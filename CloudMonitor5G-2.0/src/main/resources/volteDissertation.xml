@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+
+	<!-- volte专题-volte整体概览 -->
+	<package name="volteWhole" namespace="/volteWhole" extends="json-default">
+		<action name="*" class="volteWholePreviewAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/volteWholeScan.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadVolteTotal" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadVolteTotal</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+			<result name="downloadVideoTotal" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadVideoTotal</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte质量专题-volte语音质差路段分析 -->
+	<package name="voiceQBR" namespace="/voiceQBR" extends="json-default">
+		<action name="*" class="voiceQualityBadRoadAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/qualityBadRoad/qualityBadRoadList.jsp</result>
+			<result name="whole">/WEB-INF/volte/qualityBadRoad/whole.jsp</result>
+			<result name="weakCover">/WEB-INF/volte/qualityBadRoad/weakCover.jsp</result>
+			<result name="disturb">/WEB-INF/volte/qualityBadRoad/disturb.jsp</result>
+			<result name="nbCell">/WEB-INF/volte/qualityBadRoad/nbCell.jsp</result>
+			<result name="paramError">/WEB-INF/volte/qualityBadRoad/paramError.jsp</result>
+			<result name="coreNet">/WEB-INF/volte/qualityBadRoad/coreNet.jsp</result>
+			<result name="other">/WEB-INF/volte/qualityBadRoad/other.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadVolteQBR" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadVolteQBR</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte质量专题-volte语音质差其他问题路段信令分析 -->
+	<package name="voiceQBRSign" namespace="/voiceQBRSign" extends="json-default">
+		<action name="*" class="voiceQualityBadRoadSignllingAction" method="{1}">
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte异常事件-volte语音未接通分析 -->
+	<package name="voiceNotConnect" namespace="/voiceNotConnect" extends="json-default">
+		<action name="*" class="voiceNotConnectAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/exceptionEvent/notConnectList.jsp</result>
+			<result name="whole">/WEB-INF/volte/exceptionEvent/notConnectWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/exceptionEvent/notConnectProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte异常事件-volte语音掉话分析 -->
+	<package name="voiceDropCall" namespace="/voiceDropCall" extends="json-default">
+		<action name="*" class="voiceDropCallAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/exceptionEvent/dropCallList.jsp</result>
+			<result name="whole">/WEB-INF/volte/exceptionEvent/dropCallWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/exceptionEvent/dropCallProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte异常事件-IMS注册失败分析 -->
+	<package name="imsRegistFail" namespace="/imsRegistFail" extends="json-default">
+		<action name="*" class="imsRegistFailAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/exceptionEvent/imsRegistFailList.jsp</result>
+			<result name="whole">/WEB-INF/volte/exceptionEvent/imsRegistFailWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/exceptionEvent/imsRegistFailProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte异常事件-CSFB失败分析 -->
+	<package name="csfbFail" namespace="/csfbFail" extends="json-default">
+		<action name="*" class="csfbFailAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/exceptionEvent/csfbFailList.jsp</result>
+			<result name="whole">/WEB-INF/volte/exceptionEvent/csfbFailWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/exceptionEvent/csfbFailProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte切换失败-SRVCC切换失败 -->
+	
+	<package name="droppingSRVCC" namespace="/droppingSRVCC" extends="json-default">
+		<action name="*" class="droppingSRVCCAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/handoffDropping/outDroppingList.jsp</result>
+			<result name="whole">/WEB-INF/volte/handoffDropping/outDroppingWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/handoffDropping/outDroppingProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte切换失败-系统内部切换失败 -->
+	<package name="droppingInt" namespace="/droppingInt" extends="json-default">
+		<action name="*" class="droppingIntAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/handoffDropping/inDroppingList.jsp</result>
+			<result name="whole">/WEB-INF/volte/handoffDropping/inDroppingWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/handoffDropping/inDroppingProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte对比分析-->
+	<package name="voiceCompare" namespace="/voiceCompare" extends="json-default">
+		<action name="*" class="compareAnalysisAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/compareAnalysis/compareAnalysisList.jsp</result>
+			<result name="compareTestLogItemlistUI">/WEB-INF/volte/compareAnalysis/compareTestLogList.jsp</result>
+			<result name="whole">/WEB-INF/volte/compareAnalysis/compareWhole.jsp</result>
+			<result name="exceptionEvent">/WEB-INF/volte/compareAnalysis/compareExceptionEvent.jsp</result>
+			<result name="mosQualityBad">/WEB-INF/volte/compareAnalysis/compareMosQualityBad.jsp</result>
+			<result name="srvccHo">/WEB-INF/volte/compareAnalysis/compareSrvccHo.jsp</result>
+			<result name="systemHo">/WEB-INF/volte/compareAnalysis/compareSystemHo.jsp</result>
+			<result name="latticeCell">/WEB-INF/volte/compareAnalysis/compareLatticeCell.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadVolteCompareExcel" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">volteCompareExcel</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte质量专题-连续无线差分析 -->
+	<package name="volteCWBR" namespace="/volteCWBR" extends="json-default">
+		<action name="*" class="volteContinueWirelessBadRoadAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/continueWirelessBadRoad/continueWirelessBadRoadList.jsp</result>
+			<result name="whole">/WEB-INF/volte/continueWirelessBadRoad/whole.jsp</result>
+			<result name="weakCover">/WEB-INF/volte/continueWirelessBadRoad/weakCover.jsp</result>
+			<result name="disturb">/WEB-INF/volte/continueWirelessBadRoad/disturb.jsp</result>
+			<result name="nbCell">/WEB-INF/volte/continueWirelessBadRoad/nbCell.jsp</result>
+			<result name="other">/WEB-INF/volte/continueWirelessBadRoad/other.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadVolteCWBR" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadVolteCWBR</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+		</action>
+	</package>
+	
+	<!-- volte专题-呼叫建立时延异常 -->
+	<package name="callEstablish" namespace="/callEstablish" extends="json-default">
+		<action name="*" class="callEstablishDelayExceptionAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/callEstablishDelayException/callEstablishDelayExceptionList.jsp</result>
+			<result name="whole">/WEB-INF/volte/callEstablishDelayException/whole.jsp</result>
+			<result name="weakCover">/WEB-INF/volte/callEstablishDelayException/weakCover.jsp</result>
+			<result name="overlapCover">/WEB-INF/volte/callEstablishDelayException/overlapCover.jsp</result>
+			<result name="locationUpdate">/WEB-INF/volte/callEstablishDelayException/locationUpdate.jsp</result>
+			<result name="coreNet">/WEB-INF/volte/callEstablishDelayException/coreNet.jsp</result>
+			<result name="other">/WEB-INF/volte/callEstablishDelayException/other.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadCallEDE" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadCallEstablishDelayException</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+		</action>
+	</package>
+	<!-- volte专题-volte质量-VOlte语音RTP连续丢包 -->
+	<package name="lostPacket" namespace="/lostPacket" extends="json-default">
+		<action name="*" class="volteVoiceRTPLostPacketAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/voiceRTPLostPacket/lostPacketList.jsp</result>
+			<result name="whole">/WEB-INF/volte/voiceRTPLostPacket/lostPacketWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/voiceRTPLostPacket/lostPacketProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadLostPacketRTP" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadLostPacketRTP</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+		</action>
+	</package>
+	<!-- volte专题-volte质量专题-视频质差分析 -->
+	<package name="videoQuality" namespace="/videoQuality" extends="json-default">
+		<action name="*" class="videoQualityBadAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/videoQualityBad/videoQualityBadList.jsp</result>
+			<result name="whole">/WEB-INF/volte/videoQualityBad/whole.jsp</result>
+			<result name="pingPong">/WEB-INF/volte/videoQualityBad/pingPong.jsp</result>
+			<result name="neighbourPlot">/WEB-INF/volte/videoQualityBad/neighbourPlot.jsp</result>
+			<result name="weakCover">/WEB-INF/volte/videoQualityBad/weakCover.jsp</result>
+			<result name="disturb">/WEB-INF/volte/videoQualityBad/disturb.jsp</result>
+			<result name="overCover">/WEB-INF/volte/videoQualityBad/overCover.jsp</result>
+			<result name="downDispatchSmall">/WEB-INF/volte/videoQualityBad/downDispatchSmall.jsp</result>
+			<result name="patternSwitch">/WEB-INF/volte/videoQualityBad/patternSwitch.jsp</result>
+			<result name="other">/WEB-INF/volte/videoQualityBad/other.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadVideoQualityBad" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadVideoQualityBad</param>  
+               	<param name="bufferSize">10240</param> 
+            </result>
+		</action>
+	</package>
+	<!-- volte专题-volte异常事件-volte视频未接通分析 -->
+	<package name="videoNotConnect" namespace="/videoNotConnect" extends="json-default">
+		<action name="*" class="videoNotConnectAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/exceptionEvent/video/videoNotConnectList.jsp</result>
+			<result name="whole">/WEB-INF/volte/exceptionEvent/video/videoNotConnectWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/exceptionEvent/video/videoNotConnectProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- volte专题-volte异常事件-volte视频掉话分析 -->
+	<package name="videoDropCall" namespace="/videoDropCall" extends="json-default">
+		<action name="*" class="videoDropCallAction" method="{1}">
+			<result name="listUI">/WEB-INF/volte/exceptionEvent/video/videoDropCallList.jsp</result>
+			<result name="whole">/WEB-INF/volte/exceptionEvent/video/videoDropCallWhole.jsp</result>
+			<result name="problem">/WEB-INF/volte/exceptionEvent/video/videoDropCallProblem.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+</struts>

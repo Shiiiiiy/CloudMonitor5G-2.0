@@ -1,0 +1,406 @@
+﻿﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>路测云平台</title>
+<style>
+html,body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+	margin: 0;
+	padding: 0;
+}
+</style>
+<link type="text/css" rel="stylesheet" href="../js/easyui/themes/default/easyui.css" />
+<link type="text/css" rel="stylesheet" href="../js/easyui/themes/icon.css" />
+<link type="text/css" rel="stylesheet" href="../js/easyui/themes/color.css" />
+<link href="css/Style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="3.16/esri/css/esri.css" />
+<link rel="stylesheet" type="text/css" href="3.16/dijit/themes/claro/claro.css" />
+<link rel="stylesheet" type="text/css" href="css/easyui.css" />
+<link rel="stylesheet" type="text/css" href="css/linkbutton.css" />
+<script type="text/javascript">
+	var djConfig = {
+		parseOnLoad : true,
+		paths : {
+			extras : location.pathname.replace(/\/[^/]+$/, "") + "/extras"
+		}
+	};
+</script>
+<script src="js/Constant.js" type="text/javascript"></script>
+<script src="js/jquery-1.9.1.js" type="text/javascript"></script>
+<script src="js/jquery.cookie.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/init.js"></script>
+<!-- <script type="text/javascript" src="extras/TianMap.js"></script> -->
+<script type="text/javascript" src="js/index3.js"></script>
+<script type="text/javascript" src="js/layerControl.js"></script>
+<script src="js/public.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/easyui/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body class="claro">
+	<div data-dojo-type="dijit/layout/BorderContainer"
+		data-dojo-props="design:'headline',gutters:false"
+		style="width: 100%; height: 100%; margin: 0;position: initial;">
+		<div id="map" data-dojo-type="dijit/layout/ContentPane"
+			data-dojo-props="region:'center'">
+			<div id="MapTool">
+				<div class="mapTools">
+					<ul>
+						<li><img class="navItem" id="zoom_in"
+							src="images/zoom_in.png" title="地图放大" alt="地图放大" /></li>
+						<li><img class="navItem" id="zoom_out"
+							src="images/zoom_out.png" title="地图缩小" alt="地图缩小" /></li>
+						<li><img class="navItem" id="Pan" src="images/hand.png"
+							title="拖动" alt="拖动" /></li>
+						<li><img class="navItem" id="PrevExtent"
+							src="images/PrevExtent.png" title="前一视图" alt="前一视图" /></li>
+						<li><img class="navItem" id="NextExtent"
+							src="images/NextExtent.png" title="后一视图" alt="后一视图" /></li>
+						<li><img class="navItem" id="DistanceMeasure"
+							src="images/DistanceMeasure.png" title="测距" alt="测距" /></li>
+						<li><img class="navItem " id="clear" src="images/broom.png"
+							title="清除" alt="清除" /></li>
+						<li><img class="navItem" id="FullExtent"
+							src="images/FullExtent.png" title="全图" alt="全图" /></li>
+						<li><img class="navItem" id="MapDataCenter"
+							src="images/MapDataCenter.png" title="定位至数据范围" alt="定位至数据范围" />
+						</li>
+						<li><img class="Item" id="layerControldis"
+							name="layerControl" src="images/layerControl.png" title="图层控制"
+							alt="图层控制" /></li>
+						<li><img class="Item" name="MapResource"
+							src="images/MapChange.png" title="图源切换" alt="图源切换" /></li>
+						<li class="shaw_div" style="float:left;height:18px"></li>
+						<li><img class="navItem" id="DisplayCleLPoint"
+							src="images/DisplayCleLPoint_dis.png" title="显示小区点连线"
+							alt="显示小区点连线" /></li>
+						<li><img class="navItem" id="DisplayCleLEvent"
+							src="images/DisplayCleLEvent_dis.png" title="显示小区事件连线"
+							alt="显示小区事件连线" /></li>
+						<li><img class="navItem" id="DisplayCelL_Points" style="display:none;"
+							src="images/DisplayCelL_Points_hide.png" title="隐藏小区与采样点连线"
+							alt="隐藏小区与采样点连线" /></li>
+						<!-- <li><img class="navItem" id="DisplayPoint_Cells" style="display:none;"
+							src="images/DisplayPoint_Cells_dis.png" title="显示单点与小区连线"
+							alt="显示单点与小区连线" /></li> -->
+						<li><img class="navItem" id="DisplayCleLArea"
+							src="images/DisplayCleLArea_dis.png" title="显示邻区连线" alt="显示邻区连线" />
+						</li>
+						<li><img class="Item" name="SetStyle" id="StyleSet"
+							src="images/legend.png" title="样式设置" alt="样式设置" /></li>
+						<li><img class="navItem" id="DisplayPCI"
+							src="images/DisplayPCI_dis.png" title="显示模3核查" alt="显示模3核查" /></li>
+						<li><img class="navItem" id="DisplayTAC"
+							src="images/DisplayTAC_dis.png" title="显示TAC分布" alt="显示TAC分布" /></li>
+						<li><img class="navItem" id="Azimuth"
+							src="images/Azimuth_dis.png" title="显示行驶方向" alt="显示行驶方向" /></li>
+						<li><img class="navItem" id="TrackOffset"
+							src="images/TrackOffset.png" title="对比日志轨迹偏移" alt="对比日志轨迹偏移" /></li>
+						<li><img class="navItem" id="SearchCell"
+							src="images/SearchCell.png" title="查找小区" alt="查找小区" />  
+						</li>
+						<li>
+							<img class="navItem" id="layerManager" src="images/layerControl.png" title="图层管理" alt="图层管理" /> 
+						</li>
+						<li>
+							<img class="navItem" id="layerManager2" src="images/layerControl.png" title="图层管理" alt="图层管理" /> 
+						</li>
+						<li>
+							<img class="navItem" id="stationLine" src="images/站间线.png" title="站间线" alt="站间线" /> 
+						</li>
+						<li>
+							<img class="navItem" id="selectGPSPoint" src="images/测试点选择.png" title="测试点选择" alt="测试点选择" /> 
+						</li>
+						<li id="BoshuAnalyseLi" style="display:none;float:left;">
+							<a href="javascript:void(0)" id="BoshuAnalyse" class="easyui-menubutton" style="width:22px;margin-top: -6px;height: 20px;" 
+							data-options="menu:'#BoshuAnalyseChoose',iconCls:'icon-noShuFenxi'"></a>
+						    <div id="BoshuAnalyseChoose" style="width:150px;">
+						        <div id="cellBoshuAnalyseButton">小区波束分析</div>
+						        <div id="cellBoshuConditionButton">全图特定波束统计</div>
+						    </div>
+						</li>
+						<li id="networkStructure" style="display:none;float:left;">
+							<a href="javascript:void(0)" id="BoshuAnalyse" class="easyui-menubutton" style="width:22px;margin-top: -6px;height: 20px;" 
+							data-options="menu:'#networkStructureChoose',iconCls:'icon-networkStructure'"></a>
+						    <div id="networkStructureChoose" style="width:150px;">
+						        <div id="ncellCheckButton">邻区核查</div>
+						        <div id="equalFreqPciButton">同频同PCI核查</div>
+						    </div>
+						</li>
+					</ul>
+				</div>
+				<div id="MapIndexTool">
+					<div id="KpiIndexTool" style="margin:2px;float: left;">
+						<label>指标</label> <select id="selectIndex" style="width:120px;">
+							<option value="1">指标1</option>
+							<option value="2">指标2</option>
+						</select>
+					</div>
+					<div id="CallIndexTool" style="margin: 2px 8px 2px 8px;float: left;">
+						<label>主被叫</label> <select id="callSelectIndex"
+							style="width:60px;">
+							<option value="0">主叫</option>
+							<option value="1">被叫</option>
+						</select>
+					</div>
+					<a class="easyui-linkbutton l-btn l-btn-small" style="width: 68px"
+						onclick="GPSTrackRender()"> <span class="l-btn-text">刷新</span>
+					</a> <a class="easyui-linkbutton l-btn l-btn-small" style="width: 68px"
+						onclick=""> <span class="l-btn-text">清除</span>
+					</a>
+				</div>
+			</div>
+			<div id="DivQueryCell" class="DivFloat" style="width:260px;">
+				<div class="divTop" id="div101" onclick="MoveDiv(this)">
+					<label>查找小区</label> <img src="images/close.png" class="title_img"
+						onclick="hideDivByDivId('DivQueryCell')" /> <img id="showHide"
+						src="images/out.png" class="title_img"
+						onclick="hideMapToolTip('DivCenterQuery','showHide')" />
+				</div>
+				<div id="DivCenterQuery">
+					<div class="divContent">
+						<table class="table">
+							<tr>
+								<td><label>查询条件选择</label></td>
+								<td><select data-dojo-type="dijit/form/FilteringSelect"
+									id="QueryCon" name="selectGridIndex">
+										<option value="CELLID" selected>小区ID查询</option>
+										<option value="CELLNAME">小区名称查询</option>
+										<option value="ENODEBID" selected>基站ID查询</option>
+										<option value="SITENAME">基站名称查询</option>
+								</select></td>
+							</tr>
+							<tr>
+								<td><label>查询值：</label></td>
+								<td><input id="QueryValue"
+									data-dojo-type="dijit/form/TextBox" /></td>
+							</tr>
+						</table>
+					</div>
+					<div class="divBottom">
+						<button data-dojo-type="dijit/form/Button" onclick="QueryCell()">查询</button>
+						<button data-dojo-type="dijit/form/Button"
+							onclick="hideDivByDivId('DivQueryCell')">取消</button>
+					</div>
+				</div>
+			</div>
+			<div id="dropDownButtonContainer" style="display: none;"></div>
+			<div id="layerControl" class="toolRight" style="width:342px;">
+				<div class="divTop" id="div211" onclick="MoveDiv(this)">
+					<label>图层控制</label> <img src="images/close.png" class="title_img"
+						onclick="hideDivByDivId('layerControl')" /> <img
+						id="imgLayersControl" src="images/out.png" class="title_img"
+						onclick="hideMapToolTip('LayersControlContent','imgLayersControl')" />
+				</div>
+				<div class="divContent" id="LayersControlContent">
+					<table class="t1">
+						<thead>
+							<tr>
+								<th style="width:40px">选择</th>
+								<th style="width:50px">可视</th>
+								<th style="width:50px">标注</th>
+								<th style="alignment-adjust: auto">图层名称</th>
+							</tr>
+						</thead>
+						<tbody id="layersControl">
+							<tr>
+								<td style="width:40px"><input type="radio"
+									id="radio_TrackLayer" name="radio_tr"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="layer_TrackLayer" checked='checked' onchange="DisplayCellLayer(this)"></td>
+								<td style="width:50px"><input type="checkbox" 
+									id="label_TrackLayer"
+									onchange="DisplayLabelLayer(this)"></td>
+								<td>指标图层</td>
+							</tr>
+							<tr>
+								<td style="width:40px"><input type="radio"
+									id="radio_EventLayer" name="radio_tr"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="layer_EventLayer" checked='checked' onchange="DisplayCellLayer(this)"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="label_EventLayer" 
+									onchange="DisplayLabelLayer(this)"></td>
+								<td>事件图层</td>
+							</tr>
+							<tr>
+								<td style="width:40px"><input type="radio"
+									id="radio_CellsLayer" name="radio_tr"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="layer_CellsLayer" checked='checked' onchange="DisplayCellLayer(this)"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="label_CellsLayer" 
+									onchange="DisplayLabelLayer(this)"></td>
+								<td>小区图层</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="4"><a
+									class="easyui-linkbutton l-btn l-btn-small" style="width: 60px"
+									onclick="moveTop()"> <span class="l-btn-text">置顶</span>
+								</a> <a class="easyui-linkbutton l-btn l-btn-small"
+									style="width: 60px" onclick="moveUpRows()"> <span
+										class="l-btn-text">上移</span>
+								</a> <a class="easyui-linkbutton l-btn l-btn-small"
+									style="width: 60px" onclick="moveDownRows()"> <span
+										class="l-btn-text">下移</span>
+								</a> <a class="easyui-linkbutton l-btn l-btn-small"
+									style="width: 60px" onclick="moveBottom()"> <span
+										class="l-btn-text">置底</span>
+								</a></td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+			<div class="Legend" id="Legend">
+				<div class="divTop" id="div2" onclick="MoveDiv(this)">
+					<label>图例</label> <img id="showHide1" src="images/in.png"
+						class="title_img" onclick="hideMapToolTip('DivSec','showHide1')" />
+				</div>
+				<div id="DivSec" style="display: none;white-space: nowrap;">
+					<div id="mapLegend">
+						<table style="text-align:center;white-space:nowrap">
+							<tr>
+								<td id="td1" style="width: 50px;background-color:greenyellow;">
+								</td>
+								<td>10≤指标≤20</td>
+							</tr>
+							<tr>
+								<td id="td2"
+									style="width: 50px;background-color:cornflowerblue;"></td>
+								<td>20≤指标≤30</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<div id="SetStyle" style="font-size:0.9em;">
+				<div class="divTop" id="div11" onclick="MoveDiv(this)">
+					<label>样式设置</label> <img src="images/close.png" class="title_img"
+						onclick="hideDivByDivId('SetStyle')" /> <img id="imgSetStyle"
+						src="images/out.png" class="title_img"
+						onclick="hideMapToolTip('div111','imgSetStyle')" />
+				</div>
+				<div id="div111" class="divContent">
+					<div data-dojo-type="dijit/layout/TabContainer"
+						style="width:300px;text-align: center;font-size:0.82em ">
+						<div data-dojo-type="dijit/layout/ContentPane" title="采样点样式">
+							<label>形状选择</label> <select id="PointStyle" style="width:150px;">
+								<option value="Circle">圆形</option>
+								<option value="Square">方形</option>
+							</select> <br />
+							<button data-dojo-type="dijit/form/Button" type="button"
+								onClick="GPSTrackRender()">刷新</button>
+						</div>
+						<div data-dojo-type="dijit/layout/ContentPane" title="小区样式"
+							data-dojo-props="selected:true" style="height:40px;">
+							<table class="table">
+								<!--  <tr><th style="width:70px;">小区半径</th><td colspan="2"><div data-dojo-type="dijit.form.NumberTextBox" data-dojo-props="required:true"
+                                                                      id="RadiusText" value='50' constraints='{min:10,max:300}'  required='true'  invalidMessage= '无效值.(10-300)'>
+                        </div></td></tr> -->
+								<tr>
+									<th rowspan="3">模3核查设置</th>
+									<td style="width: 75px">0</td>
+									<td><input type="color" id="Color0" value="#ff0400" /></td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td><input type="color" id="Color1" value="#10ff00" /></td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td><input type="color" id="Color2" value="#0000ff" /></td>
+								</tr>
+							</table>
+							<button data-dojo-type="dijit/form/Button" type="button"
+								onClick="DisplayPCI(true)">刷新</button>
+						</div>
+						<div data-dojo-type="dijit/layout/ContentPane" title="服务小区与采样点连线">
+							<label>连线颜色</label> <select id="SelectCellColorLine"
+								style="width:150px;">
+								<option value="point">同采样点相同颜色</option>
+								<option value="cell">同小区相同颜色</option>
+							</select> <br />
+							<button data-dojo-type="dijit/form/Button" type="button"
+								onClick="CellLineConjunction()">刷新</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="BackgroundDiv" class="bg">
+				<div class="waitImg" id="waitImg">
+					<label>加载中...</label> <br /> <img src="images/wait.gif"
+						style="float:right;">
+				</div>
+			</div>
+		</div>
+		<div data-dojo-type="dijit/Dialog" data-dojo-id="myFormDialog"
+			title="经纬度搜索" style="display: none">
+			<form data-dojo-type="dijit/form/Form" data-dojo-id="myForm">
+				<div class="dijitDialogPaneContentArea">
+					<label>经度:</label>
+					<div data-dojo-type="dijit.form.NumberTextBox"
+						data-dojo-props="required:true" id="txt_lon" value='120'
+						constraints='{min:-180,max:180}' required='true'
+						invalidMessage='无效值.'></div>
+					<div class="dijitDialogPaneContentArea">
+						<label>纬度:</label>
+						<div data-dojo-type="dijit.form.NumberTextBox"
+							data-dojo-props="required:true" id="txt_lat" value='30'
+							constraints='{min:-90,max:90}' required='true'
+							invalidMessage='无效值.'></div>
+					</div>
+				</div>
+				<div class="dijitDialogPaneActionBar">
+					<button data-dojo-type="dijit/form/Button" type="button"
+						onClick="Locate()">搜索</button>
+					<button data-dojo-type="dijit/form/Button" type="button"
+						data-dojo-props="onClick:function(){myFormDialog.hide();}">取消</button>
+				</div>
+			</form>
+		</div>
+		
+		<div id="MapResource" class="DivFloat">
+				<div class="divTop" id="div21" onclick="MoveDiv(this)">
+					<label>图源切换</label> <img src="images/close.png" class="title_img"
+						onclick="hideDivByDivId('MapResource')" /> <img id="showHide11"
+						src="images/out.png" class="title_img"
+						onclick="hideMapToolTip('DivMapChange','showHide11')" />
+				</div>
+				<div id="DivMapChange" class="divContent" style="width:210px;">
+					<div class="base-map">
+						<div id="offline" class=" base-map-switch base-map-switch-center"
+							onclick="alert('离线地图暂不提供')">
+							<img src="images/offline.png" title="离线地图" alt="离线地图"
+								class="mapResourceImg" /> <br />离线地图
+						</div>
+						<div id="vec" class="base-map-switch base-map-switch-active"
+							onclick="showMap('vec')">
+							<img src="images/vec.png" title="在线地图" alt="在线地图"
+								class="mapResourceImg" /> <br />在线地图
+						</div>
+						<div id="img" class="base-map-switch base-map-switch-center"
+							onclick="showMap('img')">
+							<img src="images/img.png" title="影像地图" alt="影像地图"
+								class="mapResourceImg" /> <br />影像地图
+						</div>
+					</div>
+				</div>
+		</div>
+		
+		<div id="menuDiv"
+			style="color:white;z-index:999;position:absolute;background-color: rgba(28, 229, 28, 0.5);display: none;">
+			<i>双击选取目的坐标</i>
+		</div>
+	</div>
+</body>
+</html>

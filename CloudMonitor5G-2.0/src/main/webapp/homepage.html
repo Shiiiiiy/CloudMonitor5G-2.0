@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html style="width:100%;height:100%;margin: 0 auto;padding: 0 auto;">
+  <head>
+    <title>主页</title>
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript"  src="js/jquery.min.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript">
+		$(function(){
+			initWH();
+		});
+		function initWH(){
+			var highTotal = $(document.body).outerHeight(true);
+			var widthTotal = $(document.body).outerWidth(true);
+			$("#img").attr({
+				width:widthTotal,
+				height:highTotal
+			});
+		}
+		window.onresize=reload;
+		function reload(){
+			initWH();
+		}
+	</script>
+  </head>
+  <body style="width: 100%;height: 100%;margin: 0 ;padding: 0 ;list-style:none;overflow:hidden;">
+		<img id="img" src="images/main.jpg" />
+  </body>
+</html>

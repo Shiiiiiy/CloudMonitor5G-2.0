@@ -1,0 +1,18 @@
+[
+	{"thresholdType":"MOS均值恶化门限","nameEn":"MosVorsen","value":"1"},
+	{"thresholdType":"MOS均值稍降门限","nameEn":"MosDecline","value":"0.4"},
+	{"thresholdType":"RSRP均值恶化门限(dBm)","nameEn":"RsrpAvaregeVorsen","value":"-100"},
+	{"thresholdType":"RSRP均值稍降门限","nameEn":"RsrpAvaregeDecline","value":"10"},
+	{"thresholdType":"RSRP差值恶化门限(dBm)","nameEn":"RsrpDifferenceVorsen","value":"-95"},
+	{"thresholdType":"RSRP差值稍降门限","nameEn":"RsrpDifferenceDecline","value":"5"},
+	{"thresholdType":"SINR均值恶化门限","nameEn":"SinrAvaregeVorsen","value":"6"},
+	{"thresholdType":"SINR差值恶化门限","nameEn":"SinrDifferenceVorsen","value":"4"},
+	{"thresholdType":"SINR均值稍降门限","nameEn":"SinrAvaregeDecline","value":"9"},
+	{"thresholdType":"SINR差值稍降门限","nameEn":"SinrDifferenceDecline","value":"2"},
+	{"thresholdType":"RTP丢包率均值恶化门限(%)","nameEn":"RtpLosePageAvaregeVorsen","value":"30"},
+	{"thresholdType":"RTP丢包率差值恶化门限(%)","nameEn":"RtpLosePageDifferenceVorsen","value":"30"},
+	{"thresholdType":"RTP丢包率均值稍降门限(%)","nameEn":"RtpLosePageAvaregeDecline","value":"20"},
+	{"thresholdType":"RTP丢包率差值稍降门限(%)","nameEn":"RtpLosePageDifferenceDecline","value":"20"},
+	{"thresholdType":"栅格大小(米)","nameEn":"GridSize","value":"500"}
+	
+]

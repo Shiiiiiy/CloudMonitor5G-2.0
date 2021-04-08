@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+        "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+    <!--异常事件分析门限设置功能-->
+    <!--4/5G互操作的异常事件分析参数-->
+    <package name="exceptionparam45g" namespace="/exceptionparam45g"  extends="json-default">
+        <action name="*" class="exceptionEvent45gAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/exceptionEvent45GList.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    <!--update-->
+    <package name="exceptionparam45g_update" namespace="/updateexceptionparam45g"  extends="json-default">
+        <action name="*" class="exceptionEvent45gAction" method="{1}">
+        	 <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+
+
+    <!--SA模式接入性异常事件分析参数界面-->
+    <package name="exceptionparamsaaccess" namespace="/exceptionparamsaaccess"  extends="json-default">
+        <action name="*" class="exceptionEventSAAccessAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/exceptionEventSAAccessList.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    <!--update-->
+    <package name="exceptionEventaccess_update" namespace="/updateexceptioneventaccess"  extends="json-default">
+        <action name="*" class="exceptionEventSAAccessAction" method="{1}"> 
+        	 <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+
+
+    <!--NSA模式异常事件分析-->
+    <package name="exceptionparamnsa" namespace="/exceptionparamnsa"  extends="json-default">
+        <action name="*" class="exceptionEventNSAAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/exceptionEventNSAAnalysisList.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    <!--update-->
+    <package name="exceptionparamnsa_update" namespace="/updateExceptionNSA"  extends="json-default">
+        <action name="*" class="exceptionEventNSAAction" method="{1}"> 
+        	 <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    
+    <!--SA模式移动性异常事件分析参数界面-->
+    <package name="exceptionparamsamove" namespace="/exceptionparamsamove"  extends="json-default">
+        <action name="*" class="exceptionEventSAMoveAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/exceptionEventSAMoveList.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    <!--update-->
+    <package name="exceptioneventmove_update" namespace="/updateexceptioneventmove"  extends="json-default">
+        <action name="*" class="exceptionEventSAMoveAction" method="{1}"> 
+        	 <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    
+    <!--业务类异常事件参数设置界面-->
+    <package name="exceptionparambussiness" namespace="/exceptionparambussiness"  extends="json-default">
+        <action name="*" class="exceptionEventBussineessAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/exceptionEventBussinessList.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+
+
+    <!--NSA制式异常事件列表和地图的呈现-->
+    <package name="nas_gis_list_view" namespace="/nasexceptionview"  extends="json-default">
+        <action name="*" class="nsaGisAndListShowAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/nSAGisAndListShow.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+            <result name="downloadLog" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadTestLog</param>  
+               	<!-- <param name="bufferSize">10240</param> --> 
+            </result> 
+        </action>
+    </package>
+
+
+    <!--SA move 45g-->
+    <package name="sa_move_gis_list_view" namespace="/samoveexceptionview"  extends="json-default">
+        <action name="*" class="saMove45GGisAndListShowAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/saMoveGisAndListShow.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+            <result name="downloadLog" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadTestLog</param>  
+               	<!-- <param name="bufferSize">10240</param> --> 
+            </result> 
+        </action>
+    </package>
+
+
+    <!--SA move switch-->
+    <package name="sa_move_switch_gis_list_view" namespace="/samoveswitchexceptionview"  extends="json-default">
+        <action name="*" class="saMoveSwitchGisAndListShowAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/saMoveSwitchGisAndListShow.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+            <result name="downloadLog" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadTestLog</param>  
+               	<!-- <param name="bufferSize">10240</param> --> 
+            </result> 
+        </action>
+    </package>
+
+
+
+    <!--SA模式接入性异常事件分析报表-->
+    <package name="sa_access_gis_list_view" namespace="/saaccessexceptionview"  extends="json-default">
+        <action name="*" class="saAccessGisAndListShowAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/saAccessGisAndListShow.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+            <result name="downloadLog" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadTestLog</param>  
+               	<!-- <param name="bufferSize">10240</param> --> 
+            </result> 
+        </action>
+    </package>
+    
+     <!--业务类异常事件异常事件分析报表-->
+    <package name="bussiness_gis_list_view" namespace="/bussinessexceptionview"  extends="json-default">
+        <action name="*" class="bussinessGisAndListShowAction" method="{1}">
+            <result name="listUI">/WEB-INF/5g/analysisThreshold/bussinessGisAndListShow.jsp</result>
+            <result name="json" type="json">
+                <param name="contentType">text/html</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+            <result name="downloadLog" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadTestLog</param>  
+               	<!-- <param name="bufferSize">10240</param> --> 
+            </result> 
+        </action>
+    </package>
+
+
+</struts>

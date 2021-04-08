@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>路测云平台</title>
+<style>
+html,body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+	margin: 0;
+	padding: 0;
+}
+</style>
+<link href="css/Style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="3.16/esri/css/esri.css" />
+<link rel="stylesheet" type="text/css"
+	href="3.16/dijit/themes/claro/claro.css" />
+<link rel="stylesheet" type="text/css" href="css/easyui.css" />
+<link rel="stylesheet" type="text/css" href="css/linkbutton.css" />
+<script type="text/javascript">
+	var djConfig = {
+		parseOnLoad : true,
+		paths : {
+			extras : location.pathname.replace(/\/[^/]+$/, "") + "/extras"
+		}
+	};
+</script>
+<script type="text/javascript" src="../js/html2canvas.js"></script>
+<script src="js/Constant.js" type="text/javascript"></script>
+<script src="js/jquery-1.9.1.js" type="text/javascript"></script>
+<script src="js/jquery.cookie.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/init.js"></script>
+<script type="text/javascript" src="js/index3.js"></script>
+<script type="text/javascript" src="js/layerControl.js"></script>
+<script src="js/public.js" type="text/javascript"></script>
+</head>
+<body class="claro">
+	<div data-dojo-type="dijit/layout/BorderContainer"
+		data-dojo-props="design:'headline',gutters:false"
+		style="width: 100%; height: 100%; margin: 0;position: initial;">
+		<div id="map" data-dojo-type="dijit/layout/ContentPane"
+			data-dojo-props="region:'center'">
+			<div id="MapTool">
+				<div class="mapTools">
+					<ul>
+						<li><img class="navItem" id="zoom_in"
+							src="images/zoom_in.png" title="地图放大" alt="地图放大" /></li>
+						<li><img class="navItem" id="zoom_out"
+							src="images/zoom_out.png" title="地图缩小" alt="地图缩小" /></li>
+						<li><img class="navItem" id="Pan" src="images/hand.png"
+							title="拖动" alt="拖动" /></li>
+						<li><img class="navItem" id="PrevExtent"
+							src="images/PrevExtent.png" title="前一视图" alt="前一视图" /></li>
+						<li><img class="navItem" id="NextExtent"
+							src="images/NextExtent.png" title="后一视图" alt="后一视图" /></li>
+						<li><img class="navItem" id="DistanceMeasure"
+							src="images/DistanceMeasure.png" title="测距" alt="测距" /></li>
+						<li><img class="navItem " id="clear" src="images/broom.png"
+							title="清除" alt="清除" /></li>
+						<li><img class="navItem" id="FullExtent"
+							src="images/FullExtent.png" title="全图" alt="全图" /></li>
+						<li><img class="navItem" id="MapDataCenter"
+							src="images/MapDataCenter.png" title="定位至数据范围" alt="定位至数据范围" />
+						</li>
+						<li><img class="Item" id="layerControldis"
+							name="layerControl" src="images/layerControl.png" title="图层控制"
+							alt="图层控制" /></li>
+						<li><img class="Item" name="MapResource"
+							src="images/MapChange.png" title="图源切换" alt="图源切换" /></li>
+						<li><img class="Item" id="EventControldis"
+							name="eventControl" src="images/ChoseEvent.png" title="事件面板"
+							alt="事件面板" /></li>
+						<li>
+							<img class="navItem" id="DrawRectangleFrame" src="images/矩形框.png" title="矩形框" alt="矩形框" />  
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="dropDownButtonContainer" style="display: none;"></div>
+			<div id="layerControl" class="toolRight" style="width:342px;">
+				<div class="divTop" id="div211" onclick="MoveDiv(this)">
+					<label>图层控制</label> <img src="images/close.png" class="title_img"
+						onclick="hideDivByDivId('layerControl')" /> <img
+						id="imgLayersControl" src="images/out.png" class="title_img"
+						onclick="hideMapToolTip('LayersControlContent','imgLayersControl')" />
+				</div>
+				<div class="divContent" id="LayersControlContent">
+					<table class="t1">
+						<thead>
+							<tr>
+								<th style="width:40px">选择</th>
+								<th style="width:50px">可视</th>
+								<th style="width:50px">标注</th>
+								<th style="alignment-adjust: auto">图层名称</th>
+							</tr>
+						</thead>
+						<tbody id="layersControl">
+                       <!-- <tr>
+								<td style="width:40px"><input type="radio"
+									id="radio_TrackLayer" name="radio_tr"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="layer_TrackLayer" checked='checked'
+									onchange="DisplayCellLayer(this)"></td>
+								<td style="width:50px"><input type="checkbox"
+									disabled="disabled" id="label_TrackLayer"
+									onchange="DisplayLabelLayer(this)"></td>
+								<td>指标图层</td>
+							</tr> -->
+							<tr>
+								<td style="width:40px"><input type="radio"
+									id="radio_channelEventLayer" name="radio_tr"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="layer_channelEventLayer" checked='checked'
+									onchange="DisplayCellLayer(this)"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="label_channelEventLayer" onchange="DisplayLabelLayer(this)"></td>
+								<td>事件图层</td>
+							</tr>
+                  <!-- 		<tr>
+								<td style="width:40px"><input type="radio"
+									id="radio_CellsLayer" name="radio_tr"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="layer_CellsLayer" checked='checked'
+									onchange="DisplayCellLayer(this)"></td>
+								<td style="width:50px"><input type="checkbox"
+									id="label_CellsLayer" onchange="DisplayLabelLayer(this)"></td>
+								<td>小区图层</td>
+							</tr> -->
+						</tbody>
+<!-- 						<tfoot>
+							<tr>
+								<td colspan="4"><a
+									class="easyui-linkbutton l-btn l-btn-small" style="width: 60px"
+									onclick="moveTop()"> <span class="l-btn-text">置顶</span>
+								</a> <a class="easyui-linkbutton l-btn l-btn-small"
+									style="width: 60px" onclick="moveUpRows()"> <span
+										class="l-btn-text">上移</span>
+								</a> <a class="easyui-linkbutton l-btn l-btn-small"
+									style="width: 60px" onclick="moveDownRows()"> <span
+										class="l-btn-text">下移</span>
+								</a> <a class="easyui-linkbutton l-btn l-btn-small"
+									style="width: 60px" onclick="moveBottom()"> <span
+										class="l-btn-text">置底</span>
+								</a></td>
+							</tr>
+						</tfoot> -->
+					</table>
+				</div>
+			</div>
+			<div id="eventControl" class="toolRight" style="width:342px;">
+				<div class="divTop" id="div236" onclick="MoveDiv(this)">
+					<label>事件面板</label> <img src="images/close.png" class="title_img"
+						onclick="hideDivByDivId('eventControl')" /> <img
+						id="imgLayersControl" src="images/out.png" class="title_img"
+						onclick="hideMapToolTip('EventsControlContent','imgLayersControl')" />
+				</div>
+				<div class="divContent" id="EventsControlContent">
+					<table class="t1">
+						<thead>
+							<tr>
+								<th style="width:40px"><input type="checkbox" id="ch_listall" /></th>
+								<th style="alignment-adjust: auto">通道名称</th>
+							</tr>
+						</thead>
+						<tbody id="eventsControl">
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel0_EventLayer" value="0" /></td>
+								<td>通道0</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel1_EventLayer" value="1" /></td>
+								<td>通道1</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel2_EventLayer" value="2"/></td>
+								<td>通道2</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel3_EventLayer" value="3" /></td>
+								<td>通道3</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel4_EventLayer" value="4"/></td>
+								<td>通道4</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel5_EventLayer" value="5"/></td>
+								<td>通道5</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel6_EventLayer" value="6"/></td>
+								<td>通道6</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel7_EventLayer" value="7"/></td>
+								<td>通道7</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel8_EventLayer"value="8"/></td>
+								<td>通道8</td>
+							</tr>
+							<tr>
+								<td style="width:50px"><input type="checkbox" name="ch_list"
+									id="channel9_EventLayer"value="9"/></td>
+								<td>通道9</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="2"><a
+									class="easyui-linkbutton l-btn l-btn-small" style="width: 60px"
+									onclick="drawChannelEvent()"> <span class="l-btn-text">确定</span>
+								</a> <a class="easyui-linkbutton l-btn l-btn-small"
+									style="width: 60px" onclick="hideDivByDivId('eventControl')">
+										<span class="l-btn-text">取消</span>
+								</a></td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+			<div class="Legend" id="Legend" style="display: none;">
+				<div class="divTop" id="div2" onclick="MoveDiv(this)">
+					<label>图例</label> <img id="showHide1" src="images/in.png"
+						class="title_img" onclick="hideMapToolTip('DivSec','showHide1')" />
+				</div>
+				<div id="DivSec" style="display: none;white-space: nowrap;">
+					<div id="mapLegend">
+						<table style="text-align:center;white-space:nowrap">
+							<tr>
+								<td id="td1" style="width: 50px;background-color:greenyellow;">
+								</td>
+								<td>10≤指标≤20</td>
+							</tr>
+							<tr>
+								<td id="td2"
+									style="width: 50px;background-color:cornflowerblue;"></td>
+								<td>20≤指标≤30</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="MapResource" class="DivFloat">
+				<div class="divTop" id="div21" onclick="MoveDiv(this)">
+					<label>图源切换</label> <img src="images/close.png" class="title_img"
+						onclick="hideDivByDivId('MapResource')" /> <img id="showHide11"
+						src="images/out.png" class="title_img"
+						onclick="hideMapToolTip('DivMapChange','showHide11')" />
+				</div>
+				<div id="DivMapChange" class="divContent" style="width:210px;">
+					<div class="base-map">
+						<div id="offline" class=" base-map-switch base-map-switch-center"
+							onclick="alert('离线地图暂不提供')">
+							<img src="images/offline.png" title="离线地图" alt="离线地图"
+								class="mapResourceImg" /> <br />离线地图
+						</div>
+						<div id="vec" class="base-map-switch base-map-switch-active"
+							onclick="showMap('vec')">
+							<img src="images/vec.png" title="在线地图" alt="在线地图"
+								class="mapResourceImg" /> <br />在线地图
+						</div>
+						<div id="img" class="base-map-switch base-map-switch-center"
+							onclick="showMap('img')">
+							<img src="images/img.png" title="影像地图" alt="影像地图"
+								class="mapResourceImg" /> <br />影像地图
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="BackgroundDiv" class="bg">
+				<div class="waitImg" id="waitImg">
+					<label>加载中...</label> <br /> <img src="images/wait.gif"
+						style="float:right;">
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<div id="tt" class="easyui-tabs" style="width:100%;height:100%;"
+	data-options="fit:true,tools:[{
+		text:'统计',
+		handler:statis
+		
+    },
+	{
+		text:'下载',
+		handler:downloading
+		
+    },{
+		text:'关闭',
+		handler:closeTooltips
+		
+    }]">
+	<div title="移动"
+		style="width:100%;height:100%;overflow-y:auto;overflow-x:hidden;">
+		<table id="moveDataTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="10">数据</th>
+				</tr>
+				<tr>
+					<th
+						data-options="field:'ftpattemptcountdl',width:100,align:'center'">FTP下载尝试次数</th>
+					<th
+						data-options="field:'ftpsuccessratedl',width:100,align:'center'">FTP下载成功率(%)</th>
+					<th data-options="field:'ftpdropratedl',width:100,align:'center'">FTP下载掉线率(%)</th>
+					<th
+						data-options="field:'ftprecvtotalsuccessdl',width:100,align:'center'">应用层下载流<br>量(不含掉线)(KB)
+					</th>
+					<th
+						data-options="field:'ftpattemptcountul',width:100,align:'center'">FTP上传尝试次数</th>
+					<th
+						data-options="field:'ftpsuccessrateul',width:100,align:'center'">FTP上传成功率(%)</th>
+					<th data-options="field:'ftpdroprateul',width:100,align:'center'">FTP上传掉线率(%)</th>
+					<th
+						data-options="field:'ftpulthrputsuccess',width:120,align:'center'">应用层平均上传<br>速率(不含掉线)(kbps)
+					</th>
+					<th data-options="field:'rsrpaverage',width:80,align:'center'">平均RSRP</th>
+					<th
+						data-options="field:'ltecoverage110rate',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+		<table id="moveVoiceTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="10">语音</th>
+				</tr>
+				<tr>
+					<th
+						data-options="field:'callcompleterate',width:120,align:'center'">全程呼叫成功率</th>
+					<th data-options="field:'callconnectrate',width:60,align:'center'">接通率</th>
+					<th data-options="field:'calldroprate',width:60,align:'center'">掉话率</th>
+					<th
+						data-options="field:'voltecallcompleterate',width:140,align:'center'">VOLTE全程呼叫成功率</th>
+					<th
+						data-options="field:'voltecallconnectrate',width:100,align:'center'">VOLTE接通率</th>
+					<th
+						data-options="field:'voltecalldroprate',width:100,align:'center'">VOLTE掉话率</th>
+					<th data-options="field:'voltemosaverage',width:100,align:'center'">VoLTE平均MOS</th>
+					<th
+						data-options="field:'psmosover358rate',width:120,align:'center'">VoLTE
+MOS>=3.5占比</th>
+					<th data-options="field:'rsrpaverage',width:80,align:'center'">平均RSRP</th>
+					<th
+						data-options="field:'ltecoverage110rate',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+		<table id="moveVideoTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="9">视频</th>
+				</tr>
+				<tr>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫请求次数</th>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫建立次数</th>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫建立成功率</th>
+					<th data-options="field:'know',width:140,align:'center'">视频被叫建立次数</th>
+					<th data-options="field:'know',width:90,align:'center'">视频掉线率</th>
+					<th data-options="field:'know',width:100,align:'center'">VoLTE平均MOS</th>
+					<th data-options="field:'know',width:100,align:'center'">VoLTE
+						MOS>=3.5占比</th>
+					<th data-options="field:'know',width:80,align:'center'">平均RSRP</th>
+					<th data-options="field:'know',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+	</div>
+	<div title="联通"
+		style="width:100%;height:100%;overflow-y:auto;overflow-x:hidden;">
+		<table id="linkDataTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="10">数据</th>
+				</tr>
+		
+				<tr>
+					<th
+						data-options="field:'ftpattemptcountdl',width:100,align:'center'">FTP下载尝试次数</th>
+					<th
+						data-options="field:'ftpsuccessratedl',width:100,align:'center'">FTP下载成功率(%)</th>
+					<th data-options="field:'ftpdropratedl',width:100,align:'center'">FTP下载掉线率(%)</th>
+					<th
+						data-options="field:'ftprecvtotalsuccessdl',width:100,align:'center'">应用层下载流<br>量(不含掉线)(KB)
+					</th>
+					<th
+						data-options="field:'ftpattemptcountul',width:100,align:'center'">FTP上传尝试次数</th>
+					<th
+						data-options="field:'ftpsuccessrateul',width:100,align:'center'">FTP上传成功率(%)</th>
+					<th data-options="field:'ftpdroprateul',width:100,align:'center'">FTP上传掉线率(%)</th>
+					<th
+						data-options="field:'ftpulthrputsuccess',width:120,align:'center'">应用层平均上传<br>速率(不含掉线)(kbps)
+					</th>
+					<th data-options="field:'rsrpaverage',width:80,align:'center'">平均RSRP</th>
+					<th
+						data-options="field:'ltecoverage110rate',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+		<table id="linkVoiceTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="10">语音</th>
+				</tr>
+				<tr>
+					<th
+						data-options="field:'callcompleterate',width:120,align:'center'">全程呼叫成功率</th>
+					<th data-options="field:'callconnectrate',width:60,align:'center'">接通率</th>
+					<th data-options="field:'calldroprate',width:60,align:'center'">掉话率</th>
+					<th
+						data-options="field:'voltecallcompleterate',width:140,align:'center'">VOLTE全程呼叫成功率</th>
+					<th
+						data-options="field:'voltecallconnectrate',width:100,align:'center'">VOLTE接通率</th>
+					<th
+						data-options="field:'voltecalldroprate',width:100,align:'center'">VOLTE掉话率</th>
+					<th data-options="field:'voltemosaverage',width:100,align:'center'">VoLTE平均MOS</th>
+					<th
+						data-options="field:'psmosover358rate',width:120,align:'center'">VoLTE
+						MOS>=3.5占比</th>
+					<th data-options="field:'rsrpaverage',width:80,align:'center'">平均RSRP</th>
+					<th
+						data-options="field:'ltecoverage110rate',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+		<table id="linkVideoTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="9">视频</th>
+				</tr>
+				<tr>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫请求次数</th>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫建立次数</th>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫建立成功率</th>
+					<th data-options="field:'know',width:140,align:'center'">视频被叫建立次数</th>
+					<th data-options="field:'know',width:90,align:'center'">视频掉线率</th>
+					<th data-options="field:'know',width:100,align:'center'">VoLTE平均MOS</th>
+					<th data-options="field:'know',width:100,align:'center'">VoLTE
+						MOS>=3.5占比</th>
+					<th data-options="field:'know',width:80,align:'center'">平均RSRP</th>
+					<th data-options="field:'know',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+
+	</div>
+	<div title="电信"
+		style="width:100%;height:100%;overflow-y:auto;overflow-x:hidden;">
+		<table id="telecomDataTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="10">数据</th>
+				</tr>
+				<tr>
+					<th
+						data-options="field:'ftpattemptcountdl',width:100,align:'center'">FTP下载尝试次数</th>
+					<th
+						data-options="field:'ftpsuccessratedl',width:100,align:'center'">FTP下载成功率(%)</th>
+					<th data-options="field:'ftpdropratedl',width:100,align:'center'">FTP下载掉线率(%)</th>
+					<th
+						data-options="field:'ftprecvtotalsuccessdl',width:100,align:'center'">应用层下载流<br>量(不含掉线)(KB)
+					</th>
+					<th
+						data-options="field:'ftpattemptcountul',width:100,align:'center'">FTP上传尝试次数</th>
+					<th
+						data-options="field:'ftpsuccessrateul',width:100,align:'center'">FTP上传成功率(%)</th>
+					<th data-options="field:'ftpdroprateul',width:100,align:'center'">FTP上传掉线率(%)</th>
+					<th
+						data-options="field:'ftpulthrputsuccess',width:120,align:'center'">应用层平均上传<br>速率(不含掉线)(kbps)
+					</th>
+					<th data-options="field:'rsrpaverage',width:80,align:'center'">平均RSRP</th>
+					<th
+						data-options="field:'ltecoverage110rate',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+		<table id="telecomVoiceTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="10">语音</th>
+				</tr>
+				<tr>
+					<th
+						data-options="field:'callcompleterate',width:120,align:'center'">全程呼叫成功率</th>
+					<th data-options="field:'callconnectrate',width:60,align:'center'">接通率</th>
+					<th data-options="field:'calldroprate',width:60,align:'center'">掉话率</th>
+					<th
+						data-options="field:'voltecallcompleterate',width:140,align:'center'">VOLTE全程呼叫成功率</th>
+					<th
+						data-options="field:'voltecallconnectrate',width:100,align:'center'">VOLTE接通率</th>
+					<th
+						data-options="field:'voltecalldroprate',width:100,align:'center'">VOLTE掉话率</th>
+					<th data-options="field:'voltemosaverage',width:100,align:'center'">VoLTE平均MOS</th>
+					<th
+						data-options="field:'psmosover358rate',width:120,align:'center'">VoLTE
+						MOS>=3.5占比</th>
+					<th data-options="field:'rsrpaverage',width:80,align:'center'">平均RSRP</th>
+					<th
+						data-options="field:'ltecoverage110rate',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+		<table id="telecomVideoTable" class="easyui-datagrid"
+			data-options="scrollbarSize:0,striped:true,fitColumns:false,singleSelect:true">
+			<thead>
+				<tr>
+					<th colspan="9">视频</th>
+				</tr>
+				<tr>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫请求次数</th>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫建立次数</th>
+					<th data-options="field:'know',width:150,align:'center'">视频主叫建立成功率</th>
+					<th data-options="field:'know',width:140,align:'center'">视频被叫建立次数</th>
+					<th data-options="field:'know',width:90,align:'center'">视频掉线率</th>
+					<th data-options="field:'know',width:100,align:'center'">VoLTE平均MOS</th>
+					<th data-options="field:'know',width:100,align:'center'">VoLTE
+						MOS>=3.5占比</th>
+					<th data-options="field:'know',width:80,align:'center'">平均RSRP</th>
+					<th data-options="field:'know',width:80,align:'center'">LTE覆盖率</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+	</div>
+</div>

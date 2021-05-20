@@ -476,7 +476,7 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 					List<String> list = null;
 					//时间类型ie结果表名称需要变换
 					String tablename = mappingIeToKpiPojo.getTableName();
-					String timeTablename = tablename.substring(0,tablename.lastIndexOf("_"))+"_MILEAGE"
+					String timeTablename = tablename.substring(0,tablename.lastIndexOf("_"))+"_GRID"
 													+tablename.substring(tablename.lastIndexOf("_"),tablename.length());
 					if (mileTableMap.get(timeTablename) == null) {
 						list = new ArrayList<String>();

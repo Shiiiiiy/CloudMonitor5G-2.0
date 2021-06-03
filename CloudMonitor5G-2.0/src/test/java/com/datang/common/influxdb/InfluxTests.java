@@ -1,0 +1,81 @@
+package com.datang.common.influxdb;
+
+import com.datang.domain.planParam.PlanParamPojo;
+import com.datang.service.influx.InfluxService;
+import com.datang.service.taskOrderManage.CQTTaskOrderService;
+import okhttp3.OkHttpClient;
+import org.influxdb.InfluxDB;
+import org.influxdb.InfluxDBFactory;
+import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:applicationContext.xml"})
+//@Transactional
+public class InfluxTests {
+    @Autowired
+    private InfluxService influxService;
+    @Autowired
+    private CQTTaskOrderService cqtTaskOrderService;
+
+    public void getDatas(){
+        List<String> fileNames=new ArrayList<>();
+        fileNames.add("none28");
+        List<Map<String, Object>> mapTrailByLogFiles = influxService.getMapTrailByLogFiles(fileNames);
+        System.out.println(mapTrailByLogFiles.size());
+    }
+    @Test
+    public void test1(){
+        List<PlanParamPojo> nrCell = cqtTaskOrderService.getNrCell("贵阳");
+        System.out.println(nrCell.size());
+
+    }
+
+    @Test
+    public void test2(){
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .readTimeout(100,TimeUnit.SECONDS);
+        String sql="SELECT * from (SELECT count(Lat) from EVT GROUP BY evtName);";
+        InfluxDB connect = InfluxDBFactory.connect("http://192.168.0.42:8086", "admin", "admin",client);
+        connect.setDatabase("Task_2306");
+        QueryResult query=connect.query(new Query(sql, "Task_2306"));
+        List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
+        System.out.println(result.size());
+    }
+    @Test
+    public void test4(){
+        List<String> fileNames=new ArrayList<>();
+        fileNames.add("14897");
+       /* Map<String, String> abevtKpiConfig = influxService.getAbevtKpiConfig();
+        System.out.println(abevtKpiConfig);*/
+       /* List<Map<String, Object>> eventByLogFiles = influxService.getEventByLogFiles(fileNames);
+        System.out.println(eventByLogFiles.size());*/
+        /*List<Map<String, Object>> mapTrailByLogFiles = influxService.getMapTrailByLogFiles(fileNames);
+        System.out.println(mapTrailByLogFiles.size());*/
+       /* List<Map<String, Object>> sampPointByLogFiles = influxService.getSampPointByLogFiles(fileNames);
+        System.out.println(sampPointByLogFiles.size());*/
+       /* List<Map.Entry<String, List<Map<String, Object>>>> gridDatasByLogFiles = influxService.getGridDatasByLogFiles(fileNames);
+        System.out.println(gridDatasByLogFiles.size());
+
+        Map<String, List<Map<String, Object>>> netConfigReports = influxService.getNetConfigReports(fileNames);
+        System.out.println(netConfigReports);*/
+
+       /* List<Map<String, Object>> reportCellKpi = influxService.getReportCellKpi(fileNames);
+        System.out.println(reportCellKpi.size());*/
+
+         List<Map<String, Object>> reportCellKpi = influxService.getVoiceBusiReports(fileNames);
+        System.out.println(reportCellKpi.size());
+
+    }
+
+}

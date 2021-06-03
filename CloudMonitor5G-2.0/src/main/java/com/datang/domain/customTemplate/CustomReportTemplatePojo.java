@@ -34,12 +34,7 @@ public class CustomReportTemplatePojo implements Serializable{
 	
 	//模板名称
 	private String templateName;
-	
-	//区域名称
-	private String region;
-	
-	//二级域
-	private TerminalGroup group;
+
 	
 	//导入时间
 	private Long importDate;
@@ -79,15 +74,6 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.templateName = templateName;
 	}
 
-	@Column(name = "REGION")
-	public String getRegion() {
-		return region;
-	}
-
-	public void setRegion(String region) {
-		this.region = region;
-	}
-
 
 	@Column(name = "IMPORT_DATE")
 	@JSON(format = "yyyy-MM-dd HH:mm:ss.SSS")
@@ -118,7 +104,7 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.saveFilePath = saveFilePath;
 	}
 	
-	@Column(name = "KPINAME_SUM")
+	@Column(name = "KPINAME_SUM", columnDefinition="CLOB")
 	@JSON(serialize = false)
 	public String getConmmonKpiNameSum() {
 		return conmmonKpiNameSum;
@@ -128,7 +114,7 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.conmmonKpiNameSum = conmmonKpiNameSum;
 	}
 
-	@Column(name = "TIME_KPINAME_SUM")
+	@Column(name = "TIME_KPINAME_SUM", columnDefinition="CLOB")
 	@JSON(serialize = false)
 	public String getTimeKpiNameSum() {
 		return timeKpiNameSum;
@@ -138,31 +124,13 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.timeKpiNameSum = timeKpiNameSum;
 	}
 
-	@Column(name = "MILEAGE_KPINAME_SUM")
+	@Column(name = "MILEAGE_KPINAME_SUM", columnDefinition="CLOB")
 	public String getMileageKpiNameSum() {
 		return mileageKpiNameSum;
 	}
 
 	public void setMileageKpiNameSum(String mileageKpiNameSum) {
 		this.mileageKpiNameSum = mileageKpiNameSum;
-	}
-
-	/**
-	 * @return the groupgroup
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TID")
-	@JSON(serialize = false)
-	public TerminalGroup getGroup() {
-		return group;
-	}
-
-	/**
-	 * @param group
-	 *            the group to set
-	 */
-	public void setGroup(TerminalGroup group) {
-		this.group = group;
 	}
 
 	

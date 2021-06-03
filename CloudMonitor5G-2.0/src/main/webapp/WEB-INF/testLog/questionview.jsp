@@ -45,10 +45,41 @@
 		{field:'Lat',width:100,align:'center',title:'维度'}, 	
 		{field:'logName',width:180,align:'center',title:'日志名'}
 	]];
-	
+
+
+	var testLogItemIds = "",_questionIndex = "";
 	$(function(){
+
+		var conditionStr = location.href.split('?')[1];
+		testLogItemIds = conditionStr.split('&')[0].split('=')[1];
+		_questionIndex = decodeURI(conditionStr.split('&')[1].split('=')[1]);
+
+		console.log(testLogItemIds+ ";" +_questionIndex);
+
+		$("#questionIdx").combotree({
+			//,url:''
+			url:"${pageContext.request.contextPath}/unicomLogItem/questionTree.action",
+			onLoadSuccess:function (node,data) {
+
+				var qidx =  _questionIndex.split(",");
+
+				var questionIdx = $("#questionIdx").combotree('tree');
+
+				for (var i = 0; i < qidx.length; i++) {
+					var selection =  questionIdx.tree("find",qidx[i]);
+					if(selection){
+						questionIdx.tree("check",selection.target);
+					}
+				}
+			}
+		});
+
+
+
 		initHeight();
 		initTable();
+
+
 	});
 	//重新加载
 	/* window.onresize=reload;
@@ -67,15 +98,10 @@
 	}
 	
 	
-	var testLogItemIds = "",_questionIndex = "";
+
 	function initTable(){
 		//console.log(location.href.split('?')[1])
-		var conditionStr = location.href.split('?')[1];
-		testLogItemIds = conditionStr.split('&')[0].split('=')[1];
-		_questionIndex = conditionStr.split('&')[1].split('=')[1];
-		
-		//console.log(testLogItemIds+ ";" +questionIndex)
-		
+
 		/* $("#mainTable").datagrid({
 			url:'${pageContext.request.contextPath}/unicomLogItem/seeQuestionviewData.action?testLogItemIds='+testLogItemIds+"&questionIndex="+_questionIndex,
 			title:'问题索引',
@@ -85,7 +111,8 @@
 			fitColumns:true
 			//rownumbers:true
 		}); */
-		
+
+
 		$.ajax({
             type: "POST",
             url: "${pageContext.request.contextPath}/unicomLogItem/seeQuestionviewData.action",
@@ -103,10 +130,10 @@
 					striped:true,
 					fitColumns:true
 					//rownumbers:true
-				});		
+				});
           	}
-   	    }); 
-		
+   	    });
+
 	}
 	
 	
@@ -175,7 +202,7 @@
 	function goToUnicomLogList(){
 		goToPage('${pageContext.request.contextPath}/unicomLogItem/unicomLogItemListUI.action');
 	}
-	
+
 	</script>
   </head>
   
@@ -201,7 +228,7 @@
 			    	</div> -->
 			    
 			    	<div class="inputDivShow">问题索引
-			    		<select id="questionIdx" name="questionIdx"  class="easyui-combotree" data-options="width:200,panelWidth:200,editable:false,onlyLeafCheck:true,multiple:true,lines:true,checkbox:false,url:'${pageContext.request.contextPath}/unicomLogItem/questionTree.action'">
+			    		<select id="questionIdx" name="questionIdx"  class="easyui-combotree" data-options="width:200,panelWidth:200,editable:false,onlyLeafCheck:true,multiple:true,lines:true,checkbox:false">
 			    		</select>
 			    	</div>
 			    	<table width="100%">

@@ -1148,7 +1148,7 @@ public class CustomTemplateUtils {
 				unionTestCard.add(t);
 			}else if(CustomReportConstant.G_CARD_TELCOM.equals(t.getTest_card()) &&  CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(t.getContractor()) && "主设备厂商汇总".equals(t.getEquipement_producer())){
 				telcom.add(t);
-			}else if(CustomReportConstant.G_CARD_MOBILE.equals(t.getTest_card()) &&  CustomReportConstant.CQT_CONTRATOR_ALL_MOBILE.equals(t.getContractor()) && "主设备厂商汇总".equals(t.getEquipement_producer())){
+			}else if(CustomReportConstant.G_CARD_MOBILE.equals(t.getTest_card()) &&  CustomReportConstant.CQT_CONTRATOR_ALL_MOBILE[0].equals(t.getContractor()) && CustomReportConstant.CQT_CONTRATOR_ALL_MOBILE[0].equals(t.getEquipement_producer())){
 				mobile.add(t);
 			}
 		});
@@ -1276,7 +1276,7 @@ public class CustomTemplateUtils {
 				unionTestCard.add(t);
 			}else if(CustomReportConstant.G_CARD_TELCOM.equals(t.getTest_card()) &&  CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(t.getContractor())){
 				telcom.add(t);
-			}else if(CustomReportConstant.G_CARD_MOBILE.equals(t.getTest_card()) &&  CustomReportConstant.CQT_CONTRATOR_ALL_MOBILE.equals(t.getContractor()) ){
+			}else if(CustomReportConstant.G_CARD_MOBILE.equals(t.getTest_card()) &&  CustomReportConstant.DT_CONTRATOR_ALL_MOBILE[0].equals(t.getContractor()) ){
 				mobile.add(t);
 			}
 		});
@@ -1736,6 +1736,14 @@ public class CustomTemplateUtils {
      */
     public void PushBack(TemplateInfo tmp)
     {
+
+		if(7 == table_index && is_dt){
+			if(!(CustomReportConstant.G_CONTRATOR_UNICOM.equals(tmp.getContractor()) || CustomReportConstant.G_CONTRATOR_TELCOM.equals(tmp.getContractor()) || CustomReportConstant.G_CONTRATOR_ALL.equals(tmp.getContractor())   ) ){
+				table7_row_start--;
+				return ;
+			}
+		}
+
         List<TestLogInfo> findLogs = FindLogs(tmp);
         tmp.setTestLogList(findLogs);
     	if (1 == table_index)

@@ -218,6 +218,9 @@ insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") value
 --二级功能  日志重新统计分析
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (44, '测试日志分析', 'testlogitem:analysis', 42);
 
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (45, '统计任务', null, 1);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (46, '统计任务管理', 'basereport:manage', 45);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (47, '统计任务页面显示', 'basereport:show', 45);
 --一级功能  地图分析
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (48, '地图分析', null, 1);
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (49, '地图分析页面显示', 'map:show', 48);
@@ -225,6 +228,8 @@ insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") value
 --一级功能  专题分析
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (50, '专题分析', null, 1);
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (51, '专题分析页面显示', 'voltevoicebadroad:show', 50);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (53, '活跃度查看', NULL, 1);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (54, '活跃度查看页面显示', 'activation:show', 53);
 
 --二级功能 单站参数设置
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (55, '单站参数设置', null, 2);
@@ -280,6 +285,19 @@ insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") value
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (87, '反开3d进度查看', null, 76);
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (88, '反开3d进度查看展示页面', 'oppositecompletion:show', 87);
 
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (89, '工单查看', NULL, 1);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (90, '定点测试任务', NULL, 89);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (91, '定点测试任务查看', 'CQTTask:show', 90);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (92, '定点测试任务新增', 'CQTTask:add', 90);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (93, '定点测试任务删除', 'CQTTask:delete', 90);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (94, '定点测试任务闭环', 'CQTTask:close', 90);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (95, '单验任务', NULL, 89);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (96, '单验任务查看', 'stationTask:show', 95);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (97, '单验任务删除', 'stationTask:delete', 95);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (98, '单验任务闭环', 'stationTask:close', 95);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (99, '单验任务下载', 'stationTask:download', 95);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (100, '单验任务地图轨迹', 'stationTask:map', 95);
+insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (101, '单验任务新增', 'stationTask:add', 95);
 --一级功能 实时监控
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (102, '实时监控', null, 1);
 
@@ -323,6 +341,46 @@ insert into iads_usergroup_permission(permission_id,usergroup_id) values (39, 1)
 insert into iads_usergroup_permission(permission_id,usergroup_id) values (41, 1);         
 insert into iads_usergroup_permission(permission_id,usergroup_id) values (43, 1);         
 insert into iads_usergroup_permission(permission_id,usergroup_id) values (44, 1);  
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (46, 1);         
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (47, 1); 
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (49, 1);         
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (51, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (52, 1);     
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (54, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (56, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (57, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (59, 1);     
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (60, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (61, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (62, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (64, 1);     
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (66, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (67, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (68, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (70, 1);     
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (71, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (72, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (73, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (75, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (77, 1);     
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (79, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (80, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (81, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (83, 1);     
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (84, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (85, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (86, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (88, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (91, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (92, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (93, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (94, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (96, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (97, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (98, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (99, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (100, 1);
+insert into iads_usergroup_permission(permission_id,usergroup_id) values (101, 1);
 
 --二维配置
 insert into "iads_two_dimensional"("id", "x_axis", "y_axis", "chart_type") VALUES ('1', '[0,3)@[3,5)@[5,7)@[7,20)@[20,30)@[30,40)@[40,60)@[60,80)@[80,100]', '(∞,-115)@[-115,-105)@[-105,-95)@[-95,-85)@[-85,∞)', 'RtpPacketLostRatioRsrp');
@@ -693,3 +751,7 @@ insert into "iads_report_template"("id", "chart_rate_time", "export_excel_name",
 insert into "iads_report_template"("id", "chart_rate_time", "export_excel_name", "map_trail_type", "template_exmple_download", "template_exmple_name", "template_name", "template_type", "template_value") VALUES ('20', '60', '宁夏NSA单验报告模板.xlsx', '-1', '5G单验报告-NSA模板-宁夏.xlsx', '5G单验报告-NSA模板-宁夏.xlsx', '宁夏单验报告模板', '0', '18');
 insert into "iads_report_template"("id", "chart_rate_time", "export_excel_name", "map_trail_type", "template_exmple_download", "template_exmple_name", "template_name", "template_type", "template_value") VALUES ('21', '60', '江西电信单验报告模板.xlsx', '-1', '5G单验报告-模板-江西电信.xlsx', '5G单验报告-模板-江西电信.xlsx', '江西电信单验报告模板', '0', '19');
 insert into "iads_report_template"("id", "chart_rate_time", "export_excel_name", "map_trail_type", "template_exmple_download", "template_exmple_name", "template_name", "template_type", "template_value") VALUES ('22', '60', '湖北700MSA单验报告模板.xlsx', '-1', '湖北移动_5G_700M_SA宏站单验报告.xlsx', '5G单验报告-SA模板-湖北700M.xlsx', '湖北700MSA单验报告模板', '0', '20');
+insert into iads_cusreport_tmeplate (id,kpiname_sum,import_date,mileage_kpiname_sum,save_file_path,template_name,time_kpiname_sum,user_name) values (100,'KPI2803,KPI2801,KPI2800,KPI2755,KPI2204,KPI2187,KPI2165,KPI2154,KPI2151,KPI2621,KPI2613,KPI2560,KPI2472,KPI2469,KPI2301,KPI2300,KPI2168,KPI2162,KPI2159,KPI2119,KPI2116,KPI2101,KPI2097,KPI2024,KPI2020,KPI2015,KPI2802,KPI2754,KPI2616,KPI2610,KPI2607,KPI2604,KPI2473,KPI2470,KPI3694,KPI3696,KPI3697,KPI3699,KPI3701,KPI3702,KPI3400,KPI3401,KPI4924,KPI5040,KPI5041,KPI5047,KPI5049,KPI5050,KPI5051,KPI5057',1617350007076,'KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694',null,'联通大会战测试数据校验概览.xlsx','KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694','MapObjects1');
+insert into iads_cusreport_tmeplate (id,kpiname_sum,import_date,mileage_kpiname_sum,save_file_path,template_name,time_kpiname_sum,user_name) values (101,'KPI5058,KPI2761,KPI2762,KPI5065',1617350007076,'KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694',null,'联通大会战测试数据校验概览.xlsx','KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694','MapObjects1');
+insert into iads_cusreport_tmeplate (id,kpiname_sum,import_date,mileage_kpiname_sum,save_file_path,template_name,time_kpiname_sum,user_name) values (102,'KPI2801,KPI2800,KPI2755,KPI2204,KPI2187,KPI2301,KPI2300,KPI2101,KPI2097,KPI2015,KPI2754,KPI2616,KPI3400,KPI4924,KPI5047',1617350007076,'KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694',null,'联通大会战测试日志详情表.xlsx','KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694','MapObjects2');
+insert into iads_cusreport_tmeplate (id,kpiname_sum,import_date,mileage_kpiname_sum,save_file_path,template_name,time_kpiname_sum,user_name) values (103,'KPI2801,KPI2800,KPI2755,KPI2204,KPI2187,KPI2165,KPI2154,KPI2151,KPI2621,KPI2613,KPI2560,KPI2472,KPI2469,KPI2301,KPI2300,KPI2168,KPI2162,KPI2159,KPI2119,KPI2116,KPI2020,KPI2754,KPI2616,KPI2610,KPI2607,KPI2604,KPI2473,KPI2470,KPI3694,KPI3696,KPI3697,KPI3699,KPI3701,KPI3702,KPI4924,KPI5047,KPI5049,KPI5050,KPI5051,KPI5057,KPI5058',1617350007076,'KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694',null,'联通大会战测试数据概览.xlsx','KPI2079,KPI2082,KPI2088,KPI2097,KPI2101,KPI2104,KPI2300,KPI2301,KPI2546,KPI2547,KPI2551,KPI3417,KPI3419,KPI3420,KPI3422,KPI3423,KPI3424,KPI3425,KPI3426,KPI3427,KPI3428,KPI3431,KPI3434,KPI3435,KPI3436,KPI3437,KPI3438,KPI3439,KPI3440,KPI3441,KPI3497,KPI3498,KPI3499,KPI3502,KPI3505,KPI3506,KPI3507,KPI3508,KPI3509,KPI3510,KPI3513,KPI3516,KPI3517,KPI3518,KPI3519,KPI3520,KPI3521,KPI3522,KPI3523,KPI3694','MapObjects3');

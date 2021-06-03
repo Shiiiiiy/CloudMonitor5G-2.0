@@ -37,9 +37,8 @@ public interface CustomReportConstant {
 	 * DT表一测试用例
 	 */
 	public final static String[] DT_ALL_USE_CASE_1 = {
-			"1.1联通卡5G网络DT室外下行业务测试",
-			"1.2电信卡5G网络DT室外下行业务测试",
-			"1.3移动卡5G网络DT室外下行业务测试"
+			"1.1联通卡5G网络DT室外下行业务测试","1.2电信卡5G网络DT室外下行业务测试",
+			"5.3移动卡5G网络DT室外上行下行串行业务测试","6.3移动卡5G网络DT室外覆盖对标测试",
 	};
 
 	/**
@@ -52,7 +51,7 @@ public interface CustomReportConstant {
 	 **/
 	public final static String[] DT_ALL_USE_CASE_2 = {"2.1联通卡5G网络DT室外上行业务测试",
 			"2.2电信卡5G网络DT室外上行业务测试",
-			"2.3移动卡5G网络DT室外上行业务测试"
+			"5.3移动卡5G网络DT室外上行下行串行业务测试"
 	};
 
 
@@ -100,15 +99,17 @@ public interface CustomReportConstant {
 	/**
      * CQT表一测试用例
      */	
-    public final static String[] CQT_ALL_USE_CASE_1 = {"11.1联通卡5G网络CQT室内下行业务测试",
+    public final static String[] CQT_ALL_USE_CASE_1  = {"11.1联通卡5G网络CQT室内下行业务测试",
 														"11.2电信卡5G网络CQT室内下行业务测试",
-														"11.3移动卡5G网络CQT室内下行业务测试"};
+														"15.3移动卡5G网络CQT室内上行下行串行业务测试"
+    };
 	/**
      * CQT表二测试用例
      */	
 	public final static String[] CQT_ALL_USE_CASE_2 = {"12.1联通卡5G网络CQT室内上行业务测试",
-															"12.2电信卡5G网络CQT室内上行业务测试",
-															"12.3移动卡5G网络CQT室内上行业务测试"};
+													"12.2电信卡5G网络CQT室内上行业务测试",
+													"15.3移动卡5G网络CQT室内上行下行串行业务测试"
+	};
 	/**
      * CQT表三测试用例
      */
@@ -134,18 +135,14 @@ public interface CustomReportConstant {
 	/**
 	 * CQT表6测试用例
 	 */
-	public final static String[] CQT_ALL_USE_CASE_6 = {"20.1联通卡4G网络DT室外CSFB语音业务测试主叫",
-	//		"20.4联通卡4G网络DT室外CSFB语音业务测试被叫"
+	public final static String[] CQT_ALL_USE_CASE_6 = {"20.1联通卡4G网络CQT室内CSFB语音业务测试主叫",
+	//		"20.4联通卡4G网络CQT室内CSFB语音业务测试被叫"
 	};
 
 	/**
 	 * CQT表7测试用例
 	 */
 	public final static String[] CQT_ALL_USE_CASE_7 = {"17.1联通卡4G网络CQT室内上行下行串行业务测试"};
-
-
-
-
 
 
 

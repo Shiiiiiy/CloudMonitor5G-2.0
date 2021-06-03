@@ -43,6 +43,13 @@ public class CustomLogReportTaskDao extends
 		ReportRequertBean pageParams = (ReportRequertBean) pageList
 				.getParam("pageQueryBean");
 
+
+		// 用户定义的报表
+		String taskType = pageParams.getTaskType();
+		if (StringUtils.hasText(taskType)) {
+			criteria.add(Restrictions.eq("taskType", taskType));
+		}
+
 		// 筛选创建人
 		String createrName = pageParams.getCreaterName();
 		if (StringUtils.hasText(createrName)) {
@@ -66,9 +73,9 @@ public class CustomLogReportTaskDao extends
 			criteria.add(Restrictions.le("creatDateLong", endDate.getTime()));
 		}
 
+		criteria.addOrder(Order.desc("creatDateLong"));
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("creatDateLong"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

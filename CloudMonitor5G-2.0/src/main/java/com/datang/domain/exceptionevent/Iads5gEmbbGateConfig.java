@@ -46,6 +46,67 @@ public class Iads5gEmbbGateConfig {
     private Integer commenCover;
 
     /**
+     *
+     */
+    @Column(name = "TIME_HIGH")
+    private Integer time_high;
+
+    /**
+     *
+     */
+    @Column(name = "TIME_LOW")
+    private Integer time_low;
+
+    /**
+     *
+     */
+    @Column(name = "GTOLTE_COVER")
+    private Integer gtolte_cover;
+
+    /**
+     *
+     */
+    @Column(name = "GTOLTE_QUALITY")
+    private Integer gtolte_quality;
+
+    /**
+     *
+     */
+    @Column(name = "PDU_UPDATE_COVER")
+    private Integer pdu_update_cover;
+
+    /**
+     *
+     */
+    @Column(name = "PDU_UPDATE_QUALITY")
+    private Integer pdu_update_quality;
+
+    /**
+     *
+     */
+    @Column(name = "PDU_RELEASE_COVER")
+    private Integer pdu_release_cover;
+
+    /**
+     *
+     */
+    @Column(name = "PDU_RELEASE_QUALITY")
+    private Integer pdu_release_quality;
+
+    /**
+     *
+     */
+    @Column(name = "RRC_RESUME_COVER")
+    private Integer rrc_resume_cover;
+
+    /**
+     *
+     */
+    @Column(name = "RRC_RESUME_QUALITY")
+    private Integer rrc_resume_quality;
+
+
+    /**
      * 同频切换失败质差原因判定比例（%)
      */
     @Column(name = "COMMEN_QUALITY")

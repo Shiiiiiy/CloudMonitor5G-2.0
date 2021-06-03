@@ -63,9 +63,9 @@ public class AlarmDao extends GenericHibernateDao<RealtimeAlarm, Long> {
 		if (null != boxIdsSet && 0 != boxIdsSet.size()) {
 			criteria.add(Restrictions.in("boxId", boxIdsSet));
 		}
+		criteria.addOrder(Order.desc("alarmTimeLong"));
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("alarmTimeLong"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

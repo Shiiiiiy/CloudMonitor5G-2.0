@@ -50,6 +50,42 @@ public class POIExcelUtil {
 		return wb;
 	}
 
+
+	/**
+	 * 根据数据和Excel模板生成Excel
+	 *
+	 * @param beans
+	 *            Map
+	 * @param templateFilePath
+	 *            模板文件路徑
+	 * @return Workbook
+	 * @throws IOException
+	 */
+	public static Workbook transformToExcel(Map beans, InputStream is) {
+		// Transformer
+		XLSTransformer transformer = new XLSTransformer();
+		Workbook workbook = null;
+		try {
+			workbook = transformer.transformXLS(is, beans);
+		} catch (ParsePropertyException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (InvalidFormatException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+
+				}
+			}
+		}
+		return workbook;
+	}
+
+
 	/**
 	 * 根据数据和Excel模板生成Excel
 	 * 

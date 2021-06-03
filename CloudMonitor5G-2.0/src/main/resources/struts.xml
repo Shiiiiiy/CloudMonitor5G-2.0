@@ -82,6 +82,7 @@
 
     </package>
     <include file="securityManage.xml"/>
+    <include file="analysisThreshold.xml"/>
     <include file="testManage.xml"/>
     <include file="projectParam.xml"/>
     <include file="testLogItem.xml"/>
@@ -89,6 +90,7 @@
     <include file="gisSql.xml"/>
     <include file="monitor.xml"/>
     <include file="session.xml"/>
+    <include file="report.xml"/>
     <include file="stream.xml"/>
     <include file="activation.xml"/>
     <!--<include file="app.xml" /> -->
@@ -98,5 +100,6 @@
     <include file="stationParam.xml"/>
     <include file="oppositeOpen3d.xml"/>
     <include file="stationFileUpload.xml"/>
+    <include file="taskOrderManage.xml"/>
     <include file="mos.xml"/>
 </struts>

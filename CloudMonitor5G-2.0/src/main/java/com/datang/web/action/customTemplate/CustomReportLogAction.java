@@ -19,11 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.datang.dao.customTemplate.AnalyFileReportDao;
+import com.datang.domain.customTemplate.AnalyFileReport;
+import com.datang.web.action.action5g.report.ReportFgAction;
+import com.datang.web.beans.report.*;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.struts2.ServletActionContext;
@@ -64,12 +70,8 @@ import com.datang.util.ReadExcelToHtml;
 import com.datang.util.ZMQUtils;
 import com.datang.util.ZipMultiFile;
 import com.datang.web.action.ReturnType;
+import com.datang.web.action.report.ReportAction;
 import com.datang.web.beans.VoLTEDissertation.wholePreview.VoLTEWholePreviewParam;
-import com.datang.web.beans.report.BoxInforRequestBean;
-import com.datang.web.beans.report.CityInfoRequestBean;
-import com.datang.web.beans.report.ReportRequertBean;
-import com.datang.web.beans.report.StatisticeTaskRequest;
-import com.datang.web.beans.report.TestInfoRequestBean;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ModelDriven;
 
@@ -99,6 +101,9 @@ public class CustomReportLogAction extends PageAction implements
 	@Autowired
 	private CustomTemplateService customTemplateService;
 
+	@Autowired
+	private AnalyFileReportDao analyFileReportDao;
+
 	/** 多条件查询请求参数 */
 	private ReportRequertBean reportRequertBean = new ReportRequertBean();
 	/**
@@ -113,6 +118,8 @@ public class CustomReportLogAction extends PageAction implements
 	 * 查看详情收集参数
 	 */
 	private Long idLong;
+
+	private String reportType;
 	
 	private String templateName;
 	
@@ -120,6 +127,12 @@ public class CustomReportLogAction extends PageAction implements
 	 * 要导出的sheet名
 	 */
 	private String sheetName;
+	
+	/**
+	 * 目标界面
+	 */
+	private String dPage;
+
 
 	/**
 	 * 跳转到 list界面
@@ -138,23 +151,73 @@ public class CustomReportLogAction extends PageAction implements
 		if (null != idLong) {
 			session.setAttribute("idLong", idLong);
 			CustomLogReportTask task = customLogReportService.queryOneByID(idLong);
-			List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(new PageList());
-			Set<String> unionTeplateSet = new HashSet<String>();
-			for (CustomReportTemplatePojo customReportTemplatePojo : queryTemplateByParam) {
-				unionTeplateSet.add(customReportTemplatePojo.getTemplateName());
-			}
-			List<Map<String,Object>> teplateList = new ArrayList<Map<String,Object>>();
-			if (unionTeplateSet!=null && unionTeplateSet.size()>0) {
-				for (String name : unionTeplateSet) {
-					Map<String,Object> map = new HashMap<String,Object>();
-					map.put("valueField",name);
-					map.put("textField",name);
-					teplateList.add(map);
+			List<Map<String,Object>> templateList = new ArrayList<>();
+
+			if(CustomLogReportTask.typeIsAnylyFileReport(task)){
+				PageList pageList = new PageList();
+				AnalyFileReportRequertBean analyFileReportRequertBean = new AnalyFileReportRequertBean();
+				analyFileReportRequertBean.setTaskId(task.getId());
+				pageList.putParam("pageQueryBean", analyFileReportRequertBean);
+				EasyuiPageList pageItem = analyFileReportDao.getPageItem(pageList);
+				List<AnalyFileReport> rows = pageItem.getRows();
+
+				// *****
+
+				if (rows!=null && rows.size()>0) {
+					for (AnalyFileReport analyFileReport : rows) {
+						//  '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%'
+						if(ReportFgAction.analyzeTemplateMap.containsKey(analyFileReport.getReportId())){
+							Map<String,Object> map = new HashMap<String,Object>();
+							map.put("valueField",analyFileReport.getReportId());
+							map.put("textField", ReportFgAction.analyzeTemplateMap.get(analyFileReport.getReportId()).getTemplateFileName());
+							templateList.add(map);
+						}
+					}
+				}
+
+
+			}else{
+				List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(new PageList());
+				Set<String> unionTeplateSet = new HashSet<String>();
+				for (CustomReportTemplatePojo customReportTemplatePojo : queryTemplateByParam) {
+					unionTeplateSet.add(customReportTemplatePojo.getTemplateName());
+				}
+				// *****
+				if (unionTeplateSet!=null && unionTeplateSet.size()>0) {
+					for (String name : unionTeplateSet) {
+						//  '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%'
+						if(name!=null && (name.contains("指标报表_CQT模板") || name.contains("指标报表_DT模板"))){
+							Map<String,Object> map = new HashMap<String,Object>();
+							map.put("valueField",name);
+							map.put("textField",name);
+							templateList.add(map);
+						}
+
+					}
 				}
 			}
-			ActionContext.getContext().getValueStack().set("reportTemplate", teplateList);
+
+
+			ActionContext.getContext().getValueStack().set("reportTemplate", templateList);
+			//ActionContext.getContext().getValueStack().set("reportType", StatisticeTaskRequest.typeIsAnylyFileReport(CustomLogReportTask.typeIsAnylyFileReport(task)));
+			// ActionContext.getContext().getValueStack().set("reportType", CustomLogReportTask.typeIsAnylyFileReport(CustomLogReportTask.typeIsAnylyFileReport(task)));
+			session.setAttribute("reportType", CustomLogReportTask.typeIsAnylyFileReport(task));
 		}
 		return "seeReport";
+	}
+	
+	/**
+	 * 跳转到添加界面
+	 * 
+	 * @return
+	 */
+	public String goAdd() {
+		HttpSession session = ServletActionContext.getRequest()
+				.getSession();
+		if(dPage!=null && !dPage.equals("")){
+			session.setAttribute("dPage", dPage);
+		}
+		return "add";
 	}
 
 	
@@ -175,9 +238,10 @@ public class CustomReportLogAction extends PageAction implements
 	 */
 	@Override
 	public AbstractPageList doPageQuery(PageList pageList) {
-
+		reportRequertBean.setTaskType("1");
 		reportRequertBean
 				.setCreaterName(customLogReportTask.getCreaterName());
+
 		reportRequertBean.setName(customLogReportTask.getName());
 		pageList.putParam("pageQueryBean", reportRequertBean);
 		return customLogReportService.pageList(pageList);
@@ -229,32 +293,62 @@ public class CustomReportLogAction extends PageAction implements
 			if(task!=null && !task.getTaskStatus().equals("2") && !task.getTaskStatus().equals("3")){
 				throw new ApplicationException("任务未解析，请等待解析完成");
 			}
-			
-			//查询模板
-			PageList selectConditions = new PageList();
-			selectConditions.putParam("templateName", templateName);
-			List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(selectConditions);
-			
-			File file = new File(queryTemplateByParam.get(0).getSaveFilePath());
-			if (file == null || !file.exists() || file.isDirectory()) {
-				throw new ApplicationException("模板文件不存在");
-			}
-			String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+task.getId()
-					+ file.getName().substring(file.getName().lastIndexOf("."));
-			String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
-			
+
 			String exportFilePath = null;
-			Map<String, Object> map = new HashMap<>();
-			String idsString = task.getLogIds();
-			
-			PageList page = new PageList();
-			page.putParam("taskName", task.getName());
-			page.putParam("logids", idsString);
-			page.putParam("templateName", templateName);
-			page.putParam("excelPath",queryTemplateByParam.get(0).getSaveFilePath());
-			page.putParam("exportFilePath", newPath);
-			//根据指标公式修改获取值保存到excel
-			exportFilePath = customTemplateService.modifyExcelValue(page);
+			// 分析报表
+			if(CustomLogReportTask.typeIsAnylyFileReport(task)){
+
+
+				AnalyzeTemplate analyzeTemplate = ReportFgAction.analyzeTemplateMap.get(templateName);
+				if(analyzeTemplate==null || analyzeTemplate.getId()==null){
+					throw new ApplicationException("模板文件不存在");
+				}
+
+				PageList analyPageList = new PageList();
+				AnalyFileReportRequertBean anlayParam = new AnalyFileReportRequertBean();
+				anlayParam.setTaskId(task.getId());
+				anlayParam.setReportId(analyzeTemplate.getId());
+				analyPageList.putParam("pageQueryBean",anlayParam);
+				EasyuiPageList pageItem = analyFileReportDao.getPageItem(analyPageList);
+				List<AnalyFileReport> rows = pageItem.getRows();
+				if(rows==null || rows.size()==0){
+					throw new ApplicationException("模板文件不存在!");
+				}
+				exportFilePath = rows.get(0).getFilePath();
+				if(exportFilePath==null||!StringUtils.hasText(exportFilePath)){
+					throw new ApplicationException("模板文件生成异常");
+				}
+
+			}else{
+				// 通用
+
+				//查询模板
+				PageList selectConditions = new PageList();
+				selectConditions.putParam("templateName", templateName);
+				List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(selectConditions);
+
+				File file = new File(queryTemplateByParam.get(0).getSaveFilePath());
+				if (file == null || !file.exists() || file.isDirectory()) {
+					throw new ApplicationException("模板文件不存在");
+				}
+				String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+task.getId()
+						+ file.getName().substring(file.getName().lastIndexOf("."));
+				String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
+
+
+				Map<String, Object> map = new HashMap<>();
+				String idsString = task.getLogIds();
+
+				PageList page = new PageList();
+				page.putParam("taskName", task.getName());
+				page.putParam("logids", idsString);
+				page.putParam("templateName", templateName);
+				page.putParam("excelPath",queryTemplateByParam.get(0).getSaveFilePath());
+				page.putParam("exportFilePath", newPath);
+				//根据指标公式修改获取值保存到excel
+				exportFilePath = customTemplateService.modifyExcelValue(page);
+			}
+
 			
 			List<Map<String, String>> readExcelToMap = ReadExcelToHtml.readExcelToMap(exportFilePath, true);
 
@@ -288,16 +382,42 @@ public class CustomReportLogAction extends PageAction implements
 	public InputStream getDownloadTemplateExcel() {
 		Long id = (Long) ServletActionContext.getRequest().getSession().getAttribute("idLong");
 		CustomLogReportTask statisticeTask = customLogReportService.queryOneByID(id);
-		PageList selectConditions = new PageList();
-		selectConditions.putParam("templateName", templateName);
-		List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(selectConditions);
-		
-		File file = new File(queryTemplateByParam.get(0).getSaveFilePath());
-		String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+statisticeTask.getId()
-				+ file.getName().substring(file.getName().lastIndexOf("."));
-		String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
-		File exportfile = new File(newPath);
-		
+
+		File exportfile = null;
+		// 分析报表
+		if(CustomLogReportTask.typeIsAnylyFileReport(statisticeTask)){
+			AnalyzeTemplate analyzeTemplate = ReportFgAction.analyzeTemplateMap.get(templateName);
+			if(analyzeTemplate==null || analyzeTemplate.getId()==null){
+				throw new ApplicationException("模板文件不存在");
+			}
+
+			PageList analyPageList = new PageList();
+			AnalyFileReportRequertBean anlayParam = new AnalyFileReportRequertBean();
+			anlayParam.setTaskId(statisticeTask.getId());
+			anlayParam.setReportId(analyzeTemplate.getId());
+			analyPageList.putParam("pageQueryBean",anlayParam);
+			EasyuiPageList pageItem = analyFileReportDao.getPageItem(analyPageList);
+			List<AnalyFileReport> rows = pageItem.getRows();
+			if(rows==null || rows.size()==0){
+				throw new ApplicationException("模板文件不存在!");
+			}
+			String exportFilePath = rows.get(0).getFilePath();
+			if(exportFilePath==null||!StringUtils.hasText(exportFilePath)){
+				throw new ApplicationException("模板文件生成异常");
+			}
+			exportfile = new File(exportFilePath);
+		}else{
+			PageList selectConditions = new PageList();
+			selectConditions.putParam("templateName", templateName);
+			List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(selectConditions);
+			File file = new File(queryTemplateByParam.get(0).getSaveFilePath());
+			String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+statisticeTask.getId()
+					+ file.getName().substring(file.getName().lastIndexOf("."));
+			String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
+			exportfile = new File(newPath);
+		}
+
+
 		if(exportfile!=null && exportfile.exists()){
 			FileInputStream inputStream = null ;
 			try {
@@ -395,6 +515,13 @@ public class CustomReportLogAction extends PageAction implements
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
 	}
+		
+	public String getdPage() {
+		return dPage;
+	}
 
+	public void setdPage(String dPage) {
+		this.dPage = dPage;
+	}
 	
 }

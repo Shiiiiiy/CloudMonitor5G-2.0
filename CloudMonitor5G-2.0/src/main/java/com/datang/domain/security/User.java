@@ -281,7 +281,7 @@ public class User implements Serializable, Cloneable {
 	/**
 	 * @return the powerUserpowerUser
 	 */
-	@Column(name = "POWER_USER", columnDefinition = "boolean")
+	@Column(name = "POWER_USER", columnDefinition = "number", length = 1)
 	public boolean isPowerUser() {
 		return powerUser;
 	}

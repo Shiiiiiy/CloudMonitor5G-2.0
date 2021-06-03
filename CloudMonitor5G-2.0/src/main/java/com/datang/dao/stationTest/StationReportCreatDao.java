@@ -177,9 +177,10 @@ public class StationReportCreatDao  extends GenericHibernateDao<PlanParamPojo, L
 			}
 			
 		}
+		
+		criteria.addOrder(Order.desc("id"));
 
 		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		criteria.addOrder(Order.desc("id"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

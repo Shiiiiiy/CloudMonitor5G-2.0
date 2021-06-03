@@ -39,10 +39,10 @@ public class MappingIeToKpiDao extends GenericHibernateDao<MappingIeToKpiPojo, L
 	public List<MappingIeToKpiPojo> findByParam(List<String> ieList,List<String> kpiList){
 		Criteria criteria = this.getHibernateSession().createCriteria(MappingIeToKpiPojo.class);
 		
-		if(ieList != null){
+		if(ieList != null && ieList.size()>0){
 			criteria.add(Restrictions.in("ieName", ieList));
 		}
-		if(kpiList != null){
+		if(kpiList != null  && kpiList.size()>0){
 			criteria.add(Restrictions.in("kpiName", kpiList));
 		}
 		

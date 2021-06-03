@@ -264,7 +264,7 @@ public class TestPlan implements Serializable {
 	/**
 	 * @return the sended
 	 */
-	@Column(name = "SENDED", columnDefinition = "boolean")
+	@Column(name = "SENDED", columnDefinition = "number", length = 1)
 	public boolean isSended() {
 		return sended;
 	}

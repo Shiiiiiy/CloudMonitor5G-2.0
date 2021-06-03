@@ -204,11 +204,13 @@ public class TestLogItem implements Serializable, Comparable<TestLogItem> {
 	private String fromMsisdn;
 	
 	private String toMsisdn;
-	
+	private String FILE_MD_VALUE;
+
 	private Integer volteStatus;
+
 	
-	
-	
+
+
 
 	/**
 	 * @return the id
@@ -569,7 +571,7 @@ public class TestLogItem implements Serializable, Comparable<TestLogItem> {
 	/**
 	 * @return the uploadSuccess
 	 */
-	// @Column(name = "UPLOAD_SUCCESS", columnDefinition = "boolean")
+	// @Column(name = "UPLOAD_SUCCESS", columnDefinition = "number", length = 1)
 	@Transient
 	public boolean isUploadSuccess() {
 		return uploadSuccess;
@@ -1074,6 +1076,9 @@ public class TestLogItem implements Serializable, Comparable<TestLogItem> {
 		return volteStatus;
 	}
 
+
+
+
 	/**
 	 * @param volteStatus the volteStatus to set
 	 */
@@ -1096,4 +1101,92 @@ public class TestLogItem implements Serializable, Comparable<TestLogItem> {
 		this.testTarget = testTarget;
 	}
 
+	@Column(name = "FILE_MD_VALUE")
+	public String getFILE_MD_VALUE() {
+		return FILE_MD_VALUE;
+	}
+
+	public void setFILE_MD_VALUE(String FILE_MD_VALUE) {
+		this.FILE_MD_VALUE = FILE_MD_VALUE;
+	}
+
+	private String city;
+	@Column(name = "CITY")
+	public String getCity() {
+		return city;
+	}
+
+	private String prov;
+	@Column(name = "PROV")
+	public String getProv() {
+		return prov;
+	}
+	public void setProv(String prov) {
+		this.prov = prov;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	private String builder;
+	private String contractor;
+	@Column(name = "BUILDER")
+	public String getBuilder() {
+		return this.builder;
+	}
+
+	public void setBuilder(String builder) {
+		this.builder = builder;
+	}
+	@Column(name = "CONTRACTOR")
+	public String getContractor() {
+		return this.contractor;
+	}
+
+	public void setContractor(String contractor) {
+		this.contractor = contractor;
+	}
+
+	private String testType;
+
+	//MD5校验
+	private String md5Check;
+
+	//业务事件校验
+	private String bizEventCheck;
+
+	private String testName;
+
+	public String getTestType() {
+		return testType;
+	}
+
+	public void setTestType(String testType) {
+		this.testType = testType;
+	}
+	@Column(name = "MD5_CHECK")
+	public String getMd5Check() {
+		return md5Check;
+	}
+
+	public void setMd5Check(String md5Check) {
+		this.md5Check = md5Check;
+	}
+	@Column(name = "BIZ_EVENT_CHECK")
+	public String getBizEventCheck() {
+		return bizEventCheck;
+	}
+
+	public void setBizEventCheck(String bizEventCheck) {
+		this.bizEventCheck = bizEventCheck;
+	}
+	@Column(name="TEST_NAME")
+	public String getTestName() {
+		return testName;
+	}
+
+	public void setTestName(String testName) {
+		this.testName = testName;
+	}
 }

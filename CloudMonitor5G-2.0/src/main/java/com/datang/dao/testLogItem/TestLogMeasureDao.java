@@ -42,9 +42,9 @@ public class TestLogMeasureDao extends
 		if (null != endTime) {
 			criteria.add(Restrictions.le("timeLong", endTime));
 		}
+		criteria.addOrder(Order.desc("timeLong"));
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("timeLong"));
 		criteria.setProjection(null);
 		criteria.setFirstResult((page - 1) * rows);
 		criteria.setMaxResults(rows);

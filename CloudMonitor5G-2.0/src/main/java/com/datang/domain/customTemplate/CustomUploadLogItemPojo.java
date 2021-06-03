@@ -510,7 +510,7 @@ public class CustomUploadLogItemPojo implements Serializable, Comparable<CustomU
 	/**
 	 * @return the uploadSuccess
 	 */
-	// @Column(name = "UPLOAD_SUCCESS", columnDefinition = "boolean")
+	// @Column(name = "UPLOAD_SUCCESS", columnDefinition = "number", length = 1)
 	@Transient
 	public boolean isUploadSuccess() {
 		return uploadSuccess;

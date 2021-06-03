@@ -19,6 +19,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.datang.common.dao.jdbc.JdbcTemplate;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -85,6 +86,9 @@ public class TerminalServiceImpl implements TerminalService {
 	 */
 	@Autowired
 	private TerminalGroupDao groupDao;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	/**
 	 * 测试计划
@@ -698,6 +702,54 @@ public class TerminalServiceImpl implements TerminalService {
 	@Override
 	public AbstractPageList queryPageTerminal(PageList pageList) {
 		return terminalDao.getPageTerminal(pageList);
+	}
+
+
+	/**
+	 * EVENTTYPE
+	 * LONGITUDE
+	 * LATITUDE
+	 * FILE_NAME
+	 * */
+	@Override
+	public List<Map<String,Object>> getFullCuccTraffic() {
+		String sql = "SELECT\n" +
+				"\tt.ID,\n" +
+				"\tt.BOX_ID,\n" +
+				"\tt.\"INDEX\",\n" +
+				"\tt.EVENTTYPE,\n" +
+				"\tt.FILE_NAME,\n" +
+				"\tt.TIMESTAMP,\n" +
+				"\tt.LONGITUDE,\n" +
+				"\tt.LATITUDE\n" +
+				"FROM\n" +
+				"\t(\n" +
+				"\tSELECT\n" +
+				"\t\tt.ID,\n" +
+				"\t\tt.BOX_ID,\n" +
+				"\t\tt.\"INDEX\",\n" +
+				"\t\tt.EVENTTYPE,\n" +
+				"\t\tt.FILE_NAME,\n" +
+				"\t\tt.TIMESTAMP,\n" +
+				"\t\tt.LONGITUDE,\n" +
+				"\t\tt.LATITUDE,\n" +
+				"\t\tROW_NUMBER() OVER(PARTITION BY BOX_ID ORDER BY TIMESTAMP DESC) rn\n" +
+				"\tFROM\n" +
+				"\t\t(\n" +
+				"\t\tSELECT\n" +
+				"\t\t\tID,\n" +
+				"\t\t\tBOX_ID,\n" +
+				"\t\t\t\"INDEX\",\n" +
+				"\t\t\tEVENTTYPE,\n" +
+				"\t\t\tFILE_NAME,\n" +
+				"\t\t\tTIMESTAMP,\n" +
+				"\t\t\tLONGITUDE,\n" +
+				"\t\t\tLATITUDE\n" +
+				"\t\tFROM\n" +
+				"\t\t\tIADS_CUCC_TRAFFICINFO ict) t )t\n" +
+				"WHERE\n" +
+				"\tt.rn = 1\n";
+		return jdbcTemplate.objectQueryAll(sql);
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.datang.common.util.ClassUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,23 +141,23 @@ public class CustomrReportTemplateAction extends PageAction implements ModelDriv
 	@Override
 	public AbstractPageList doPageQuery(PageList pageList) {
 		//初始化查询时，需要判断用户的区域权限
-		if(citNames == null || !StringUtils.hasText(citNames)){
-			citNames="";
-			// 获取用户权限范围内的二级域menu
-			List<TerminalMenu> cities = menuManageService.getCities();
-			// 将二级域menu转化成terminalGroup
-			List<TerminalGroup> groupsByMenus = groupService
-					.getGroupsByMenus(cities);
-			for(int i=0;i<groupsByMenus.size();i++){
-				citNames = citNames+groupsByMenus.get(i).getName();
-				if(i!=groupsByMenus.size()-1){
-					citNames = citNames+",";
-				}
-			}
-		}
+//		if(citNames == null || !StringUtils.hasText(citNames)){
+//			citNames="";
+//			// 获取用户权限范围内的二级域menu
+//			List<TerminalMenu> cities = menuManageService.getCities();
+//			// 将二级域menu转化成terminalGroup
+//			List<TerminalGroup> groupsByMenus = groupService
+//					.getGroupsByMenus(cities);
+//			for(int i=0;i<groupsByMenus.size();i++){
+//				citNames = citNames+groupsByMenus.get(i).getName();
+//				if(i!=groupsByMenus.size()-1){
+//					citNames = citNames+",";
+//				}
+//			}
+//		}
 		pageList.putParam("beginImportDate", beginImportDate);
 		pageList.putParam("endImportDate", endImportDate);
-		pageList.putParam("citNames", citNames);
+//		pageList.putParam("citNames", citNames);
 		AbstractPageList list = customTemplateService.doPageQuery(pageList);
 		
 		return list;
@@ -191,20 +192,67 @@ public class CustomrReportTemplateAction extends PageAction implements ModelDriv
 	public InputStream getDownloadData() {
 		List<File> fileList = new ArrayList<File>();
 		String[] ids = idsStr.split(",");
+
+
+		List<String> fileName = new ArrayList<>();
+		fileName.add("联通大会战测试日志详情表_DT模板V1.0.xlsx");
+		fileName.add("联通大会战测试数据校验概览_DT模板V1.0.xlsx");
+
+
 		for (String id : ids) {
 			CustomReportTemplatePojo pojo = customTemplateService.find(Long.valueOf(id));
 			if(pojo.getSaveFilePath() != null){
-				File file = new File(pojo.getSaveFilePath());
-				if(file.exists()){
+				// 判断文件是否是 特点文件名,从不同的路径下载文件
+				if(fileName.contains(pojo.getTemplateName())){
+					InputStream is = ClassUtil.getResourceAsStream("/templates/" + pojo.getTemplateName());
+					File file = new File(reportUrl + "/uploadReportTemplate/" + pojo.getTemplateName() );
 					fileList.add(file);
+					OutputStream os = null;
+					try {
+						 os = new FileOutputStream(file);
+						int len = 0;
+						byte[] buffer = new byte[1024];
+						while ((len = is.read(buffer))!=-1){
+							os.write(buffer,0,len);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}finally {
+						try{
+							os.close();
+						}catch (IOException ose){
+							ose.printStackTrace();
+						}
+						try{
+							is.close();
+						}catch (IOException ise){
+							ise.printStackTrace();
+						}
+					}
+				}else{
+					File file = new File(pojo.getSaveFilePath());
+					if(file.exists()){
+						fileList.add(file);
+					}
+
 				}
+
+
+
+
 			}
 		}
-		
+
+
+
+
+
 		File file1 = new File(reportUrl+ "/downloadTemplate/");
 		if (!file1.exists()) {
 			file1.mkdirs();
 		}
+
+
 		
 		File zipFile = new File(reportUrl + "/downloadTemplate/" + "自定义报告模板.zip");
 		FileInputStream zipIn = null ;

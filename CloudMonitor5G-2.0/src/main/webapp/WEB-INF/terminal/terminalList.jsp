@@ -30,14 +30,18 @@
 							return '<a href="javaScript:void(0);" onclick="editTemrinal('+row.id+')" >'+value+'</a>';
 						}
 					}, 				
-					{field:'boxId',width:90,align:'center',title:'ID'},
+					{field:'boxId',width:90,align:'center',title:'终端IMEI'},
+					{field:'longitude',width:90,align:'center',title:'经度'},
+					{field:'latitude',width:90,align:'center',title:'维度'},
+					{field:'fileName',width:90,align:'center',title:'日志名'},
+					{field:'exception',width:90,align:'center',title:'当前事件'},
 					{field:'testTargetStr',width:90,align:'center',title:'终端类型'},
 					{field:'softwareVersion',width:165,align:'center',title:'软件版本'},
 					{field:'downVersion',width:165,align:'center',title:'下发版本'}, 
-					{field:'hardwareVersion',width:60,align:'center',title:'硬件版本'},
-					{field:'manufacturer',width:30,align:'center',title:'厂商'},
+					{field:'hardwareVersion',width:80,align:'center',title:'硬件版本'},
+					{field:'manufacturer',width:60,align:'center',title:'厂商'},
 					{field:'remark',width:60,align:'center',title:'备注'}, 
-					{field:'installDate',width:60,align:'center',title:'安装日期',
+					{field:'installDateFormt',width:80,align:'center',title:'安装日期',
 						formatter:function(value,row,index){
 							if(!value){
 								return "";
@@ -46,7 +50,7 @@
 							return valStr.replace("T", " ");
 						}
 					}, 
-					{field:'online',width:30,align:'center',title:'状态',
+					{field:'online',width:45,align:'center',title:'状态',
 						styler:function onlineStyler(value,row,index){
 							if (value){
 								return 'color:green;';
@@ -90,7 +94,7 @@
 				]],
 				url:'${pageContext.request.contextPath}/terminal/doPageListJson.action?cityId=${id}',
 				border:false,
-				fitColumns:true,
+				//fitColumns:true,
 				pagination:true,
 				singleSelect:true,
 				//填满区域
@@ -137,20 +141,21 @@
 			var testTarget = $("#testTarget").combobox('getValue');
 			var online = $("#tOnline").combobox('getValue');
 			var installDate = $("#installDate").datebox('getValue');
+			var time3 = installDate == "" ? installDate : Date.parse(installDate);
 			var boxId = $("#boxId").textbox('getValue');
 			if(online!='请选择'){
 				$("#terminalListTable").datagrid('load',{
 					name:$("#tName").textbox('getValue'),
 					terOnline : online,
 					testTarget : testTarget,
-					installDate : installDate,
+					installDate : time3,
 					boxId : boxId
 				});	
 			}else{
 				$("#terminalListTable").datagrid('load',{
 					name:$("#tName").textbox('getValue'),
 					testTarget : testTarget,
-					installDate : installDate,
+					installDate : time3,
 					boxId : boxId
 				});	
 			}
@@ -237,10 +242,11 @@
 			var testTarget = $("#testTarget").combobox('getValue');
 			var terOnline = $("#tOnline").combobox('getValue');
 			var installDate = $("#installDate").datebox('getValue');
+			var time3 = installDate == "" ? installDate : Date.parse(installDate);
 			var boxId = $("#boxId").textbox('getValue');
 			var name = $("#tName").textbox('getValue');
 			window.location= "${pageContext.request.contextPath}/terminal/downloadData.action?cityId="+cityId
-					+"&testTarget="+testTarget+"&terOnline="+terOnline+"&installDate="+installDate+"&boxId="+boxId+"&name="+name;
+					+"&testTarget="+testTarget+"&terOnline="+terOnline+"&installDate="+time3+"&boxId="+boxId+"&name="+name;
 		}
 	</script>
   </head>

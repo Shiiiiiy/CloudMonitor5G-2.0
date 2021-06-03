@@ -1,32 +1,39 @@
 package com.datang.web.action.action5g.report;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import ch.qos.logback.core.util.ExecutorServiceUtil;
+import com.datang.common.dao.jdbc.JdbcTemplate;
+import com.datang.dao.customTemplate.AnalyFileReportDao;
+import com.datang.dao.customTemplate.CustomLogReportTaskDao;
+import com.datang.domain.customTemplate.AnalyFileReport;
+import com.datang.domain.customTemplate.CustomLogReportTask;
+import com.datang.domain.testLogItem.UnicomLogItem;
+import com.datang.service.influx.InfluxService;
+import com.datang.service.testLogItem.UnicomLogItemService;
+import com.datang.web.beans.report.*;
+import com.datang.web.beans.testLogItem.UnicomLogItemPageQueryRequestBean;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +69,8 @@ import com.datang.util.ReadExcelToHtml;
 import com.datang.util.ZMQUtils;
 import com.datang.util.ZipMultiFile;
 import com.datang.web.action.ReturnType;
+import com.datang.web.action.report.ReportAction;
 import com.datang.web.beans.VoLTEDissertation.wholePreview.VoLTEWholePreviewParam;
-import com.datang.web.beans.report.BoxInforRequestBean;
-import com.datang.web.beans.report.CityInfoRequestBean;
-import com.datang.web.beans.report.ReportRequertBean;
-import com.datang.web.beans.report.StatisticeTaskRequest;
-import com.datang.web.beans.report.TestInfoRequestBean;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ModelDriven;
 
@@ -84,18 +87,39 @@ import net.sf.json.JSONObject;
 @Scope("prototype")
 public class ReportFgAction extends PageAction implements
 		ModelDriven<StatisticeTaskRequest> {
-	private static Logger LOGGER = LoggerFactory.getLogger(ReportFgAction.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ReportAction.class);
+	private static String ANALYZE_TEMPLATE_PATH = "分析型报表";
 	/**
 	 * 统计任务服务
 	 */
 	@Autowired
 	private IReportService reportService;
-
+	/**
+	 * 统计任务服务
+	 */
+	@Autowired
+	private CustomLogReportTaskDao customLogReportTaskDao;
+	@Autowired
+	private AnalyFileReportDao analyFileReportDao;
 	/**
 	 * 日志服务
 	 */
 	@Autowired
 	private ITestLogItemService testLogItemService;
+
+	@Resource
+	private JdbcTemplate jdbcTemplate;
+
+	@Resource
+	private InfluxService influxService;
+
+	/**
+	 * 日志服务
+	 */
+	@Autowired
+	private UnicomLogItemService unicomLogItemService;
+
+
 	/**
 	 * 终端服务
 	 */
@@ -113,10 +137,10 @@ public class ReportFgAction extends PageAction implements
 	@Autowired
 	private CustomTemplateService customTemplateService;
 	
-	@Value("${newCustomTask.signalling.ip}")
+	@Value("${decode.signalling.ip}")
 	private String taskIp;
 	
-	@Value("${newCustomTask.signalling.port}")
+	@Value("${decode.signalling.port}")
 	private String taskPort;
 	
 	private String allLogNames;
@@ -151,6 +175,30 @@ public class ReportFgAction extends PageAction implements
 	 */
 	private String dPage;
 
+	private static final ExecutorService analyzeTaskExecutor = Executors.newFixedThreadPool(2);
+
+	/**
+	 * 分析型报表
+	 * */
+	public  static List<AnalyzeTemplate> analyzeTamplateList = new ArrayList<>();
+
+	public  static Map<String,AnalyzeTemplate> analyzeTemplateMap =  new HashMap<>();
+
+
+	@Value("${appTaskReportFileLink}")
+	private String fileSaveUrl;
+
+
+	static{
+		analyzeTamplateList.add(new AnalyzeEventTemplate());
+		analyzeTamplateList.add(new AnalyzeNetworkTemplate());
+		analyzeTamplateList.add(new AnalyzeVoiceTemplate());
+
+		analyzeTemplateMap = ReportFgAction.analyzeTamplateList.stream().collect(Collectors.toMap(it->it.getId(), Function.identity(),(o1, o2)-> o1));
+	}
+
+
+
 	/**
 	 * 跳转到 list界面
 	 * 
@@ -182,16 +230,16 @@ public class ReportFgAction extends PageAction implements
 		StatisticeTask statisticeTask = reportService.queryOneByID(id);
 		String templateIds = statisticeTask.getTemplateIds();
 		List<Map<String,Object>> teplateList = new ArrayList<Map<String,Object>>();
-//		if (StringUtils.hasText(templateIds)) {
-//			String[] idArry = templateIds.split(",");
-//			for (String idstr : idArry) {
-//				Map<String,Object> map = new HashMap<String,Object>();
-//				CustomReportTemplatePojo reportTemplateByid = customTemplateService.find(Long.valueOf(idstr));
-//				map.put("valueField",reportTemplateByid.getId());
-//				map.put("textField",reportTemplateByid.getTemplateName());
-//				teplateList.add(map);
-//			}
-//		}
+		if (StringUtils.hasText(templateIds)) {
+			String[] idArry = templateIds.split(",");
+			for (String idstr : idArry) {
+				Map<String,Object> map = new HashMap<String,Object>();
+				CustomReportTemplatePojo reportTemplateByid = customTemplateService.find(Long.valueOf(idstr));
+				map.put("valueField",reportTemplateByid.getId());
+				map.put("textField",reportTemplateByid.getTemplateName());
+				teplateList.add(map);
+			}
+		}
 		ActionContext.getContext().getValueStack().set("reportTemplate", teplateList);
 		return "seeReport";
 	}
@@ -331,6 +379,76 @@ public class ReportFgAction extends PageAction implements
 		return ReturnType.JSON;
 	}
 
+
+	/**
+	 * 获取某些boxIds相关的日志 testLogItem
+	 * 周文千需求
+	 * @return
+	 */
+	public String testUnicomLogItem() {
+		Date beginDate = statisticeTaskRequest.getBeginDate();
+		Date endDate = statisticeTaskRequest.getEndDate();
+		// String boxIds = statisticeTaskRequest.getBoxIds();
+		String cityIds = statisticeTaskRequest.getCityIds();
+		String prov = statisticeTaskRequest.getProv();
+		String city = statisticeTaskRequest.getCity();
+
+		// String testRanks = statisticeTaskRequest.getTestRank();
+		String boxIds = "";
+		String testRanks = "";
+		cityIds = "";
+		if (
+//				StringUtils.hasText(boxIds)
+//				&&StringUtils.hasText(cityIds)
+//				&& StringUtils.hasText(testRanks)
+//				&&
+				null != beginDate
+				&& null != endDate) {
+			String[] splitBox = boxIds.split(",");
+			List<String> boxList = Arrays.asList(splitBox);
+			String[] splitCity = cityIds.split(",");
+			List<String> cityList = Arrays.asList(splitCity);
+			String[] splitTestRank = testRanks.split(",");
+			List<String> testRankList = new ArrayList<>();
+			for (String string : splitTestRank) {
+				if (string.trim().equals("1")) {
+					testRankList.add("organizationCheck");
+				} else if (string.trim().equals("2")) {
+					testRankList.add("dailyOptimiz");
+				} else if (string.trim().equals("3")) {
+					testRankList.add("deviceDebug");
+				}
+			}
+			SimpleDateFormat dateFormat = new SimpleDateFormat(
+					"yyyy-MM-dd HH:mm:ss.SSS");
+
+			// 取消条件
+			boxList = new ArrayList<>();
+			cityList = new ArrayList<>();
+			testRankList = new ArrayList<>();
+
+			List<UnicomLogItem> testLogItemsByBoxIds = unicomLogItemService
+					.queryTestLogItemsByOther(prov,city,boxList, cityList, testRankList,
+							beginDate, endDate);
+			List<TestInfoRequestBean> responseBeans = new ArrayList<>();
+			if (null != testLogItemsByBoxIds
+					&& 0 != testLogItemsByBoxIds.size()) {
+				for (UnicomLogItem testLogItem : testLogItemsByBoxIds) {
+					TestInfoRequestBean responseBean = new TestInfoRequestBean();
+					responseBean.setFileName(testLogItem.getFileName());
+					responseBean.setId(testLogItem.getRecSeqNo());
+					responseBeans.add(responseBean);
+				}
+			}
+			ActionContext.getContext().getValueStack()
+					.set("testLog", responseBeans);
+		}
+
+		return ReturnType.JSON;
+	}
+
+
+
 	/**
 	 * 获取某些boxIds相关的日志 testLogItem
 	 * 
@@ -381,7 +499,75 @@ public class ReportFgAction extends PageAction implements
 
 		return ReturnType.JSON;
 	}
-	
+
+
+	/**
+	 * 获取某区域获取相关的模板 CustomReportTemplatePojo
+	 * 周文千需求
+	 * @return
+	 */
+	public String reportTemplate() {
+		String reportType = statisticeTaskRequest.getReportType();
+		List<Map<String, Object>>  templatePojoList = null;
+
+		List<Map<String,Object>> templateList = new ArrayList<Map<String,Object>>();
+
+		if(reportType!=null && reportType.equals("1")){
+			for(AnalyzeTemplate t:analyzeTamplateList){
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("id",t.getId());
+				map.put("fileName",t.getTemplate());
+				templateList.add(map);
+			}
+			ActionContext.getContext().getValueStack()
+					.set("reportTemplate", templateList);
+			return ReturnType.JSON;
+		}
+
+		String sql = "SELECT  wm_concat(ID) ID ,TEMPLATE_NAME FILE_NAME FROM IADS_CUSREPORT_TMEPLATE WHERE TEMPLATE_NAME IS NOT NULL  AND (TEMPLATE_NAME LIKE '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%')  GROUP BY TEMPLATE_NAME ORDER BY TEMPLATE_NAME";
+		templatePojoList = jdbcTemplate.objectQueryAll(sql);
+		if (null != templatePojoList
+				&& 0 != templatePojoList.size()) {
+			for (Map<String, Object> m : templatePojoList) {
+				Map<String,Object> map = new HashMap<String,Object>();
+				if(m.get("ID")==null) continue;
+				try{
+					Object id = m.get("ID");
+					if(id instanceof Clob){
+						map.put("id",ClobToString((Clob)id));
+					}else{
+						map.put("id",id.toString());
+					}
+
+					map.put("fileName",(String)m.get("FILE_NAME"));
+					templateList.add(map);
+					}catch (Exception e){
+
+				}
+
+
+			}
+		}
+		ActionContext.getContext().getValueStack()
+					.set("reportTemplate", templateList);
+		return ReturnType.JSON;
+	}
+
+	public String ClobToString(Clob clob) throws SQLException, IOException {
+
+		String reString = "";
+		java.io.Reader is = clob.getCharacterStream();// 得到流
+		BufferedReader br = new BufferedReader(is);
+		String s = br.readLine();
+		StringBuffer sb = new StringBuffer();
+		while (s != null) {// 执行循环将字符串全部取出付值给StringBuffer由StringBuffer转成STRING
+			sb.append(s);
+			s = br.readLine();
+		}
+		reString = sb.toString();
+		return reString;
+	}
+
 	/**
 	 * 获取某区域获取相关的模板 CustomReportTemplatePojo
 	 * 
@@ -543,6 +729,353 @@ public class ReportFgAction extends PageAction implements
 
 		return "seeTask";
 	}
+
+
+	/**
+	 * 添加或修改统计任务
+	 *
+	 * @return
+	 */
+	public String addUnicomReportTask() {
+		// 测试
+//		String ltt = statisticeTaskRequest.getLogIds();
+//		if(ltt!=null && StringUtils.hasText(ltt)){
+//			ltt = "," + ltt;
+//		}else {
+//			ltt = "";
+//		}
+//		statisticeTaskRequest.setLogIds("2070,2080" +ltt );
+
+
+		if (null != statisticeTaskRequest) {
+			// 创建人名称
+			CustomLogReportTask customLogReportTask = new CustomLogReportTask();
+			// StatisticeTask statisticeTask = new StatisticeTask();
+			if (StringUtils.hasText(statisticeTaskRequest.getCreaterName())) {
+				customLogReportTask.setCreaterName(statisticeTaskRequest.getCreaterName());
+			}else{
+				String userName = (String) SecurityUtils.getSubject()
+						.getPrincipal();
+				if (null != userName) {
+					customLogReportTask.setCreaterName(userName.trim());
+				}
+			}
+
+			// ?????
+			StringBuilder taskName = new StringBuilder();
+
+			// 参数传递
+			StringBuilder terminalGroupNames = new StringBuilder();
+//			if (null != statisticeTaskRequest.getBoxIds()) {
+//				customLogReportTask.setBoxIds(statisticeTaskRequest.getBoxIds());
+//			}
+			if (null != statisticeTaskRequest.getLogIds()) {
+				customLogReportTask.setLogIds(statisticeTaskRequest.getLogIds());
+			}
+			if (null != statisticeTaskRequest.getTemplateIds()) {
+				customLogReportTask.setTemplateIds(statisticeTaskRequest.getTemplateIds());
+			}
+			// 查找日志
+			List<TestLogItem> queryTestLogItems = unicomLogItemService
+					.queryTestLogItems(statisticeTaskRequest.getLogIds());
+
+			// ???
+			StringBuilder allLogIDBuilder = new StringBuilder();
+			StringBuilder allLogNameBuilder = new StringBuilder();
+			StringBuilder moveLogIDBuilder = new StringBuilder();
+			StringBuilder linkLogIDBuilder = new StringBuilder();
+			StringBuilder telecomLogIDBuilder = new StringBuilder();
+			// StringBuilder nbiotLogIDBuilder = new StringBuilder();
+			for (TestLogItem testLogItem : queryTestLogItems) {
+				if (0 != allLogIDBuilder.toString().length()) {
+					allLogIDBuilder.append(","
+							+ testLogItem.getRecSeqNo());
+					allLogNameBuilder.append(","
+							+ testLogItem.getFileName());
+				} else {
+					allLogIDBuilder.append(testLogItem.getRecSeqNo());
+					allLogNameBuilder.append(testLogItem.getFileName());
+				}
+				if (null != testLogItem.getOperatorName()) {
+					if (testLogItem.getOperatorName().trim().equals("中国移动")||testLogItem.getOperatorName().trim().equals("China Mobile")) {
+						if (0 != moveLogIDBuilder.toString().length()) {
+							moveLogIDBuilder.append(","
+									+ testLogItem.getRecSeqNo());
+						} else {
+							moveLogIDBuilder.append(testLogItem.getRecSeqNo());
+						}
+
+					} else if (testLogItem.getOperatorName().trim()
+							.equals("中国联通")) {
+						if (0 != linkLogIDBuilder.toString().length()) {
+							linkLogIDBuilder.append(","
+									+ testLogItem.getRecSeqNo());
+						} else {
+							linkLogIDBuilder.append(testLogItem.getRecSeqNo());
+						}
+					} else if (testLogItem.getOperatorName().trim()
+							.equals("中国电信")) {
+						if (0 != telecomLogIDBuilder.toString().length()) {
+							telecomLogIDBuilder.append(","
+									+ testLogItem.getRecSeqNo());
+						} else {
+							telecomLogIDBuilder.append(testLogItem
+									.getRecSeqNo());
+						}
+					}
+				}
+			}
+
+
+
+
+			HttpSession session = ServletActionContext.getRequest()
+					.getSession();
+			session.setAttribute("allTestLogItemIds",
+					allLogIDBuilder.toString());
+			session.setAttribute("allLogNames",
+					allLogNameBuilder.toString());
+			session.setAttribute("moveTestLogItemIds",
+					moveLogIDBuilder.toString());
+			session.setAttribute("linkTestLogItemIds",
+					linkLogIDBuilder.toString());
+			session.setAttribute("telecomTestLogItemIds",
+					telecomLogIDBuilder.toString());
+			// session.setAttribute("nbiotTestLogItemIds",
+			// nbiotLogIDBuilder.toString());
+
+
+			if (statisticeTaskRequest.getCityIds() != null) {
+//				String[] cityIds = statisticeTaskRequest.getCityIds().trim()
+//						.split(",");
+//				// 存储TestLogItem的id集合
+//				List<String> ids = new ArrayList<>();
+//				for (int i = 0; i < cityIds.length; i++) {
+//					if (StringUtils.hasText(cityIds[i])) {
+//						try {
+//							ids.add(cityIds[i].trim());
+//						} catch (NumberFormatException e) {
+//							continue;
+//						}
+//					}
+//				}
+//				if (ids.size() > 1) {
+//					HashSet<String> nameSet = new HashSet<String>();
+//					for (String cityId : ids) {
+//						if (cityId == null) {
+//							continue;
+//						} else {
+//							Long id = Long.valueOf(cityId);
+//							String name = terminalGroupService
+//									.getProvinceNameByCityGroup(terminalGroupService
+//											.findGroupById(id));
+//							nameSet.add(name);
+//						}
+//
+//					}
+//					if (nameSet.size() > 1) {
+//						terminalGroupNames.append("全国");
+//					} else {
+//						terminalGroupNames
+//								.append((String) nameSet.toArray()[0]);
+//					}
+//				} else {
+//					Long id = Long.valueOf(ids.get(0));
+//					TerminalGroup terminalGroup = terminalGroupService
+//							.findGroupById(id);
+//					if (terminalGroup != null) {
+//						terminalGroupNames.append(terminalGroup.getName());
+//					}
+//				}
+				if (taskName.length() >= 1) {
+					taskName.deleteCharAt(taskName.length() - 1);
+				}
+				if (terminalGroupNames.length() > 0) {
+					taskName.append(terminalGroupNames.toString().trim());
+				}
+				taskName.append(statisticeTaskRequest.getProv());
+				taskName.append("-");
+				taskName.append(statisticeTaskRequest.getCity());
+				taskName.append('-');
+				taskName.append(DateUtil.getCurDateStr(new Date()));
+				taskName.append('-');
+				// 分析报表 / 通用报表
+				taskName.append(CustomLogReportTask.typeIsAnylyFileReport(StatisticeTaskRequest.typeIsAnylyFileReport(statisticeTaskRequest.getReportType())));
+
+//				taskName.append(DateUtil
+//						.getShortDateTimeStr(statisticeTaskRequest
+//								.getBeginDate()));
+//				taskName.append('-');
+//				taskName.append(DateUtil
+//						.getShortDateTimeStr(statisticeTaskRequest.getEndDate()));
+				if(!statisticeTaskRequest.getName().contains("定点测试-DD")){
+					customLogReportTask.setName(taskName.toString().trim());
+				}else{
+					customLogReportTask.setName(statisticeTaskRequest.getName());
+				}
+				session.setAttribute("taskName", taskName.toString());
+				customLogReportTask.setCityIds(statisticeTaskRequest.getCityIds());
+
+			}
+
+
+			if (null != statisticeTaskRequest.getBeginDate()) {
+				customLogReportTask.setBeginDate(statisticeTaskRequest
+						.getBeginDate());
+			}
+			if (null != collectTypes) {
+				StringBuffer sBuffer = new StringBuffer();
+				for (int i = 0; i < collectTypes.length; i++) {
+					sBuffer = (i == (collectTypes.length - 1)) ? sBuffer
+							.append(collectTypes[i]) : sBuffer
+							.append(collectTypes[i] + ",");
+				}
+				customLogReportTask.setCollectType(sBuffer.toString());
+			}
+			if (null != testRanks) {
+				StringBuffer sBuffer = new StringBuffer();
+				for (int i = 0; i < testRanks.length; i++) {
+					sBuffer = (i == (testRanks.length - 1)) ? sBuffer
+							.append(testRanks[i]) : sBuffer.append(testRanks[i]
+							+ ",");
+				}
+				customLogReportTask.setTestRank(sBuffer.toString());
+			}
+			if (null != statisticeTaskRequest.getEndDate()) {
+				customLogReportTask.setEndDate(statisticeTaskRequest.getEndDate());
+			}
+			customLogReportTask.setCreatDate(new Date());
+			customLogReportTask.setTaskStatus("1");
+			customLogReportTask.setTaskType("1");
+			if (null != statisticeTaskRequest.getId()) {
+				customLogReportTask.setId(statisticeTaskRequest.getId());
+				customLogReportTaskDao.update(customLogReportTask);
+			} else {
+				session.setAttribute("idLong", null);
+				customLogReportTaskDao.create(customLogReportTask);
+			}
+
+			PageList pageList = new PageList();
+			pageList.putParam("workOrderId", customLogReportTask.getName());
+
+			session.setAttribute("idLong", customLogReportTask.getId());
+
+			//xxxxxxxxxxxxx
+			if(StatisticeTaskRequest.typeIsAnylyFileReport(statisticeTaskRequest.getReportType())){
+				// 线程执行
+				File file1 = new File(fileSaveUrl+ "/" + ANALYZE_TEMPLATE_PATH + "/");
+				if (!file1.exists()) {
+					try{
+						file1.mkdirs();
+					}catch (Exception e){
+						LOGGER.error("无法创建目录",e);
+						ActionContext.getContext().getValueStack().set("errorMsg", "无法创建目录"+ file1.getAbsolutePath());
+						return ReturnType.JSON;
+					}
+				}
+
+				// 日志文件
+				UnicomLogItemPageQueryRequestBean pageParams = new UnicomLogItemPageQueryRequestBean();
+				PageList unicomLogPageList = new PageList();
+				unicomLogPageList.putParam("pageQueryBean", pageParams);
+				AbstractPageList abstractPageList = unicomLogItemService.pageList(unicomLogPageList);
+				List<UnicomLogItem> unicomLogItemList = abstractPageList.getRows();
+				List<String> unicomLogItemIdList = new ArrayList<>();
+				for(UnicomLogItem u:unicomLogItemList) {
+					Long recSeqNo = u.getRecSeqNo();
+					if (recSeqNo == null) continue;
+					unicomLogItemIdList.add(recSeqNo.toString());
+				}
+
+				Session hibernateSession = analyFileReportDao.getSessionFactory().openSession();
+
+				analyzeTaskExecutor.submit(new Thread(new Runnable() {
+					@Override
+					public void run() {
+
+						AnalyzeEventTemplate analyzeEventTemplate = new AnalyzeEventTemplate();
+						AnalyzeNetworkTemplate analyzeNetworkTemplate = new AnalyzeNetworkTemplate();
+						AnalyzeVoiceTemplate analyzeVoiceTemplate = new AnalyzeVoiceTemplate();
+
+						List<String> templateIds = Arrays.asList(customLogReportTask.getTemplateIds().split(","));
+						Boolean result = true;
+						if(templateIds.contains(analyzeNetworkTemplate.getId())){
+							result = result && createAnalyFile(analyzeNetworkTemplate, unicomLogItemIdList, customLogReportTask,hibernateSession);
+						}
+						if(templateIds.contains(analyzeEventTemplate.getId())){
+							result = result && createAnalyFile(analyzeEventTemplate, unicomLogItemIdList, customLogReportTask,hibernateSession);
+						}
+
+						if(templateIds.contains(analyzeVoiceTemplate.getId())){
+							result = result && createAnalyFile(analyzeVoiceTemplate, unicomLogItemIdList, customLogReportTask,hibernateSession);
+						}
+
+						customLogReportTask.setTaskStatus("3");
+						hibernateSession.merge(customLogReportTask);
+						hibernateSession.flush();
+						hibernateSession.close();
+					}
+				}));
+				return ReturnType.JSON;
+			}
+
+
+
+
+			//下发任务到后台
+
+			String errotMsg = goUnicomSocket(customLogReportTask);
+			if(StringUtils.hasText(errotMsg)){
+				customLogReportTaskDao.delete(customLogReportTask.getId());
+				LOGGER.info("下发自定义任务失败,无法保存任务:"+ errotMsg);
+				ActionContext.getContext().getValueStack().set("errorMsg", "下发自定义任务失败,无法保存任务："+ errotMsg);
+			}
+
+
+		}
+		return ReturnType.JSON;
+	}
+
+
+	/**
+	 * excel 文件生成
+	 * */
+	private boolean createAnalyFile(AnalyzeTemplate analyzeTemplate,List<String> unicomLogItemIdList,CustomLogReportTask customLogReportTask,Session session){
+
+		String taskName = analyzeTemplate.getTemplateFileName() + "-" + UUID.randomUUID().toString().replaceAll("-", "")
+				.toUpperCase().trim();
+		File file = new File(fileSaveUrl + "/" + ANALYZE_TEMPLATE_PATH + "/" + taskName + analyzeTemplate.getTemplateSuffix());
+		String filePath = fileSaveUrl + "/" + ANALYZE_TEMPLATE_PATH + "/" + taskName + analyzeTemplate.getTemplateSuffix();
+		Map<String, Collection> hashMap1 = analyzeTemplate.getData(influxService, unicomLogItemIdList);
+
+
+		AnalyFileReport report = new AnalyFileReport();
+
+		report.setTaskId(customLogReportTask.getId());
+		report.setReportId(analyzeTemplate.getId());
+
+		try {
+			FileOutputStream fileOutputStream = new FileOutputStream(file);
+			Workbook transformToExcel = POIExcelUtil.transformToExcel(
+					hashMap1, "templates/" + analyzeTemplate.getTemplate());
+			if (null != transformToExcel) {
+				transformToExcel.write(fileOutputStream);
+				report.setFilePath(filePath);
+				session.save(report);
+				session.flush();
+				return true;
+			}
+
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			report.setDescription("失败");
+		}
+		session.save(report);
+		session.flush();
+		return false;
+	}
+
+
 
 	/**
 	 * 添加或修改统计任务
@@ -761,19 +1294,19 @@ public class ReportFgAction extends PageAction implements
 			pageList.putParam("workOrderId", statisticeTask.getName());
 			List<StatisticeTask> statisticeTaskList = reportService.findStatisticeTask(pageList);
 			session.setAttribute("idLong", statisticeTaskList.get(0).getId());
-//			if(statisticeTaskList!=null && statisticeTaskList.size()==1) { 
-//				//下发任务到后台
-//				String errotMsg = goSocket(statisticeTaskList.get(0));
-//				if(StringUtils.hasText(errotMsg)){
-//					// 下发任务失败，删除刚刚保存的任务
-//					List<Long> idss = new ArrayList<>();
-//					idss.add(statisticeTaskList.get(0).getId());
-//					reportService.delete(idss);
-//					
-//					LOGGER.info("下发自定义任务失败,无法保存任务:"+ errotMsg);
-//					ActionContext.getContext().getValueStack().set("errorMsg", "下发自定义任务失败,无法保存任务："+ errotMsg);
-//				}
-//			}
+			if(statisticeTaskList!=null && statisticeTaskList.size()==1) { 
+				//下发任务到后台
+				String errotMsg = goSocket(statisticeTaskList.get(0));
+				if(StringUtils.hasText(errotMsg)){
+					// 下发任务失败，删除刚刚保存的任务
+					List<Long> idss = new ArrayList<>();
+					idss.add(statisticeTaskList.get(0).getId());
+					reportService.delete(idss);
+					
+					LOGGER.info("下发自定义任务失败,无法保存任务:"+ errotMsg);
+					ActionContext.getContext().getValueStack().set("errorMsg", "下发自定义任务失败,无法保存任务："+ errotMsg);
+				}
+			}
 			
 		}
 		return ReturnType.JSON;
@@ -852,7 +1385,93 @@ public class ReportFgAction extends PageAction implements
 		}
 		return "发送任务失败";
 	}
-	
+
+
+	/**
+	 * 任务下发
+	 * @author lucheng
+	 * @date 2020年12月28日 下午1:44:53
+	 * @param statisticeTask
+	 * @return
+	 */
+	public String goUnicomSocket(CustomLogReportTask customLogReportTask){
+		if (customLogReportTask != null) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", customLogReportTask.getId());
+			map.put("taskName", customLogReportTask.getName());
+			List<String> logidList = Arrays.asList(customLogReportTask.getLogIds().split(","));
+			map.put("logIds", logidList);
+			List<String> templateIds = Arrays.asList(customLogReportTask.getTemplateIds().split(","));
+			map.put("templateIds", templateIds);
+//			Set<String> kpiSet = new HashSet<String>();
+//			for (String idStr : templateIdArry) {
+//				CustomReportTemplatePojo pojo = customTemplateService.find(Long.valueOf(idStr));
+//				if(StringUtils.hasText(pojo.getConmmonKpiNameSum())){
+//					List<String> kpis = Arrays.asList(pojo.getConmmonKpiNameSum().split(","));
+//					kpiSet.addAll(kpis);
+//
+//				}
+//			}
+//			List<String> kpiList = new ArrayList(kpiSet);
+//			map.put("kpiNames", kpiList);
+
+			JSONObject requJson = new JSONObject();
+			requJson.put("importCustomTeplate", map);
+			String request = requJson.toString();
+			System.out.println(request);
+			Socket socket = ZMQUtils.getZMQSocket();
+			try {
+				socket.setReceiveTimeOut(20000);
+				socket.connect("tcp://" + taskIp + ":" + taskPort); // 与response端建立连接
+				System.out.println("tcp://" + taskIp + ":" + taskPort);
+				socket.send(request.getBytes()); // 向reponse端发送数据
+				byte[] responseBytes = socket.recv(); // 接收response发送回来的数据
+				if (null == responseBytes || responseBytes.length==0) {
+					throw new ApplicationException("后台通信异常!");
+				} else {
+					ZMQUtils.releaseZMQSocket(socket);
+					String result = null;
+
+					try{
+						String response = new String(responseBytes, "UTF8");
+						JSONObject jsonObject = JSONObject.fromObject(response);
+						JSONObject respJson = (JSONObject)jsonObject.get("importCustomTeplate");
+						if (null != respJson) {
+							result = respJson.getString("result");
+							if(result.equals("0")){
+								LOGGER.info("成功发送任务");
+								return null;
+							}else if(result.equals("-1")){
+								LOGGER.info("发送任务失败");
+								throw new ApplicationException("后台返回结果异常!");
+							}
+
+						}else {
+							throw new ApplicationException("后台返回结果异常!");
+						}
+					}catch (Exception e){
+						throw new ApplicationException("后台返回结果异常!");
+					}
+
+				}
+			} catch (Exception e) {
+				ZMQUtils.releaseSocketException(socket);
+				e.printStackTrace();
+				if (e instanceof ApplicationException) {
+					LOGGER.info(e.getMessage());
+					return e.getMessage();
+				} else {
+					LOGGER.info("后台通信异常!");
+					return "通信失败:"+e.getMessage();
+				}
+			}
+		}
+		return "发送任务失败";
+	}
+
+
+
+
 	/**
 	 * 查看统计任务
 	 * 

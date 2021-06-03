@@ -17,7 +17,9 @@ public class EceptionCellLogPojo {
 	private Long id;
 	
 	private String nrCellname;
-	
+
+	private String nrRegion;
+
 	private String nrTestdate;
 	
 	private String nrWirelessstation;
@@ -704,7 +706,15 @@ public class EceptionCellLogPojo {
 	public void setNrCellname(String nrCellname) {
 		this.nrCellname = nrCellname;
 	}
-	
+
+	@Column(name = "NR_REGION")
+	public String getNrRegion() {
+		return nrRegion;
+	}
+	public void setNrRegion(String nrRegion) {
+		this.nrRegion = nrRegion;
+	}
+
 	@Column(name = "NR_TESTDATE")
 	public String getNrTestdate() {
 		return nrTestdate;

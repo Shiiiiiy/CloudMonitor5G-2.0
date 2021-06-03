@@ -3,10 +3,12 @@
  */
 package com.datang.util;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 /**
- * 三种坐标系互转工具<br>
+ * 三种Task_互转工具<br>
  * WGS-84:国际标准,GPS坐标(Google Earth使用,或者GPS模块)<br>
  * GCJ-02:中国坐标偏移标准,Google Map,高德,腾讯使用<br>
  * BD-09:百度坐标偏移标准,Baidu Map使用<br>
@@ -27,7 +29,7 @@ import java.util.Date;
  * 求距离:GPSUtils.distance(latA,lngA,latB,lngB);<br>
  * <br>
  * 
- * @see 示例：见mian();
+ * @see
  * 
  * @author yinzhipeng
  * @date:2015年12月11日 下午3:23:39
@@ -37,6 +39,78 @@ public class GPSUtils {
 
 	private static double PI = 3.14159265358979324;
 	private static double X_PI = 3.14159265358979324 * 3000.0 / 180.0;
+
+	/**
+	 * 两个经纬度之间的距离
+	 * @param Long1
+	 * @param Lati1
+	 * @param Long2
+	 * @param Lati2
+	 * @return
+	 */
+	static double calDistant(double Long1, double Lati1, double Long2, double Lati2)
+	{
+		if (!(Math.abs(Long1) <= 180 && Math.abs(Lati1) <= 90))
+		{
+			return 0;
+		}
+		double EARTH_RADIUS = 6.371229 * 1e6;//地球半径
+		double PI2 = 3.141592653589793238;
+		double ANS = PI2 / 180.0;//角度转弧度系数
+		//球坐标系两角度
+		double Seda1 = Long1 * ANS;
+		double Fia1 = Lati1 * ANS;
+		double Seda2 = Long2 * ANS;
+		double Fia2 = Lati2 * ANS;
+
+		//球坐标系转直角坐标系
+		double x1 = Math.cos(Fia1) * Math.cos(Seda1);
+		double y1 = Math.cos(Fia1) * Math.sin(Seda1);
+		double z1 = Math.sin(Fia1);
+
+		double x2 = Math.cos(Fia2) * Math.cos(Seda2);
+		double y2 = Math.cos(Fia2) * Math.sin(Seda2);
+		double z2 = Math.sin(Fia2);
+
+		//算距离
+		double dx = x1 - x2;
+		double dy = y1 - y2;
+		double dz = z1 - z2;
+		return EARTH_RADIUS * Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+
+	public static void main(String[] args) {
+		double lat = 39.569765, lon = 116.206543;      //按*1000000处理后X=996091843276，Y=440010130712
+		double samplat = 30.402345, samplon = 120.523456;
+
+		Double[] doubles = xy2Lonlat(new BigDecimal("1155916000000"), new BigDecimal("338069000000"), samplon, samplat);
+		System.out.println(doubles[0]);
+		System.out.println(doubles[1]);
+
+	}
+
+	private static DecimalFormat df = new DecimalFormat("#.000000");
+	public static Double[] xy2Lonlat(BigDecimal x, BigDecimal y, double sampx, double sampy){
+		double dCalcLonDistance = calDistant(sampx, sampy, sampx + 0.5, sampy);
+		double dCalcLatDistance = calDistant(sampx, sampy, sampx, sampy + 0.5);
+		double Meter2Lon = 0.5 / (dCalcLonDistance);
+		double Meter2Lat = 0.5 / (dCalcLatDistance);
+		double lon,lat;
+		lon=Double.parseDouble(df.format(x.divide(new BigDecimal(1000000)).doubleValue()*((Meter2Lon * 10.0))));
+		lat=Double.parseDouble(df.format(y.divide(new BigDecimal(1000000)).doubleValue()*(Meter2Lat * 10.0)));
+		return new Double[]{lon,lat};
+	}
+
+	/*public static void main(String[] args) {
+		double lat = 39.569761, lon = 116.206543;      //按*1000000处理后X=996091843276，Y=440010130712
+		double lat2 = 39.569765, lon2 = 116.206547;
+		BigDecimal x=new BigDecimal("996091843276");
+		BigDecimal y=new BigDecimal("440010130712");
+		Double[] doubles = xy2Lonlat(x, y, lon2, lat2);
+		System.out.println(doubles[0]);
+		System.out.println(doubles[1]);
+	}*/
 
 	private static double[] delta(double lat, double lon) {
 		double a = 6378245.0; // a: 卫星椭球坐标投影到平面地图坐标系的投影因子。
@@ -234,7 +308,7 @@ public class GPSUtils {
 		return ret;
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		// 121.47432, 31.2339
 		// 121.46771, 31.25407
 		System.out.println("GPS: 31.175633,121.393348678679");
@@ -279,5 +353,5 @@ public class GPSUtils {
 		System.out.println(mercator2wgs[1]);
 		System.out.println(mercator2wgs2[0]);
 		System.out.println(mercator2wgs2[1]);
-	}
+	}*/
 }

@@ -226,4 +226,18 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
 		List list = criteria.list();
 		return list;
 	}
+
+    public List<Cell5G> getCellsByRegion(String region) {
+        Criteria criteria = this.getHibernateSession().createCriteria(Cell5G.class);
+        criteria.add(Restrictions.eq("region", region));
+        List list = criteria.list();
+        return list;
+    }
+
+    public List<LteCell> getLteCellsByRegion(String region) {
+        Criteria criteria = this.getHibernateSession().createCriteria(LteCell.class);
+        criteria.add(Restrictions.eq("region", region));
+        List list = criteria.list();
+        return list;
+    }
 }

@@ -345,7 +345,7 @@ public class TestModule implements java.io.Serializable, Comparable<TestModule> 
 	/**
 	 * @return the independency
 	 */
-	@Column(name = "INDEPENDENCY", columnDefinition = "boolean")
+	@Column(name = "INDEPENDENCY", columnDefinition = "number", length = 1)
 	public boolean isIndependency() {
 		return independency;
 	}
@@ -361,7 +361,7 @@ public class TestModule implements java.io.Serializable, Comparable<TestModule> 
 	/**
 	 * @return the enable
 	 */
-	@Column(name = "P_ENABLE", columnDefinition = "boolean")
+	@Column(name = "P_ENABLE", columnDefinition = "number", length = 1)
 	public boolean isEnable() {
 		return enable;
 	}

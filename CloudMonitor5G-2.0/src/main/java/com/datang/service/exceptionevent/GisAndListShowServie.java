@@ -63,4 +63,18 @@ public interface GisAndListShowServie {
 	 */
 	public List<Cell5G> getNrCell(String nrFriendlyName);
 
+	/**
+	 * 根据区域获取小区
+	 * @param region
+	 * @return
+	 */
+	List<Cell5G> getCellsByRegion(String region);
+
+	/**
+	 * 根据区域获取小区
+	 * @param region
+	 * @return
+	 */
+	List<LteCell> getLteCellsByRegion(String region);
+
 }

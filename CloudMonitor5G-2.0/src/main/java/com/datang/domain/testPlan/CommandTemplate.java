@@ -197,7 +197,7 @@ public class CommandTemplate implements Serializable {
 	/**
 	 * @return the binary
 	 */
-	@Column(name = "BINARY_COLUMN")
+	@Column(name = "BINARY")
 	public String getBinary() {
 		return binary;
 	}

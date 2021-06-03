@@ -13,7 +13,20 @@
                	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
                	<param name="inputName">downloadTestLog</param>  
                	<!-- <param name="bufferSize">10240</param> --> 
-            </result> 
+            </result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>   
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+
+
+	<!-- 网络侧日志 -->
+	<package name="networkTestLogItem" namespace="/networkTestLogItem" extends="default">
+		<action name="*" class="networkTestLogItemAction" method="{1}">
+			<result name="listUI">/WEB-INF/testLog/networkTestLogList.jsp</result>
+			<result name="import">/WEB-INF/testLog/importNetworkTestLog.jsp</result>
 			<result name="json" type="json">
 				<param name="contentType">text/html</param>
 				<param name="ignoreHierarchy">false</param>
@@ -36,11 +49,46 @@
 		</action>
 	</package>
 	
-	<!-- 网络侧日志 -->
-	<package name="networkTestLogItem" namespace="/networkTestLogItem" extends="default">
-		<action name="*" class="networkTestLogItemAction" method="{1}">
-			<result name="listUI">/WEB-INF/testLog/networkTestLogList.jsp</result>
-			<result name="import">/WEB-INF/testLog/importNetworkTestLog.jsp</result>
+	<!-- 联通日志 -->
+	<package name="unicomLogItem" namespace="/unicomLogItem" extends="json-default">
+		<action name="*" class="unicomLogItemAction" method="{1}">
+			<result name="listUI">/WEB-INF/testLog/unicomLogList.jsp</result>
+			<result name="add">/WEB-INF/testLog/addReportTask.jsp</result>
+			<result name="dataOverview">/WEB-INF/testLog/dataOverview.jsp</result>
+			<result name="questionview">/WEB-INF/testLog/questionview.jsp</result>
+			<result name="downloadLog" type="stream">
+				<param name="contentType">application/octet-stream</param>  
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
+               	<param name="inputName">downloadTestLog</param>  
+            </result>
+			<result name="downloadFullCheck" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">downloadFullCheck</param>
+			</result>
+			<result name="downloadDataOverview" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">downloadDataOverview</param>
+			</result>
+			<result name="downloadMiddleOriginal" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">downloadMiddleOriginal</param>
+			</result>
+			<result name="downloadMiddleGrid" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">downloadMiddleGrid</param>
+			</result>
+
+			<result name="downloadQuestion" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">downloadQuestion</param>
+			</result>
+
+
 			<result name="json" type="json">
 				<param name="contentType">text/html</param>
 				<param name="ignoreHierarchy">false</param>

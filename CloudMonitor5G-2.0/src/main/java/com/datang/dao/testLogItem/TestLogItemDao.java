@@ -3,17 +3,10 @@
  */
 package com.datang.dao.testLogItem;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
 import com.datang.common.action.page.EasyuiPageList;
@@ -111,11 +104,11 @@ public class TestLogItemDao extends GenericHibernateDao<TestLogItem, Long> {
 					selectTestLogItemIds)));
 		}
 		criteria.add(Restrictions.or(Restrictions.eq("deleteTag", 0), Restrictions.isNull("deleteTag")));
+		criteria.addOrder(Order.desc("startDateLong"));
+		criteria.addOrder(Order.asc("fileName"));
 
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("startDateLong"));
-		criteria.addOrder(Order.asc("fileName"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
@@ -141,11 +134,49 @@ public class TestLogItemDao extends GenericHibernateDao<TestLogItem, Long> {
 		}
 		Criteria criteria = this.getHibernateSession().createCriteria(
 				TestLogItem.class);
-		criteria.add(Restrictions.in("recSeqNo", testLogIds));
+	//	criteria.add(Restrictions.in("recSeqNo", testLogIds));
+		criteria.add(Restrictions.or(getSetOr("recSeqNo",new HashSet<>(testLogIds))));
 		testLogItems = criteria.list();
 		return testLogItems;
 	}
-	
+
+
+	public  Criterion[] getSetOr(String propertyName, Set<Long> set){
+		int stemp = 900;
+		int all = set.size();
+		List<Criterion> list = new ArrayList<>();
+		if(set.size()>stemp){
+			Set<Long> idTemp = new HashSet<>();
+			int i = 0;
+			for(Long s:set){
+				i++;
+				idTemp.add(s);
+				if(i>=stemp){
+					i =0;
+					list.add(Restrictions.in(propertyName, new HashSet(idTemp)));
+					idTemp.clear();
+					all = all -stemp;
+				}else{
+
+				}
+
+			}
+			if(idTemp.size()>0){
+				list.add(Restrictions.in(propertyName, new HashSet(idTemp)));
+			}
+		}else {
+			list.add(Restrictions.in(propertyName, new HashSet(set)));
+		}
+		Criterion[] arr = new Criterion[list.size()];
+		for(int i=0;i<list.size();i++){
+			arr[i] = list.get(i);
+		}
+
+		return arr;
+	}
+
+
+
 	/**
 	 * 根据日志链接查询日志
 	 * @param filename

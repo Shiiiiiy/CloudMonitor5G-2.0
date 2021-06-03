@@ -1,0 +1,36 @@
+制式_业务类型,详细Sheet名,指标index，源index
+nr_voice,5G→4G 盲重定向过程,kpi1,NR_EVENT_A2_THRESHOLD_RSRP
+nr_voice,5G→4G 盲重定向过程,kpi2,NR_EVENT_A2_HYSTERIS
+nr_voice,5G→4G 盲重定向过程,kpi3,NR_EVENT_A2_TIME_TO_TRIGGER
+nr_voice,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi4,NR_EVENT_A2_THRESHOLD_RSRP
+nr_voice,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi5,NR_EVENT_A2_HYSTERIS
+nr_voice,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi6,NR_EVENT_A2_TIME_TO_TRIGGER
+nr_voice,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi7,NR_EVENT_B1_THRESHOLD_RSRP
+nr_voice,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi8,NR_EVENT_B1_HYSTERIS
+nr_voice,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi9,NR_EVENT_B1_TIME_TO_TRIGGER
+nr_data,5G→4G 盲重定向过程,kpi10,NR_EVENT_A2_THRESHOLD_RSRP
+nr_data,5G→4G 盲重定向过程,kpi11,NR_EVENT_A2_HYSTERIS
+nr_data,5G→4G 盲重定向过程,kpi12,NR_EVENT_A2_TIME_TO_TRIGGER
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi13,NR_EVENT_A2_THRESHOLD_RSRP
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi14,NR_EVENT_A2_HYSTERIS
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi15,NR_EVENT_A2_TIME_TO_TRIGGER
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi16,NR_EVENT_B1_THRESHOLD_RSRP
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi17,NR_EVENT_B1_HYSTERIS
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi18,NR_EVENT_B1_TIME_TO_TRIGGER
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi19,NR_EVENT_B2_THRESHOLD_RSRP
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi20,NR_EVENT_B2_HYSTERIS
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi21,NR_EVENT_B2_TIME_TO_TRIGGER
+nr_data,5G→4G 基于测量切换详情/5G→4G 基于测量重定向详情,kpi22,NR_EVENT_B2_THRESHOLD2EUTRA_RSRP
+lte_voice,4G→5G 基于测量重定向详情/4G→5G 盲重定向过程,kpi1,LTE_EVENT_B1_THRESHOLD_RSRP
+lte_voice,4G→5G 基于测量重定向详情/4G→5G 盲重定向过程,kpi2,LTE_EVENT_B1_HYSTERIS
+lte_voice,4G→5G 基于测量重定向详情/4G→5G 盲重定向过程,kpi3,LTE_EVENT_B1_TIME_TO_TRIGGER
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi4,LTE_EVENT_A2_THRESHOLD_RSRP
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi5,LTE_EVENT_A2_HYSTERIS
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi6,LTE_EVENT_A2_TIME_TO_TRIGGER
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi7,LTE_EVENT_B1_THRESHOLD_RSRP
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi8,LTE_EVENT_B1_HYSTERIS
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi9,LTE_EVENT_B1_TIME_TO_TRIGGER
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi10,LTE_EVENT_B2_THRESHOLD_RSRP
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi11,LTE_EVENT_B2_HYSTERIS
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi12,LTE_EVENT_B2_TIME_TO_TRIGGER
+lte_data,4G→5G 基于测量重定向详情/4G→5G 基于测量切换详情,kpi13,LTE_EVENT_B2_THRESHOLD2EUTRA_RSRP

@@ -285,6 +285,16 @@
 		<!-- first一级菜单,second二级菜单,third三级菜单 -->
 		<div class="main">
 			<ul>
+				<shiroextend:hasAnyPermissions name="activation:show">
+					<%-- <li class="first">
+						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/VoLTE_diss.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />活跃度查看</a>
+						<ul> 
+							<shiroextend:hasAnyPermissions name="activation:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="activationShowAction/goToActivationShowList.action">活跃度查看</a></li>
+							</shiroextend:hasAnyPermissions>
+						 </ul>
+					</li> --%>
+				</shiroextend:hasAnyPermissions>
 				<shiroextend:hasAnyPermissions  name="user:show,usergroup:show,projectparam:show,volteanalysisthreshold:show" >
 					<li class="first">
 						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/platform.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />平台管理</a>
@@ -314,6 +324,10 @@
 								<li class="second"><a href="javascript:void(0);"  >分析门限<div ></div></a>
 									<ul>
 										<shiroextend:hasAnyPermissions name="volteanalysisthreshold:show">
+											<!-- <li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="aboutThreshold/volteDissThresholdListUI">VoLTE专题分析门限</a></li>
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="aboutThreshold/streamDissThresholdListUI">流媒体专题分析门限</a></li> -->
+											<!-- <li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="contrastThreshold/contrastDissThresholdListUI">对比分析门限</a></li> -->
+											<!-- <li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="fgAnaThreshold/fgAnalysisThresholdListUI">参数设置</a></li> -->
 											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="coverageParam/weakCoverageParamListUI">弱覆盖参数设置</a></li>
 											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="coverageParam/overCoverageParamListUI">过覆盖参数设置</a></li>
 											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="coverageParam/overlayCoverageParamListUI">重叠覆盖参数设置</a></li>
@@ -357,6 +371,7 @@
 										<li class="second"><a href="javascript:void(0);" url="mosValue/listUI.action"  onclick="addTab(this);">MOS监控</a></li>
 										<li class="second"><a href="javascript:void(0);" url="status/listUI.action"  onclick="addTab(this);">终端状态监控</a></li>
 										<li class="second"><a href="javascript:void(0);" url="mapMonitor/listUI.action"  onclick="addTab(this);">地图监控</a></li>
+										<!-- <li class="second"><a href="javascript:void(0);" url="terminalInfo/listUI.action"  onclick="addTab(this);">终端信息监控</a></li> -->
 									 </ul>
 								</li>
 								<li class="second"><a href="javascript:void(0);" url="errorLogManage/errorLogManageListUI.action"  onclick="addTab(this);">错误日志管理</a></li>
@@ -372,19 +387,118 @@
 								<li class="second"><a href="javascript:void(0);" url="logUpload/listUI.action" onclick="addTab(this);">上传日志</a></li>
 							</shiroextend:hasAnyPermissions>
 							<li class="second"><a href="javascript:void(0);" url="testLogItem/testLogItemListUI.action"  onclick="addTab(this);">已完成日志</a></li>
+<!-- 							<li class="second"><a href="javascript:void(0);" url="testLogItem/unfinishedTestLogItemListUI.action" onclick="addTab(this);">未完成日志</a></li>
+							<li class="second"><a href="javascript:void(0);" url="networkTestLogItem/networkTestLogItemListUI.action" onclick="addTab(this);">网络侧日志</a></li> -->
 							<shiroextend:hasAnyPermissions name="stationVeri:show">
 								<li class="second"><a href="javascript:void(0);" url="stationVerificationTest/goToStationVerificationJsp.action" onclick="addTab(this);">单站验证日志</a></li>
 							</shiroextend:hasAnyPermissions>
+							<li class="second"><a href="javascript:void(0);" url="unicomLogItem/unicomLogItemListUI.action" onclick="addTab(this);">联通日志</a></li>
 <%-- 							<shiroextend:hasAnyPermissions name="testlogitem:upload">
 								<li class="second"><a href="javascript:void(0);" url="customeUploadTestLog/goToCustomReportLogJsp.action" onclick="addTab(this);">自定义报表日志</a></li>
 							</shiroextend:hasAnyPermissions> --%>
 						</ul>
 					</li>
 				</shiroextend:hasAnyPermissions>
+				<%-- <shiroextend:hasAnyPermissions name="voltetotal:show,voltecompare:show,voltevoicebadroad:show,continueWirelessBadRoad:show,voltevoicenotconnect:show,voltevoicedropcall:show,volteimsregistfail:show,voltecsfbfail:show,voltesrvcccutfail:show,voltesystemcutfail:show,callEstablishDelayException:show">
+					<li class="first">
+						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/VoLTE_diss.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />VoLTE专题</a>
+						<ul> 
+							<shiroextend:hasAnyPermissions name="voltetotal:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="volteWhole/wholePreList.action">VoLTE总体概览</a></li>
+							</shiroextend:hasAnyPermissions>
+							<shiroextend:hasAnyPermissions name="voltecompare:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="voiceCompare/goToCompareAnalysisListUI.action">VoLTE对比分析</a></li>
+							</shiroextend:hasAnyPermissions>
+							<shiroextend:hasAnyPermissions name="voltevoicebadroad:show,continueWirelessBadRoad:show,voltevideobadroad:show,voicertplosspage:show">
+								<li class="second"><a href="javascript:void(0);">VoLTE质量专题<div ></div></a>
+									<ul>
+										<shiroextend:hasAnyPermissions name="voltevoicebadroad:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="voiceQBR/goToqualityBadRoadList">VoLTE语音质差</a></li>
+										</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="continueWirelessBadRoad:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="volteCWBR/goTocontinueWirelessBadRoadList">连续无线差</a></li>
+									 	</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="voicertplosspage:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="lostPacket/goToLostPacketList">语音RTP连续丢包</a></li>
+									 	</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="voltevideobadroad:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="videoQuality/goTovideoQualityBadList">VOLTE视频质差</a></li>
+									 	</shiroextend:hasAnyPermissions>
+									 </ul>
+								</li>
+							</shiroextend:hasAnyPermissions>
+							<shiroextend:hasAnyPermissions name="voltevoicenotconnect:show,voltevoicedropcall:show,volteimsregistfail:show,voltecsfbfail:show,voltevideonotconnect:show,voltevideodropcall:show">
+								<li class="second"><a href="javascript:void(0);">VoLTE异常事件<div ></div></a>
+									<ul>
+										<shiroextend:hasAnyPermissions name="voltevoicenotconnect:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="voiceNotConnect/goToNotConnectList">VoLTE语音未接通</a></li>
+										</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="voltevoicedropcall:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="voiceDropCall/goToDropCallList">VoLTE语音掉话</a></li>
+										</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="volteimsregistfail:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="imsRegistFail/goToRegistFailList">IMS注册失败</a></li>
+										</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="voltecsfbfail:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="csfbFail/goToCsfbFailList">CSFB失败</a></li>
+									 	</shiroextend:hasAnyPermissions>
+									 	<shiroextend:hasAnyPermissions name="voltevideonotconnect:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="videoNotConnect/goToNotConnectList">VoLTE视频未接通</a></li>
+										</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="voltevideodropcall:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="videoDropCall/goToDropCallList">VoLTE视频掉话</a></li>
+										</shiroextend:hasAnyPermissions>
+									 </ul>
+								</li>
+							</shiroextend:hasAnyPermissions>
+							<shiroextend:hasAnyPermissions name="voltesrvcccutfail:show,voltesystemcutfail:show">
+								<li class="second"><a href="javascript:void(0);">VoLTE切换失败<div ></div></a>
+									<ul>
+										<shiroextend:hasAnyPermissions name="voltesrvcccutfail:show">
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="droppingSRVCC/goToDroppingSRVCCList">SRVCC切换失败</a></li>
+										</shiroextend:hasAnyPermissions>
+										<shiroextend:hasAnyPermissions name="voltesystemcutfail:show">	
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="droppingInt/goToDroppingIntList">系统内切换失败</a></li>
+									 	</shiroextend:hasAnyPermissions>
+									 </ul>
+								</li>
+							</shiroextend:hasAnyPermissions>
+							<shiroextend:hasAnyPermissions name="callEstablishDelayException:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="callEstablish/goToCallEstablishDelayExceptionList">呼叫建立时延异常</a></li>
+							</shiroextend:hasAnyPermissions>
+						 </ul>
+					</li>
+				</shiroextend:hasAnyPermissions> --%>
+				<%-- <shiroextend:hasAnyPermissions name="voltetotal:show">
+					<li class="first">
+						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/stream.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />流媒体专题</a>
+						<ul> 
+							<shiroextend:hasAnyPermissions name="voltetotal:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="streamWhole/wholePreList.action">流媒体总体概览</a></li>
+							</shiroextend:hasAnyPermissions>
+							<shiroextend:hasAnyPermissions name="voltecompare:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="streamQuality/goToStreamQualityBadList.action">流媒体视频质差</a></li>
+							</shiroextend:hasAnyPermissions>
+						</ul>
+					</li>
+				</shiroextend:hasAnyPermissions> --%>
+				<%-- <shiroextend:hasAnyPermissions name="basereport:show"> 
+					<li class="first">
+						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/analysis.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />统计分析</a>
+						<ul> 
+						<shiroextend:hasAnyPermissions name="basereport:show">
+							<li class="second"><a href="javascript:void(0);" url="report/listUI.action"  onclick="addTab(this);">基础统计</a></li>
+							</shiroextend:hasAnyPermissions>
+							<!-- <li class="second"><a href="javascript:void(0);" url="cqtReport/listUI.action"  onclick="addTab(this);">CQT统计</a></li>
+							<li class="second"><a href="javascript:void(0);" url="floorReport/listUI.action"  onclick="addTab(this);">楼宇统计</a></li> -->
+						</ul>
+					</li>
+				</shiroextend:hasAnyPermissions> --%>
 				<shiroextend:hasAnyPermissions name="basereport:show">
 					<li class="first">
 						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/analysis.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />统计分析</a>
 						<ul> 
+							<!-- <li class="second"><a href="javascript:void(0);" url="compareAnalysis5g/goToCompareAnalysis5gListUI.action"  onclick="addTab(this);">5G对比分析</a></li> -->
 							<li class="second"><a href="javascript:void(0);" url="report5g/listUI.action"  onclick="addTab(this);">5G基础统计</a></li>
 							<li class="second"><a href="javascript:void(0);" url="customeLogReport/listUI.action"  onclick="addTab(this);">自定义报表统计</a></li>
 						</ul>
@@ -394,6 +508,15 @@
 					<li class="first">
 						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/VoLTE_diss.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />专题分析</a>
 						<ul> 
+							<%-- <shiroextend:hasAnyPermissions name="voltevoicebadroad:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="embbCover5g/goToEmbbCoverBadRoadList.action">eMBB覆盖类专题分析</a></li>
+							</shiroextend:hasAnyPermissions>
+
+							<shiroextend:hasAnyPermissions name="voltevoicebadroad:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="qualityBadRoad5g/goToQualityBadRoad5gJSP.action">质差分析专题</a></li>
+							</shiroextend:hasAnyPermissions>
+
+							todo 异常事件专题分析 --%>
 							<shiroextend:hasAnyPermissions name="voltevoicebadroad:show">
 								<li class="second"><a href="javascript:void(0);">eMBB事件类专题分析</a>
 									<ul>
@@ -446,7 +569,19 @@
 						</ul>
 					</li>
 				</shiroextend:hasAnyPermissions>
-
+				<%-- <shiroextend:hasAnyPermissions name="CQTTask:show,stationTask:show">
+					<li class="first">
+						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/opposite3D.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />工单</a>
+						<ul> 
+							<shiroextend:hasAnyPermissions name="CQTTask:show">
+								<li class="second"><a href="javascript:void(0);" url="testTaskManage/listUI.action"  onclick="addTab(this);">指定测试</a></li>
+							</shiroextend:hasAnyPermissions>
+							<shiroextend:hasAnyPermissions name="stationTask:show">
+								<li class="second"><a href="javascript:void(0);" url="stationReportCreatTask/listUI.action"  onclick="addTab(this);">单验任务</a></li>
+							</shiroextend:hasAnyPermissions>
+						</ul>
+					</li>
+				</shiroextend:hasAnyPermissions> --%>
 				<shiroextend:hasAnyPermissions name="appTestInfoMonitor:show">
 					<li class="first">
 						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/realtimeMontitoring.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />实时监控</a>

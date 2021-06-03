@@ -64,10 +64,10 @@ public class EventDao extends GenericHibernateDao<RealtimeEvent, Long> {
 		if (eventCode != null) {
 			criteria.add(Restrictions.eq("eventCode", eventCode));
 		}
-		long total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
 		criteria.addOrder(Order.desc("eventTimeLong"));
 		criteria.addOrder(Order.asc("boxId"));
+		long total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

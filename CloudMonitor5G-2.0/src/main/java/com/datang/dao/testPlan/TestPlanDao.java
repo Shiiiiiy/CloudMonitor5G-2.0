@@ -209,10 +209,10 @@ public class TestPlanDao extends GenericHibernateDao<TestPlan, Integer> {
 		} else if(endTime != null){
 			criteria.add(Restrictions.lt("planSendDate", endTime));
 		}
-
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		autoTestUnitCriteria.addOrder(Order.desc("version"));
 		criteria.addOrder(Order.desc("sendDate"));
+
+		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

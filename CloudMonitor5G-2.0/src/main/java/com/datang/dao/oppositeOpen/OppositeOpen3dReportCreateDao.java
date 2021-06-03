@@ -94,10 +94,10 @@ public class OppositeOpen3dReportCreateDao extends GenericHibernateDao<Plan4GPar
 			}
 			criteria.add(Restrictions.eq(fieldName, Integer.valueOf(testStatus.toString())));
 		}
-
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		
 		criteria.addOrder(Order.desc("id"));
+
+		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

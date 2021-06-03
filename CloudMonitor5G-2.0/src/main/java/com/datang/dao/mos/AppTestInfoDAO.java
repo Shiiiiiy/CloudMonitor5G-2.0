@@ -54,9 +54,9 @@ public class AppTestInfoDAO extends GenericHibernateDao<AppTestInfo, Long> {
 		
 		Criteria createCriteria = getParam(pageList);
 		
+		createCriteria.addOrder(Order.desc("id"));
 		long total = (Long) createCriteria
 				.setProjection(Projections.rowCount()).uniqueResult();
-		createCriteria.addOrder(Order.desc("id"));
 		createCriteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

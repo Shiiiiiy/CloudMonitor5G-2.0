@@ -796,7 +796,7 @@ public class Command implements Serializable {
 	/**
 	 * @return the binary
 	 */
-	@Column(name = "BINARY_COLUMN")
+	@Column(name = "BINARY")
 	public String getBinary() {
 		return binary;
 	}
@@ -2133,7 +2133,7 @@ public class Command implements Serializable {
 		this.proxyPort = proxyPort;
 	}
 
-	@Column(name = "URLMUST")
+	@Column(name = "URLMUST",columnDefinition = "varchar2(1000)")
 	public String getUrlMust() {
 		return urlMust;
 	}
@@ -2142,7 +2142,7 @@ public class Command implements Serializable {
 		this.urlMust = urlMust;
 	}
 
-	@Column(name = "URLRANDOM")
+	@Column(name = "URLRANDOM",columnDefinition = "varchar2(1000)")
 	public String getUrlRandom() {
 		return urlRandom;
 	}

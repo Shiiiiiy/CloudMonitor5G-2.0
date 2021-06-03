@@ -65,9 +65,9 @@ public class CQTStatisticeTaskDao extends
 			criteria.add(Restrictions.le("creatDateLong", endDate.getTime()));
 		}
 
+		criteria.addOrder(Order.desc("creatDateLong"));
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("creatDateLong"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

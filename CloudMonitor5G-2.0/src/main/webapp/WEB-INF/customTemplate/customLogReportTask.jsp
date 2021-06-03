@@ -183,6 +183,10 @@
 			$("#beginDate").datetimebox('setValue',dateString); */
 			
 		}
+		
+		function add(){
+			goToPage('${pageContext.request.contextPath}/customeLogReport/goAdd.action?dPage=0');
+		}
 	</script>
   </head>
   
@@ -222,6 +226,7 @@
 			    	</form>
    			</div>
     		<div id="tb">
+    			<a class="easyui-linkbutton" style="width:80px;" data-options="iconCls:'icon-add',plain:true" onclick="add();">新增</a>
 				<a class="easyui-linkbutton" style="width:80px;" data-options="iconCls:'icon-remove',plain:true" onclick="delReport();">删除</a>
 			</div>
     	</div>

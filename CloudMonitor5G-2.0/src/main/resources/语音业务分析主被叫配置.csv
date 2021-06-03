@@ -1,0 +1,11 @@
+业务,触发事件,制式,FB方式,振铃事件,振铃时网络,呼叫类型
+主叫,Outgoing SIP Call Attempt,NR,,,NR,VoNR
+主叫,Outgoing SIP Call Attempt,LTE,,,LTE,VoLTE
+主叫,Outgoing SIP Call Attempt,NR,EPSFallBack Start,,,EPS FallBack
+主叫,CSFB Start MO,,,,,CSFB
+主叫,Outgoing Call Attempt,,,,,23G语音
+被叫,Incoming SIP Call Attempt,NR,,,,NR,VoNR
+被叫,Incoming SIP Call Attempt,LTE,,,LTE,VoLTE
+被叫,Incoming SIP Call Attempt,NR,EPSFallBack Start,,,EPS FallBack
+被叫,CSFB Start MT,,,,,CSFB
+被叫,Incoming Call Attempt,,,,,23G语音

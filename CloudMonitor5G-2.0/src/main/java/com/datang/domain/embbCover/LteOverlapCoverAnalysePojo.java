@@ -86,7 +86,15 @@ public class LteOverlapCoverAnalysePojo  implements Serializable{
 	 * 弱覆盖采样点SINR均值（dBm）
 	 */
 	private String sinr;
-	
+
+	private String bestncellrsrp;
+
+	private String gnumber;
+	private String gspace;
+	private String gibler;
+	private String grsrp;
+	private String gsinr;
+
 	/**
 	 * ibler平均值
 	 */
@@ -210,6 +218,40 @@ public class LteOverlapCoverAnalysePojo  implements Serializable{
 	public void setSinr(String sinr) {
 		this.sinr = sinr;
 	}
+
+	@Column(name = "LTE_GBESTNCELLRSRP")
+	public String getBestncellrsrp() {
+		return bestncellrsrp;
+	}
+
+	public void setBestncellrsrp(String bestncellrsrp) {
+		this.bestncellrsrp = bestncellrsrp;
+	}
+
+	@Column(name = "LTE_GNUMBER")
+	public String getGnumber() { return gnumber;}
+
+	public void setGnumber(String gnumber) { this.gnumber = gnumber; }
+
+	@Column(name = "LTE_GSPACE")
+	public String getGspace() {	return gspace;}
+
+	public void setGspace(String gspace) {	this.gspace = gspace;}
+
+	@Column(name = "LTE_GIBLER")
+	public String getGibler() {	return gibler;	}
+
+	public void setGibler(String gibler) { this.gibler = gibler;	}
+
+	@Column(name = "LTE_GRSRP")
+	public String getGrsrp() {return grsrp;	}
+
+	public void setGrsrp(String grsrp) {this.grsrp = grsrp;	}
+
+	@Column(name = "LTE_GSINR")
+	public String getGsinr() { return gsinr;}
+
+	public void setGsinr(String gsinr) {this.gsinr = gsinr;	}
 
 	@Column(name = "LTE_DIBLER")
 	public String getIbler() {

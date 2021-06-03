@@ -92,6 +92,8 @@ public class NrOverlapCoverAnalysePojo  implements Serializable{
 	 */
 	private String ibler;
 
+	private String bestncellrsrp;
+
 	@Column(name = "ID")
 	@Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -219,4 +221,10 @@ public class NrOverlapCoverAnalysePojo  implements Serializable{
 	public void setIbler(String ibler) {
 		this.ibler = ibler;
 	}
+
+	@Column(name = "NR_RBESTNCELLRSRP")
+	public String getBestncellrsrp() { return bestncellrsrp;	}
+
+	public void setBestncellrsrp(String bestncellrsrp) { this.bestncellrsrp = bestncellrsrp; }
+
 }

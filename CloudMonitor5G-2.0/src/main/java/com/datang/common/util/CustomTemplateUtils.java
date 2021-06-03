@@ -1,5 +1,7 @@
 package com.datang.common.util;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,10 +52,17 @@ public class CustomTemplateUtils {
 	private List<TemplateInfo> table2 = new ArrayList<TemplateInfo>();
 	private List<TemplateInfo> table3 = new ArrayList<TemplateInfo>();
 	private List<TemplateInfo> table4 = new ArrayList<TemplateInfo>();
+	private List<TemplateInfo> table5 = new ArrayList<TemplateInfo>();
+	private List<TemplateInfo> table6 = new ArrayList<TemplateInfo>();
+	private List<TemplateInfo> table7 = new ArrayList<TemplateInfo>();
     private int table1_row_start;
     private int table2_row_start;
     private int table3_row_start;
     private int table4_row_start;
+
+	private int table5_row_start;
+	private int table6_row_start;
+	private int table7_row_start;
     private TemplateInfo cur_template_info = new TemplateInfo();
     private int table_index = 1;//第几个表
     private int table_index2 = 0;//表中的位置
@@ -202,11 +212,17 @@ public class CustomTemplateUtils {
 	    table2.clear();
 	    table3.clear();
 	    table4.clear();
+		table5.clear();
+		table6.clear();
+		table7.clear();
 	    table1_row_start = 5;
 	    table2_row_start = 5;
 	    table3_row_start = 4;
 	    table4_row_start = 4;
-	    
+		table5_row_start = 4;
+		table6_row_start = 4;
+		table7_row_start = 4;
+
 	    boolean ret = false;
 	    if (is_dt)
 	    {
@@ -217,6 +233,9 @@ public class CustomTemplateUtils {
 	    	all_use_case.put(2, Arrays.asList(CustomReportConstant.DT_ALL_USE_CASE_2));
 	    	all_use_case.put(3, Arrays.asList(CustomReportConstant.DT_ALL_USE_CASE_3));
 	    	all_use_case.put(4, Arrays.asList(CustomReportConstant.DT_ALL_USE_CASE_4));
+			all_use_case.put(5, Arrays.asList(CustomReportConstant.DT_ALL_USE_CASE_5));
+			all_use_case.put(6, Arrays.asList(CustomReportConstant.DT_ALL_USE_CASE_6));
+			all_use_case.put(7, Arrays.asList(CustomReportConstant.DT_ALL_USE_CASE_7));
 	        WriteDtTemplate();
 	    }
 	    else
@@ -225,6 +244,9 @@ public class CustomTemplateUtils {
 	    	all_use_case.put(2, Arrays.asList(CustomReportConstant.CQT_ALL_USE_CASE_2));
 	    	all_use_case.put(3, Arrays.asList(CustomReportConstant.CQT_ALL_USE_CASE_3));
 	    	all_use_case.put(4, Arrays.asList(CustomReportConstant.CQT_ALL_USE_CASE_4));
+			all_use_case.put(5, Arrays.asList(CustomReportConstant.CQT_ALL_USE_CASE_5));
+			all_use_case.put(6, Arrays.asList(CustomReportConstant.CQT_ALL_USE_CASE_6));
+			all_use_case.put(7, Arrays.asList(CustomReportConstant.CQT_ALL_USE_CASE_7));
 	        WriteCqtTemplate();
 	    }
 	    table_index = 1;//第几个表
@@ -253,6 +275,12 @@ public class CustomTemplateUtils {
                 WriteTableDt(city.getValue(), tmp);
                 table_index = 4;
                 WriteTableDt(city.getValue(), tmp);
+				table_index = 5;
+				WriteTableDt(city.getValue(), tmp);
+				table_index = 6;
+				WriteTableDt(city.getValue(), tmp);
+				table_index = 7;
+				WriteTableDt(city.getValue(), tmp);
         	}
 		}
         log.debug("__FUNCTION__ << begin WriteDtTemplateImp");
@@ -373,6 +401,33 @@ public class CustomTemplateUtils {
 	                     tmp5.setContractorList(contractorList);
 	                     tmp5.setEquipementProducerList(equipementProducerList);
 	                     PushBack(tmp5);
+
+						 // ZWQ (报表增加 电联承建汇总  华为+爱立信+中兴     , 电联承建汇总  华为, 电联承建汇总  爱立信,   华为, 电联承建汇总 中兴)
+						 // 电联承建汇总  华为+爱立信+中兴（所有主设备，作用与主设备厂商汇总相同）
+						 if(contrator.equals("总体")) {
+							 TemplateInfo dianLianNew1 = tmp5.clone();
+							 dianLianNew1.setRow_index(GetRowIndex());
+							 ;
+							 dianLianNew1.setEquipement_producer(equipement_all);
+							 dianLianNew1.setContractor(CustomReportConstant.G_CONTRATOR_ALL_CQT);
+							 PushBack(dianLianNew1);
+							 // 电联承建汇总  华为(单个主设备)
+							 if (equipement_s.size() == 1) {
+								 continue;
+							 }
+							 for (String eq : equipement_s) {
+								 TemplateInfo dianLianNew2 = tmp5.clone();
+								 dianLianNew2.setRow_index(GetRowIndex());
+								 ;
+								 dianLianNew2.setContractor(CustomReportConstant.G_CONTRATOR_ALL_CQT);
+								 dianLianNew2.setEquipement_producer(eq);
+								 List<String> eeList = new ArrayList<>();
+								 eeList.add(eq);
+								 dianLianNew2.setEquipementProducerList(eeList);
+								 PushBack(dianLianNew2);
+							 }
+							 // ZWQ
+						 }
 	                     continue;
 	                 }
 	             }
@@ -457,6 +512,12 @@ public class CustomTemplateUtils {
                 WriteTableCqt(city.getValue(), tmp);
                 table_index = 4;
                 WriteTableCqt(city.getValue(), tmp);
+				table_index = 5;
+				WriteTableCqt(city.getValue(), tmp);
+				table_index = 6;
+				WriteTableCqt(city.getValue(), tmp);
+				table_index = 7;
+				WriteTableCqt(city.getValue(), tmp);
         	}
 		}
         log.debug("__FUNCTION__ << begin WriteCQTTemplateImp");
@@ -675,6 +736,7 @@ public class CustomTemplateUtils {
 	                            if (logs_contrator.isEmpty()){
 	                            	continue;
 	                            }
+
 	                            TemplateInfo tmp4 = tmp3.clone();
 	                            tmp4.setContractor(contrator);
 
@@ -723,7 +785,28 @@ public class CustomTemplateUtils {
 	        	                    tmp5.setContractorList(contractorList);
 	        	                    tmp5.setEquipementProducerList(equipementProducerList);
 	                                PushBack(tmp5);
-	                                continue;
+	                                // ZWQ (报表增加 电联承建汇总  华为+爱立信+中兴     , 电联承建汇总  华为, 电联承建汇总  爱立信,   华为, 电联承建汇总 中兴)
+									// 电联承建汇总  华为+爱立信+中兴（所有主设备，作用与主设备厂商汇总相同）
+									TemplateInfo dianLianNew1 = tmp5.clone();
+									dianLianNew1.setEquipement_producer(equipement_all);
+									dianLianNew1.setRow_index(GetRowIndex());
+									PushBack(dianLianNew1);
+									// 当只有一个主设备时 跳过单个设备一次循环
+									if(equipement_s.size()==1){
+										continue;
+									}
+									// 电联承建汇总  华为(单个主设备循环)
+									for(String eq: equipement_s){
+										TemplateInfo dianLianNew2 = tmp5.clone();
+										dianLianNew2.setEquipement_producer(eq);
+										dianLianNew2.setRow_index(GetRowIndex());
+										List<String> eeList = new ArrayList<>();
+										eeList.add(eq);
+										dianLianNew2.setEquipementProducerList(eeList);
+										PushBack(dianLianNew2);
+									}
+									// ZWQ 
+									continue;
 	                            }
 	                        }
 	                        //联通承建 电信承建
@@ -889,7 +972,10 @@ public class CustomTemplateUtils {
 	        List<TestLogInfo> v3 = new ArrayList<TestLogInfo>();
 	        if (tli.getContractor().equals("总体")){
 	        	 v3 = v0;
-	        }else{
+	        }else if(CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(tli.getContractor())){
+				v3.addAll(FindLogsByContractor(v0, "电信"));
+				v3.addAll(FindLogsByContractor(v0, "联通"));
+			}else{
 	        	 v3 = FindLogsByContractor(v0, tli.getContractor());
 	        }
 	        if (v3.isEmpty()) return v3;
@@ -946,8 +1032,351 @@ public class CustomTemplateUtils {
 	        }       
 	    }
 	}
-	
-	
+
+	public void clearCellValue(Row targetRow,int targetColumn){
+		Cell cell = targetRow.getCell(targetColumn);
+		if(cell!=null){
+			cell.setCellValue("");
+		}
+	}
+
+
+	private BigDecimal getBigDecimalValue(String value){
+
+		BigDecimal returnValue = BigDecimal.ZERO;
+		try {
+			returnValue = new BigDecimal(value);
+		}catch (Exception e){
+			log.warn("非数字类型:"+value);
+		}
+		return returnValue;
+	}
+
+	private void setCellValue(Workbook workbook,List<TemplateInfo> table,DataInfo dataInfos,int targetColumn){
+
+		if (table.size()<1) {
+			return;
+		}
+		//汇总表
+		Sheet sheetSummary = workbook.getSheetAt(1);
+
+		Row rowSummary = sheetSummary.getRow(dataInfos.getTargetRow()-1);
+		Cell targetCell =  null;
+		if(rowSummary!= null ){
+			targetCell = rowSummary.getCell(targetColumn-1);
+		}
+
+		if (targetCell ==null) {
+			return;
+		}
+		Sheet sheetAt = workbook.getSheetAt(table.get(0).getSheet_index());
+
+		BigDecimal sum =BigDecimal.ZERO;
+		for (TemplateInfo t : table) {
+			Row resourceRow = sheetAt.getRow(t.getRow_index());
+			if(resourceRow==null){
+				continue;
+			}
+			for (String column : dataInfos.getResourceColumns()) {
+				Cell createCell = resourceRow.getCell(numberTransform2(column)-1);
+				if(createCell!=null){
+					String cellValue = getCellValue(createCell);
+					sum = sum.add(getBigDecimalValue(cellValue));
+				}
+			}
+		}
+
+		if (sum.compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+
+		BigDecimal resultValue = null;
+		if(dataInfos.getType() == DataInfo.Type.Average && table.size() > 1){
+			BigDecimal average = sum.divide(new BigDecimal(table.size()),4,BigDecimal.ROUND_HALF_UP);
+			resultValue = average;
+		}else{
+			resultValue = sum.setScale(2,BigDecimal.ROUND_HALF_UP);
+		}
+
+		if( resultValue!=null){
+			DecimalFormat format = new DecimalFormat();
+			format.applyPattern(dataInfos.getPrevision());
+			String value = format.format(resultValue.doubleValue());
+			targetCell.setCellValue(value);
+		}
+	}
+
+	public void cqtSummary2(Workbook workbook, String[] use_case1,List<TemplateInfo> table, DataInfo[] dataInfos){
+
+		List<String> cases = Arrays.asList(use_case1);
+		List<TemplateInfo> templateInfos = table.stream().filter(a->cases.contains(a.getTest_case_s())).collect(Collectors.toList());
+		//联通整体汇总
+		List<TemplateInfo> union = new ArrayList<>();
+		templateInfos.forEach(t->{
+			if(CustomReportConstant.G_CARD_UNICOM.equals(t.getTest_card()) &&  CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(t.getContractor()) ){
+				union.add(t);
+			}
+		});
+		for (DataInfo dataInfo : dataInfos) {
+			setCellValue(workbook,union,dataInfo,6);
+		}
+
+	}
+
+
+	public void cqtSummary(Workbook workbook, String[] use_case1,List<TemplateInfo> table, DataInfo[] dataInfos){
+
+		List<String> cases = Arrays.asList(use_case1);
+
+		List<TemplateInfo> templateInfos = table.stream().filter(a->cases.contains(a.getTest_case_s())).collect(Collectors.toList());
+
+		//移动整体汇总
+		List<TemplateInfo> mobile = new ArrayList<>();
+		//电信整体汇总
+		List<TemplateInfo> telcom = new ArrayList<>();
+		//联通整体汇总
+		List<TemplateInfo> union = new ArrayList<>();
+
+		//联通测试卡
+		List<TemplateInfo> unionTestCard = new ArrayList<>();
+
+		templateInfos.forEach(t->{
+			if(CustomReportConstant.G_CARD_UNICOM.equals(t.getTest_card())  ){
+				if(CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(t.getContractor()) && "主设备厂商汇总".equals(t.getEquipement_producer()) ){
+					union.add(t);
+				}
+				unionTestCard.add(t);
+			}else if(CustomReportConstant.G_CARD_TELCOM.equals(t.getTest_card()) &&  CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(t.getContractor()) && "主设备厂商汇总".equals(t.getEquipement_producer())){
+				telcom.add(t);
+			}else if(CustomReportConstant.G_CARD_MOBILE.equals(t.getTest_card()) &&  CustomReportConstant.CQT_CONTRATOR_ALL_MOBILE.equals(t.getContractor()) && "主设备厂商汇总".equals(t.getEquipement_producer())){
+				mobile.add(t);
+			}
+		});
+
+		//联通承建
+		List<TemplateInfo> unionContract = new ArrayList<>();
+		//电信承建
+		List<TemplateInfo> telcomContract = new ArrayList<>();
+
+		//华为主设备
+		List<TemplateInfo> huawei = new ArrayList<>();
+		//中兴主设备
+		List<TemplateInfo> zhongxing = new ArrayList<>();
+		//爱立信主设备
+		List<TemplateInfo> ailixin = new ArrayList<>();
+		//大唐主设备
+		List<TemplateInfo> datang = new ArrayList<>();
+
+		//华为主设备+联通承建
+		List<TemplateInfo> huaweiUnion = new ArrayList<>();
+		//中兴主设备+联通承建
+		List<TemplateInfo> zhongxingUnion = new ArrayList<>();
+		//爱立信主设备+联通承建
+		List<TemplateInfo> ailixinUnion = new ArrayList<>();
+		//大唐主设备+联通承建
+		List<TemplateInfo> datangUnion = new ArrayList<>();
+		//华为主设备+电信承建
+		List<TemplateInfo> huaweiTelcom = new ArrayList<>();
+		//中兴主设备+电信承建
+		List<TemplateInfo> zhongxingTelcom = new ArrayList<>();
+		//爱立信主设备+电信承建
+		List<TemplateInfo> ailixinTelcom = new ArrayList<>();
+		//大唐主设备+电信承建
+		List<TemplateInfo> datangTelcom = new ArrayList<>();
+
+
+		for (TemplateInfo t : unionTestCard) {
+
+			if("电信承建汇总".equals(t.getContractor())){
+				telcomContract.add(t);
+			}else if("联通承建汇总".equals(t.getContractor())){
+				unionContract.add(t);
+			}
+
+
+			if("电信承建".equals(t.getContractor())  && CustomReportConstant.G_SCENE_ALL.equals(t.getScene_type1())){
+
+				if("华为".equals(t.getEquipement_producer())){
+					huawei.add(t);
+					huaweiTelcom.add(t);
+				}else if("中兴".equals(t.getEquipement_producer())){
+					zhongxing.add(t);
+					zhongxingTelcom.add(t);
+				}else if("爱立信".equals(t.getEquipement_producer())){
+					ailixin.add(t);
+					ailixinTelcom.add(t);
+				}else if("大唐".equals(t.getEquipement_producer())){
+					datang.add(t);
+					datangTelcom.add(t);
+				}
+			}
+			if("联通承建".equals(t.getContractor()) && CustomReportConstant.G_SCENE_ALL.equals(t.getScene_type1())){
+				if("华为".equals(t.getEquipement_producer())){
+					huawei.add(t);
+					huaweiUnion.add(t);
+				}else if("中兴".equals(t.getEquipement_producer())){
+					zhongxing.add(t);
+					zhongxingUnion.add(t);
+				}else if("爱立信".equals(t.getEquipement_producer())){
+					ailixin.add(t);
+					ailixinUnion.add(t);
+				}else if("大唐".equals(t.getEquipement_producer())){
+					datang.add(t);
+					datangUnion.add(t);
+				}
+			}
+		}
+
+		for (DataInfo dataInfo : dataInfos) {
+			setCellValue(workbook,mobile,dataInfo,6);
+			setCellValue(workbook,telcom,dataInfo,7);
+			setCellValue(workbook,union,dataInfo,8);
+			setCellValue(workbook,unionContract,dataInfo,9);
+			setCellValue(workbook,telcomContract,dataInfo,10);
+			setCellValue(workbook,huawei,dataInfo,11);
+			setCellValue(workbook,zhongxing,dataInfo,12);
+			setCellValue(workbook,ailixin,dataInfo,13);
+			setCellValue(workbook,datang,dataInfo,14);
+			setCellValue(workbook,huaweiUnion,dataInfo,15);
+			setCellValue(workbook,zhongxingUnion,dataInfo,16);
+			setCellValue(workbook,ailixinUnion,dataInfo,17);
+			setCellValue(workbook,datangUnion,dataInfo,18);
+			setCellValue(workbook,huaweiTelcom,dataInfo,19);
+			setCellValue(workbook,zhongxingTelcom,dataInfo,20);
+			setCellValue(workbook,ailixinTelcom,dataInfo,21);
+			setCellValue(workbook,datangTelcom,dataInfo,22);
+		}
+
+	}
+
+
+
+
+	public void dtSummary(Workbook workbook, String[] use_case1,List<TemplateInfo> table, DataInfo[] dataInfos){
+
+		List<String> cases = Arrays.asList(use_case1);
+
+		List<TemplateInfo> templateInfos = table.stream().filter(a->cases.contains(a.getTest_case_s())).collect(Collectors.toList());
+
+		//移动整体汇总
+		List<TemplateInfo> mobile = new ArrayList<>();
+		//电信整体汇总
+		List<TemplateInfo> telcom = new ArrayList<>();
+		//联通整体汇总
+		List<TemplateInfo> union = new ArrayList<>();
+
+		//联通测试卡
+		List<TemplateInfo> unionTestCard = new ArrayList<>();
+
+		templateInfos.forEach(t->{
+			if(CustomReportConstant.G_CARD_UNICOM.equals(t.getTest_card())  ){
+				if(CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(t.getContractor())){
+					union.add(t);
+				}
+				unionTestCard.add(t);
+			}else if(CustomReportConstant.G_CARD_TELCOM.equals(t.getTest_card()) &&  CustomReportConstant.G_CONTRATOR_ALL_CQT.equals(t.getContractor())){
+				telcom.add(t);
+			}else if(CustomReportConstant.G_CARD_MOBILE.equals(t.getTest_card()) &&  CustomReportConstant.CQT_CONTRATOR_ALL_MOBILE.equals(t.getContractor()) ){
+				mobile.add(t);
+			}
+		});
+
+		//联通承建
+		List<TemplateInfo> unionContract = new ArrayList<>();
+		//电信承建
+		List<TemplateInfo> telcomContract = new ArrayList<>();
+
+		//华为主设备
+		List<TemplateInfo> huawei = new ArrayList<>();
+		//中兴主设备
+		List<TemplateInfo> zhongxing = new ArrayList<>();
+		//爱立信主设备
+		List<TemplateInfo> ailixin = new ArrayList<>();
+		//大唐主设备
+		List<TemplateInfo> datang = new ArrayList<>();
+
+		//华为主设备+联通承建
+		List<TemplateInfo> huaweiUnion = new ArrayList<>();
+		//中兴主设备+联通承建
+		List<TemplateInfo> zhongxingUnion = new ArrayList<>();
+		//爱立信主设备+联通承建
+		List<TemplateInfo> ailixinUnion = new ArrayList<>();
+		//大唐主设备+联通承建
+		List<TemplateInfo> datangUnion = new ArrayList<>();
+		//华为主设备+电信承建
+		List<TemplateInfo> huaweiTelcom = new ArrayList<>();
+		//中兴主设备+电信承建
+		List<TemplateInfo> zhongxingTelcom = new ArrayList<>();
+		//爱立信主设备+电信承建
+		List<TemplateInfo> ailixinTelcom = new ArrayList<>();
+		//大唐主设备+电信承建
+		List<TemplateInfo> datangTelcom = new ArrayList<>();
+
+
+		for (TemplateInfo t : unionTestCard) {
+
+			if("电信承建总体".equals(t.getContractor())){
+				telcomContract.add(t);
+			}else if("联通承建总体".equals(t.getContractor())){
+				unionContract.add(t);
+			}
+
+			if("电信承建".equals(t.getContractor()) ){
+
+				if("华为".equals(t.getEquipement_producer())){
+					huawei.add(t);
+					huaweiTelcom.add(t);
+				}else if("中兴".equals(t.getEquipement_producer())){
+					zhongxing.add(t);
+					zhongxingTelcom.add(t);
+				}else if("爱立信".equals(t.getEquipement_producer())){
+					ailixin.add(t);
+					ailixinTelcom.add(t);
+				}else if("大唐".equals(t.getEquipement_producer())){
+					datang.add(t);
+					datangTelcom.add(t);
+				}
+			}
+			if("联通承建".equals(t.getContractor())){
+				if("华为".equals(t.getEquipement_producer())){
+					huawei.add(t);
+					huaweiUnion.add(t);
+				}else if("中兴".equals(t.getEquipement_producer())){
+					zhongxing.add(t);
+					zhongxingUnion.add(t);
+				}else if("爱立信".equals(t.getEquipement_producer())){
+					ailixin.add(t);
+					ailixinUnion.add(t);
+				}else if("大唐".equals(t.getEquipement_producer())){
+					datang.add(t);
+					datangUnion.add(t);
+				}
+			}
+		}
+
+		for (DataInfo dataInfo : dataInfos) {
+			setCellValue(workbook,mobile,dataInfo,6);
+			setCellValue(workbook,telcom,dataInfo,7);
+			setCellValue(workbook,union,dataInfo,8);
+			setCellValue(workbook,unionContract,dataInfo,9);
+			setCellValue(workbook,telcomContract,dataInfo,10);
+			setCellValue(workbook,huawei,dataInfo,11);
+			setCellValue(workbook,zhongxing,dataInfo,12);
+			setCellValue(workbook,ailixin,dataInfo,13);
+			setCellValue(workbook,datang,dataInfo,14);
+			setCellValue(workbook,huaweiUnion,dataInfo,15);
+			setCellValue(workbook,zhongxingUnion,dataInfo,16);
+			setCellValue(workbook,ailixinUnion,dataInfo,17);
+			setCellValue(workbook,datangUnion,dataInfo,18);
+			setCellValue(workbook,huaweiTelcom,dataInfo,19);
+			setCellValue(workbook,zhongxingTelcom,dataInfo,20);
+			setCellValue(workbook,ailixinTelcom,dataInfo,21);
+			setCellValue(workbook,datangTelcom,dataInfo,22);
+		}
+
+	}
+
+
 	/**
 	 * DT报告汇总sheet插入
 	 * @author lucheng
@@ -1283,7 +1712,19 @@ public class CustomTemplateUtils {
     		for (TemplateInfo info: table4) {
 				info.setSheet_index(sheetIndex);
 			}
-    	}
+    	}else if (5 == table_index){
+			for (TemplateInfo info: table5) {
+				info.setSheet_index(sheetIndex);
+			}
+		}else if (6 == table_index){
+			for (TemplateInfo info: table6) {
+				info.setSheet_index(sheetIndex);
+			}
+		}else if (7 == table_index){
+			for (TemplateInfo info: table7) {
+				info.setSheet_index(sheetIndex);
+			}
+		}
     	table_index = 1;
     }
     
@@ -1305,6 +1746,12 @@ public class CustomTemplateUtils {
     		table3.add(tmp);
     	else if (4 == table_index)
     		table4.add(tmp);
+		else if (5 == table_index)
+			table5.add(tmp);
+		else if (6 == table_index)
+			table6.add(tmp);
+		else if (7 == table_index)
+			table7.add(tmp);
     	else
     		return;
     }
@@ -1318,6 +1765,12 @@ public class CustomTemplateUtils {
             return table3_row_start++;
         else if (4 == table_index)
             return table4_row_start++;
+		else if (5 == table_index)
+			return table5_row_start++;
+		else if (6 == table_index)
+			return table6_row_start++;
+		else if (7 == table_index)
+			return table7_row_start++;
         else
             return 100;
     }
@@ -1449,6 +1902,32 @@ public class CustomTemplateUtils {
 		this.table4 = table4;
 	}
 
+
+	public List<TemplateInfo> getTable5() {
+		return table5;
+	}
+
+	public void setTable5(List<TemplateInfo> table5) {
+		this.table5 = table5;
+	}
+
+	public List<TemplateInfo> getTable6() {
+		return table6;
+	}
+
+	public void setTable6(List<TemplateInfo> table6) {
+		this.table6 = table6;
+	}
+
+	public List<TemplateInfo> getTable7() {
+		return table7;
+	}
+
+	public void setTable7(List<TemplateInfo> table7) {
+		this.table7 = table7;
+	}
+
+
 	public int getTable1_row_start() {
 		return table1_row_start;
 	}
@@ -1480,6 +1959,32 @@ public class CustomTemplateUtils {
 	public void setTable4_row_start(int table4_row_start) {
 		this.table4_row_start = table4_row_start;
 	}
+
+
+	public int getTable5_row_start() {
+		return table5_row_start;
+	}
+
+	public void setTable5_row_start(int table5_row_start) {
+		this.table5_row_start = table5_row_start;
+	}
+
+	public int getTable6_row_start() {
+		return table6_row_start;
+	}
+
+	public void setTable6_row_start(int table6_row_start) {
+		this.table6_row_start = table6_row_start;
+	}
+
+	public int getTable7_row_start() {
+		return table7_row_start;
+	}
+
+	public void setTable7_row_start(int table7_row_start) {
+		this.table7_row_start = table7_row_start;
+	}
+
 
 	public TemplateInfo getCur_template_info() {
 		return cur_template_info;

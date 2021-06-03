@@ -8,6 +8,14 @@ public class StatisticeTaskRequest implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 274653069108830834L;
+
+	private String prov;
+	private String city;
+	/**
+	 * 0 通用模板 调用ZMQ 后台维护任务状态
+	 * 1 分析模板 自己维护
+	 * */
+	private String reportType;
 	private Long id;
 	/**
 	 * 创建人
@@ -60,8 +68,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
-	 *            id to set
+	 * @param id to set
 	 */
 
 	public void setId(Long id) {
@@ -76,7 +83,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            createrName to set
 	 */
 
@@ -92,7 +99,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            name to set
 	 */
 
@@ -108,7 +115,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            beginDate to set
 	 */
 
@@ -124,7 +131,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            endDate to set
 	 */
 
@@ -140,7 +147,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            testRank to set
 	 */
 
@@ -156,7 +163,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            collectType to set
 	 */
 
@@ -172,7 +179,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            cityIds to set
 	 */
 
@@ -188,7 +195,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            boxIds to set
 	 */
 
@@ -204,7 +211,7 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            logIds to set
 	 */
 
@@ -228,12 +235,36 @@ public class StatisticeTaskRequest implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            cityNames to set
 	 */
 
 	public void setCityNames(String cityNames) {
 		this.cityNames = cityNames;
+	}
+
+	public String getProv() {
+		return prov;
+	}
+
+	public void setProv(String prov) {
+		this.prov = prov;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getReportType() {
+		return reportType;
+	}
+
+	public void setReportType(String reportType) {
+		this.reportType = reportType;
 	}
 
 	/* *
@@ -253,8 +284,24 @@ public class StatisticeTaskRequest implements Serializable {
 
 	/* *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
+
+	public static boolean typeIsAnylyFileReport(String reportType){
+		// 分析日志
+		if(reportType!=null && reportType.equals("1")) {
+			return true;
+		}
+		return false;
+	}
+
+	public static String typeIsAnylyFileReport(boolean bool){
+		// 分析日志
+		if(bool) {
+			return "1";
+		}
+		return "";
+	}
 
 }

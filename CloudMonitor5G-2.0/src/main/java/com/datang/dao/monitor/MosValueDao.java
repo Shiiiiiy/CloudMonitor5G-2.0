@@ -68,9 +68,9 @@ public class MosValueDao extends GenericHibernateDao<MosValue, Long> {
 		if (ueNo != null) {
 			criteria.add(Restrictions.eq("channelNo", ueNo));
 		}
+		criteria.addOrder(Order.desc("mosTimeLong"));
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("mosTimeLong"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

@@ -4,6 +4,7 @@
  */
 package com.datang.domain.testManage.terminal;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -354,7 +355,7 @@ public class Terminal implements java.io.Serializable, Comparable<Terminal> {
 	/**
 	 * @return the enable
 	 */
-	@Column(name = "P_ENABLE", columnDefinition = "boolean")
+	@Column(name = "P_ENABLE", columnDefinition = "number", length = 1)
 	public boolean isEnable() {
 		return enable;
 	}
@@ -380,7 +381,7 @@ public class Terminal implements java.io.Serializable, Comparable<Terminal> {
 	 * 
 	 * @return the online
 	 */
-	@Column(name = "P_ONLINE", columnDefinition = "boolean")
+	@Column(name = "P_ONLINE", columnDefinition = "number", length = 1)
 	public boolean isOnline() {
 		return online;
 	}
@@ -444,6 +445,12 @@ public class Terminal implements java.io.Serializable, Comparable<Terminal> {
 
 	@Transient
 	public String getInstallDateFormt() {
+		if(installDateFormt==null && installDate!=null){
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date installTime = new Date(installDate);
+			String time = simpleDateFormat.format(installTime);
+			return time;
+		}
 		return installDateFormt;
 	}
 
@@ -749,6 +756,45 @@ public class Terminal implements java.io.Serializable, Comparable<Terminal> {
 
 	public void setOnlineStr(String onlineStr) {
 		this.onlineStr = onlineStr;
+	}
+
+
+
+	private String longitude;
+	private String latitude;
+	private String fileName;
+	private String exception;
+	@Transient
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+	@Transient
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+	@Transient
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	@Transient
+	public String getException() {
+		return exception;
+	}
+
+	public void setException(String exception) {
+		this.exception = exception;
 	}
 
 	/*

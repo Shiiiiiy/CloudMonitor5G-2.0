@@ -92,7 +92,7 @@ $(function(){
 				}
 			,"json");
 	}
-/* 	var templateIds='${statisticeTask.templateIds}';
+ 	var templateIds='${statisticeTask.templateIds}';
 	if(null!=templateIds){
 		$.post("${pageContext.request.contextPath}/report5g/getReportTemplate.action?templateIds="+templateIds+"",
 				function(result){
@@ -105,7 +105,7 @@ $(function(){
 					}
 				}
 			,"json");
-	} */
+	}
 	
 	var timee='${statisticeTask.beginDate}';
 	if(timee==null||timee.length==0){
@@ -573,7 +573,7 @@ $(function(){
 	    			    	<!-- <a iconCls="icon-add" class="easyui-linkbutton" style="width:138px;margin:2px 2px 2px 0;" onclick="addLog();" >添加</a><a iconCls="icon-cancel" class="easyui-linkbutton" style="width:138px;margin:2px 0px 2px 2px;" onclick="del(3);" >删除</a> -->
 				    	</div>
 				    	
-				    	<!-- <div class="inputDivShow"><font color="red">*</font>报表模板
+				    	<div class="inputDivShow"><font color="red">*</font>报表模板
 				    	<br>
 				    		<table  id="templateTab"class="easyui-datagrid" style="width:280px;height:100px">
 	    			    		<thead>
@@ -583,8 +583,8 @@ $(function(){
 									</tr>
 						    	</thead>
 	    			    	</table>
-	    			    	<a iconCls="icon-add" class="easyui-linkbutton" style="width:138px;margin:2px 2px 2px 0;" onclick="addTemplate();" >添加</a><a iconCls="icon-cancel" class="easyui-linkbutton" style="width:138px;margin:2px 0px 2px 2px;" onclick="del(4);" >删除</a>
-				    	</div> -->
+	    			    	<!-- <a iconCls="icon-add" class="easyui-linkbutton" style="width:138px;margin:2px 2px 2px 0;" onclick="addTemplate();" >添加</a><a iconCls="icon-cancel" class="easyui-linkbutton" style="width:138px;margin:2px 0px 2px 2px;" onclick="del(4);" >删除</a> -->
+				    	</div>
       					</div>
        				<input  type="hidden"    name="statisticeTaskRequest.id" value="${statisticeTask.id}"  id="id">
 					<input  type="hidden"  name="statisticeTaskRequest.cityIds" value="${statisticeTask.cityIds}"  id="cityIds">
@@ -638,7 +638,7 @@ $(function(){
      		</div>
         </div>
         
-<!--         <div id="winTemplate" class="easyui-dialog"  title="添加报表模板" style="width:600px;height:400px;"data-options="buttons:'#template-buttons',onMove:onDrag,collapsible:false,minimizable:false,maximizable:false,modal:true,closed:true">
+        <div id="winTemplate" class="easyui-dialog"  title="添加报表模板" style="width:600px;height:400px;"data-options="buttons:'#template-buttons',onMove:onDrag,collapsible:false,minimizable:false,maximizable:false,modal:true,closed:true">
 	    	<table  id="templateTab2"class="easyui-datagrid" data-options="fit:true,border:false,scrollbarSize:0,fit:true,striped:true,fitColumns:true" >
  				<thead>
 					<tr>
@@ -652,7 +652,7 @@ $(function(){
 				<a iconCls="icon-ok" class="easyui-linkbutton" onclick="add(4);"  >确定</a>
    				<a class="easyui-linkbutton" iconCls="icon-undo" onclick="clean(4);" >取消</a>
      		</div>
-        </div> -->
+        </div>
         
 	   	<div data-options="region:'south',border:false" style="height:40px;">
 		   	<table width="100%" style="border-top:1px solid #95b8e7;">

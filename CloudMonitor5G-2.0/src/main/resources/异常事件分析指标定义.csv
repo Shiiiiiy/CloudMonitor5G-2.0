@@ -1,0 +1,13 @@
+制式,kpi英文,kpi英文中文,公式
+LTE,avgrsrp,事件前2s RSRP均值,avg(40028)
+LTE,minrsrp,事件前2s RSRP最低值,min(40028)
+LTE,avgsinr,事件前2s SINR均值,avg(40035)
+LTE,minsinr,事件前2s SINR最低值,min(40035)
+LTE,avgtxpower,事件前2sTxPower均值(pusch),avg(40056)
+LTE,avgcqiwb,事件前2sCQI WB均值,avg(43368)
+NR,avgrsrp,事件前2s RSRP均值,avg(50055)
+NR,minrsrp,事件前2s RSRP最低值,min(50055)
+NR,avgsinr,事件前2s SINR均值,avg(50056)
+NR,minsinr,事件前2s SINR最低值,min(50056)
+NR,avgtxpower,事件前2sTxPower均值(pusch),avg(50097)
+NR,avgcqiwb,事件前2sCQI WB均值,avg(74214)

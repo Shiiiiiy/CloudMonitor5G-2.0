@@ -473,7 +473,7 @@ public class VolteVoiceRTPLostPacket implements Serializable {
 	// /**
 	// * @return the isCallingisCalling
 	// */
-	// @Column(name = "IS_CALLING", columnDefinition = "boolean")
+	// @Column(name = "IS_CALLING", columnDefinition = "number", length = 1)
 	// public boolean getIsCalling() {
 	// return isCalling;
 	// }
@@ -489,7 +489,7 @@ public class VolteVoiceRTPLostPacket implements Serializable {
 	/**
 	 * @return the hasNetworkTestLogItemhasNetworkTestLogItem
 	 */
-	@Column(name = "HAS_NETWORK_LOG", columnDefinition = "boolean")
+	@Column(name = "HAS_NETWORK_LOG", columnDefinition = "number", length = 1)
 	@JSON(serialize = false)
 	public boolean getHasNetworkTestLogItem() {
 		return hasNetworkTestLogItem;

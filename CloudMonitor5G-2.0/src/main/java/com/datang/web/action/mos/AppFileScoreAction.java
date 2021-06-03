@@ -3,48 +3,21 @@
  */
 package com.datang.web.action.mos;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
-
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.junit.Test;
+import com.datang.common.action.page.AbstractPageList;
+import com.datang.common.action.page.PageAction;
+import com.datang.common.action.page.PageList;
+import com.datang.domain.mos.AppTestInfo;
+import com.datang.service.mos.IAppService;
+import com.datang.web.action.ReturnType;
+import com.opensymphony.xwork2.ActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import com.datang.common.action.page.AbstractPageList;
-import com.datang.common.action.page.PageAction;
-import com.datang.common.action.page.PageList;
-import com.datang.common.util.StringUtils;
-import com.datang.domain.mos.AppTestInfo;
-import com.datang.domain.testManage.terminal.Terminal;
-import com.datang.service.mos.IAppService;
-import com.datang.web.action.ReturnType;
-import com.opensymphony.xwork2.ActionContext;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * app文件打分接口

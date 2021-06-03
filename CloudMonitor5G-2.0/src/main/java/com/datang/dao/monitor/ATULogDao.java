@@ -60,9 +60,9 @@ public class ATULogDao extends GenericHibernateDao<ATULoginLogItem, Long> {
 
 			criteria.add(Restrictions.in("boxId", boxIdsSet));
 		}
+		criteria.addOrder(Order.desc("loginTimeLong"));
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("loginTimeLong"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

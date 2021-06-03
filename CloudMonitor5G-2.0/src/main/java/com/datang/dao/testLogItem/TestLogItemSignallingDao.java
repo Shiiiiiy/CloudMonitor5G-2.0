@@ -55,10 +55,10 @@ public class TestLogItemSignallingDao extends
 		if (null != pageList.getParam("endTime")) {
 			criteria.add(Restrictions.le("time", pageList.getParam("endTime")));
 		}
+		criteria.addOrder(Order.asc("time"));
 
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.asc("time"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

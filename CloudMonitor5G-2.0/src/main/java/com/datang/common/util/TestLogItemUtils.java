@@ -16,6 +16,7 @@ import java.util.Set;
 
 import com.datang.domain.testLogItem.TestLogItem;
 import com.datang.domain.testManage.terminal.Terminal;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * 测试日志工具类
@@ -448,6 +449,37 @@ public class TestLogItemUtils {
 			}
 		}
 		return rows;
+	}
+
+
+
+	/**
+	 * 加序号
+	 * */
+	public static void addId(List<Map<String,Object>> list){
+		if(list==null) return;
+		for(int i=0;i<list.size();i++){
+			list.get(i).put("id",i);
+		}
+	}
+	/**
+	 * 转数字
+	 * */
+	public static void formatNumber(List<Map<String,Object>> list){
+		for(Map<String,Object> map:list){
+			for(Map.Entry<String,Object> entry:map.entrySet()){
+				try{
+					if(entry.getValue()==null){
+						continue;
+					}
+					if(NumberUtils.isNumber(entry.getValue().toString())){
+						entry.setValue(NumberUtils.createDouble(entry.getValue().toString()));
+					}
+				}catch (Exception e){
+
+				}
+			}
+		}
 	}
 
 }

@@ -96,11 +96,11 @@ public class CustomReportLogItemDao extends GenericHibernateDao<CustomUploadLogI
 					selectTestLogItemIds)));
 		}
 		criteria.add(Restrictions.or(Restrictions.eq("deleteTag", 0), Restrictions.isNull("deleteTag")));
+		criteria.addOrder(Order.desc("startDateLong"));
+		criteria.addOrder(Order.asc("fileName"));
 
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("startDateLong"));
-		criteria.addOrder(Order.asc("fileName"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

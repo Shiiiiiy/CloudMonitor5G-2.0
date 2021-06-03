@@ -29,6 +29,9 @@ public class ReportRequertBean {
 	/** 任务名称 */
 	private String name;
 
+
+	private String taskType;
+
 	/**
 	 * @return the beginDate
 	 */
@@ -91,6 +94,14 @@ public class ReportRequertBean {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(String taskType) {
+		this.taskType = taskType;
 	}
 
 	/* *

@@ -155,3 +155,34 @@ function onDrag(moveLeft,moveTop){
 		},100);
 	}
 }
+
+var MaskUtil = {  
+   $mask:null,
+   $maskMsg:null,  
+   defMsg:'正在处理，请稍待。。。', 
+   init:function(){  
+        if(!this.$mask){  
+            $mask = $("<div class=\"datagrid-mask mymask\"></div>").appendTo("body");  
+        }  
+        if(!this.$maskMsg){  
+            $maskMsg = $("<div class=\"datagrid-mask-msg mymask\">"+this.defMsg+"</div>")  
+                .appendTo("body").css({'font-size':'12px'});
+        }  
+          
+        $mask.css({width:"100%",height:$(document).height()});  
+          
+        $maskMsg.css({  
+            left:($(document.body).outerWidth(true) - 190) / 2,top:($(window).height() - 45) / 2,
+        });   
+                  
+   },
+   mask:function(msg){  
+       this.init();  
+       $mask.show();  
+       $maskMsg.html(msg||this.defMsg).show();  
+   }  
+   ,unmask:function(){  
+       $mask.hide();  
+       $maskMsg.hide();  
+   }  
+};

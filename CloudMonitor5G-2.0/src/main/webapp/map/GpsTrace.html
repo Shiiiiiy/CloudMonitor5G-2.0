@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GpsTrace</title>
+    <link rel="stylesheet" type="text/css" href="css/Style.css">
+    <link rel="stylesheet" href="css/ol.css" type="text/css">
+</head>
+<style>
+    #progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 20px;
+        box-shadow: 0px 0px 1px 2px rgb(255, 255, 255);
+        width: 0;
+        transition: width 500ms;
+        font-weight: bold;
+        text-align: center;
+        background: #90bf46;
+        color: white;
+    }
+
+    .flex-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -100px;
+        margin-left: -100px;
+        width: 50%;
+        z-Index: 999;
+        /* display: flex;
+        flex-direction: column;
+        align-items: center; */
+    }
+
+    .container {
+        display: inline-block;
+        width: 50%;
+        height: 20px;
+        padding-right: 10px;
+        border: 1px solid #999;
+        border-radius: 5px;
+        background: white;
+    }
+
+    .h-100P {
+        height: 100%;
+    }
+
+    .bar {
+        display: inline-block;
+        background: #90bf46;
+        color: white;
+        font-weight: bold;
+        padding: 0 5px;
+        text-align: right;
+        border-radius: 5px;
+        border-right: 1px solid #999;
+    }
+</style>
+
+<body>
+    <div id="layerbox" class="layerbox usel" style="position:absolute;z-index:999;right: 100px; top: 10px;">
+        <div id="layerbox_item">
+            <div class="show-list">
+                <i class="red-point"></i>
+                <div class="layer_item zoonin item " onclick="zoominMap();">
+                    <span class="icon"></span>
+                    <span class="name">放大</span>
+                </div>
+                <div class="layer_item zoomout item " onclick="zoomoutMap();">
+                    <span class="icon"></span>
+                    <span class="name">缩小</span>
+                </div>
+                <div class="layer_item zoomExtent item" onclick="fullscreen();">
+                    <span class="icon"></span>
+                    <span class="name">全景</span>
+                </div>
+                <div class="layer_item measure item" onclick="measureMap();">
+                    <span class="icon"></span>
+                    <span class="name">测量</span>
+                </div>
+                <div class="layer_item clearMark item" onclick="clearMap();">
+                    <span class="icon"></span>
+                    <span class="name">清除</span>
+                </div>
+                <div class="layer_item search item">
+                    <span className="icon">
+                        <select id="dataType" onchange="changeLegend()">
+                            <option value="NR SS-RSRP">NR SS-RSRP</option>
+                            <option value="NR SS-SINR">NR SS-SINR</option>
+                            <option value="LTE PCC_RSRP">LTE PCC_RSRP</option>
+                            <option value="LTE PCC_SINR">LTE PCC_SINR</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="layer_item detail item" onclick="saveMap();">
+                    <span class="icon"></span>
+                    <span class="name">导出图片</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="map" class="map_iframe" style="position: relative;">
+        <!-- <div class="flex-center">
+                <span class="container">
+                    <span id="progressBar" class="h-100P bar"></span>
+                </span>
+            </div> -->
+
+        <div id="location10" class='mapLegend' style="right:6px;bottom:5px;"></div>
+    </div>
+    <div id="progress"></div>
+
+    <script src="js/Constant.js" type="text/javascript"></script>
+    <script src="js/ol.js" type="text/javascript"></script>
+    <script src="js/FileSaver.js"></script>
+    <script src="js/jquery.min.js"></script>
+	<script src= "js/html2canvas.js"></script>
+    <script src="js/GpsTrace.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        function receiveMessage(e) {
+            var data = e.data;
+            showTrace(data, "NR SS-RSRP");
+        }
+
+        if (typeof window.addEventListener != 'undefined') {//使用html5 的postMessage必须处理的 
+            window.addEventListener('message', receiveMessage, false);
+        } else if (typeof window.attachEvent != 'undefined') {
+            window.attachEvent('onmessage', receiveMessage);
+        }
+    </script>
+</body>
+
+</html>

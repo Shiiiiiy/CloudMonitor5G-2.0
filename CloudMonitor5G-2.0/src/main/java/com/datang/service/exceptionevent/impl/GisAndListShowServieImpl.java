@@ -65,6 +65,16 @@ public class GisAndListShowServieImpl implements GisAndListShowServie {
 	public List<Cell5G> getCellIdAndCellName(String nrPci, String point) {
 		return nsaGisAndListShowDao.getCellIdAndCellName(nrPci,point);
 	}
+
+    @Override
+    public List<Cell5G> getCellsByRegion(String region) {
+        return nsaGisAndListShowDao.getCellsByRegion(region);
+    }
+
+    @Override
+    public List<LteCell> getLteCellsByRegion(String region) {
+        return nsaGisAndListShowDao.getLteCellsByRegion(region);
+    }
 	
 	@Override
 	public List<LteCell> getLteCell(String lteFriendlyName) {

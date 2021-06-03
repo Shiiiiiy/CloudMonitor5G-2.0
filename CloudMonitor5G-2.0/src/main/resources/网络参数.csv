@@ -1,0 +1,8 @@
+类型,详情表/过程,前置条件（2s内）,请求,成功
+NR,5G→4G 基于测量切换详情,,Mobility From NR Start,Mobility From NR Success
+NR,5G→4G 基于测量重定向详情,NR Event B1/NR Event B2,N2L_REDIRECT_BEGIN,N2L_REDIRECT_SUCC
+lte,4G→5G 基于测量切换详情,,EUTRA Handover to NR Start,EUTRA Handover to NR Success
+lte,4G→5G 基于测量重定向详情,LTE Event B1,L2NR_REDIRECTED_START,L2NR_REDIRECTED_SUCC
+NR,5G→4G 盲重定向过程,无NR Event B1/NR Event B2,N2L_REDIRECT_BEGIN,N2L_REDIRECT_SUCC
+lte,4G→5G 盲重定向过程,无LTE Event B1,L2NR_REDIRECTED_START,L2NR_REDIRECTED_SUCC
+

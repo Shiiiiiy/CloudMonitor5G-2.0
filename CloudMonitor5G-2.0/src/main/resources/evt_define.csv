@@ -1,0 +1,29 @@
+事件,软件事件名
+NR RRC建立请求,NR RRC Setup Request
+NR RRC建立成功,NR RRC Setup Success
+NR RRC建立失败,NR RRC Setup Failure
+NR 连接异常释放（掉线）,NR RadioLink Failure
+NR 连接正常释放,NR RRC Release
+NR 系统内切换尝试,NR IntraFreq-Handover Start、NR InterFreq-Handover Start
+NR 系统内切换成功,NR IntraFreq-Handover Success、NR InterFreq-Handover Success
+NR 系统内切换失败,NR IntraFreq-Handover Failure、NR InterFreq-Handover Failure
+5G->4G重定向请求,NR2L_REDIRECTED_START
+5G->4G重定向成功,NR2L_REDIRECTED_SUCC
+5G->4G重定向失败,NR2L_REDIRECTED_FAIL
+5G->4G切换请求,Mobility From NR Start
+5G->4G切换成功,Mobility From NR Success
+5G->4G切换失败,Mobility From NR Failure
+4G->5G重定向请求,L2NR_REDIRECTED_START
+4G->5G重定向成功,L2NR_REDIRECTED_SUCC
+4G->5G重定向失败,L2NR_REDIRECTED_FAIL
+4G->5G切换向请求,EUTRA Handover to NR Start
+4G->5G切换向成功,EUTRA Handover to NR Success
+4G->5G切换向失败,EUTRA Handover to NR Failure
+EPS FallBack尝试,EPSFallBack Start
+EPS FallBack成功,EPSFallBack Success
+EPS FallBack失败,EPSFallBack Failure
+IMS注册尝试,SIP REGISTER ATTEMPT
+IMS注册成功,SIP REGISTER SUCCESS
+IMS注册失败,SIP REGISTER FAILURE
+TAU失败,LTE TAU Failure
+TAU失败（EPS FB过程中，5G回落4G失败）,LTE TAU Failure

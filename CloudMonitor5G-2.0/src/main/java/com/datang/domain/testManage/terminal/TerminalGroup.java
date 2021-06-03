@@ -72,7 +72,7 @@ public class TerminalGroup implements java.io.Serializable,
 	/**
 	 * 各区域的自定义报表模板信息
 	 */
-	private Set<CustomReportTemplatePojo> customReportTemplates = new HashSet<>();
+//	private Set<CustomReportTemplatePojo> customReportTemplates = new HashSet<>();
 
 	/**
 	 * @return the id
@@ -165,15 +165,15 @@ public class TerminalGroup implements java.io.Serializable,
 		this.cellInfos = cellInfos;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "group", cascade = javax.persistence.CascadeType.ALL)
-	@JSON(serialize = false)
-	public Set<CustomReportTemplatePojo> getCustomReportTemplates() {
-		return customReportTemplates;
-	}
-
-	public void setCustomReportTemplates(Set<CustomReportTemplatePojo> customReportTemplates) {
-		this.customReportTemplates = customReportTemplates;
-	}
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "group", cascade = javax.persistence.CascadeType.ALL)
+//	@JSON(serialize = false)
+//	public Set<CustomReportTemplatePojo> getCustomReportTemplates() {
+//		return customReportTemplates;
+//	}
+//
+//	public void setCustomReportTemplates(Set<CustomReportTemplatePojo> customReportTemplates) {
+//		this.customReportTemplates = customReportTemplates;
+//	}
 
 	/**
 	 * 添加group

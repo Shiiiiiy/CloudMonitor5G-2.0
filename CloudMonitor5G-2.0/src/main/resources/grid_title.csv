@@ -1,0 +1,65 @@
+altitude,高度
+X,
+Y,
+NR SS-RSRP,
+NR SS-SINR,
+NR PCI,服务小区PCI
+NR ARFCNPointA-DL,服务小区下行频点号
+NR ssb-Index[0],服务小区广播信道最强波束索引ID
+NR SS-RSRP[0],服务小区广播信道最最强波束RSRP
+NR SS-SINR[0],服务小区广播信道最最强波束SINR
+NR SS-RSRQ[0],服务小区广播信道最最强波束RSRQ
+NR ssb-Index[1],服务小区广播信道最第二强波束索引ID
+NR SS-RSRP[1],服务小区广播信道最第二强波束RSRP
+NR SS-SINR[1],服务小区广播信道最第二强波束SINR
+NR SS-RSRQ[1],服务小区广播信道最第二强波束RSRQ
+NR ssb-Index[2],服务小区广播信道最第三强波束索引ID
+NR SS-RSRP[2],服务小区广播信道最第三强波束RSRP
+NR SS-SINR[2],服务小区广播信道最第三强波束SINR
+NR SS-RSRQ[2],服务小区广播信道最第三强波束RSRQ
+NR ssb-Index[3],服务小区广播信道最第四强波束索引ID
+NR SS-RSRP[3],服务小区广播信道最第四强波束RSRP
+NR SS-SINR[3],服务小区广播信道最第四强波束SINR
+NR SS-RSRQ[3],服务小区广播信道最第四强波束RSRQ
+NR Ncell PCI[0],服务小区最强邻区PCI
+NR Ncell ARFCNSSB_DL[0],服务小区最强邻区下行频点号
+NR Ncell ssb-index[0],服务小区最强邻区SSB TOP1波束索引号
+NR Ncell SS-RSRP[0],服务小区最强邻区SSB TOP1波束索RSRP
+NR Ncell SS-RSRQ[0],服务小区最强邻区SSB TOP1波束索RSRQ
+NR Ncell SS-SINR[0],服务小区最强邻区SSB TOP1波束索SINR
+NR Ncell PCI[1],服务小区次强邻区PCI
+NR Ncell ARFCNSSB_DL[1],服务小区次强邻区arfcn
+NR Ncell ssb-index[1],服务小区次强邻区SSB TOP1波束索引号
+NR Ncell SS-RSRP[1],服务小区次强邻区SSB TOP1波束索RSRP
+NR Ncell SS-RSRQ[1],服务小区次强邻区SSB TOP1波束索RSRQ
+NR Ncell SS-SINR[1],服务小区次强邻区SSB TOP1波束索SINR
+NR Ncell PCI[2],服务小区第三强邻区PCI
+NR Ncell ARFCNSSB_DL[2],服务小区第三强邻区arfcn
+NR Ncell ssb-index[2],服务小区第三强邻区SSB TOP1波束索引号
+NR Ncell SS-RSRP[2],服务小区第三强邻区SSB TOP1波束索RSRP
+NR Ncell SS-RSRQ[2],服务小区第三强邻区SSB TOP1波束索RSRQ
+NR Ncell SS-SINR[2],服务小区第三强邻区SSB TOP1波束索SINR
+NR Ncell PCI[3],服务小区第四强邻区PCI
+NR Ncell ARFCNSSB_DL[3],服务小区第四强邻区arfcn
+NR Ncell ssb-index[3],服务小区第四强邻区SSB TOP1波束索引号
+NR Ncell SS-RSRP[3],服务小区第四强邻区SSB TOP1波束索RSRP
+NR Ncell SS-RSRQ[3],服务小区第四强邻区SSB TOP1波束索RSRQ
+NR Ncell SS-SINR[3],服务小区第四强邻区SSB TOP1波束索SINR
+NR RLC Thrput DL(Mbps),NR RLC 下行平均吞吐率(Mbps)
+NR RLC Thrput UL(Mbps),NR RLC 上行平均吞吐率(Mbps)
+NR DL GrantNum,小区NR_PDCCH DL Grant Count
+NR DL IBLER,小区NR_DL Initial BLER(%)
+NR DL RBLER,小区NR_DL Residual BLER(%)
+NR DL MCS,小区NR_DL MCS
+NR AVG CQI,小区NR_ DL CQI
+NR Rank Indicator,小区NR_DL Rank
+NR DL Modulation Most,小区NR下行调制方式
+NR DL PRBNum/slot,小区下行调用PRB平均数/slot
+NR UL MCS,小区NR_UL Avg MCS
+NR UL IBLER,小区NR_UL Initial BLER(%)
+NR UL RBLER,小区NR_UL Residual BLER(%)
+NR UL RI Avr,小区NR_UL Rank
+NR UL Modulation Most,小区NR上行调制方式
+NR PUSCH Pathloss,小区NR_Path Loss(dB)
+NR UL PRBNum/slot,小区上行调用PRB平均数/slot
+NR PUSCH Txpower,小区PUSCH TxPower（dBm）

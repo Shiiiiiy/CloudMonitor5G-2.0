@@ -203,8 +203,9 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 			createCriteria2.add(Restrictions.in("name",cityNames));
 		}
 		
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		
 		criteria.addOrder(Order.desc("id"));
+		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
@@ -233,8 +234,8 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 			Criteria createCriteria2 = criteria.createCriteria("cellInfo");
 			createCriteria2.add(Restrictions.eq("id", (Long.valueOf(String.valueOf(idsStr)))));
 		}
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.addOrder(Order.desc("id"));
+		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
@@ -263,8 +264,8 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 			Criteria createCriteria2 = criteria.createCriteria("cellInfo");
 			createCriteria2.add(Restrictions.eq("id", (Long.valueOf(String.valueOf(idsStr)))));
 		}
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.addOrder(Order.desc("id"));
+		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

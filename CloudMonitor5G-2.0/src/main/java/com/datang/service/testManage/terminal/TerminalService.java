@@ -247,6 +247,15 @@ public interface TerminalService {
 	 */
 	public AbstractPageList queryPageTerminal(PageList pageList);
 
+
+	/**
+	 * 多条件组合分页
+	 *
+	 * @author yinzhipeng
+	 * @return
+	 */
+	public List<Map<String,Object>> getFullCuccTraffic();
+
 	/**
 	 * 导入终端表
 	 * 

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import com.datang.domain.testLogItem.UnicomLogItem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.struts2.ServletActionContext;
 import org.slf4j.Logger;
@@ -303,9 +304,59 @@ public class TerminalAction extends PageAction implements ModelDriven<Terminal> 
 		pageList.putParam("testTarget", terminal.getTestTarget());
 		pageList.putParam("installDate", terminal.getInstallDate());
 		pageList.putParam("boxId", terminal.getBoxId());
-		return terminalService.queryPageTerminal(pageList);
+		AbstractPageList abstractPageList = terminalService.queryPageTerminal(pageList);
+		List<Terminal>  terminalList = abstractPageList.getRows();
+		addNewField(terminalList);
+		return abstractPageList;
 	}
-	
+
+
+	private List<Terminal> addNewField(List<Terminal> terminalList){
+		/**
+		 *
+		 * BOX_ID
+		 *
+		 * EVENTTYPE
+		 * LONGITUDE
+		 * LATITUDE
+		 * FILE_NAME
+		 * */
+		List<Map<String, Object>> fullCuccTraffic = terminalService.getFullCuccTraffic();
+		Map<String,Map<String, Object>> fullCuccTrafficMap = new HashMap<>();
+
+		for(Map<String, Object> m:fullCuccTraffic){
+			Object boxId = m.get("BOX_ID");
+			if(boxId==null) continue;
+			fullCuccTrafficMap.put(boxId.toString(),m);
+		}
+
+
+		for(Terminal t:terminalList){
+			String boxId = t.getBoxId();
+			if(boxId==null) continue;
+			Map<String, Object> stringObjectMap = fullCuccTrafficMap.get(boxId);
+			t.setException(getMap(stringObjectMap,"EVENTTYPE"));
+			t.setLongitude(getMap(stringObjectMap,"LONGITUDE"));
+			t.setLatitude(getMap(stringObjectMap,"LATITUDE"));
+			t.setFileName(getMap(stringObjectMap,"FILE_NAME"));
+		}
+		return terminalList;
+	}
+
+
+
+	public String getMap(Map<String,Object> m,String key){
+		if(m==null){
+			return null;
+		}
+		if(m.get(key)==null){
+			return null;
+		}
+		return m.get(key).toString();
+
+	}
+
+
 	/**
 	 * 下载数据
 	 * 
@@ -332,6 +383,7 @@ public class TerminalAction extends PageAction implements ModelDriven<Terminal> 
 				terminal.setInstallDateFormt(time);
 			}
 		}
+		addNewField(tl);
 		HashMap<String, List<Terminal>> hashMap = new HashMap<String, List<Terminal>>();
 		hashMap.put("tl", tl);
 		

@@ -443,6 +443,7 @@ public class TerminalDao extends GenericHibernateDao<Terminal, Long> {
 		// 设置city筛选条件
 		Criteria groupCriteria = criteria.createCriteria("terminalGroup");
 		groupCriteria.add(Restrictions.eq("id", pageList.getParam("cityId")));
+		criteria.addOrder(Order.desc("id"));
 		// 设置online筛选条件
 		if (null != online) {
 			// online
@@ -455,12 +456,11 @@ public class TerminalDao extends GenericHibernateDao<Terminal, Long> {
 		}
 		//设置下载时间
 		if(installDate != null){
-			criteria.add(Restrictions.eq("installDate", (Date) installDate));
+			criteria.add(Restrictions.ge("installDate", installDate));
 		}
 
 		long total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
-		criteria.addOrder(Order.desc("id"));
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
@@ -514,7 +514,7 @@ public class TerminalDao extends GenericHibernateDao<Terminal, Long> {
 		}
 		//设置下载时间
 		if(installDate != null){
-			criteria.add(Restrictions.eq("installDate", (Date) installDate));
+			criteria.add(Restrictions.ge("installDate",installDate));
 		}
 		// 设置city筛选条件
 		Criteria groupCriteria = criteria.createCriteria("terminalGroup");

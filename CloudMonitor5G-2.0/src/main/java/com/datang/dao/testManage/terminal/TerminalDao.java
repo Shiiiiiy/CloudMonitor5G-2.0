@@ -459,14 +459,18 @@ public class TerminalDao extends GenericHibernateDao<Terminal, Long> {
 			criteria.add(Restrictions.ge("installDate", installDate));
 		}
 
-		long total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
+
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
+		long total = 0;
+		if(list.size() > 0){
+			total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		}
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

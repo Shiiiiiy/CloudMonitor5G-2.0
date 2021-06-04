@@ -796,7 +796,7 @@ public class Command implements Serializable {
 	/**
 	 * @return the binary
 	 */
-	@Column(name = "BINARY")
+	@Column(name = "BINARY_COLUMN")
 	public String getBinary() {
 		return binary;
 	}

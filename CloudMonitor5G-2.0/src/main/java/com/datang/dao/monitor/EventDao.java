@@ -66,14 +66,17 @@ public class EventDao extends GenericHibernateDao<RealtimeEvent, Long> {
 		}
 		criteria.addOrder(Order.desc("eventTimeLong"));
 		criteria.addOrder(Order.asc("boxId"));
-		long total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
+		long total =0;
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
+		if(list.size() > 0){
+			total =  (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		}
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

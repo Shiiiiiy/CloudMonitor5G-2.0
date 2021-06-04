@@ -571,7 +571,7 @@ public class TestLogItem implements Serializable, Comparable<TestLogItem> {
 	/**
 	 * @return the uploadSuccess
 	 */
-	// @Column(name = "UPLOAD_SUCCESS", columnDefinition = "number", length = 1)
+	// @Column(name = "UPLOAD_SUCCESS", columnDefinition = "boolean")
 	@Transient
 	public boolean isUploadSuccess() {
 		return uploadSuccess;

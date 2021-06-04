@@ -135,7 +135,7 @@ public class UserGroup implements Serializable {
 	/**
 	 * @return the powerGrouppowerGroup
 	 */
-	@Column(name = "POWER_GROUP", columnDefinition = "number", length = 1)
+	@Column(name = "POWER_GROUP", columnDefinition = "boolean")
 	public boolean isPowerGroup() {
 		return powerGroup;
 	}
@@ -185,7 +185,7 @@ public class UserGroup implements Serializable {
 	/**
 	 * @return the hasDeletehasDelete
 	 */
-	@Column(name = "HAS_DELETE", columnDefinition = "number", length = 1)
+	@Column(name = "HAS_DELETE", columnDefinition = "boolean")
 	public boolean isHasDelete() {
 		return hasDelete;
 	}

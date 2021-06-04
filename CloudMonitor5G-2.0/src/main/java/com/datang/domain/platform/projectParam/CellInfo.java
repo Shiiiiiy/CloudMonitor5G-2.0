@@ -395,7 +395,7 @@ public class CellInfo implements Serializable {
 	/**
 	 * @return the lteCellsImportlteCellsImport
 	 */
-	@Column(name = "LTECELLS_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "LTECELLS_IMPORT", columnDefinition = "boolean")
 	public Boolean getLteCellsImport() {
 		return lteCellsImport;
 	}
@@ -411,7 +411,7 @@ public class CellInfo implements Serializable {
 	/**
 	 * @return the gsmCellsImportgsmCellsImport
 	 */
-	@Column(name = "GSMCELLS_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "GSMCELLS_IMPORT", columnDefinition = "boolean")
 	public Boolean getGsmCellsImport() {
 		return gsmCellsImport;
 	}
@@ -427,7 +427,7 @@ public class CellInfo implements Serializable {
 	/**
 	 * @return the tdlNbCellsImporttdlNbCellsImport
 	 */
-	@Column(name = "TDLNBCELLS_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "TDLNBCELLS_IMPORT", columnDefinition = "boolean")
 	public Boolean getTdlNbCellsImport() {
 		return tdlNbCellsImport;
 	}
@@ -443,7 +443,7 @@ public class CellInfo implements Serializable {
 	/**
 	 * @return the tdlGsmNbCellsImporttdlGsmNbCellsImport
 	 */
-	@Column(name = "TDLGSMNBCELLS_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "TDLGSMNBCELLS_IMPORT", columnDefinition = "boolean")
 	public Boolean getTdlGsmNbCellsImport() {
 		return tdlGsmNbCellsImport;
 	}
@@ -456,7 +456,7 @@ public class CellInfo implements Serializable {
 		this.tdlGsmNbCellsImport = tdlGsmNbCellsImport;
 	}
 
-	@Column(name = "LTE5GCELLS_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "LTE5GCELLS_IMPORT", columnDefinition = "boolean")
 	public Boolean getLte5GCellsImport() {
 		return lte5GCellsImport;
 	}
@@ -474,7 +474,7 @@ public class CellInfo implements Serializable {
 		this.cells5g = cells5g;
 	}
 
-	@Column(name = "CELLS5G_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "CELLS5G_IMPORT", columnDefinition = "boolean")
 	public Boolean getCells5gImport() {
 		return cells5gImport;
 	}
@@ -492,7 +492,7 @@ public class CellInfo implements Serializable {
 		this.cells5gNb = cells5gNb;
 	}
 
-	@Column(name = "CELLS5GNB_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "CELLS5GNB_IMPORT", columnDefinition = "boolean")
 	public Boolean getCells5gNbImport() {
 		return cells5gNbImport;
 	}
@@ -526,7 +526,7 @@ public class CellInfo implements Serializable {
 		this.cells5gTdlNb = cells5gTdlNb;
 	}
 
-	@Column(name = "CELLS5GTDLNB_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "CELLS5GTDLNB_IMPORT", columnDefinition = "boolean")
 	public Boolean getCells5gTdlNbImport() {
 		return cells5gTdlNbImport;
 	}
@@ -545,7 +545,7 @@ public class CellInfo implements Serializable {
 		this.planParams = planParams;
 	}
 
-	@Column(name = "PLANPARAMS_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "PLANPARAMS_IMPORT", columnDefinition = "boolean")
 	public Boolean getPlanParamsImport() {
 		return planParamsImport;
 	}
@@ -573,7 +573,7 @@ public class CellInfo implements Serializable {
 	/**
 	 * @return the plan4GParamsImport
 	 */
-	@Column(name = "PLAN4GPARAMS_IMPORT", columnDefinition = "number", length = 1)
+	@Column(name = "PLAN4GPARAMS_IMPORT", columnDefinition = "boolean")
 	public Boolean getPlan4GParamsImport() {
 		return plan4GParamsImport;
 	}

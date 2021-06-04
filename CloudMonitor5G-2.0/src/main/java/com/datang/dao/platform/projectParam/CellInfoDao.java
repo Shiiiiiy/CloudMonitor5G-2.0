@@ -205,7 +205,7 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 		
 		
 		criteria.addOrder(Order.desc("id"));
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		long total = 0;
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
@@ -216,6 +216,9 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 //			cellInfo.setPlan4GParams(null);
 //			cellInfo.setPlanParams(null);
 //		}
+		if(list.size() > 0){
+			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		}
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");
@@ -235,7 +238,7 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 			createCriteria2.add(Restrictions.eq("id", (Long.valueOf(String.valueOf(idsStr)))));
 		}
 		criteria.addOrder(Order.desc("id"));
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		long total = 0;
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
@@ -246,6 +249,9 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 //			cellInfo.setPlan4GParams(null);
 //			cellInfo.setPlanParams(null);
 //		}
+		if(list.size() > 0){
+			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		}
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");
@@ -265,7 +271,7 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 			createCriteria2.add(Restrictions.eq("id", (Long.valueOf(String.valueOf(idsStr)))));
 		}
 		criteria.addOrder(Order.desc("id"));
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		long total = 0;
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
@@ -276,6 +282,9 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 //			cellInfo.setPlan4GParams(null);
 //			cellInfo.setPlanParams(null);
 //		}
+		if(list.size() > 0){
+			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		}
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

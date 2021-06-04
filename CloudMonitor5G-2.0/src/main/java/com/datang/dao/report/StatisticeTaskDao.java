@@ -5,10 +5,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
 import com.datang.common.action.page.EasyuiPageList;
@@ -66,14 +63,18 @@ public class StatisticeTaskDao extends
 		}
 
 		criteria.addOrder(Order.desc("creatDateLong"));
-		long total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
+
+		long total = 0;
+		if(list.size() > 0) {
+			total = (Long) criteria.setProjection(Projections.rowCount())
+					.uniqueResult();
+		}
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

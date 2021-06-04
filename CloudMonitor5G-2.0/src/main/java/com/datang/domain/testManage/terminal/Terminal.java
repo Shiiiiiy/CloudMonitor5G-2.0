@@ -355,7 +355,7 @@ public class Terminal implements java.io.Serializable, Comparable<Terminal> {
 	/**
 	 * @return the enable
 	 */
-	@Column(name = "P_ENABLE", columnDefinition = "number", length = 1)
+	@Column(name = "P_ENABLE", columnDefinition = "boolean")
 	public boolean isEnable() {
 		return enable;
 	}
@@ -381,7 +381,7 @@ public class Terminal implements java.io.Serializable, Comparable<Terminal> {
 	 * 
 	 * @return the online
 	 */
-	@Column(name = "P_ONLINE", columnDefinition = "number", length = 1)
+	@Column(name = "P_ONLINE", columnDefinition = "boolean")
 	public boolean isOnline() {
 		return online;
 	}

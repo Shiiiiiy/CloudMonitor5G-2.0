@@ -102,7 +102,7 @@ public class StatisticeTask implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            id to set
 	 */
 
@@ -113,12 +113,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the createrName
 	 */
+	@Column(name = "CREATERNAME")
 	public String getCreaterName() {
 		return createrName;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            createrName to set
 	 */
 
@@ -129,12 +130,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the name
 	 */
+	@Column(name = "NAME")
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            name to set
 	 */
 
@@ -159,7 +161,7 @@ public class StatisticeTask implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            beginDate to set
 	 */
 
@@ -173,6 +175,7 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the beginDateLong
 	 */
+	@Column(name = "BEGINDATELONG")
 	public Long getBeginDateLong() {
 		if (beginDateLong != null) {
 			this.beginDate = new Date(beginDateLong);
@@ -181,7 +184,7 @@ public class StatisticeTask implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            beginDateLong to set
 	 */
 
@@ -206,7 +209,7 @@ public class StatisticeTask implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            endDate to set
 	 */
 
@@ -220,6 +223,7 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the endDateLong
 	 */
+	@Column(name = "ENDDATELONG")
 	public Long getEndDateLong() {
 		if (endDateLong != null) {
 			this.endDate = new Date(endDateLong);
@@ -228,7 +232,7 @@ public class StatisticeTask implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            endDateLong to set
 	 */
 
@@ -249,7 +253,7 @@ public class StatisticeTask implements Serializable {
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            creatDate to set
 	 */
 
@@ -263,12 +267,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the creatDateLong
 	 */
+	@Column(name = "CREATDATELONG")
 	public Long getCreatDateLong() {
 		return creatDateLong;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            creatDateLong to set
 	 */
 
@@ -279,12 +284,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the testRank
 	 */
+	@Column(name = "TESTRANK")
 	public String getTestRank() {
 		return testRank;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            testRank to set
 	 */
 
@@ -295,12 +301,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the collectType
 	 */
+	@Column(name = "COLLECTTYPE")
 	public String getCollectType() {
 		return collectType;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            collectType to set
 	 */
 
@@ -319,12 +326,13 @@ public class StatisticeTask implements Serializable {
 	// @OrderColumn(name = "C_ID")
 	// // 指定排序列的名称
 	//
+	@Column(name = "CITYIDS")
 	public String getCityIds() {
 		return cityIds;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            cityIds to set
 	 */
 
@@ -335,12 +343,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the boxIds
 	 */
+	@Column(name = "BOXIDS")
 	public String getBoxIds() {
 		return boxIds;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            boxIds to set
 	 */
 
@@ -351,12 +360,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the logIds
 	 */
+	@Column(name = "LOGIDS")
 	public String getLogIds() {
 		return logIds;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            logIds to set
 	 */
 
@@ -364,6 +374,7 @@ public class StatisticeTask implements Serializable {
 		this.logIds = logIds;
 	}
 
+	@Column(name = "TEMPLATEIDS")
 	public String getTemplateIds() {
 		return templateIds;
 	}
@@ -372,6 +383,7 @@ public class StatisticeTask implements Serializable {
 		this.templateIds = templateIds;
 	}
 
+	@Column(name = "TASKSTATUS")
 	public String getTaskStatus() {
 		return taskStatus;
 	}
@@ -383,12 +395,13 @@ public class StatisticeTask implements Serializable {
 	/**
 	 * @return the terminalGroup
 	 */
+	@Column(name = "TERMINALGROUP")
 	public String getTerminalGroup() {
 		return terminalGroup;
 	}
 
 	/**
-	 * @param the
+	 * @param
 	 *            terminalGroup to set
 	 */
 

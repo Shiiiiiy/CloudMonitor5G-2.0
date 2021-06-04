@@ -193,7 +193,7 @@ public class CustomLogReportTask implements Serializable {
 	/**
 	 * @return the logIds
 	 */
-	@Column(name = "LOGIDS", nullable = false, columnDefinition="CLOB")
+	@Column(name = "LOGIDS", nullable = false, length=4000)
 	@JSON(serialize = false)
 	public String getLogIds() {
 		return logIds;

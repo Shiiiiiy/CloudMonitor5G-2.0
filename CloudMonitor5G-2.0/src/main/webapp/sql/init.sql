@@ -155,6 +155,23 @@ insert into iads_users(id,user_name,password,salt,power_user) values (1, 'admin'
 insert into iads_usergroup(id,name,power_group,has_delete) values (1, '超级管理员',true,false);
 insert into iads_user_usergroup(groups_id,users_id) values (1, 1);
 
+
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('2', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('4', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('283', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('285', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('1720', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('1722', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('3122', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('3124', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('3242', '1');
+INSERT INTO "public"."iads_usergroup_menu" VALUES ('3244', '1');
+
+
+INSERT INTO "public"."iads_menu" VALUES ('TERMINAL_MENU', '2', 'images/menu/folder.gif', 'images/menu/folderopen.gif', '上海市', null, 'terminalGroupAction.do?method=getCityInfo&provinceId=1', '1', 'Province', null);
+INSERT INTO "public"."iads_menu" VALUES ('TERMINAL_MENU', '4', 'images/menu/page.gif', null, '徐汇区', '2', 'terminalAction.do?method=pagelist&cityId=3', '3', 'City', '6');
+
+
 --0级功能
 insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (1, '功能权限', null, null);
 --一级功能  平台管理

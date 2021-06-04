@@ -43,12 +43,15 @@ public class TestLogMeasureDao extends
 			criteria.add(Restrictions.le("timeLong", endTime));
 		}
 		criteria.addOrder(Order.desc("timeLong"));
-		long total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
+		long total = 0;
 		criteria.setProjection(null);
 		criteria.setFirstResult((page - 1) * rows);
 		criteria.setMaxResults(rows);
 		List list = criteria.list();
+		if(list.size() > 0){
+			total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		}
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

@@ -716,7 +716,7 @@ public class TerminalServiceImpl implements TerminalService {
 		String sql = "SELECT\n" +
 				"\tt.ID,\n" +
 				"\tt.BOX_ID,\n" +
-				"\tt.\"INDEX\",\n" +
+				"\tt.INDEX,\n" +
 				"\tt.EVENTTYPE,\n" +
 				"\tt.FILE_NAME,\n" +
 				"\tt.TIMESTAMP,\n" +
@@ -727,7 +727,7 @@ public class TerminalServiceImpl implements TerminalService {
 				"\tSELECT\n" +
 				"\t\tt.ID,\n" +
 				"\t\tt.BOX_ID,\n" +
-				"\t\tt.\"INDEX\",\n" +
+				"\t\tt.INDEX,\n" +
 				"\t\tt.EVENTTYPE,\n" +
 				"\t\tt.FILE_NAME,\n" +
 				"\t\tt.TIMESTAMP,\n" +
@@ -739,7 +739,7 @@ public class TerminalServiceImpl implements TerminalService {
 				"\t\tSELECT\n" +
 				"\t\t\tID,\n" +
 				"\t\t\tBOX_ID,\n" +
-				"\t\t\t\"INDEX\",\n" +
+				"\t\t\tINDEX,\n" +
 				"\t\t\tEVENTTYPE,\n" +
 				"\t\t\tFILE_NAME,\n" +
 				"\t\t\tTIMESTAMP,\n" +

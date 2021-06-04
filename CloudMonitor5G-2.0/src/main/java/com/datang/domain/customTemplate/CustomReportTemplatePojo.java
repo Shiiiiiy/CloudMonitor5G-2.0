@@ -104,7 +104,7 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.saveFilePath = saveFilePath;
 	}
 	
-	@Column(name = "KPINAME_SUM", columnDefinition="CLOB")
+	@Column(name = "KPINAME_SUM")
 	@JSON(serialize = false)
 	public String getConmmonKpiNameSum() {
 		return conmmonKpiNameSum;
@@ -114,7 +114,7 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.conmmonKpiNameSum = conmmonKpiNameSum;
 	}
 
-	@Column(name = "TIME_KPINAME_SUM", columnDefinition="CLOB")
+	@Column(name = "TIME_KPINAME_SUM")
 	@JSON(serialize = false)
 	public String getTimeKpiNameSum() {
 		return timeKpiNameSum;
@@ -124,7 +124,7 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.timeKpiNameSum = timeKpiNameSum;
 	}
 
-	@Column(name = "MILEAGE_KPINAME_SUM", columnDefinition="CLOB")
+	@Column(name = "MILEAGE_KPINAME_SUM")
 	public String getMileageKpiNameSum() {
 		return mileageKpiNameSum;
 	}

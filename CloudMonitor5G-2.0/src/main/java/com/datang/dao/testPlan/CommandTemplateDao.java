@@ -44,8 +44,11 @@ public class CommandTemplateDao extends
 		Collection<CommandTemplate> result = criteria.list();
 		commandTemplateQuery.setQueryResults(result);
 		if (commandTemplateQuery.getPagerCount() == -1) {
-			int count = (Integer) criteria
+			int count = 0;
+			if(result.size() > 0){
+				count = (Integer) criteria
 					.setProjection(Projections.rowCount()).uniqueResult();
+			}
 			commandTemplateQuery.setPagerCount(count);
 		}
 		return result;

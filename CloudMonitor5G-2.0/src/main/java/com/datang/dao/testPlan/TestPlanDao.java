@@ -212,13 +212,16 @@ public class TestPlanDao extends GenericHibernateDao<TestPlan, Integer> {
 		autoTestUnitCriteria.addOrder(Order.desc("version"));
 		criteria.addOrder(Order.desc("sendDate"));
 
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		long total = 0;
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List<TestPlan> list = (List<TestPlan>)criteria.list();
+		if(list.size() > 0){
+			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		}
 		
 		for (TestPlan testPlan : list) {
 			testPlan.setBoxId(terBoxIdMap.get(testPlan.getTerminalId()));

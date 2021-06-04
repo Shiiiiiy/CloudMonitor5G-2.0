@@ -44,8 +44,7 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
         
         criteria.add(Restrictions.eq("eType", "1"));
 
-        long total = (Long) criteria.setProjection(Projections.rowCount())
-                .uniqueResult();
+        long total = 0;
         criteria.setProjection(null);
 
         int rowsCount = pageList.getRowsCount();// 每页记录数
@@ -53,6 +52,10 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
         criteria.setFirstResult((pageNum - 1) * rowsCount);
         criteria.setMaxResults(rowsCount);
         List list = criteria.list();
+	 if(list.size() > 0){
+		total = (Long) criteria.setProjection(Projections.rowCount())
+                .uniqueResult();
+	 }
         EasyuiPageList easyuiPageList = new EasyuiPageList();
         easyuiPageList.setRows(list);
         easyuiPageList.setTotal(total + "");
@@ -72,14 +75,17 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
         criteria.add(Restrictions.in("fileName", logNameList));
         
         criteria.add(Restrictions.eq("eType", "2"));
-        long total = (Long) criteria.setProjection(Projections.rowCount())
-                .uniqueResult();
+        long total = 0;
         criteria.setProjection(null);
         int rowsCount = pageList.getRowsCount();// 每页记录数
         int pageNum = pageList.getPageNum();// 页码
         criteria.setFirstResult((pageNum - 1) * rowsCount);
         criteria.setMaxResults(rowsCount);
         List list = criteria.list();
+	 if(list.size() > 0){
+		total = (Long) criteria.setProjection(Projections.rowCount())
+                .uniqueResult();
+	 }
         EasyuiPageList easyuiPageList = new EasyuiPageList();
         easyuiPageList.setRows(list);
         easyuiPageList.setTotal(total + "");
@@ -100,14 +106,17 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
         criteria.add(Restrictions.in("fileName", logNameList));
         
         criteria.add(Restrictions.like("eType", "4"));
-        long total = (Long) criteria.setProjection(Projections.rowCount())
-                .uniqueResult();
+        long total = 0;
         criteria.setProjection(null);
         int rowsCount = pageList.getRowsCount();// 每页记录数
         int pageNum = pageList.getPageNum();// 页码
         criteria.setFirstResult((pageNum - 1) * rowsCount);
         criteria.setMaxResults(rowsCount);
         List list = criteria.list();
+	 if(list.size() > 0){
+		total = (Long) criteria.setProjection(Projections.rowCount())
+                .uniqueResult();
+	 }
         EasyuiPageList easyuiPageList = new EasyuiPageList();
         easyuiPageList.setRows(list);
         easyuiPageList.setTotal(total + "");
@@ -129,8 +138,7 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
 
         criteria.add(Restrictions.eq("eType", "3"));
 
-        long total = (Long) criteria.setProjection(Projections.rowCount())
-                .uniqueResult();
+        long total = 0;
         criteria.setProjection(null);
 
         int rowsCount = pageList.getRowsCount();// 每页记录数
@@ -138,6 +146,10 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
         criteria.setFirstResult((pageNum - 1) * rowsCount);
         criteria.setMaxResults(rowsCount);
         List list = criteria.list();
+	 if(list.size() > 0){
+		total = (Long) criteria.setProjection(Projections.rowCount())
+                .uniqueResult();
+	 }
         EasyuiPageList easyuiPageList = new EasyuiPageList();
         easyuiPageList.setRows(list);
         easyuiPageList.setTotal(total + "");
@@ -158,8 +170,7 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
 
         criteria.add(Restrictions.eq("eType", "5"));
 
-        long total = (Long) criteria.setProjection(Projections.rowCount())
-                .uniqueResult();
+        long total = 0;
         criteria.setProjection(null);
 
         int rowsCount = pageList.getRowsCount();// 每页记录数
@@ -167,6 +178,10 @@ public class NSAGisAndListShowDao  extends GenericHibernateDao<Iads5gExceptionEv
         criteria.setFirstResult((pageNum - 1) * rowsCount);
         criteria.setMaxResults(rowsCount);
         List list = criteria.list();
+	 if(list.size() > 0){
+		total = (Long) criteria.setProjection(Projections.rowCount())
+                .uniqueResult();
+	 }
         EasyuiPageList easyuiPageList = new EasyuiPageList();
         easyuiPageList.setRows(list);
         easyuiPageList.setTotal(total + "");

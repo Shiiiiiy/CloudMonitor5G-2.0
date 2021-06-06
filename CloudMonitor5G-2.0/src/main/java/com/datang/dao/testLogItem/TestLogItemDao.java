@@ -28,6 +28,89 @@ import com.datang.web.beans.testLogItem.TestLogItemPageQueryRequestBean;
 @Repository
 @SuppressWarnings("all")
 public class TestLogItemDao extends GenericHibernateDao<TestLogItem, Long> {
+
+	public long getPageTestLogItemCount(PageList pageList) {
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				TestLogItem.class);
+		TestLogItemPageQueryRequestBean pageParams = (TestLogItemPageQueryRequestBean) pageList
+				.getParam("pageQueryBean");
+
+		// 筛选参数日志数据来源
+		List<Integer> logSource = pageParams.getLogSource();
+		if (null != logSource && 0 != logSource.size()) {
+			criteria.add(Restrictions.in("logSource", logSource));
+		}
+		// 筛选参数日志运营商
+		List<String> operators = pageParams.getOperators();
+		if (null != operators && 0 != operators.size()) {
+			criteria.add(Restrictions.in("operatorName", operators));
+		}
+		// 筛选参数日志业务类型
+		List<Integer> serviceType = pageParams.getServiceType();
+		if (null != serviceType && 0 != serviceType.size()) {
+			Disjunction dis = Restrictions.disjunction();
+			for (Integer integer : serviceType) {
+				dis.add(Restrictions.like("serviceType", integer + ",",
+						MatchMode.ANYWHERE));
+			}
+			criteria.add(dis);
+		}
+		// 筛选参数日志开始时间
+		Date beginDate = pageParams.getBeginDate();
+		if (null != beginDate) {
+			criteria.add(Restrictions.ge("startDateLong", beginDate.getTime()));
+		}
+		// 筛选参数日志结束时间
+		Date endDate = pageParams.getEndDate();
+		if (null != endDate) {
+			criteria.add(Restrictions.le("endDateLong", endDate.getTime()));
+		}
+		// 筛选参数boxid确认权限范围的数据
+		Set<String> boxIdsSet = pageParams.getBoxIdsSet();
+		if (null != boxIdsSet && 0 != boxIdsSet.size()) {
+			criteria.add(Restrictions.in("boxId", boxIdsSet));
+		}
+		// 筛选参数日志文件名
+		String fileName = pageParams.getFileName();
+		if (StringUtils.hasText(fileName)) {
+			criteria.add(Restrictions.like("fileName", fileName.trim(),
+					MatchMode.ANYWHERE));
+		}
+		// 筛选参数是否上传完成
+		Boolean isFinished = pageParams.getIsFinished();
+		Integer testFileStatus = pageParams.getTestFileStatus();
+		if (null == isFinished || !isFinished) {
+			// 查询未上传完成的日志
+			criteria.add(Restrictions.eqOrIsNull("testFileStatus", 0));
+		} else {
+			// 查询已经上传完成的日志,解析或者未解析完成的日志
+			if (null != testFileStatus) {
+				criteria.add(Restrictions.eq("testFileStatus", testFileStatus));
+			} else {
+				criteria.add(Restrictions.or(
+						Restrictions.eq("testFileStatus", 1),
+						Restrictions.eq("testFileStatus", 2)));
+			}
+		}
+		// 在对比分析中存放已经选中的日志,后台查询应该排除这些结果集
+		List<Long> selectTestLogItemIds = pageParams.getSelectTestLogItemIds();
+		if (null != selectTestLogItemIds && 0 != selectTestLogItemIds.size()) {
+			criteria.add(Restrictions.not(Restrictions.in("recSeqNo",
+					selectTestLogItemIds)));
+		}
+		criteria.add(Restrictions.or(Restrictions.eq("deleteTag", 0), Restrictions.isNull("deleteTag")));
+
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件分页
 	 * 
@@ -114,10 +197,7 @@ public class TestLogItemDao extends GenericHibernateDao<TestLogItem, Long> {
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getPageTestLogItemCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

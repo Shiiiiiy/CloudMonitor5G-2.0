@@ -30,7 +30,157 @@ public class StationReportCreatDao  extends GenericHibernateDao<PlanParamPojo, L
 	
 	@Autowired
 	private StationVerificationTestDao stationVerificationTestDao;
-	
+
+
+	public long doPageQueryCount(PageList pageList) {
+		
+		Criteria criteria = this.getHibernateSession().createCriteria(PlanParamPojo.class);
+		PlanParamPojo plan = (PlanParamPojo) pageList.getParam("planParamPojo");
+		Object startTime = pageList.getParam("startTime");
+		Object endTime = pageList.getParam("endTime");
+		Object testStatus = pageList.getParam("testStatus");
+		Object testService = pageList.getParam("testService");
+		Object cityStr = pageList.getParam("cityStr");
+		
+		if(StringUtils.hasText(plan.getCity()) && !"全部".equals(plan.getCity())){
+			criteria.add(Restrictions.eq("city", plan.getCity()));
+		}
+		
+		if(startTime != null){
+			criteria.add(Restrictions.ge("reportCreateDate", Long.valueOf(startTime.toString())));
+		}
+		if(endTime != null){
+			criteria.add(Restrictions.le("reportCreateDate", Long.valueOf(endTime.toString())));
+		}
+		if(plan.getGnbId() != null){
+			criteria.add(Restrictions.eq("gnbId",plan.getGnbId()));
+		}
+		if(StringUtils.hasText(plan.getSiteName())){
+			criteria.add(Restrictions.like("siteName",plan.getSiteName(),MatchMode.ANYWHERE));
+		}
+		
+		if(plan.getWirelessParamStatus() != null && StringUtils.hasText(plan.getWirelessParamStatus())){
+			criteria.add(Restrictions.eq("wirelessParamStatus",plan.getWirelessParamStatus()));
+		}
+		
+		if(plan.getTestEventAllStatus() != null && StringUtils.hasText(plan.getTestEventAllStatus())){
+			criteria.add(Restrictions.eq("testEventAllStatus",plan.getTestEventAllStatus()));
+		}
+		
+		if(cityStr != null){
+			String[] cityNames = cityStr.toString().split(",");
+			criteria.add(Restrictions.in("city",cityNames));
+		}
+		
+		if(testStatus != null && testService != null){
+			switch (Integer.valueOf(testService.toString())) {
+			case 0://绕点
+				switch (Integer.valueOf(testStatus.toString())) {
+				case 0://未完成
+					criteria.add(Restrictions.eq("raodianTest",0));
+					break;
+				case 1://已完成
+					criteria.add(Restrictions.eq("raodianTest",1));
+					break;
+				case 2://更新
+					criteria.add(Restrictions.eq("raodianTest",2));
+					break;
+				}
+				break;
+			case 1://FTP下载
+				switch (Integer.valueOf(testStatus.toString())) {
+				case 2://有更新
+					criteria.add(
+							Restrictions.or(
+									Restrictions.eq("goodFtpdownload",2),
+									Restrictions.eq("midFtpdownload",2),
+									Restrictions.eq("badFtpdownload",2)
+									));
+					//criteria.add(Restrictions.eq("goodFtpdownload",2));
+					//criteria.add(Restrictions.eq("midFtpdownload",2));
+					//criteria.add(Restrictions.eq("badFtpdownload",2));
+					break;
+				case 1://已完成
+					criteria.add(Restrictions.eq("goodFtpdownload",1));
+					criteria.add(Restrictions.eq("midFtpdownload",1));
+					criteria.add(Restrictions.eq("badFtpdownload",1));
+					break;
+				}
+				break;
+			case 2://FTP上传  
+				switch (Integer.valueOf(testStatus.toString())) {
+				case 2://有更新
+					criteria.add(
+							Restrictions.or(
+									Restrictions.eq("goodFtpUpload",2),
+									Restrictions.eq("midFtpUpload",2),
+									Restrictions.eq("badFtpUpload",2)
+									));
+					break;
+				case 1://已完成
+					criteria.add(Restrictions.eq("goodFtpUpload",1));
+					criteria.add(Restrictions.eq("midFtpUpload",1));
+					criteria.add(Restrictions.eq("badFtpUpload",1));
+					break;
+				}
+				break;
+			case 3://ENDC成功率测试
+				switch (Integer.valueOf(testStatus.toString())) {
+				case 2://有更新
+					criteria.add(
+							Restrictions.or(
+									Restrictions.eq("goodEndcSuccessRatio",2),
+									Restrictions.eq("midEndcSuccessRatio",2),
+									Restrictions.eq("badEndcSuccessRatio",2)
+									));
+					break;
+				case 1://已完成
+					criteria.add(Restrictions.eq("goodEndcSuccessRatio",1));
+					criteria.add(Restrictions.eq("midEndcSuccessRatio",1));
+					criteria.add(Restrictions.eq("badEndcSuccessRatio",1));
+					break;
+				}
+				break;
+			case 4://ping（32）测试
+				switch (Integer.valueOf(testStatus.toString())) {
+				case 0://未完成
+					criteria.add(Restrictions.eq("goodPing32",0));
+					break;
+				case 1://已完成
+					criteria.add(Restrictions.eq("goodPing32",1));
+					break;
+				case 2://更新
+					criteria.add(Restrictions.eq("goodPing32",2));
+					break;
+				}
+				break;
+			case 5://
+				switch (Integer.valueOf(testStatus.toString())) {
+				case 0://未完成
+					criteria.add(Restrictions.eq("goodPing1500",0));
+					break;
+				case 1://已完成
+					criteria.add(Restrictions.eq("goodPing1500",1));
+					break;
+				case 2://已完成
+					criteria.add(Restrictions.eq("goodPing32",2));
+					break;
+				}
+				break;
+			}
+			
+		}
+
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}
 	public AbstractPageList doPageQuery(PageList pageList) {
 		/*PlanParamPojo find = this.find(2L);
 		StationVerificationLogPojo svl1 = stationVerificationTestDao.find(1L);
@@ -187,9 +337,7 @@ public class StationReportCreatDao  extends GenericHibernateDao<PlanParamPojo, L
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		}
+		total = doPageQueryCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

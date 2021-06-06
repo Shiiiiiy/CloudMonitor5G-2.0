@@ -19,7 +19,86 @@ import com.datang.domain.platform.projectParam.Plan4GParam;
 @Repository
 public class OppositeOpen3dReportCreateDao extends GenericHibernateDao<Plan4GParam,Long>{
 
-	/**
+
+	public long doPageQueryCount(PageList pageList) {
+		Criteria criteria = this.getHibernateSession().createCriteria(Plan4GParam.class);
+		Plan4GParam plan = (Plan4GParam) pageList.getParam("plan4GParam");
+		Object startTime = pageList.getParam("startTime");
+		Object endTime = pageList.getParam("endTime");
+		Object testStatus = pageList.getParam("testStatus");
+		Object testService = pageList.getParam("testService");
+		Object cityStr = pageList.getParam("cityStr");
+		
+		if(StringUtils.hasText(plan.getRegion()) && !"全部".equals(plan.getRegion())){
+			criteria.add(Restrictions.eq("region", plan.getRegion()));
+		}
+		
+		if(startTime != null){
+			criteria.add(Restrictions.ge("createReportDate", Long.valueOf(startTime.toString())));
+		}
+		if(endTime != null){
+			criteria.add(Restrictions.le("createReportDate", Long.valueOf(endTime.toString())));
+		}
+		if(plan.getEnbId() != null && StringUtils.hasText(plan.getEnbId())){
+			criteria.add(Restrictions.eq("enbId",plan.getEnbId()));
+		}
+		if(StringUtils.hasText(plan.getSiteName())){
+			criteria.add(Restrictions.like("siteName",plan.getSiteName(),MatchMode.ANYWHERE));
+		}
+		if(cityStr != null){
+			String[] cityNames = cityStr.toString().split(",");
+			criteria.add(Restrictions.in("region",cityNames));
+		}
+		if(plan.getWirelessParamStatus() != null && StringUtils.hasText(plan.getWirelessParamStatus())){
+			criteria.add(Restrictions.eq("wirelessParamStatus",plan.getWirelessParamStatus()));
+		}
+		
+		if(plan.getTestEventAllStatus() != null && StringUtils.hasText(plan.getTestEventAllStatus())){
+			criteria.add(Restrictions.eq("testEventAllStatus",plan.getTestEventAllStatus()));
+		}
+		
+		if(plan.getNoPassTestEvent() != null && StringUtils.hasText(plan.getNoPassTestEvent())){
+			criteria.add(Restrictions.eq("noPassTestEvent",plan.getNoPassTestEvent()));			
+		}
+		
+		if(testStatus != null && testService != null){
+			String fieldName = "";
+			switch (Integer.valueOf(testService.toString())) {
+			case 0://ftp下载
+				fieldName = "ftpDownloadGood";
+				break;
+			case 1://ftp上传
+				fieldName = "ftpUploadGood";
+				break;
+			case 2://ENDC成功率测试
+				fieldName = "goodEndcSuccessRatio";
+				break;
+			case 3://CSFB测试
+				fieldName = "csfTest";
+				break;
+			case 4://Volte测试
+				fieldName = "volteTest";		
+				break;
+			case 5://ping（32）测试
+				fieldName = "ping32Good";
+				break;
+			case 6://绕点测试
+				fieldName = "raodianTest";
+				break;
+			}
+			criteria.add(Restrictions.eq(fieldName, Integer.valueOf(testStatus.toString())));
+		}
+		
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}	/**
 	 * 分页查询
 	 * @author maxuancheng
 	 * date:2020年3月10日 下午4:23:31
@@ -104,9 +183,7 @@ public class OppositeOpen3dReportCreateDao extends GenericHibernateDao<Plan4GPar
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		}
+		total = doPageQueryCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

@@ -32,6 +32,61 @@ import com.datang.web.beans.testLogItem.TestLogItemPageQueryRequestBean;
 @SuppressWarnings("all")
 public class NetworkTestLogItemDao extends
 		GenericHibernateDao<NetworkTestLogItem, Long> {
+
+	public long getPageTestLogItemCount(PageList pageList) {
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				NetworkTestLogItem.class);
+		TestLogItemPageQueryRequestBean pageParams = (TestLogItemPageQueryRequestBean) pageList
+				.getParam("pageQueryBean");
+
+		// 筛选参数日志开始时间
+		Date beginDate = pageParams.getBeginDate();
+		if (null != beginDate) {
+			criteria.add(Restrictions.ge("startDateLong", beginDate.getTime()));
+		}
+		// 筛选参数日志结束时间
+		Date endDate = pageParams.getEndDate();
+		if (null != endDate) {
+			criteria.add(Restrictions.le("endDateLong", endDate.getTime()));
+		}
+		// 筛选参数boxid确认权限范围的数据
+		Set<String> boxIdsSet = pageParams.getBoxIdsSet();
+		if (null != boxIdsSet && 0 != boxIdsSet.size()) {
+			criteria.add(Restrictions.in("boxId", boxIdsSet));
+		}
+		// 筛选参数日志文件名
+		String fileName = pageParams.getFileName();
+		if (StringUtils.hasText(fileName)) {
+			criteria.add(Restrictions.like("fileName", fileName.trim(),
+					MatchMode.ANYWHERE));
+		}
+		// 筛选参数日志通道号
+		Set<String> galleryNo = pageParams.getGalleryNoList();
+		if (null != galleryNo && 0 != galleryNo.size()) {
+			criteria.add(Restrictions.in("moduleNo", galleryNo));
+		}
+		// 查询已经上传完成的日志,解析或者未解析完成的日志
+		Integer testFileStatus = pageParams.getTestFileStatus();
+		if (null != testFileStatus) {
+			if (2 == testFileStatus) {
+				// 上传成功,统计完成
+				criteria.add(Restrictions.ge("testFileStatus", testFileStatus));
+			} else {
+				// 上传成功,待统计或者统计中
+				criteria.add(Restrictions.eq("testFileStatus", testFileStatus));
+			}
+		}
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件分页
 	 * 
@@ -90,10 +145,7 @@ public class NetworkTestLogItemDao extends
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getPageTestLogItemCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

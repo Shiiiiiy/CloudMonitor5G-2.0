@@ -27,6 +27,49 @@ import com.datang.web.beans.monitor.EventRequestBean;
 @Repository
 @SuppressWarnings("all")
 public class EventDao extends GenericHibernateDao<RealtimeEvent, Long> {
+
+	public long getPageItemCount(PageList pageList) {
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				RealtimeEvent.class);
+		EventRequestBean pageParams = (EventRequestBean) pageList
+				.getParam("pageQueryBean");
+
+		// 筛选模块编号
+		Integer ueNo = pageParams.getUeNo();
+		if (null != ueNo) {
+			criteria.add(Restrictions.eq("channelNo", ueNo));
+		}
+		// 筛选开始时间
+		Date beginDate = pageParams.getBeginDate();
+		if (null != beginDate) {
+			criteria.add(Restrictions.ge("eventTimeLong", beginDate.getTime()));
+		}
+		// 筛选结束时间
+		Date endDate = pageParams.getEndDate();
+		if (null != endDate) {
+			criteria.add(Restrictions.le("eventTimeLong", endDate.getTime()));
+		}
+		// 筛选参数boxid确认权限范围的数据
+		Set<String> boxIdsSet = pageParams.getBoxIdsSet();
+		if (null != boxIdsSet && 0 != boxIdsSet.size()) {
+			criteria.add(Restrictions.in("boxId", boxIdsSet));
+		}
+		// 筛选事件代码
+		Integer eventCode = pageParams.getEventCode();
+		if (eventCode != null) {
+			criteria.add(Restrictions.eq("eventCode", eventCode));
+		}
+		long total =0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total =  (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件分页
 	 * 
@@ -73,10 +116,7 @@ public class EventDao extends GenericHibernateDao<RealtimeEvent, Long> {
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total =  (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total =  getPageItemCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

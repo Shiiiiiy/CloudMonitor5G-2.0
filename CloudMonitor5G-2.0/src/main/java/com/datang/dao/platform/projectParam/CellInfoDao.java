@@ -178,7 +178,36 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 		}
 		
 	}
-	
+
+	public long doPageQueryCount(PageList pageList){
+		Criteria criteria = this.getHibernateSession().createCriteria(CellInfo.class);
+		Criteria createCriteria2 = criteria.createCriteria("group");
+		Object startTime = pageList.getParam("beginImportDate");
+		Object endTime = pageList.getParam("endImportDate");
+		Object cityStr = pageList.getParam("citNames");
+		
+		criteria.add(Restrictions.or(Restrictions.eq("operatorType", "5G"), Restrictions.eq("operatorType", "4G")));
+		if(startTime != null){
+			criteria.add(Restrictions.ge("importDate", startTime));
+		}
+		if(endTime != null){
+			criteria.add(Restrictions.le("importDate", endTime));
+		}
+		if(cityStr != null ){
+			String[] cityNames = cityStr.toString().split(",");
+			createCriteria2.add(Restrictions.in("name",cityNames));
+		}
+		
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List<CellInfo> list = (List<CellInfo>)criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}
 	/**
 	 * 查询规划参数表信息
 	 * @param pageList
@@ -216,15 +245,30 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 //			cellInfo.setPlan4GParams(null);
 //			cellInfo.setPlanParams(null);
 //		}
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		}
+		total = doPageQueryCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");
 		return easyuiPageList;
 	}
-	
+
+	public long doPageQueryParam5GCount(PageList pageList){
+		Criteria criteria = this.getHibernateSession().createCriteria(PlanParamPojo.class);
+		Object idsStr = pageList.getParam("idsStr");
+		if(idsStr != null && StringUtils.hasText(idsStr.toString())){
+			Criteria createCriteria2 = criteria.createCriteria("cellInfo");
+			createCriteria2.add(Restrictions.eq("id", (Long.valueOf(String.valueOf(idsStr)))));
+		}
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List<PlanParamPojo> list = (List<PlanParamPojo>)criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}
 	/**
 	 * 查询5G规划参数表详细信息
 	 * @param pageList
@@ -249,15 +293,30 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 //			cellInfo.setPlan4GParams(null);
 //			cellInfo.setPlanParams(null);
 //		}
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		}
+		total = doPageQueryParam5GCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");
 		return easyuiPageList;
 	}
-	
+
+	public long doPageQueryParam4GCount(PageList pageList){
+		Criteria criteria = this.getHibernateSession().createCriteria(Plan4GParam.class);
+		Object idsStr = pageList.getParam("idsStr");
+		if(idsStr != null && StringUtils.hasText(idsStr.toString())){
+			Criteria createCriteria2 = criteria.createCriteria("cellInfo");
+			createCriteria2.add(Restrictions.eq("id", (Long.valueOf(String.valueOf(idsStr)))));
+		}
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List<Plan4GParam> list = (List<Plan4GParam>)criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}
 	/**
 	 * 查询4G规划参数表详细信息
 	 * @param pageList
@@ -282,9 +341,7 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 //			cellInfo.setPlan4GParams(null);
 //			cellInfo.setPlanParams(null);
 //		}
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		}
+		total = doPageQueryParam4GCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

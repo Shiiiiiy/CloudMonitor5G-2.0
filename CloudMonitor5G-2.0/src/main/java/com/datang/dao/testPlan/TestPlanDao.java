@@ -153,6 +153,65 @@ public class TestPlanDao extends GenericHibernateDao<TestPlan, Integer> {
 		return version;
 	}
 
+	public long getPageTestPlanCount(PageList pageList) {
+		if (null == pageList || null == pageList.getParam("terminalIds") || "".equals(pageList.getParam("terminalIds").toString())) {
+			return 0;
+		}
+
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				TestPlan.class);
+		Criteria autoTestUnitCriteria = criteria.createCriteria("autoTestUnit");
+		// terminalId
+		Object terminalIds = pageList.getParam("terminalIds");
+		// name
+		Object name = pageList.getParam("name");
+		// version
+		Object version = pageList.getParam("version");
+		//startTime
+		Object startTime = pageList.getParam("startTime");
+		//endTime
+		Object endTime = pageList.getParam("endTime");
+		//boxid
+		Map<Long, String> terBoxIdMap = (Map<Long, String>) pageList.getParam("terBoxIdMap");
+
+		// 设置name筛选条件
+		if (StringUtils.hasText((String) name)) {
+			criteria.add(Restrictions.like("name", (String) name,
+					MatchMode.ANYWHERE));
+		}
+		// 设置version筛选条件
+		if (null != version) {
+			autoTestUnitCriteria.add(Restrictions.eq("version", version));
+		}
+		// 设置terminalId筛选条件
+		if (null != terminalIds) {
+			String[] tIds = terminalIds.toString().split(",");
+			List<Long> idls = new ArrayList<Long>();
+			for (String id : tIds) {
+				idls.add(Long.valueOf(id));
+			}
+			//criteria.add(Restrictions.eq("terminalId", terminalId));
+			criteria.add(Restrictions.in("terminalId", idls));
+		}
+		
+		//设置筛选时间
+		if ( startTime != null && endTime != null) {
+			criteria.add(Restrictions.between("planSendDate", startTime, endTime));
+		} else if(startTime != null){
+			criteria.add(Restrictions.gt("planSendDate", startTime));
+		} else if(endTime != null){
+			criteria.add(Restrictions.lt("planSendDate", endTime));
+		}
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List<TestPlan> list = (List<TestPlan>)criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件查询
 	 * 
@@ -219,9 +278,7 @@ public class TestPlanDao extends GenericHibernateDao<TestPlan, Integer> {
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List<TestPlan> list = (List<TestPlan>)criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		}
+		total = getPageTestPlanCount(pageList);
 		
 		for (TestPlan testPlan : list) {
 			testPlan.setBoxId(terBoxIdMap.get(testPlan.getTerminalId()));

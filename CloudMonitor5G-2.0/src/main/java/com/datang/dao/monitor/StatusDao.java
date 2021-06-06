@@ -27,6 +27,41 @@ import com.datang.web.beans.monitor.StatusRequestBean;
 @Repository
 @SuppressWarnings("all")
 public class StatusDao extends GenericHibernateDao<StatusReport, Long> {
+
+	public long getPageItemCount(PageList pageList) {
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				StatusReport.class);
+		StatusRequestBean pageParams = (StatusRequestBean) pageList
+				.getParam("pageQueryBean");
+
+		// 筛选参数日志开始时间
+		Date beginDate = pageParams.getBeginDate();
+		if (null != beginDate) {
+			criteria.add(Restrictions.ge("statusReportTimeLong",
+					beginDate.getTime()));
+		}
+		// 筛选参数日志结束时间
+		Date endDate = pageParams.getEndDate();
+		if (null != endDate) {
+			criteria.add(Restrictions.le("statusReportTimeLong",
+					endDate.getTime()));
+		}
+		// 筛选参数boxid确认权限范围的数据
+		Set<String> boxIdsSet = pageParams.getBoxIdsSet();
+		if (null != boxIdsSet && 0 != boxIdsSet.size()) {
+			criteria.add(Restrictions.in("boxId", boxIdsSet));
+		}
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件分页
 	 * 
@@ -64,10 +99,7 @@ public class StatusDao extends GenericHibernateDao<StatusReport, Long> {
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getPageItemCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

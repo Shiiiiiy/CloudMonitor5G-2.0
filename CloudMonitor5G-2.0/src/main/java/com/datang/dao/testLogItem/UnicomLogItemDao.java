@@ -57,6 +57,146 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 	@Resource
 	private JdbcTemplate jdbcTemplate;
 
+	public long getPageTestLogItemCount(PageList pageList) {
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				UnicomLogItem.class);
+		UnicomLogItemPageQueryRequestBean pageParams = (UnicomLogItemPageQueryRequestBean) pageList
+				.getParam("pageQueryBean");
+
+		// 筛选参数日志数据来源
+		List<Integer> logSource = pageParams.getLogSource();
+		if (null != logSource && 0 != logSource.size()) {
+			criteria.add(Restrictions.in("logSource", logSource));
+		}
+
+
+		// 省
+		String prov = pageParams.getProv();
+		if (StringUtils.hasText(prov)) {
+			criteria.add(Restrictions.eq("prov", prov));
+		}
+		// 市
+		String city = pageParams.getCity();
+		if (StringUtils.hasText(city)) {
+			criteria.add(Restrictions.eq("city", city));
+		}
+
+		// 筛选参数日志运营商
+		List<String> operators = pageParams.getOperators();
+		if (null != operators && 0 != operators.size()) {
+			criteria.add(Restrictions.in("operatorName", operators));
+		}
+		// 筛选参数日志业务类型
+		List<Integer> serviceType = pageParams.getServiceType();
+		if (null != serviceType && 0 != serviceType.size()) {
+			Disjunction dis = Restrictions.disjunction();
+			for (Integer integer : serviceType) {
+				dis.add(Restrictions.like("serviceType", integer + ",",
+						MatchMode.ANYWHERE));
+			}
+			criteria.add(dis);
+		}
+		// 筛选参数日志开始时间
+		Date beginDate = pageParams.getBeginDate();
+		if (null != beginDate) {
+			criteria.add(Restrictions.ge("startDateLong", beginDate.getTime()));
+		}
+		// 筛选参数日志结束时间
+		Date endDate = pageParams.getEndDate();
+		if (null != endDate) {
+			criteria.add(Restrictions.le("endDateLong", endDate.getTime()));
+		}
+		// 筛选参数boxid确认权限范围的数据
+		Set<String> cityNameSet = pageParams.getCityName();
+		if (null != cityNameSet && 0 != cityNameSet.size()) {
+			criteria.add(Restrictions.in("city", cityNameSet));
+		}
+		// 筛选id
+		Set<Long> idSet = pageParams.getIds();
+
+
+		if (null != idSet && 0 != idSet.size()) {
+			//criteria.add(Restrictions.in("recSeqNo", idSet));
+			criteria.add(Restrictions.or(getSetOr("recSeqNo",idSet)));
+		}
+
+
+		// 筛选参数日志文件名
+		String fileName = pageParams.getFileName();
+		if (StringUtils.hasText(fileName)) {
+			criteria.add(Restrictions.like("fileName", fileName.trim(),
+					MatchMode.ANYWHERE));
+		}
+
+		// 筛选参数日志文件名
+		List<String> fileNameList = pageParams.getFileNameList();
+		if (fileNameList!=null && fileNameList.size()>0) {
+			criteria.add(Restrictions.in("fileName", fileNameList));
+		}
+
+		// 筛选测试名称
+		String testName = pageParams.getTestName();
+		if (StringUtils.hasText(testName)) {
+			criteria.add(Restrictions.like("testName", testName.trim(),
+					MatchMode.ANYWHERE));
+		}
+
+		// 筛选测试名称
+		String taskName = pageParams.getTaskName();
+		if (StringUtils.hasText(taskName)) {
+			criteria.add(Restrictions.like("taskName", taskName.trim(),
+					MatchMode.ANYWHERE));
+		}
+
+		// 筛选测试名称
+		List<String> md5Checks = pageParams.getMd5Check();
+		if (null != md5Checks && 0 != md5Checks.size()) {
+			criteria.add(Restrictions.in("md5Check", md5Checks));
+		}
+
+
+		// 筛选测试名称
+		List<String> trafficCheck = pageParams.getTrafficCheck();
+		if (null != trafficCheck && 0 != trafficCheck.size()) {
+			criteria.add(Restrictions.in("trafficCheck", trafficCheck));
+		}
+
+		// 筛选参数是否上传完成
+		Boolean isFinished = pageParams.getIsFinished();
+		Integer testFileStatus = pageParams.getTestFileStatus();
+		if (null == isFinished || !isFinished) {
+			// 查询未上传完成的日志
+			criteria.add(Restrictions.eqOrIsNull("testFileStatus", 0));
+		} else {
+			// 查询已经上传完成的日志,解析或者未解析完成的日志
+			if (null != testFileStatus) {
+				criteria.add(Restrictions.eq("testFileStatus", testFileStatus));
+			} else {
+				criteria.add(Restrictions.or(
+						Restrictions.eq("testFileStatus", 1),
+						Restrictions.eq("testFileStatus", 2)));
+			}
+		}
+		// 在对比分析中存放已经选中的日志,后台查询应该排除这些结果集
+		List<Long> selectTestLogItemIds = pageParams.getSelectTestLogItemIds();
+		if (null != selectTestLogItemIds && 0 != selectTestLogItemIds.size()) {
+			criteria.add(Restrictions.not(Restrictions.in("recSeqNo",
+					selectTestLogItemIds)));
+		}
+		criteria.add(Restrictions.or(Restrictions.eq("deleteTag", 0), Restrictions.isNull("deleteTag")));
+
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
+
 	/**
 	 * 多条件分页
 	 * 
@@ -203,10 +343,7 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getPageTestLogItemCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");
@@ -578,7 +715,7 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 				"SELECT ID,TASK_NAME,LOG_NAME,null as KPI2803, null as KPI2801, null as KPI2800, null as KPI2755, null as KPI2204, null as KPI2187, null as KPI2165, null as KPI2154, null as KPI2151, null as KPI2621, null as KPI2613, null as KPI2560, null as KPI2472, null as KPI2469, null as KPI2301, null as KPI2300, null as KPI2168, null as KPI2162, null as KPI2159, null as KPI2119, null as KPI2116, null as KPI2101, null as KPI2097, null as KPI2024, null as KPI2020, null as KPI2015, null as KPI2802, null as KPI2754, null as KPI2616, null as KPI2610, null as KPI2607, null as KPI2604, null as KPI2473, null as KPI2470, null as KPI3694, null as KPI3696, null as KPI3697, null as KPI3699, null as KPI3701, null as KPI3702, null as KPI3400, null as KPI3401, KPI4924, null as KPI5040, null as KPI5041, null as KPI5047, null as KPI5049, null as KPI5050, null as KPI5051, null as KPI5057, null as KPI5058 FROM  IADS_EXCEL_KPI_4\n" +
 				"UNION all\n" +
 				"SELECT ID,TASK_NAME,LOG_NAME,null as KPI2803, null as KPI2801, null as KPI2800, null as KPI2755, null as KPI2204, null as KPI2187, null as KPI2165, null as KPI2154, null as KPI2151, null as KPI2621, null as KPI2613, null as KPI2560, null as KPI2472, null as KPI2469, null as KPI2301, null as KPI2300, null as KPI2168, null as KPI2162, null as KPI2159, null as KPI2119, null as KPI2116, null as KPI2101, null as KPI2097, null as KPI2024, null as KPI2020, null as KPI2015, null as KPI2802, null as KPI2754, null as KPI2616, null as KPI2610, null as KPI2607, null as KPI2604, null as KPI2473, null as KPI2470, null as KPI3694, null as KPI3696, null as KPI3697, null as KPI3699, null as KPI3701, null as KPI3702, null as KPI3400, null as KPI3401, null as KPI4924, KPI5040, KPI5041, KPI5047, KPI5049, KPI5050, KPI5051, KPI5057, KPI5058 FROM IADS_EXCEL_KPI_5\n" +
-				") fff group by TASK_NAME, LOG_NAME) fff)";
+				") fff group by TASK_NAME, LOG_NAME) ffff) aaa";
 
 		return jdbcTemplate.objectQueryAll(kpiListTrueSQL);
 	}

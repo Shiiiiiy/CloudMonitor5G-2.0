@@ -31,6 +31,37 @@ import java.util.List;
 @SuppressWarnings("all")
 public class AnalyFileReportDao extends
 		GenericHibernateDao<AnalyFileReport, Long> {
+
+	public long getPageItemCount(PageList pageList) {
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				AnalyFileReport.class);
+		AnalyFileReportRequertBean pageParams = (AnalyFileReportRequertBean) pageList
+				.getParam("pageQueryBean");
+
+
+		// 用户定义的报表
+		String reportId = pageParams.getReportId();
+		if (StringUtils.hasText(reportId)) {
+			criteria.add(Restrictions.eq("reportId", reportId));
+		}
+
+		// 筛选创建人
+		Long taskId = pageParams.getTaskId();
+		if (taskId!=null) {
+			criteria.add(Restrictions.eq("taskId", taskId));
+		}
+
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件分页
 	 * 
@@ -63,10 +94,7 @@ public class AnalyFileReportDao extends
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getPageItemCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

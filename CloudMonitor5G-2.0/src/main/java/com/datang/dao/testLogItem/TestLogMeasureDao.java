@@ -24,6 +24,28 @@ import com.datang.domain.testLogItem.TestLogMeasure;
 @SuppressWarnings("all")
 public class TestLogMeasureDao extends
 		GenericHibernateDao<TestLogMeasure, Long> {
+
+	public long getTestLogMeasuresByTimePageCount(Long begainTime,
+			Long endTime, int rows, int page) {
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				TestLogMeasure.class);
+		// 筛选发生时间
+		if (null != begainTime) {
+			criteria.add(Restrictions.ge("timeLong", begainTime));
+		}
+		// 筛选结束时间
+		if (null != endTime) {
+			criteria.add(Restrictions.le("timeLong", endTime));
+		}
+		long total = 0;
+		criteria.setProjection(null);
+		criteria.setFirstResult((page - 1) * rows);
+		criteria.setMaxResults(rows);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 根据时间分页查询
 	 * 
@@ -48,10 +70,7 @@ public class TestLogMeasureDao extends
 		criteria.setFirstResult((page - 1) * rows);
 		criteria.setMaxResults(rows);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getTestLogMeasuresByTimePageCount(begainTime,  endTime,  rows,  page);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

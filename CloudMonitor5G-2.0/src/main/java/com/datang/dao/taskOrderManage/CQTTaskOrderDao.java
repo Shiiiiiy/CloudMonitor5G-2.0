@@ -28,6 +28,87 @@ import com.datang.domain.testLogItem.StationVerificationLogPojo;
 @SuppressWarnings("rawtypes")
 public class CQTTaskOrderDao extends GenericHibernateDao<FixedPointTaskOrderPojo, Long>{
 
+	public long doPageQueryCount(PageList pageList){
+		Criteria criteria = this.getHibernateSession().createCriteria(FixedPointTaskOrderPojo.class);
+		
+		Criteria terminal = criteria.createCriteria("terminal");
+		Criteria terminalGroup = terminal.createCriteria("terminalGroup");
+		
+		Object cityId =  pageList.getParam("cityId");
+		Object beginDate =  pageList.getParam("beginDate");
+		Object endDate =  pageList.getParam("endDate");
+		Object loctionDeparture =  pageList.getParam("loctionDeparture");
+		Object occupyNrCellName =  pageList.getParam("occupyNrCellName");
+		Object occupyLteCellName =  pageList.getParam("occupyLteCellName");
+		Object boxId =  pageList.getParam("boxId");
+		Object workOrderState =  pageList.getParam("workOrderState");
+		Object taskInitiator =  pageList.getParam("taskInitiator");
+		Object taskTimeLimit =  pageList.getParam("taskTimeLimit");
+		
+
+		if(cityId != null && Long.valueOf(cityId.toString()) != -1){
+			terminalGroup.add(Restrictions.eq("id", Long.valueOf(cityId.toString())));			
+		}
+		
+		if(beginDate != null){
+			criteria.add(Restrictions.ge("taskCreatTime", (Date)beginDate));
+		}
+		
+		if(endDate != null){
+			criteria.add(Restrictions.le("taskCreatTime", (Date)endDate));
+		}
+		
+		if(loctionDeparture !=null){
+			if (Integer.valueOf(loctionDeparture.toString()) == 0) {
+				//小于100米
+				criteria.add(Restrictions.lt("testLocationSkewing", 100L));
+				
+			} else if (Integer.valueOf(loctionDeparture.toString()) == 1) {
+				//大于等于100米
+				criteria.add(Restrictions.ge("testLocationSkewing", 100L));
+				//小于等于500米
+				criteria.add(Restrictions.le("testLocationSkewing", 500L));
+				
+			} else if (Integer.valueOf(loctionDeparture.toString()) == 2) {
+				//大于500米
+				criteria.add(Restrictions.gt("testLocationSkewing", 500L));
+			}
+		}
+		
+		if(StringUtils.hasText((String)occupyNrCellName)){
+			criteria.add(Restrictions.like("occupyNrCellName", (String) occupyNrCellName,MatchMode.ANYWHERE));
+		}
+		
+		if(StringUtils.hasText((String)occupyLteCellName)){
+			criteria.add(Restrictions.like("occupyLteCellName", (String) occupyLteCellName,MatchMode.ANYWHERE));
+		}
+
+		if(StringUtils.hasText((String)boxId)){
+			criteria.add(Restrictions.eq("boxId", (String) boxId));
+		}
+
+		if(StringUtils.hasText((String)workOrderState)){
+			criteria.add(Restrictions.eq("workOrderState", (String)workOrderState));
+		}
+		
+		if(StringUtils.hasText((String)taskInitiator)){
+			criteria.add(Restrictions.eq("taskInitiator", (String) taskInitiator));
+		}
+
+		if(StringUtils.hasText((String)taskTimeLimit)){
+			criteria.add(Restrictions.eq("taskTimeLimit", (String) taskTimeLimit));
+		}
+		
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}
 	public EasyuiPageList doPageQuery(PageList pageList){
 		Criteria criteria = this.getHibernateSession().createCriteria(FixedPointTaskOrderPojo.class);
 		
@@ -108,9 +189,7 @@ public class CQTTaskOrderDao extends GenericHibernateDao<FixedPointTaskOrderPojo
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-		}
+		total = doPageQueryCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

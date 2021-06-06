@@ -404,6 +404,64 @@ public class TerminalDao extends GenericHibernateDao<Terminal, Long> {
 		return tes;
 	}
 
+	public long getPageTerminalCount(PageList pageList) {
+		if (null == pageList || null == pageList.getParam("cityId")) {
+			return 0;
+		}
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				Terminal.class);
+		// boxid
+		Object boxId = pageList.getParam("boxId");
+		// terminalGroup
+		Object cityId = pageList.getParam("cityId");
+		// name
+		Object name = pageList.getParam("name");
+		// online
+		Object online = pageList.getParam("online");
+		// name
+		Object testTarget = pageList.getParam("testTarget");
+		// online
+		Object installDate = pageList.getParam("installDate");
+
+		// 设置boxid筛选条件
+		if (StringUtils.hasText((String) boxId)) {
+			criteria.add(Restrictions.like("boxId", (String) boxId,
+					MatchMode.ANYWHERE));
+		}
+		// 设置name筛选条件
+		if (StringUtils.hasText((String) name)) {
+			criteria.add(Restrictions.like("name", (String) name,
+					MatchMode.ANYWHERE));
+		}
+		// 设置city筛选条件
+		Criteria groupCriteria = criteria.createCriteria("terminalGroup");
+		groupCriteria.add(Restrictions.eq("id", pageList.getParam("cityId")));
+		// 设置online筛选条件
+		if (null != online) {
+			// online
+			criteria.add(Restrictions.eq("online", online));
+		}
+		
+		//设置终端类型
+		if(testTarget != null){
+			criteria.add(Restrictions.eq("testTarget", (Integer) testTarget));
+		}
+		//设置下载时间
+		if(installDate != null){
+			criteria.add(Restrictions.ge("installDate", installDate));
+		}
+
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		long total = 0;
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件查询
 	 * 
@@ -467,10 +525,7 @@ public class TerminalDao extends GenericHibernateDao<Terminal, Long> {
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
 		long total = 0;
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getPageTerminalCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

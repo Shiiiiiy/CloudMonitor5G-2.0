@@ -33,6 +33,47 @@ import com.datang.domain.errorLogManage.ErrorLogManagePojo;
 @Repository
 public class ErrorLogManageDao extends GenericHibernateDao<ErrorLogManagePojo, Long>{
 
+
+	public long getPageDataOfFactorCount(PageList pageList) {
+		if (null == pageList) {
+			return 0;
+		}
+		Criteria criteria = this.getHibernateSession().createCriteria(ErrorLogManagePojo.class);
+		ErrorLogManagePojo errorLogManagePojo = (ErrorLogManagePojo)pageList.getParam("errorLogManagePojo");
+		if(errorLogManagePojo != null){
+			String city = errorLogManagePojo.getCity();
+			String softwareV = errorLogManagePojo.getSoftwareV();
+			String osV = errorLogManagePojo.getOsV();
+			Integer terminalType = errorLogManagePojo.getTerminalType();
+			
+			// 设置city筛选条件
+			if (StringUtils.hasText((String) city)) {
+				criteria.add(Restrictions.like("city", city,MatchMode.ANYWHERE));
+			}
+			// 设置softwareV筛选条件
+			if (StringUtils.hasText((String) softwareV)) {
+				criteria.add(Restrictions.like("softwareV", softwareV,MatchMode.ANYWHERE));
+			}
+			// 设置osV筛选条件
+			if (StringUtils.hasText((String) osV)) {
+				criteria.add(Restrictions.like("osV", osV,MatchMode.ANYWHERE));
+			}
+			// 设置terminalType筛选条件
+			if (terminalType != 0) {
+				criteria.add(Restrictions.eq("terminalType", terminalType));
+			}
+			// 设置uploatTime筛选条件
+			if ( pageList.getParam("startTime") != null &&  pageList.getParam("endTime") != null) {
+				criteria.add(Restrictions.between("uploadTime", pageList.getParam("startTime"), pageList.getParam("endTime")));
+			} else if(pageList.getParam("startTime") != null){
+				criteria.add(Restrictions.gt("uploadTime", pageList.getParam("startTime")));
+			} else if(pageList.getParam("endTime") != null){
+				criteria.add(Restrictions.lt("uploadTime", pageList.getParam("endTime")));
+			}
+		}
+		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return total;
+	}
 	/**
 	 * 多条件查询
 	 * 
@@ -78,7 +119,7 @@ public class ErrorLogManageDao extends GenericHibernateDao<ErrorLogManagePojo, L
 			}
 		}
 		criteria.addOrder(Order.desc("id"));
-		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		long total = getPageDataOfFactorCount(pageList);
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数
 		int pageNum = pageList.getPageNum();// 页码

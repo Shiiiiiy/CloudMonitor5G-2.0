@@ -28,6 +28,37 @@ import com.datang.domain.testLogItem.TestLogItemSignalling;
 public class TestLogItemSignallingDao extends
 		GenericHibernateDao<TestLogItemSignalling, Long> {
 
+	public long getPageSignallingCount(PageList pageList) {
+
+		if (null == pageList || null == pageList.getParam("recseqno")) {
+			return 0;
+		}
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				TestLogItemSignalling.class);
+
+		if (null != pageList.getParam("recseqno")) {
+			Criteria createCriteria = criteria.createCriteria("testLogItem");
+			createCriteria.add(Restrictions.eq("recSeqNo",
+					pageList.getParam("recseqno")));
+		}
+		if (null != pageList.getParam("startTime")) {
+			criteria.add(Restrictions.ge("time", pageList.getParam("startTime")));
+		}
+		if (null != pageList.getParam("endTime")) {
+			criteria.add(Restrictions.le("time", pageList.getParam("endTime")));
+		}
+
+		long total = 0;
+		criteria.setProjection(null);
+		int rowsCount = pageList.getRowsCount();// 每页记录数
+		int pageNum = pageList.getPageNum();// 页码
+		criteria.setFirstResult((pageNum - 1) * rowsCount);
+		criteria.setMaxResults(rowsCount);
+		List list = criteria.list();
+		total = (Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult();
+		return total;
+	}
 	/**
 	 * 根据pageList获取信令详情分页信息
 	 * 
@@ -64,10 +95,7 @@ public class TestLogItemSignallingDao extends
 		criteria.setFirstResult((pageNum - 1) * rowsCount);
 		criteria.setMaxResults(rowsCount);
 		List list = criteria.list();
-		if(list.size() > 0){
-			total = (Long) criteria.setProjection(Projections.rowCount())
-				.uniqueResult();
-		}
+		total = getPageSignallingCount(pageList);
 		EasyuiPageList easyuiPageList = new EasyuiPageList();
 		easyuiPageList.setRows(list);
 		easyuiPageList.setTotal(total + "");

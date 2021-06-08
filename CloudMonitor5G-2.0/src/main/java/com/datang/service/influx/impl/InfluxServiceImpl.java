@@ -118,7 +118,7 @@ public class InfluxServiceImpl implements InfluxService {
         }
         if(endTime instanceof String){
             sb.append( "AND time<'"+DateComputeUtils.localToUTC(DateComputeUtils.formatDate(endTime.toString()))+"'");
-        }else if(startTime instanceof java.util.Date){
+        }else if(endTime instanceof java.util.Date){
             sb.append(" AND time<'"+DateComputeUtils.localToUTC((Date)endTime)+"'");
         }
 

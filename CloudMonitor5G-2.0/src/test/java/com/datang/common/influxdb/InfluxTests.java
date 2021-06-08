@@ -37,7 +37,7 @@ public class InfluxTests {
         List<Map<String, Object>> maps = logIEService.evtWindowData(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
         List<Map<String, Object>> maps2 = logIEService.sigleWindowData(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
         List<Map<String, Object>> maps3 = logIEService.lineChartDatas(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
-        List<Map<String, Object>> maps4 = logIEService.synOper(575l, "2021-05-15 08:58:21.755");
+        List<Map<String, Object>> maps4 = logIEService.synOper(575l, "2021-05-15 08:58:22.258");
         System.out.println(recrods.size());
         System.out.println(maps2.size());
         System.out.println(maps3.size());

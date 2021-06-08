@@ -121,7 +121,7 @@ public class DateComputeUtils {
 		calendar.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
 		/** 取得的时间就是UTC标准时间 */
 		Date utcDate=new Date(calendar.getTimeInMillis());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		return sdf.format(utcDate);
 	}
 

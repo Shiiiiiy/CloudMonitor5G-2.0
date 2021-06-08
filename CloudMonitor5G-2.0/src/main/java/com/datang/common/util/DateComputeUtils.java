@@ -240,8 +240,18 @@ public class DateComputeUtils {
 		return "";
 	}
 
+	public static Date formatDate(String time){
+		try {
+			return DateUtils.parseDate(time,formats3);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	static String[] formats=new String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSS Z","yyyy-MM-dd'T'HH:mm:ss.SS Z","yyyy-MM-dd'T'HH:mm:ss.S Z","yyyy-MM-dd'T'HH:mm:ss Z"};
 	static String[] formats2=new String[]{ "yyyy-MM-dd HH:mm:ss.SSS","yyyy-MM-dd HH:mm:ss.SS","yyyy-MM-dd HH:mm:ss.S","yyyy-MM-dd HH:mm:ss"};
+	static String[] formats3=new String[]{ "yyyy-MM-dd HH:mm:ss","yyyy/MM/dd HH:mm:ss"};
 	static String[] utcformats=new String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","yyyy-MM-dd'T'HH:mm:ss.SS'Z'","yyyy-MM-dd'T'HH:mm:ss.S'Z'","yyyy-MM-dd'T'HH:mm:ss'Z'"};
 	public static String formatMicroTime(String date){
 		Date d = null;

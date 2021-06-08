@@ -1,7 +1,9 @@
 package com.datang.common.influxdb;
 
 import com.datang.domain.planParam.PlanParamPojo;
+import com.datang.domain.testLogItem.IEItem;
 import com.datang.service.influx.InfluxService;
+import com.datang.service.service5g.logbackplay.LogIEService;
 import com.datang.service.taskOrderManage.CQTTaskOrderService;
 import okhttp3.OkHttpClient;
 import org.influxdb.InfluxDB;
@@ -27,6 +29,13 @@ public class InfluxTests {
     private InfluxService influxService;
     @Autowired
     private CQTTaskOrderService cqtTaskOrderService;
+    @Autowired
+    private LogIEService logIEService;
+    @Test
+    public void getLogPlayDatas(){
+        List<IEItem> recrods= logIEService.getRecrodsByLogId(569l);
+        System.out.println(recrods.size());
+    }
 
     public void getDatas(){
         List<String> fileNames=new ArrayList<>();

@@ -14,9 +14,11 @@ import com.datang.service.influx.bean.NetTotalConfig;
 import com.datang.service.influx.bean.VoiceBusiConfig;
 import com.datang.service.testLogItem.UnicomLogItemService;
 import com.datang.util.AdjPlaneArithmetic;
+import com.datang.util.DateUtil;
 import com.datang.util.GPSUtils;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Query;
@@ -35,7 +37,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,6 +80,59 @@ public class InfluxServiceImpl implements InfluxService {
 
     private static DecimalFormat df = new DecimalFormat("#0.00");
 
+    private static String lineChartSql="SELECT IEValue_40028 as RSRP, IEValue_40035 as SINR, IEValue_50229 as SS_RSRP, IEValue_70525 as SS_SINR ,IEValue_43724 as 'LTE PDCP Thrput DL(Mbps)',IEValue_43725 as 'LTE PDCP Thrput UL(Mbps)',IEValue_50962 as 'NR PHY Thrput UL(Mbps)',IEValue_51213 as 'NR PHY Thrput DL(Mbps)' FROM IE";
+
+    @Override
+    public List<Map<String, Object>> lineChartDatas(long logId, String startTime, String endTime) {
+        return commonQueryDatas(lineChartSql,logId,startTime,endTime);
+    }
+
+    @Override
+    public List<Map<String, Object>> sigleDatas(long logId, String startTime, String endTime) {
+        return commonQueryDatas(sigSql,logId,startTime,endTime);
+    }
+
+    private static final String evtSql="SELECT evtName,Netmode,extrainfo from EVT";
+    private static final String sigSql="select Netmode,signalName,Dir,DetailMsg from SIG";
+    @Override
+    public List<Map<String, Object>> evtDatas(long logId, String startTime, String endTime) {
+        return commonQueryDatas(evtSql,logId,startTime,endTime);
+    }
+    private static final String synSql="select last(IEValue_40001) as ie_40001,last(IEValue_40002) as ie_40002,last(IEValue_40006) as ie_40006,last(IEValue_40007) as ie_40007,last(IEValue_40008) as ie_40008,last(IEValue_40009) as ie_40009,last(IEValue_40010) as ie_40010,last(IEValue_40014) as ie_40014,last(IEValue_40015) as ie_40015,last(IEValue_40016) as ie_40016,last(IEValue_40017) as ie_40017,last(IEValue_40019) as ie_40019,last(IEValue_40028) as ie_40028,last(IEValue_40031) as ie_40031,last(IEValue_40034) as ie_40034,last(IEValue_40035) as ie_40035,last(IEValue_40075) as ie_40075,last(IEValue_40139) as ie_40139,last(IEValue_40171) as ie_40171,last(IEValue_40203) as ie_40203,last(IEValue_40235) as ie_40235,last(IEValue_40299) as ie_40299,last(IEValue_44206) as ie_44206,last(IEValue_50001) as ie_50001,last(IEValue_50002) as ie_50002,last(IEValue_50003) as ie_50003,last(IEValue_50006) as ie_50006,last(IEValue_50007) as ie_50007,last(IEValue_50013) as ie_50013,last(IEValue_50015) as ie_50015,last(IEValue_50016) as ie_50016,last(IEValue_50017) as ie_50017,last(IEValue_50021) as ie_50021,last(IEValue_50046) as ie_50046,last(IEValue_50051) as ie_50051,last(IEValue_50055) as ie_50055,last(IEValue_50056) as ie_50056,last(IEValue_50057) as ie_50057,last(IEValue_50101) as ie_50101,last(IEValue_50165) as ie_50165,last(IEValue_50229) as ie_50229,last(IEValue_50293) as ie_50293,last(IEValue_53601) as ie_53601,last(IEValue_58000) as ie_58000,last(IEValue_58032) as ie_58032,last(IEValue_70005) as ie_70005,last(IEValue_70070) as ie_70070,last(IEValue_70525) as ie_70525 from IE";
+    @Override
+    public List<Map<String, Object>> syncIEWindow(Long logId, String time) {
+        Date date = DateComputeUtils.formatDate(time);
+        Date startDate = DateUtils.truncate(date, Calendar.SECOND);
+        return commonQueryDatas(synSql,logId,startDate,time);
+    }
+
+
+    private List<Map<String, Object>> commonQueryDatas(String sql,long logId, Object startTime, Object endTime) {
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .readTimeout(timeout,TimeUnit.SECONDS);
+        StringBuilder sb=new StringBuilder(sql);
+        if(startTime instanceof String){
+            sb.append(" where time>='"+ DateComputeUtils.localToUTC(DateComputeUtils.formatDate(startTime.toString()))+"'");
+        }else if(startTime instanceof java.util.Date){
+            sb.append(" where time>='"+ DateComputeUtils.localToUTC((Date)startTime)+"'");
+        }
+        if(endTime instanceof String){
+            sb.append( "AND time<'"+DateComputeUtils.localToUTC(DateComputeUtils.formatDate(endTime.toString()))+"'"
+        }else if(startTime instanceof java.util.Date){
+            sb.append(" AND time<'"+DateComputeUtils.localToUTC((Date)endTime)+"'");
+        }
+
+        InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
+        connect.setDatabase("Task_"+logId);
+        QueryResult query=connect.query(new Query(sb.toString(), "Task_"+logId));
+        List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
+        result.forEach(item->{
+            item.put("time", DateComputeUtils.formatTime(item.get("time").toString()));
+        });
+        connect.close();
+        return result;
+    }
+
     @Override
     public List<Map<String, Object>> getMapTrailByLogFiles(List<String> fileLogIds) {
         OkHttpClient.Builder client = new OkHttpClient.Builder()
@@ -90,7 +144,7 @@ public class InfluxServiceImpl implements InfluxService {
         String sql=MessageFormat.format(MAPTRAILSQL,columns.toArray());
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
-        List<Map<String, Object>> results=new ArrayList<>();
+        List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         fileLogIds.parallelStream().forEach(id->{
             Map<String,Object> resultMap=new HashMap<>();
             InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
@@ -1388,7 +1442,7 @@ public class InfluxServiceImpl implements InfluxService {
         }
         return null;
     }
-
+    @Override
     public Map<String, String> getAbevtKpiConfig(){
         return InitialConfig.abevtKpiMap2;
     }
@@ -1922,6 +1976,8 @@ public class InfluxServiceImpl implements InfluxService {
         });
         return results1;
     }
+
+
 
     static Map<String,String> nrVoiceMap=new LinkedHashMap<>();
     static Map<String,String> lteVoiceMap=new LinkedHashMap<>();

@@ -76,4 +76,37 @@ public interface InfluxService {
      * @return
      */
     List<Map<String, Object>> getReportCellKpi(List<String> fileLogIds);
+
+    /**
+     * 日志回放linechart 窗口数据
+     * @param logId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String, Object>> lineChartDatas(long logId, String startTime, String endTime);
+    /**
+     * 日志回放 信令窗口数据
+     * @param logId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String, Object>> sigleDatas(long logId, String startTime, String endTime);
+    /**
+     * 日志回放 事件窗口数据
+     * @param logId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String, Object>> evtDatas(long logId, String startTime, String endTime);
+
+    /**
+     * 同步IE
+     * @param logId
+     * @param time
+     * @return
+     */
+    List<Map<String,Object>> syncIEWindow(Long logId,String time);
 }

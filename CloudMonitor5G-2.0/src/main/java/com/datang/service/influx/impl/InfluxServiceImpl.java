@@ -80,7 +80,7 @@ public class InfluxServiceImpl implements InfluxService {
 
     private static DecimalFormat df = new DecimalFormat("#0.00");
 
-    private static String lineChartSql="SELECT IEValue_40028 as RSRP, IEValue_40035 as SINR, IEValue_50229 as SS_RSRP, IEValue_70525 as SS_SINR ,IEValue_43724 as 'LTE PDCP Thrput DL(Mbps)',IEValue_43725 as 'LTE PDCP Thrput UL(Mbps)',IEValue_50962 as 'NR PHY Thrput UL(Mbps)',IEValue_51213 as 'NR PHY Thrput DL(Mbps)' FROM IE";
+    private static String lineChartSql="SELECT IEValue_40028 as RSRP, IEValue_40035 as SINR, IEValue_50229 as SS_RSRP, IEValue_70525 as SS_SINR ,IEValue_43724 as \"LTE PDCP Thrput DL(Mbps)\",IEValue_43725 as \"LTE PDCP Thrput UL(Mbps)\",IEValue_50962 as \"NR PHY Thrput UL(Mbps)\",IEValue_51213 as \"NR PHY Thrput DL(Mbps)\" FROM IE";
 
     @Override
     public List<Map<String, Object>> lineChartDatas(long logId, String startTime, String endTime) {
@@ -127,7 +127,7 @@ public class InfluxServiceImpl implements InfluxService {
         QueryResult query=connect.query(new Query(sb.toString(), "Task_"+logId));
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         result.forEach(item->{
-            item.put("time", DateComputeUtils.formatTime(item.get("time").toString()));
+            item.put("time", DateComputeUtils.formatMicroTime(item.get("time").toString()));
         });
         connect.close();
         return result;

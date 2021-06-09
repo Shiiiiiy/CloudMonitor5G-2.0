@@ -1,6 +1,10 @@
 package com.datang.domain.testLogItem;
 
+import org.apache.struts2.json.annotations.JSON;
+
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Entity
 @Table(name = "iads_cucc_playbackinfo")
@@ -10,6 +14,7 @@ public class IEItem {
     private long id;
 
     private long logId;
+    private String time;
     //NR主邻区信息窗口
     private String ie_58000;
     private Double ie_58032;
@@ -67,6 +72,15 @@ public class IEItem {
     private Double ie_40299;
 
     private Double ie_40235;
+    @Column(name = "timestamp")
+    public String getTime() {
+       return time;
+    }
+    private static final SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public void setTime(String time) {
+        this.time = sd.format(new Date(Long.parseLong(time)));
+    }
+
     @Id
     @Column(name = "id")
     public long getId() {

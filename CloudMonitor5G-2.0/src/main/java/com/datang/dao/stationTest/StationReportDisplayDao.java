@@ -27,9 +27,6 @@ public class StationReportDisplayDao extends GenericHibernateDao<StationReportEx
 	public long doPageQueryCount(PageList pageList) {
 		
 		Criteria criteria = getCiteriaCondition(pageList);
-		
-		criteria.addOrder(Order.desc("id"));
-
 		long total = 0;
 		criteria.setProjection(null);
 		int rowsCount = pageList.getRowsCount();// 每页记录数

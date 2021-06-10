@@ -709,8 +709,8 @@
 				url:'${pageContext.request.contextPath}/unicomLogItem/provInput',
 				cache:false,
 				paneHeight:'auto',
-				valueField:'VALUE',
-				textField:'LABEL',
+				valueField:'value',
+				textField:'label',
 				onSelect: function(rec){
 					//var url = '';
 					//$('#city').combobox('reload', url);
@@ -718,8 +718,8 @@
 						url:'${pageContext.request.contextPath}/unicomLogItem/cityInput?prov='+rec.VALUE,
 						cache:false,
 						paneHeight:'auto',
-						valueField:'VALUE',
-						textField:'LABEL'
+						valueField:'value',
+						textField:'label'
 					})
 				}
 			})

@@ -400,6 +400,7 @@ public class CustomLogReportTask implements Serializable {
 	public void setBoxIds(String boxIds) {
 		this.boxIds = boxIds;
 	}
+	@Column(name="TEMPLATEIDS", length = 4000)
 	public String getTemplateIds() {
 		return templateIds;
 	}

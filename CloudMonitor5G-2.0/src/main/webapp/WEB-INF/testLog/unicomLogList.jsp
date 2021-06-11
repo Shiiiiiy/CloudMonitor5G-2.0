@@ -715,7 +715,7 @@
 					//var url = '';
 					//$('#city').combobox('reload', url);
 					$('#city').combobox({
-						url:'${pageContext.request.contextPath}/unicomLogItem/cityInput?prov='+rec.VALUE,
+						url:'${pageContext.request.contextPath}/unicomLogItem/cityInput?prov='+rec.value,
 						cache:false,
 						paneHeight:'auto',
 						valueField:'value',

@@ -975,13 +975,13 @@ public class ReportFgAction extends PageAction implements
 				}
 
 				// 日志文件
-				UnicomLogItemPageQueryRequestBean pageParams = new UnicomLogItemPageQueryRequestBean();
-				PageList unicomLogPageList = new PageList();
-				unicomLogPageList.putParam("pageQueryBean", pageParams);
-				AbstractPageList abstractPageList = unicomLogItemService.pageList(unicomLogPageList);
-				List<UnicomLogItem> unicomLogItemList = abstractPageList.getRows();
+//				UnicomLogItemPageQueryRequestBean pageParams = new UnicomLogItemPageQueryRequestBean();
+//				PageList unicomLogPageList = new PageList();
+//				unicomLogPageList.putParam("pageQueryBean", pageParams);
+//				AbstractPageList abstractPageList = unicomLogItemService.pageList(unicomLogPageList);
+//				List<UnicomLogItem> unicomLogItemList = abstractPageList.getRows();
 				List<String> unicomLogItemIdList = new ArrayList<>();
-				for(UnicomLogItem u:unicomLogItemList) {
+				for(TestLogItem u:queryTestLogItems) {
 					Long recSeqNo = u.getRecSeqNo();
 					if (recSeqNo == null) continue;
 					unicomLogItemIdList.add(recSeqNo.toString());

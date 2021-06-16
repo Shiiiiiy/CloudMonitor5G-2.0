@@ -518,15 +518,15 @@ $(function(){
 			url:'${pageContext.request.contextPath}/unicomLogItem/provInput',
 			cache:false,
 			paneHeight:'auto',
-			valueField:'VALUE',
-			textField:'LABEL',
+			valueField:'value',
+			textField:'label',
 			onSelect: function(rec){
 				$('#city').combobox({
-					url:'${pageContext.request.contextPath}/unicomLogItem/cityInput?prov='+rec.VALUE,
+					url:'${pageContext.request.contextPath}/unicomLogItem/cityInput?prov='+rec.value,
 					cache:false,
 					paneHeight:'auto',
-					valueField:'VALUE',
-					textField:'LABEL'
+					valueField:'value',
+					textField:'label'
 				})
 			}
 		})

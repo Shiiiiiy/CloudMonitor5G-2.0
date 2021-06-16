@@ -20,29 +20,29 @@
 	<script type="text/javascript">
 	var columns=[[
 		//{field:'id',hidden:true}, 
-		{field:'KK01',width:100,align:'center',title:'5G 网络覆盖率'}, 	
-		{field:'KK02',width:100,align:'center',title:'5G SA时长驻留比'},
-		{field:'KK03',width:100,align:'center',title:'5G NSA时长驻留比'},
-		{field:'KK04',width:100,align:'center',title:'4G 时长驻留比'},
-		{field:'KK05',width:100,align:'center',title:'NR业务建立成功率'}, 	
-		{field:'KK06',width:100,align:'center',title:'NR 里程掉线比'},
-		{field:'KK07',width:100,align:'center',title:'5G切换成功率(系统内)'},
-		{field:'KK08',width:100,align:'center',title:'5G->4G重定向成功率'},
-		{field:'KK09',width:100,align:'center',title:'4G->5G重定向成功率'}, 	
-		{field:'KK10',width:100,align:'center',title:'SA切换用户面时延(ms)'},
-		{field:'KK11',width:100,align:'center',title:'下行平均吞吐率'},
-		{field:'KK12',width:100,align:'center',title:'下行低速占比（低于100Mbps）'},
-		{field:'KK13',width:100,align:'center',title:'下行高速占比（高于800Mbps）'}, 	
-		{field:'KK14',width:100,align:'center',title:'上行平均吞吐率'},
-		{field:'KK15',width:100,align:'center',title:'上行低速占比（低于10Mbps）'},
-		{field:'KK16',width:100,align:'center',title:'上行高速占比（高于160Mbps）'},
-		{field:'KK17',width:100,align:'center',title:'下载成功率'}, 	
-		{field:'KK18',width:100,align:'center',title:'下行平均速率'},
-		{field:'KK19',width:100,align:'center',title:'下行低速占比（低于100Mbps）'},
-		{field:'KK20',width:100,align:'center',title:'下行高速占比（高于800Mbps）'},
-		{field:'KK21',width:100,align:'center',title:'VoLTE主叫EPS FB接通率'}, 	
-		{field:'KK22',width:100,align:'center',title:'VoLTE主叫掉线率'},
-		{field:'KK23',width:100,align:'center',title:'FR成功率'}
+		{field:'kk01',width:100,align:'center',title:'5G 网络覆盖率'}, 	
+		{field:'kk02',width:100,align:'center',title:'5G SA时长驻留比'},
+		{field:'kk03',width:100,align:'center',title:'5G NSA时长驻留比'},
+		{field:'kk04',width:100,align:'center',title:'4G 时长驻留比'},
+		{field:'kk05',width:100,align:'center',title:'NR业务建立成功率'}, 	
+		{field:'kk06',width:100,align:'center',title:'NR 里程掉线比'},
+		{field:'kk07',width:100,align:'center',title:'5G切换成功率(系统内)'},
+		{field:'kk08',width:100,align:'center',title:'5G->4G重定向成功率'},
+		{field:'kk09',width:100,align:'center',title:'4G->5G重定向成功率'}, 	
+		{field:'kk10',width:100,align:'center',title:'SA切换用户面时延(ms)'},
+		{field:'kk11',width:100,align:'center',title:'下行平均吞吐率'},
+		{field:'kk12',width:100,align:'center',title:'下行低速占比（低于100Mbps）'},
+		{field:'kk13',width:100,align:'center',title:'下行高速占比（高于800Mbps）'}, 	
+		{field:'kk14',width:100,align:'center',title:'上行平均吞吐率'},
+		{field:'kk15',width:100,align:'center',title:'上行低速占比（低于10Mbps）'},
+		{field:'kk16',width:100,align:'center',title:'上行高速占比（高于160Mbps）'},
+		{field:'kk17',width:100,align:'center',title:'下载成功率'}, 	
+		{field:'kk18',width:100,align:'center',title:'下行平均速率'},
+		{field:'kk19',width:100,align:'center',title:'下行低速占比（低于100Mbps）'},
+		{field:'kk20',width:100,align:'center',title:'下行高速占比（高于800Mbps）'},
+		{field:'kk21',width:100,align:'center',title:'VoLTE主叫EPS FB接通率'}, 	
+		{field:'kk22',width:100,align:'center',title:'VoLTE主叫掉线率'},
+		{field:'kk23',width:100,align:'center',title:'FR成功率'}
 	]];
 	
 	$(function(){
@@ -156,29 +156,29 @@
 						<th colspan="3">语音业务体验</th>
 					</tr>
 					<tr>
-						<th field='KK01' width="100px" style="text-align:center">5G 网络覆盖率</th>
-						<th field='KK02' width="110px" style="text-align:center">5G SA时长驻留比</th>
-						<th field='KK03' width="120px" style="text-align:center">5G NSA时长驻留比</th>
-						<th field='KK04' width="100px" style="text-align:center">4G 时长驻留比</th>
-						<th field='KK05' width="120px" style="text-align:center">NR业务建立成功率</th> 	
-						<th field='KK06' width="100px" style="text-align:center">NR 里程掉线比</th>
-						<th field='KK07' width="140px" style="text-align:center">5G切换成功率(系统内)</th>
-						<th field='KK08' width="140px" style="text-align:center">5G->4G重定向成功率</th>
-						<th field='KK09' width="140px" style="text-align:center">4G->5G重定向成功率</th>
-						<th field='KK10' width="140px" style="text-align:center">SA切换用户面时延(ms)</th>
-						<th field='KK11' width="100px" style="text-align:center">下行平均吞吐率</th>
-						<th field='KK12' width="180px" style="text-align:center">下行低速占比（低于100Mbps）</th>
-						<th field='KK13' width="180px" style="text-align:center">下行高速占比（高于800Mbps）</th>	
-						<th field='KK14' width="100px" style="text-align:center">上行平均吞吐率</th>
-						<th field='KK15' width="180px" style="text-align:center">上行低速占比（低于10Mbps）</th>
-						<th field='KK16' width="180px" style="text-align:center">上行高速占比（高于160Mbps）</th>
-						<th field='KK17' width="80px" style="text-align:center">下载成功率</th> 	
-						<th field='KK18' width="85px" style="text-align:center">下行平均速率</th>
-						<th field='KK19' width="180px" style="text-align:center">下行低速占比（低于100Mbps）</th>
-						<th field='KK20' width="180px" style="text-align:center">下行高速占比（高于800Mbps）</th>
-						<th field='KK21' width="160px" style="text-align:center">VoLTE主叫EPS FB接通率</th>	
-						<th field='KK22' width="120px" style="text-align:center">VoLTE主叫掉线率</th>
-						<th field='KK23' width="70px" style="text-align:center">FR成功率</th>
+						<th field='kk01' width="100px" style="text-align:center">5G 网络覆盖率</th>
+						<th field='kk02' width="110px" style="text-align:center">5G SA时长驻留比</th>
+						<th field='kk03' width="120px" style="text-align:center">5G NSA时长驻留比</th>
+						<th field='kk04' width="100px" style="text-align:center">4G 时长驻留比</th>
+						<th field='kk05' width="120px" style="text-align:center">NR业务建立成功率</th> 	
+						<th field='kk06' width="100px" style="text-align:center">NR 里程掉线比</th>
+						<th field='kk07' width="140px" style="text-align:center">5G切换成功率(系统内)</th>
+						<th field='kk08' width="140px" style="text-align:center">5G->4G重定向成功率</th>
+						<th field='kk09' width="140px" style="text-align:center">4G->5G重定向成功率</th>
+						<th field='kk10' width="140px" style="text-align:center">SA切换用户面时延(ms)</th>
+						<th field='kk11' width="100px" style="text-align:center">下行平均吞吐率</th>
+						<th field='kk12' width="180px" style="text-align:center">下行低速占比（低于100Mbps）</th>
+						<th field='kk13' width="180px" style="text-align:center">下行高速占比（高于800Mbps）</th>	
+						<th field='kk14' width="100px" style="text-align:center">上行平均吞吐率</th>
+						<th field='kk15' width="180px" style="text-align:center">上行低速占比（低于10Mbps）</th>
+						<th field='kk16' width="180px" style="text-align:center">上行高速占比（高于160Mbps）</th>
+						<th field='kk17' width="80px" style="text-align:center">下载成功率</th> 	
+						<th field='kk18' width="85px" style="text-align:center">下行平均速率</th>
+						<th field='kk19' width="180px" style="text-align:center">下行低速占比（低于100Mbps）</th>
+						<th field='kk20' width="180px" style="text-align:center">下行高速占比（高于800Mbps）</th>
+						<th field='kk21' width="160px" style="text-align:center">VoLTE主叫EPS FB接通率</th>	
+						<th field='kk22' width="120px" style="text-align:center">VoLTE主叫掉线率</th>
+						<th field='kk23' width="70px" style="text-align:center">FR成功率</th>
 					</tr>
 				</thead>
 			</table>

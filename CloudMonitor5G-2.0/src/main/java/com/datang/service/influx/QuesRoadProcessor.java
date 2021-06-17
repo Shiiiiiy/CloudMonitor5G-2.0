@@ -1,7 +1,9 @@
 package com.datang.service.influx;
 
 import com.datang.dao.quesroad.QuesRoadDao;
+import com.datang.domain.platform.projectParam.Cell5G;
 import com.datang.domain.testLogItem.TestLogItem;
+import com.datang.service.exceptionevent.GisAndListShowServie;
 import com.datang.service.influx.bean.QuesRoadThreshold;
 import com.datang.service.testLogItem.UnicomLogItemService;
 import com.datang.util.AdjPlaneArithmetic;
@@ -37,6 +39,8 @@ public class QuesRoadProcessor {
         EVTS_MAP.put("上行低速率路段",new String[]{"Ftp Upload Attempt","Ftp Upload Success","FTP UpLoad Drop"});
         EVTS_MAP.put("下行低速率路段",new String[]{"Ftp Upload Attempt","Ftp Upload Success","FTP UpLoad Drop"});
     }
+    @Autowired
+    private GisAndListShowServie gisAndListShowServie;
 
     /**
      * 问题路段分析入口
@@ -49,6 +53,9 @@ public class QuesRoadProcessor {
         Map<String,Double> thresholdMap=quesRoadThresholds.stream().collect(Collectors.toMap(QuesRoadThreshold::getName,QuesRoadThreshold::getValue));
         Map<String, List<Map<String, Object>>> result=Collections.synchronizedMap(new HashMap<>());
         fileLogIds.stream().forEach(id->{
+            TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
+            List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
+            Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
             WHERE_MAP.entrySet().parallelStream().forEach(entry->{
                 String key=entry.getKey();
                 List<Map<String, Object>> sampDatas;
@@ -59,7 +66,7 @@ public class QuesRoadProcessor {
                         List<Map<String,String>> times=getTimeIntervals(evtResults);
                         for(Map<String,String> time:times){
                             sampDatas = influxService.queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Arrays.asList(time));
-                            Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,id2LogBeanMap.get(Long.parseLong(id)));
+                            Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                             if(result.containsKey(key)){
                                 result.get(key).addAll(tempR.get(key));
                             }else{
@@ -70,7 +77,7 @@ public class QuesRoadProcessor {
                 }else{
                     sampDatas=influxService.queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Collections.emptyList());
                     //问题路段算法
-                    Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,id2LogBeanMap.get(Long.parseLong(id)));
+                    Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                     result.putAll(tempR);
                 }
 
@@ -86,9 +93,13 @@ public class QuesRoadProcessor {
      * @param sampDatas
      * @param thresholdMap
      * @param testLogItem
+     * @param nrPciFcn2BeanMap
      * @return
      */
-    private Map<String, List<Map<String, Object>>> quesRoadAlgorithm(String key, List<Map<String, Object>> sampDatas, Map<String, Double> thresholdMap, TestLogItem testLogItem) {
+    private Map<String, List<Map<String, Object>>> quesRoadAlgorithm(String key, List<Map<String, Object>> sampDatas, Map<String, Double> thresholdMap, TestLogItem testLogItem, Map<String, List<Cell5G>> nrPciFcn2BeanMap) {
+       if(sampDatas==null||sampDatas.isEmpty()){
+           return Collections.emptyMap();
+       }
         Map<String, Object> point = sampDatas.get(0);
         Double lon=Double.parseDouble(point.get("Long").toString());
         Double lat=Double.parseDouble(point.get("Lat").toString());
@@ -114,8 +125,7 @@ public class QuesRoadProcessor {
                     slideWindow.add(sampDatas.get(i));
                     end++;
                 }
-            }
-            if("上行质差路段".equalsIgnoreCase(key)){
+            } else if("上行质差路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("upqualitydiffroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate1(thresholdMap)).count()*1.0/slideWindow.size();
                     Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("upqualitydiffsamprate");
@@ -128,8 +138,7 @@ public class QuesRoadProcessor {
                     slideWindow.add(sampDatas.get(i));
                     end++;
                 }
-            }
-            if("下行质差路段".equalsIgnoreCase(key)){
+            }else if("下行质差路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("downqualitydiffroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate(thresholdMap)).count()*1.0/slideWindow.size();
                     Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("downqualitydiffsamprate");
@@ -142,8 +151,7 @@ public class QuesRoadProcessor {
                     slideWindow.add(sampDatas.get(i));
                     end++;
                 }
-            }
-            if("上行低速率路段".equalsIgnoreCase(key)){
+            }else if("上行低速率路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("uplowerspeedroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_54231", "uplowerspeedrlc")).count()*1.0/slideWindow.size();
                     Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("uplowerspeedsamprate");
@@ -156,8 +164,7 @@ public class QuesRoadProcessor {
                     slideWindow.add(sampDatas.get(i));
                     end++;
                 }
-            }
-            if("下行低速率路段".equalsIgnoreCase(key)){
+            }else if("下行低速率路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("downlowerspeedroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_53483", "downlowerspeedrlc")).count()*1.0/slideWindow.size();
                     Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("downlowerspeedsamprate");
@@ -196,12 +203,13 @@ public class QuesRoadProcessor {
                 pciCountMap.put(a,b.size());
             });
             List<Map.Entry<String, Integer>> collect = pciCountMap.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).collect(Collectors.toList());
-            obj.put("pci1",collect.get(0).getKey());
-            obj.put("pci1count",collect.get(0).getValue());
-            obj.put("pci2",collect.get(1).getKey());
-            obj.put("pci2count",collect.get(1).getValue());
-            obj.put("pci3",collect.get(1).getKey());
-            obj.put("pci3count",collect.get(1).getValue());
+            String pci1=collect.size()>0?collect.get(0).getKey():null;
+            obj.put("pci1",pci1);
+            obj.put("pci1count",collect.size()>0?collect.get(0).getValue():null);
+            obj.put("pci2",collect.size()>1?collect.get(1).getKey():null);
+            obj.put("pci2count",collect.size()>1?collect.get(1).getValue():null);
+            obj.put("pci3",collect.size()>2?collect.get(2).getKey():null);
+            obj.put("pci3count",collect.size()>2?collect.get(2).getValue():null);
             obj.put("sumrsrp",InfluxReportUtils.getSumKpi2(maps,"IEValue_50055"));
             obj.put("countrsrp",InfluxReportUtils.getCountKpi2(maps,"IEValue_50055"));
             obj.put("sumsinr",InfluxReportUtils.getSumKpi2(maps,"IEValue_50056"));
@@ -217,12 +225,18 @@ public class QuesRoadProcessor {
                 arfcnCountMap.put(a,b.size());
             });
             List<Map.Entry<String, Integer>> collect1 = pciCountMap.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).collect(Collectors.toList());
-            obj.put("arfcn1",collect1.get(0).getKey());
-            obj.put("arfcncount",collect1.get(0).getValue());
-            obj.put("arfcn2",collect1.get(1).getKey());
-            obj.put("arfcn2count",collect1.get(1).getValue());
-            obj.put("arfcn3",collect1.get(1).getKey());
-            obj.put("arfcn3count",collect1.get(1).getValue());
+            String arfcn1=collect1.size()>0?collect1.get(0).getKey():null;
+            obj.put("arfcn1",arfcn1);
+            obj.put("arfcn1count",collect1.size()>0?collect1.get(0).getValue():null);
+            obj.put("arfcn2",collect1.size()>1?collect1.get(1).getKey():null);
+            obj.put("arfcn2count",collect1.size()>1?collect1.get(1).getValue():null);
+            obj.put("arfcn3",collect1.size()>2?collect1.get(2).getKey():null);
+            obj.put("arfcn3count",collect1.size()>2?collect1.get(2).getValue():null);
+            List<Cell5G> cell5GS = nrPciFcn2BeanMap.get(pci1 +  "_" + arfcn1);
+            Cell5G cell = InfluxReportUtils.getCell((slat + elat) / 2, (slong + elong) / 2, cell5GS);
+            obj.put("gnodebid1",cell!=null?cell.getgNBId():null);
+            obj.put("sectorid1",cell!=null?cell.getLocalCellId():null);
+
 
             obj.put("sumdlinitbler",InfluxReportUtils.getSumKpi2(maps,"IEValue_73000"));
             obj.put("countdlinitbler",InfluxReportUtils.getCountKpi2(maps,"IEValue_73000"));
@@ -413,6 +427,7 @@ public class QuesRoadProcessor {
                     start=i;
                 }
                 flag=false;
+
             }else if(rate*100<=thresholdMap.get(thresholdName)-20){
                 if(!flag){
                     quesRaods.add(new int[]{start,end-1});
@@ -420,8 +435,17 @@ public class QuesRoadProcessor {
                     start=i;
                     end=i;
                     flag=true;
+                }else{
+                    if(flag){
+                        start++;
+                    }
+                    end++;
                 }
-
+            }else{
+                if(flag){
+                    start++;
+                }
+                end++;
             }
             return this;
         }

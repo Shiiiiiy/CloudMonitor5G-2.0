@@ -1436,6 +1436,7 @@ public class InfluxServiceImpl implements InfluxService {
             }
         }else{
             rm.put("exsistTauFail","否");
+            rm.put("exsistSwFail","否");
         }
     }
 

@@ -109,4 +109,22 @@ public interface InfluxService {
      * @return
      */
     List<Map<String,Object>> syncIEWindow(Long logId,String time);
+
+    /**
+     * 查询事件列表点发生的时刻列表
+     * @param evts
+     * @return
+     */
+    List<Map<String,Object>> evtPointTimes(Long logId,String[] evts);
+
+    /**
+     * 查询问题路段相关采样点
+     * @param sql
+     * @param logId
+     * @param timeLists
+     * @return
+     */
+    public List<Map<String, Object>> queryRoadSampDatas(String sql,long logId, List<Map<String,String>> timeLists);
+
+
 }

@@ -3,6 +3,7 @@ package com.datang.common.influxdb;
 import com.datang.domain.planParam.PlanParamPojo;
 import com.datang.domain.testLogItem.IEItem;
 import com.datang.service.influx.InfluxService;
+import com.datang.service.influx.QuesRoadProcessor;
 import com.datang.service.service5g.logbackplay.LogIEService;
 import com.datang.service.taskOrderManage.CQTTaskOrderService;
 import okhttp3.OkHttpClient;
@@ -17,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -31,18 +33,26 @@ public class InfluxTests {
     private CQTTaskOrderService cqtTaskOrderService;
     @Autowired
     private LogIEService logIEService;
+    @Autowired
+    private QuesRoadProcessor quesRoadProcessor;
     @Test
     public void getLogPlayDatas(){
         List<IEItem> recrods= logIEService.getRecrodsByLogId(572l);
         List<Map<String, Object>> maps = logIEService.evtWindowData(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
         List<Map<String, Object>> maps2 = logIEService.sigleWindowData(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
         List<Map<String, Object>> maps3 = logIEService.lineChartDatas(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
-        List<Map<String, Object>> maps4 = logIEService.synOper(575l, "2021-05-15 08:58:22.258");
+        List<Map<String, Object>> maps4 = logIEService.synOper(575l, "2021-05-15 09:12:35.644");
         System.out.println(recrods.size());
         System.out.println(maps2.size());
         System.out.println(maps3.size());
         System.out.println(maps4.size());
         System.out.println(maps.size());
+    }
+    @Test
+    public void testQuesroad(){
+        Map<String, List<Map<String, Object>>> analysize = quesRoadProcessor.analysize(Arrays.asList("575"));
+        System.out.println(analysize.size());
+
     }
 
     public void getDatas(){
@@ -72,7 +82,7 @@ public class InfluxTests {
     @Test
     public void test4(){
         List<String> fileNames=new ArrayList<>();
-        fileNames.add("14897");
+        fileNames.add("572");
        /* Map<String, String> abevtKpiConfig = influxService.getAbevtKpiConfig();
         System.out.println(abevtKpiConfig);*/
        /* List<Map<String, Object>> eventByLogFiles = influxService.getEventByLogFiles(fileNames);

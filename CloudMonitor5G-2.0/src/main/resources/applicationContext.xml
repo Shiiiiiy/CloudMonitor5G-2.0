@@ -126,6 +126,7 @@
 		<property name="packagesToScan">
 			<list>
 				<value>com.datang.domain</value>
+				<value>com.datang.service.influx.bean</value>
 			</list>
 		</property>
 	</bean>

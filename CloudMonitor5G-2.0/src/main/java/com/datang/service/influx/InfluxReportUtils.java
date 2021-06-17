@@ -159,6 +159,20 @@ public class InfluxReportUtils {
     public static Long getCountKpi(List<Map<String, Object>> list,String index){
         return list.stream().filter(item -> item.get(getColumnName(index)) != null).count();
     }
+    public static Long getCountKpi2(List<Map<String, Object>> list,String index){
+        return list.stream().filter(item -> item.get(index) != null).count();
+    }
+
+    public static Long getCountFilterKpi2(List<Map<String, Object>> list,String index, Predicate<? super Map<String, Object>> predicate){
+        return list.stream().filter(item -> item.get(index) != null).filter(item->predicate.test(item)).count();
+    }
+
+    public static Double getMaxKpi(List<Map<String, Object>> list,String index){
+        return list.stream().filter(item -> item.get(index) != null).map(item->Double.parseDouble(item.get("index").toString())).max(Comparator.comparingDouble(Double::doubleValue)).get();
+    }
+    public static Double getMinKpi(List<Map<String, Object>> list,String index){
+        return list.stream().filter(item -> item.get(index) != null).map(item->Double.parseDouble(item.get("index").toString())).min(Comparator.comparingDouble(Double::doubleValue)).get();
+    }
 
     public static Long getCountKpi(String key,Map<String, List<Map<String, Object>>> pciFcnGroupby,String index){
         return pciFcnGroupby.get(key).stream().filter(item -> item.get(getColumnName(index)) != null).count();
@@ -187,6 +201,11 @@ public class InfluxReportUtils {
     public static String getSumKpi(List<Map<String, Object>> list,String index){
         List<Map<String, Object>> collect = list.stream().filter(item -> item.get(getColumnName(index)) != null).collect(Collectors.toList());
         return !collect.isEmpty()?df.format(collect.stream().mapToDouble(f -> Double.parseDouble(String.valueOf(f.get(getColumnName(index))))).sum()):null;
+    }
+
+    public static String getSumKpi2(List<Map<String, Object>> list,String index){
+        List<Map<String, Object>> collect = list.stream().filter(item -> item.get(index) != null).collect(Collectors.toList());
+        return !collect.isEmpty()?df.format(collect.stream().mapToDouble(f -> Double.parseDouble(String.valueOf(f.get(index)))).sum()):null;
     }
 
     public static String getColumnName(String name){

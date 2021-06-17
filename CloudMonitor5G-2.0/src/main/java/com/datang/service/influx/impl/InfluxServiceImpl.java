@@ -14,7 +14,6 @@ import com.datang.service.influx.bean.NetTotalConfig;
 import com.datang.service.influx.bean.VoiceBusiConfig;
 import com.datang.service.testLogItem.UnicomLogItemService;
 import com.datang.util.AdjPlaneArithmetic;
-import com.datang.util.DateUtil;
 import com.datang.util.GPSUtils;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang.StringUtils;
@@ -106,6 +105,25 @@ public class InfluxServiceImpl implements InfluxService {
         return commonQueryDatas(synSql,logId,startDate,time);
     }
 
+    private static final String evtPointSql="SELECT evtName from EVT WHERE ";
+    @Override
+    public List<Map<String, Object>> evtPointTimes(Long logId,String[] evts) {
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .readTimeout(timeout,TimeUnit.SECONDS);
+        StringBuilder sb=new StringBuilder(evtPointSql);
+        Set<String> cols=new HashSet<>();
+        for(String evt:evts){
+            cols.add("evtName='"+evt+"'");
+        };
+        sb.append(cols.stream().collect(Collectors.joining(" or ")));
+        InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
+        connect.setDatabase("Task_"+logId);
+        QueryResult query=connect.query(new Query(sb.toString(), "Task_"+logId));
+        List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
+        connect.close();
+        return result;
+    }
+
 
     private List<Map<String, Object>> commonQueryDatas(String sql,long logId, Object startTime, Object endTime) {
         OkHttpClient.Builder client = new OkHttpClient.Builder()
@@ -129,6 +147,33 @@ public class InfluxServiceImpl implements InfluxService {
         result.forEach(item->{
             item.put("time", DateComputeUtils.formatMicroTime(item.get("time").toString()));
         });
+        connect.close();
+        return result;
+    }
+    @Override
+    public List<Map<String, Object>> queryRoadSampDatas(String sql,long logId,  List<Map<String,String>> timeLists) {
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .readTimeout(timeout,TimeUnit.SECONDS);
+        List<String> timeWheres=new ArrayList<>();
+        StringBuilder sbSql=new StringBuilder(sql);
+        timeLists.forEach(item->{
+            StringBuilder sb=new StringBuilder("(");
+            String startTime=item.get("startTime");
+            String endTime=item.get("endTime");
+            if(StringUtils.isNotBlank(startTime)){
+                sb.append(" time>='"+ startTime+"'");
+            }
+            if(StringUtils.isNotBlank(startTime)){
+                sb.append( "AND time<='"+endTime+"'");
+            }
+            sb.append(")");
+            timeWheres.add(sb.toString());
+        });
+        sbSql.append(timeWheres.stream().collect(Collectors.joining(" or ")));
+        InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
+        connect.setDatabase("Task_"+logId);
+        QueryResult query=connect.query(new Query(sbSql.toString(), "Task_"+logId));
+        List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         connect.close();
         return result;
     }
@@ -272,7 +317,7 @@ public class InfluxServiceImpl implements InfluxService {
     private static String samplat = "30.402345";
     private static String samplon ="120.523456";
     @Override
-    public List<Map.Entry<String, List<Map<String, Object>>>> getGridDatasByLogFiles(List<String> fileLogIds) {
+    public List<Map.Entry<String, List<Map<String, Object>>>>   getGridDatasByLogFiles(List<String> fileLogIds) {
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .readTimeout(timeout,TimeUnit.SECONDS);
         List<Map<String, Object>> results=new ArrayList<>();
@@ -1470,8 +1515,8 @@ public class InfluxServiceImpl implements InfluxService {
                 //生成事件名和记录的map集合
                 Map<String, List<Map<String, Object>>> evtNameDatas = result.stream().collect(Collectors.groupingBy(i -> i.get("evtName").toString()));
                 //筛选触发事件的记录
-                List<Map.Entry<String, List<Map<String, Object>>>> triggerEvtDatas = evtNameDatas.entrySet().stream().filter(entry ->
-                    Arrays.asList(item.getTriggerEvt()).contains(entry.getKey())
+                        List<Map.Entry<String, List<Map<String, Object>>>> triggerEvtDatas = evtNameDatas.entrySet().stream().filter(entry ->
+                                Arrays.asList(item.getTriggerEvt()).contains(entry.getKey())
                 ).collect(Collectors.toList());
                 if(item.getType().equalsIgnoreCase("lte")){
                     evtNetConfigBusiProcess(testLogItem, connect, item, result, triggerEvtDatas,InitialConfig.netLteKpiMap,sheetDatas);

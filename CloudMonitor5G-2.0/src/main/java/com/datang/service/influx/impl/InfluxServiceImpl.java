@@ -1495,7 +1495,7 @@ public class InfluxServiceImpl implements InfluxService {
 
     @Override
     public Map<String, List<Map<String, Object>>> getNetConfigReports(List<String> fileLogIds) {
-        Map<String, List<Map<String, Object>>> mixReportsMap=new LinkedHashMap<>();
+        Map<String, List<Map<String, Object>>> mixReportsMap=Collections.synchronizedMap(new LinkedHashMap<>());
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .readTimeout(timeout,TimeUnit.SECONDS);
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));

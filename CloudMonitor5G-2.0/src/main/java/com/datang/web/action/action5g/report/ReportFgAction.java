@@ -524,22 +524,22 @@ public class ReportFgAction extends PageAction implements
 			return ReturnType.JSON;
 		}
 
-		String sql = "SELECT  wm_concat(ID) ID ,TEMPLATE_NAME FILE_NAME FROM IADS_CUSREPORT_TMEPLATE WHERE TEMPLATE_NAME IS NOT NULL  AND (TEMPLATE_NAME LIKE '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%')  GROUP BY TEMPLATE_NAME ORDER BY TEMPLATE_NAME";
+		String sql = "SELECT  array_agg(ID) ID ,TEMPLATE_NAME FILE_NAME FROM IADS_CUSREPORT_TMEPLATE WHERE TEMPLATE_NAME IS NOT NULL  AND (TEMPLATE_NAME LIKE '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%')  GROUP BY TEMPLATE_NAME ORDER BY TEMPLATE_NAME";
 		templatePojoList = jdbcTemplate.objectQueryAll(sql);
 		if (null != templatePojoList
 				&& 0 != templatePojoList.size()) {
 			for (Map<String, Object> m : templatePojoList) {
 				Map<String,Object> map = new HashMap<String,Object>();
-				if(m.get("ID")==null) continue;
+				if(m.get("id")==null) continue;
 				try{
-					Object id = m.get("ID");
+					Object id = m.get("id");
 					if(id instanceof Clob){
 						map.put("id",ClobToString((Clob)id));
 					}else{
 						map.put("id",id.toString());
 					}
 
-					map.put("fileName",(String)m.get("FILE_NAME"));
+					map.put("fileName",(String)m.get("file_name"));
 					templateList.add(map);
 					}catch (Exception e){
 

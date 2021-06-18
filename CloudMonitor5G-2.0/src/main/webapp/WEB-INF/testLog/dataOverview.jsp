@@ -144,7 +144,7 @@
 			<table id="mainTable" >
 				<thead frozen="true">
 					<tr>
-						<th field='LOG_NAME' width="160px" style="text-align:center">文件名</th>
+						<th field='log_name' width="160px" style="text-align:center">文件名</th>
 					</tr>
 				</thead>
 				<thead>

@@ -56,7 +56,8 @@ public class QuesRoadProcessor {
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+            //WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+            WHERE_MAP.entrySet().stream().forEach(entry->{
                 String key=entry.getKey();
                 List<Map<String, Object>> sampDatas;
                 //有事件条件的处理
@@ -115,7 +116,7 @@ public class QuesRoadProcessor {
             if("弱覆盖路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("weakcoverroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_50055", "weakcoverrsrp")).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("weakcoversamprate");
+                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate,sampDatas.size()).invoke("weakcoversamprate");
                     start = ss.getStart();
                     end = ss.getEnd();
                     flag = ss.isFlag();
@@ -128,7 +129,7 @@ public class QuesRoadProcessor {
             } else if("上行质差路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("upqualitydiffroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate1(thresholdMap)).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("upqualitydiffsamprate");
+                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("upqualitydiffsamprate");
                     start = ss.getStart();
                     end = ss.getEnd();
                     flag = ss.isFlag();
@@ -141,7 +142,7 @@ public class QuesRoadProcessor {
             }else if("下行质差路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("downqualitydiffroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate(thresholdMap)).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("downqualitydiffsamprate");
+                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("downqualitydiffsamprate");
                     start = ss.getStart();
                     end = ss.getEnd();
                     flag = ss.isFlag();
@@ -154,7 +155,7 @@ public class QuesRoadProcessor {
             }else if("上行低速率路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("uplowerspeedroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_54231", "uplowerspeedrlc")).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("uplowerspeedsamprate");
+                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("uplowerspeedsamprate");
                     start = ss.getStart();
                     end = ss.getEnd();
                     flag = ss.isFlag();
@@ -167,7 +168,7 @@ public class QuesRoadProcessor {
             }else if("下行低速率路段".equalsIgnoreCase(key)){
                 if(distance>=thresholdMap.get("downlowerspeedroadlen")){
                     Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_53483", "downlowerspeedrlc")).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate).invoke("downlowerspeedsamprate");
+                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("downlowerspeedsamprate");
                     start = ss.getStart();
                     end = ss.getEnd();
                     flag = ss.isFlag();
@@ -233,11 +234,11 @@ public class QuesRoadProcessor {
             obj.put("arfcn3",collect1.size()>2?collect1.get(2).getKey():null);
             obj.put("arfcn3count",collect1.size()>2?collect1.get(2).getValue():null);
             List<Cell5G> cell5GS = nrPciFcn2BeanMap.get(pci1 +  "_" + arfcn1);
-            Cell5G cell = InfluxReportUtils.getCell((slat + elat) / 2, (slong + elong) / 2, cell5GS);
-            obj.put("gnodebid1",cell!=null?cell.getgNBId():null);
-            obj.put("sectorid1",cell!=null?cell.getLocalCellId():null);
-
-
+            if(cell5GS!=null&&!cell5GS.isEmpty()){
+                Cell5G cell = InfluxReportUtils.getCell((slat + elat) / 2, (slong + elong) / 2, cell5GS);
+                obj.put("gnodebid1",cell!=null?cell.getgNBId():null);
+                obj.put("sectorid1",cell!=null?cell.getLocalCellId():null);
+            }
             obj.put("sumdlinitbler",InfluxReportUtils.getSumKpi2(maps,"IEValue_73000"));
             obj.put("countdlinitbler",InfluxReportUtils.getCountKpi2(maps,"IEValue_73000"));
 
@@ -398,8 +399,9 @@ public class QuesRoadProcessor {
         private boolean flag;
         private int i;
         private Double rate;
+        private int sampPointSize;
 
-        public Ss(Map<String, Double> thresholdMap, List<int[]> quesRaods, List<Map<String, Object>> slideWindow, int start, int end, boolean flag, int i, Double rate) {
+        public Ss(Map<String, Double> thresholdMap, List<int[]> quesRaods, List<Map<String, Object>> slideWindow, int start, int end, boolean flag, int i, Double rate, int size) {
             this.thresholdMap = thresholdMap;
             this.quesRaods = quesRaods;
             this.slideWindow = slideWindow;
@@ -408,6 +410,7 @@ public class QuesRoadProcessor {
             this.flag = flag;
             this.i = i;
             this.rate = rate;
+            this.sampPointSize=size;
         }
 
         public int getStart() {
@@ -426,6 +429,11 @@ public class QuesRoadProcessor {
                 if(flag){
                     start=i;
                 }
+                //滑窗滑到采样点最后一个满足问题路段开始条件
+                if(end==sampPointSize-1){
+                    quesRaods.add(new int[]{start,end});
+                }
+                end++;
                 flag=false;
 
             }else if(rate*100<=thresholdMap.get(thresholdName)-20){

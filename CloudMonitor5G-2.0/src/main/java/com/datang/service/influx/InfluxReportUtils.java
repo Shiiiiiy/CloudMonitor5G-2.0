@@ -168,10 +168,12 @@ public class InfluxReportUtils {
     }
 
     public static Double getMaxKpi(List<Map<String, Object>> list,String index){
-        return list.stream().filter(item -> item.get(index) != null).map(item->Double.parseDouble(item.get("index").toString())).max(Comparator.comparingDouble(Double::doubleValue)).get();
+        List<Map<String, Object>> collect = list.stream().filter(item -> item.get(index) != null).collect(Collectors.toList());
+        return collect!=null&&!collect.isEmpty()?collect.stream().filter(item -> item.get(index) != null).map(item->Double.parseDouble(item.get("index").toString())).max(Comparator.comparingDouble(Double::doubleValue)).get():null;
     }
     public static Double getMinKpi(List<Map<String, Object>> list,String index){
-        return list.stream().filter(item -> item.get(index) != null).map(item->Double.parseDouble(item.get("index").toString())).min(Comparator.comparingDouble(Double::doubleValue)).get();
+        List<Map<String, Object>> collect = list.stream().filter(item -> item.get(index) != null).collect(Collectors.toList());
+        return collect!=null&&!collect.isEmpty()?collect.stream().filter(item -> item.get(index) != null).map(item->Double.parseDouble(item.get("index").toString())).min(Comparator.comparingDouble(Double::doubleValue)).get():null;
     }
 
     public static Long getCountKpi(String key,Map<String, List<Map<String, Object>>> pciFcnGroupby,String index){

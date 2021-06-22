@@ -537,7 +537,7 @@
 						 </ul>
 					</li>
 				</shiroextend:hasAnyPermissions>
-				<shiroextend:hasAnyPermissions name="station:show">
+				<%-- <shiroextend:hasAnyPermissions name="station:show">
 					<li class="first">
 						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/station.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />单站验证</a>
 						<ul> 
@@ -569,7 +569,7 @@
 						</ul>
 					</li>
 				</shiroextend:hasAnyPermissions>
-				<%-- <shiroextend:hasAnyPermissions name="CQTTask:show,stationTask:show">
+				<shiroextend:hasAnyPermissions name="CQTTask:show,stationTask:show">
 					<li class="first">
 						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/opposite3D.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />工单</a>
 						<ul> 

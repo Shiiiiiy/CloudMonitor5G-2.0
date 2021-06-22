@@ -193,8 +193,9 @@ public class CustomLogReportTask implements Serializable {
 	/**
 	 * @return the logIds
 	 */
-	@Column(name = "LOGIDS", nullable = false, length=4000)
-	@JSON(serialize = false)
+	//@Column(name = "LOGIDS", nullable = false, length=4000)
+	//@JSON(serialize = false)
+	@Column(name = "LOGIDS")
 	public String getLogIds() {
 		return logIds;
 	}
@@ -400,7 +401,8 @@ public class CustomLogReportTask implements Serializable {
 	public void setBoxIds(String boxIds) {
 		this.boxIds = boxIds;
 	}
-	@Column(name="TEMPLATEIDS", length = 4000)
+	//@Column(name="TEMPLATEIDS", length = 4000)
+	@Column(name="TEMPLATEIDS")
 	public String getTemplateIds() {
 		return templateIds;
 	}

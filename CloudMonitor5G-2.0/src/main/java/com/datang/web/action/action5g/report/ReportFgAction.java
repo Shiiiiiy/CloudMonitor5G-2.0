@@ -773,7 +773,10 @@ public class ReportFgAction extends PageAction implements
 				customLogReportTask.setLogIds(statisticeTaskRequest.getLogIds());
 			}
 			if (null != statisticeTaskRequest.getTemplateIds()) {
-				customLogReportTask.setTemplateIds(statisticeTaskRequest.getTemplateIds());
+				String tmp = statisticeTaskRequest.getTemplateIds();
+				String tmp1 = tmp.replace("{", "");
+				String tmp2 = tmp1.replace("}", "");
+				customLogReportTask.setTemplateIds(tmp2);
 			}
 			// 查找日志
 			List<TestLogItem> queryTestLogItems = unicomLogItemService

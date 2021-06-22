@@ -704,12 +704,12 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							for (Entry<String, Object> log : logKpiValue.entrySet()) {
 								if(commonKpiValue.get(log.getKey())==null){
 									if(log.getValue()!=null){
-										commonKpiValue.put(log.getKey(), (BigDecimal)log.getValue());
+										commonKpiValue.put(log.getKey(), (new BigDecimal(((log.getValue()).toString()))));
 									}
 								}else{
 									BigDecimal oldValue = commonKpiValue.get(log.getKey());
 									if(log.getValue()!=null){
-										BigDecimal newValue = (BigDecimal)log.getValue();
+										BigDecimal newValue = new BigDecimal(((log.getValue()).toString()));
 										if(kpiToieMapping.get(log.getKey()).toLowerCase().contains("max")){
 											if(newValue.compareTo(oldValue)==1){
 												commonKpiValue.put(log.getKey(), newValue);
@@ -737,12 +737,12 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							for (Entry<String, Object> log : logKpiValue.entrySet()) {
 								if(timeKpiValue.get(log.getKey())==null){
 									if(log.getValue()!=null){
-										timeKpiValue.put(log.getKey(), (BigDecimal)log.getValue());
+										timeKpiValue.put(log.getKey(), (new BigDecimal(((log.getValue()).toString()))));
 									}
 								}else{
 									BigDecimal oldValue = timeKpiValue.get(log.getKey());
 									if(log.getValue()!=null){
-										BigDecimal newValue = (BigDecimal)log.getValue();
+										BigDecimal newValue = new BigDecimal((log.getValue()).toString());
 										if(kpiToieMapping.get(log.getKey()).toLowerCase().contains("max")){
 											if(newValue.compareTo(oldValue)==1){
 												timeKpiValue.put(log.getKey(), newValue);
@@ -770,12 +770,12 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							for (Entry<String, Object> log : logKpiValue.entrySet()) {
 								if(mileKpiValue.get(log.getKey())==null){
 									if(log.getValue()!=null){
-										mileKpiValue.put(log.getKey(), (BigDecimal)log.getValue());
+										mileKpiValue.put(log.getKey(), (new BigDecimal(((log.getValue()).toString()))));
 									}
 								}else{
 									BigDecimal oldValue = mileKpiValue.get(log.getKey());
 									if(log.getValue()!=null){
-										BigDecimal newValue = (BigDecimal)log.getValue();
+										BigDecimal newValue = new BigDecimal(((log.getValue()).toString()));
 										if(kpiToieMapping.get(log.getKey()).toLowerCase().contains("max")){
 											if(newValue.compareTo(oldValue)==1){
 												mileKpiValue.put(log.getKey(), newValue);

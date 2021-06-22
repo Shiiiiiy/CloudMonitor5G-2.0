@@ -285,14 +285,26 @@ public class InfluxServiceImpl implements InfluxService {
                 cols.add("evtName='"+s+"'");
             }
         });
-        String sql="SELECT * from (SELECT count(Lat) as num from EVT where {0} GROUP BY evtName,X,Y)";
+        //改造去除group by
+        String sql="SELECT Lat,X,Y,evtName from EVT where {0}";
         sb.append(cols.stream().collect(Collectors.joining(" or ")));
         String execSql=MessageFormat.format(sql,sb.toString());
         InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
         connect.setDatabase("Task_"+file);
         QueryResult query=connect.query(new Query(execSql, "Task_"+file));
-        List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
+        List<Map<String, Object>> temp = InfludbUtil.paraseQueryResult(query);
         connect.close();
+        Map<String, List<Map<String, Object>>> collect = temp.stream().collect(Collectors.groupingBy(item -> item.get("X") + "-" + item.get("Y") + "-" + item.get("evtName")));
+        List<Map<String, Object>> result=new ArrayList<>();
+        collect.forEach((key,value)->{
+            Map<String, Object> item=new HashMap<>();
+            String[] split = key.split("-", -1);
+            item.put("X", split[0]);
+            item.put("Y", split[1]);
+            item.put("evtName", split[2]);
+            item.put("num", value.size());
+            result.add(item);
+        });
         return result;
     }
 

@@ -329,6 +329,31 @@
 			}
 			window.location= "${pageContext.request.contextPath}/testLogItem/downloadLog.action?testLogItemIds="+ids;
 		}
+
+
+
+		function reviewLog(){
+
+			var ids = '';
+			var checked = $("#testLogInfoTable").datagrid('getSelections');
+			if(checked.length < 1){// 操作前至少选中一条
+				$.messager.alert("提示","请至少选择一条记录!",'warning');
+				return ;
+			}
+			for(var i = 0; i < checked.length;i++){
+				ids = ids + checked[i].recSeqNo;
+				if(i != checked.length-1){
+					ids = ids + ',';
+				}
+			}
+
+			top.addRepeatableTab(null,"logReplay/toReviewPage","日志回放");
+//			alert(ids);
+		}
+
+
+
+
 	</script>
   </head>
   
@@ -405,11 +430,12 @@
 			    	</div>
 			    	<table width="100%">
 			    		<tr>
-				    		<td width="45%" align="right"><a class="easyui-linkbutton" onclick="query();" style="width: 80px;" data-options="iconCls:'icon-search'" >查找</a></td>
-				    		<td width="5%" align="center"><a class="easyui-linkbutton" style="width:80px;"  onclick="downloadLog();" data-options="iconCls:'icon-download'">下载</a></td>
-				    		<td width="5%" align="center"><a class="easyui-linkbutton" onclick="resetForm();" style="width: 80px;" data-options="iconCls:'icon-reload'" >重置</a></td>
-				    		<td width="45%" align="left"><a class="easyui-linkbutton" onclick="deleteLog();" style="width: 80px;" data-options="iconCls:'icon-reload'" >删除</a></td>
-			    		</tr>
+				    		<td width="41%" align="right"><a class="easyui-linkbutton" onclick="query();" style="width: 80px;" data-options="iconCls:'icon-search'" >查找</a></td>
+							<td width="6%" align="center"><a class="easyui-linkbutton" style="width:80px;"  onclick="downloadLog();" data-options="iconCls:'icon-download'">下载</a></td>
+							<td width="6%" align="center"><a class="easyui-linkbutton" onclick="resetForm();" style="width: 80px;" data-options="iconCls:'icon-reload'" >重置</a></td>
+							<td width="6%" align="center"><a class="easyui-linkbutton" onclick="deleteLog();" style="width: 80px;" data-options="iconCls:'icon-cancel'" >删除</a></td>
+							<td width="41%" align="left"><a class="easyui-linkbutton" onclick="reviewLog();" style="width: 80px;"  >回放</a></td>
+						</tr>
 			    	</table>
 		    	</form>
    			</div>

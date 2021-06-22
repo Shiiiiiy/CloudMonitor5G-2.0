@@ -118,13 +118,21 @@
     <script src="js/ol.js" type="text/javascript"></script>
     <script src="js/FileSaver.js"></script>
     <script src="js/jquery.min.js"></script>
-	<script src= "js/html2canvas.js"></script>
+    <!-- <script src= "js/dom-to-image.js"></script> -->
+    <script src= "js/html2canvas.js"></script>
+    <!-- <script src="js/traceData.js"></script> -->
     <script src="js/GpsTrace.js" type="text/javascript"></script>
     <script type="text/javascript">
 
         function receiveMessage(e) {
             var data = e.data;
-            showTrace(data, "NR SS-RSRP");
+            if(data && data.dataType == "logreplay"){
+                showLogTrace(data.logids,"NR SS-RSRP");
+            }else if(data && data.dataType == "synchlog"){
+                SynchronizeLog(data.logid,data.timestamp);
+            }else{
+                showTrace(data, "NR SS-RSRP");
+            }
         }
 
         if (typeof window.addEventListener != 'undefined') {//使用html5 的postMessage必须处理的 

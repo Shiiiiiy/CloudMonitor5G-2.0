@@ -80,16 +80,40 @@ var measureVector = new ol.layer.Vector({
         })
     })
 });
-
+/* 日志同步当前点 */
+var synchSource = new ol.source.Vector({ wrapX: false });
+var synchVector = new ol.layer.Vector({
+    name: 'SynchronizeVector',
+    type: 99,
+    source: synchSource,
+    style: function (feature) {
+        return new ol.style.Style({
+            image: new ol.style.RegularShape({
+                fill: new ol.style.Fill({
+                    color: 'red'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: 'magenta',
+                    width: 1
+                }),
+                points: 5,
+                radius: 18,
+                radius2: 9,
+                angle: 0,
+            }),
+        })
+        les;
+    }
+});
 /* 查询数据源 */
 var querySource = new ol.source.Vector({ wrapX: false });
 var queryVector = new ol.layer.Vector({
     name: 'queryVector',
     type: 99,
     source: querySource
-    /* style: function(feature) {
-        return styles[feature.getGeometry().getType()];
-    } */
+    // style: function(feature) {
+    //     return getPntStyle('NR SS-RSRP',feature);
+    // }
 });
 var image = new ol.style.Icon({
     anchor: [0.5, 1],
@@ -172,7 +196,7 @@ var styles = {
 
 if (gd_url) {
     map = new ol.Map({
-        layers: [gdVector, queryVector, measureVector],
+        layers: [synchVector, gdVector, queryVector, measureVector],
         interactions: ol.interaction.defaults({ doubleClickZoom: false })
             .extend([new ol.interaction.DragRotateAndZoom()]),
         controls: ol.control.defaults({
@@ -189,7 +213,7 @@ if (gd_url) {
 }
 else {
     map = new ol.Map({
-        layers: [roadVector, queryVector, measureVector],
+        layers: [synchVector, roadVector, queryVector, measureVector],
         interactions: ol.interaction.defaults({ doubleClickZoom: false })
             .extend([new ol.interaction.DragRotateAndZoom()]),
         controls: ol.control.defaults({
@@ -287,8 +311,7 @@ function saveMap() {
 
 var mapTraceData;
 function showTrace(dataInfo, dataType) {
-    console.log(dataInfo);
-    if (!dataInfo)
+    if (!dataInfo || !dataInfo.mapData)
         return;
 
     mapTraceData = dataInfo;
@@ -418,10 +441,10 @@ function dealTraceData(curNum, logName, dataType, traceData) {
 
 
             var traceFeat = new ol.Feature({
-                NR_SS_RSRP: nrRsrp,
-                NR_SS_SINR: nrSinr,
-                LTE_PCC_RSRP: lteRsrp,
-                LTE_PCC_SINR: lteSinr,
+                nr_rsrp: nrRsrp,
+                nr_sinr: nrSinr,
+                lte_rsrp: lteRsrp,
+                lte_sinr: lteSinr,
                 geometry: new ol.geom.Point(ol.proj.transform([gpsLon, gpsLat], 'EPSG:4326', 'EPSG:3857'))
             });
             var featColor = "#A9ACAE";
@@ -519,7 +542,7 @@ function getPntStyle(type, feat) {
     //需要根据不同类别设置GPS点颜色
     let color = '#A9ACAE';
     if (type == 'NR SS-RSRP') {
-        let dataValue = feat.values_['NR_SS_RSRP'];
+        let dataValue = feat.values_['nr_rsrp'];
         if (dataValue >= -Infinity && dataValue < -105) {
             color = '#FF0500';
         } else if (dataValue >= -105 && dataValue < -100) {
@@ -530,7 +553,7 @@ function getPntStyle(type, feat) {
             color = '#0400FD';
         }
     } else if (type == 'NR SS-SINR') {
-        let dataValue = feat.values_['NR_SS_SINR'];
+        let dataValue = feat.values_['nr_sinr'];
         if (dataValue >= -Infinity && dataValue < -3) {
             color = '#F20400';
         } else if (dataValue >= -3 && dataValue < 0) {
@@ -541,7 +564,7 @@ function getPntStyle(type, feat) {
             color = '#0309FB';
         }
     } else if (type == 'LTE PCC_RSRP') {
-        let dataValue = feat.values_['LTE_RSRP'];
+        let dataValue = feat.values_['lte_rsrp'];
         if (dataValue >= -Infinity && dataValue < -105) {
             color = '#FF0500';
         } else if (dataValue >= -105 && dataValue < -100) {
@@ -552,7 +575,7 @@ function getPntStyle(type, feat) {
             color = '#0400FD';
         }
     } else if (type == 'LTE PCC_SINR') {
-        let dataValue = feat.values_['LTE_SINR'];
+        let dataValue = feat.values_['lte_sinr'];
         if (dataValue >= -Infinity && dataValue < -3) {
             color = '#F20400';
         } else if (dataValue >= -3 && dataValue < 0) {
@@ -584,10 +607,10 @@ function getStyleBytype(type) {
             symbol: {
                 symbolType: 'circle',
                 size: 8,
-                color: ['case', ['between', ['get', 'NR_SS_RSRP'], -10000, -105], '#FF0500',
-                    ['between', ['get', 'NR_SS_RSRP'], -105, -100], '#C9C307',
-                    ['between', ['get', 'NR_SS_RSRP'], -100, -80], '#008C00',
-                    ['between', ['get', 'NR_SS_RSRP'], -80, +10000], '#0400FD',
+                color: ['case', ['between', ['get', 'nr_rsrp'], -10000, -105], '#FF0500',
+                    ['between', ['get', 'nr_rsrp'], -105, -100], '#C9C307',
+                    ['between', ['get', 'nr_rsrp'], -100, -80], '#008C00',
+                    ['between', ['get', 'nr_rsrp'], -80, +10000], '#0400FD',
                     '#A9ACAE'
                 ],
                 offset: [0, 0],
@@ -600,10 +623,10 @@ function getStyleBytype(type) {
             symbol: {
                 symbolType: 'circle',
                 size: 8,
-                color: ['case', ['between', ['get', 'NR_SS_SINR'], -10000, -3], '#F20400',
-                    ['between', ['get', 'NR_SS_SINR'], -3, 0], '#C9C307',
-                    ['between', ['get', 'NR_SS_SINR'], 0, 15], '#008200',
-                    ['between', ['get', 'NR_SS_SINR'], 15, +10000], '#0309FB',
+                color: ['case', ['between', ['get', 'nr_sinr'], -10000, -3], '#F20400',
+                    ['between', ['get', 'nr_sinr'], -3, 0], '#C9C307',
+                    ['between', ['get', 'nr_sinr'], 0, 15], '#008200',
+                    ['between', ['get', 'nr_sinr'], 15, +10000], '#0309FB',
                     '#A9ACAE'
                 ],
                 offset: [0, 0],
@@ -616,10 +639,10 @@ function getStyleBytype(type) {
             symbol: {
                 symbolType: 'circle',
                 size: 8,
-                color: ['case', ['between', ['get', 'NR_SS_RSRP'], -10000, -105], '#FF0500',
-                    ['between', ['get', 'NR_SS_RSRP'], -105, -100], '#C9C307',
-                    ['between', ['get', 'NR_SS_RSRP'], -100, -80], '#008C00',
-                    ['between', ['get', 'NR_SS_RSRP'], -80, +10000], '#0400FD',
+                color: ['case', ['between', ['get', 'lte_rsrp'], -10000, -105], '#FF0500',
+                    ['between', ['get', 'lte_rsrp'], -105, -100], '#C9C307',
+                    ['between', ['get', 'lte_rsrp'], -100, -80], '#008C00',
+                    ['between', ['get', 'lte_rsrp'], -80, +10000], '#0400FD',
                     '#A9ACAE'
                 ],
                 offset: [0, 0],
@@ -632,10 +655,10 @@ function getStyleBytype(type) {
             symbol: {
                 symbolType: 'circle',
                 size: 8,
-                color: ['case', ['between', ['get', 'NR_SS_SINR'], -10000, -3], '#F20400',
-                    ['between', ['get', 'NR_SS_SINR'], -3, 0], '#C9C307',
-                    ['between', ['get', 'NR_SS_SINR'], 0, 15], '#008200',
-                    ['between', ['get', 'NR_SS_SINR'], 15, +10000], '#0309FB',
+                color: ['case', ['between', ['get', 'lte_sinr'], -10000, -3], '#F20400',
+                    ['between', ['get', 'lte_sinr'], -3, 0], '#C9C307',
+                    ['between', ['get', 'lte_sinr'], 0, 15], '#008200',
+                    ['between', ['get', 'lte_sinr'], 15, +10000], '#0309FB',
                     '#A9ACAE'
                 ],
                 offset: [0, 0],
@@ -650,6 +673,7 @@ function getStyleBytype(type) {
 function changeLegend() {
     var dataType = document.getElementById("dataType").value;
     showTrace(mapTraceData, dataType);
+    showLogTrace(mapLogIds, dataType);
 }
 
 function showLegendControl(legendName, legendInfo) {
@@ -730,29 +754,210 @@ Progress.prototype.hide = function (curLen, totalLen) {
 
 var progress = new Progress(document.getElementById('progress'));
 
-function searchStation(fieldName, fieldVal) {
-    var filter = new ol.format.filter.like(fieldName, "%" + fieldVal + "%");
-    var featureRequest = new ol.format.WFS().writeGetFeature({
-        srsName: 'EPSG:900913',
-        featureTypes: [GridAll],
-        outputFormat: 'application/json',
-        filter: filter
+
+var mapLogIds;
+var pointLayer = undefined;
+var nullPointLayer = undefined;
+var pntSource = new ol.source.Vector({ wrapX: false });
+var nullPntSource = new ol.source.Vector({ wrapX: false });
+var logSource = new ol.source.Vector({ wrapX: false });
+
+function showLogTrace(logIds, dataType) {
+    console.log(logIds);
+    if (!logIds)
+        return;
+
+    mapLogIds = logIds;
+    pntSource.clear();
+    nullPntSource.clear();
+    logSource.clear();
+    var logIdField = "logcode";
+    var ieField = "lte_rsrp";
+    if (dataType == "NR SS-RSRP") {
+        ieField = "nr_rsrp";
+    } else if (dataType == "NR SS-SINR") {
+        ieField = "nr_sinr";
+    } else if (dataType == "LTE PCC_RSRP") {
+        ieField = "lte_rsrp";
+    } else if (dataType == "LTE PCC_SINR") {
+        ieField = "lte_sinr";
+    }
+
+
+    var promiseArr = [];
+    var logArr = logIds.split(',');
+    logArr.forEach(logId => {
+        var equalFilter = new ol.format.filter.equalTo(logIdField, logId);
+        var notNullFilter = new ol.format.filter.not(new ol.format.filter.isNull(ieField));
+        var andFilter = new ol.format.filter.and(equalFilter, notNullFilter);
+        var featureRequest = new ol.format.WFS().writeGetFeature({
+            srsName: 'EPSG:900913',
+            featureTypes: [logLayer],
+            outputFormat: 'application/json',
+            filter: andFilter
+        });
+        // then post the request
+        var tracePromise = fetch(yewu_url, {
+            method: 'POST',
+            body: new XMLSerializer().serializeToString(featureRequest)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            var features = new ol.format.GeoJSON().readFeatures(json);
+            if (features.length == 0) {
+                return;
+            } else {
+                pntSource.addFeatures(features);
+                logSource.addFeatures(features);
+            }
+        });
+        promiseArr.push(tracePromise);
     });
-    // then post the request
-    fetch(yewu_url, {
-        method: 'POST',
-        body: new XMLSerializer().serializeToString(featureRequest)
-    }).then(function (response) {
-        return response.json();
-    }).then(function (json) {
-        var features = new ol.format.GeoJSON().readFeatures(json);
-        if (features.length == 0) {
-            return;
-        } else {
-            var stationId = features[0].values_['station_id'];
-            getRelCell('station_id', stationId);
-        }
+
+    //处理空值GPS数据
+    logArr.forEach(logId => {
+        var equalFilter = new ol.format.filter.equalTo(logIdField, logId);
+        var nullFilter = new ol.format.filter.isNull(ieField);
+        var andFilter = new ol.format.filter.and(equalFilter, nullFilter);
+        var featureRequest = new ol.format.WFS().writeGetFeature({
+            srsName: 'EPSG:900913',
+            featureTypes: [logLayer],
+            outputFormat: 'application/json',
+            filter: andFilter
+        });
+        // then post the request
+        var tracePromise = fetch(yewu_url, {
+            method: 'POST',
+            body: new XMLSerializer().serializeToString(featureRequest)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            var features = new ol.format.GeoJSON().readFeatures(json);
+            if (features.length == 0) {
+                return;
+            } else {
+                nullPntSource.addFeatures(features);
+                logSource.addFeatures(features);
+            }
+        });
+        promiseArr.push(tracePromise);
     });
+
+
+    Promise.all(promiseArr).then(() => {
+        if (pointLayer)
+            map.removeLayer(pointLayer);
+        pointLayer = new ol.layer.WebGLPoints({
+            source: pntSource,
+            style: getStyleBytype(dataType),
+            disableHitDetection: true,
+        })
+        map.addLayer(pointLayer);
+
+        if (nullPointLayer)
+            map.removeLayer(nullPointLayer);
+        nullPointLayer = new ol.layer.WebGLPoints({
+            source: nullPntSource,
+            style: {
+                symbol: {
+                    symbolType: 'circle',
+                    size: 8,
+                    color: '#A9ACAE',
+                    offset: [0, 0],
+                    opacity: 0.95,
+                }
+            },
+            disableHitDetection: true,
+        })
+        map.addLayer(nullPointLayer);
+        //地图居中显示
+        view.fit(logSource.getExtent());
+    }).catch(() => {
+
+    })
+
+
+    //显示图例
+    var legendInfo = [];
+    var legendName = dataType ? dataType : "NR SS-RSRP";
+
+    if (dataType == "NR SS-RSRP") {
+        legendInfo = [
+            {
+                name: "[-Inf,-105)",
+                color: "#FF0500"
+            }, {
+                name: "[-105,-100)",
+                color: "#C9C307"
+            }, {
+                name: "[-100,-80)",
+                color: "#008C00"
+            }, {
+                name: "[-80,+Inf)",
+                color: "#0400FD"
+            }
+        ];
+    } else if (dataType == "NR SS-SINR") {
+        legendInfo = [
+            {
+                name: "[-Inf,-3)",
+                color: "#F20400"
+            }, {
+                name: "[-3,0)",
+                color: "#C9C307"
+            }, {
+                name: "[0,15)",
+                color: "#008200"
+            }, {
+                name: "[15,+Inf)",
+                color: "#0309FB"
+            }
+        ];
+    } else if (dataType == "LTE PCC_RSRP") {
+        legendInfo = [
+            {
+                name: "[-Inf,-105)",
+                color: "#FF0500"
+            }, {
+                name: "[-105,-100)",
+                color: "#C9C307"
+            }, {
+                name: "[-100,-80)",
+                color: "#008C00"
+            }, {
+                name: "[-80,+Inf)",
+                color: "#0400FD"
+            }
+        ];
+    } else if (dataType == "LTE PCC_SINR") {
+        legendInfo = [
+            {
+                name: "[-Inf,-3)",
+                color: "#F20400"
+            }, {
+                name: "[-3,0)",
+                color: "#C9C307"
+            }, {
+                name: "[0,15)",
+                color: "#008200"
+            }, {
+                name: "[15,+Inf)",
+                color: "#0309FB"
+            }
+        ];
+    }
+    showLegendControl(legendName, legendInfo);
+
+    // var logLyr = new ol.layer.Tile({
+    //     source: new ol.source.TileWMS({
+    //       url: wms_url,
+    //           params: { 
+    //               LAYERS: dataBaseName+":"+logLayer		
+    //           }
+    //       })
+    //   });
+    //   map.addLayer(logLyr);
+
 
     /* var url = "";
     $.ajax({
@@ -793,6 +998,40 @@ function searchStation(fieldName, fieldVal) {
             console.log(e)
         }
     }); */
+}
+
+function SynchronizeLog(logId, timestamp) {
+    console.log(logId + " " + timestamp);
+    if (!logId)
+        return;
+
+    synchSource.clear();
+    var logIdField = "logcode";
+    var timeField = "timestamp";
+    var idFilter = new ol.format.filter.equalTo(logIdField, logId);
+    var timeFilter = new ol.format.filter.greaterThanOrEqualTo(timeField, timestamp);
+    var andFilter = new ol.format.filter.and(idFilter, timeFilter);
+    var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:900913',
+        featureTypes: [logLayer],
+        outputFormat: 'application/json',
+        filter: andFilter
+    });
+    // then post the request
+    var pntPromise = fetch(yewu_url, {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest)
+    }).then(function (response) {
+        return response.json();
+    }).then(function (json) {
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+            return;
+        } else {
+            synchSource.addFeature(features[0]);
+            view.fit(synchSource.getExtent());
+        }
+    });
 }
 
 var draw;

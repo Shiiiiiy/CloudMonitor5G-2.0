@@ -68,6 +68,30 @@ function addTab(obj,url,tabTitle,tabObjId) {
 		});
 	}
 }
+
+/**
+ * 添加tab
+ * @param obj为html的dom必须具备url=""和text,obj的优先级高于url和tabTitle两个参数
+ * @param url为创建tab的url
+ * @param tabTitle为创建tab的标题
+ * @param tabObjId为tab的id默认使用id为'mytabs'
+ */
+function addRepeatableTab(obj,url,tabTitle,tabObjId) {
+	var mytabs = $("#mytabs");
+	if(tabObjId){
+		mytabs=$("#"+tabObjId);
+	}
+	if(obj){
+		url = $(obj).attr('url');
+		tabTitle = $(obj).text();
+	}
+	mytabs.tabs('add',{
+		title : tabTitle,
+		content : createIframe(url),
+		closable : true
+	});
+}
+
 /**
  * 关闭tab
  * @param tabTitle 为要删除tab的标题

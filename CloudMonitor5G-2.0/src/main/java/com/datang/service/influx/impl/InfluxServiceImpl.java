@@ -38,7 +38,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Service
+@Service(value = "influxService")
 public class InfluxServiceImpl implements InfluxService {
 
     @Value("${influxdb.url}")

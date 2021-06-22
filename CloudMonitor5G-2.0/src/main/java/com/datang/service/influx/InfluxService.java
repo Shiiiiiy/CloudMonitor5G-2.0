@@ -77,6 +77,7 @@ public interface InfluxService {
      */
     List<Map<String, Object>> getReportCellKpi(List<String> fileLogIds);
 
+
     /**
      * 日志回放linechart 窗口数据
      * @param logId
@@ -124,7 +125,9 @@ public interface InfluxService {
      * @param timeLists
      * @return
      */
-    public List<Map<String, Object>> queryRoadSampDatas(String sql,long logId, List<Map<String,String>> timeLists);
+    List<Map<String, Object>> queryRoadSampDatas(String sql,long logId, List<Map<String,String>> timeLists);
+
+
 
 
 }

@@ -2,6 +2,7 @@ package com.datang.web.beans.report;
 
 import com.datang.common.util.ClassUtil;
 import com.datang.service.influx.InfluxService;
+import com.datang.service.influx.QuesRoadProcessor;
 import lombok.Data;
 
 import java.io.InputStream;

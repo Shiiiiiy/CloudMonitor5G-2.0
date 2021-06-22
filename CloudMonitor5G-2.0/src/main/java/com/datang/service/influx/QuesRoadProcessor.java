@@ -5,6 +5,7 @@ import com.datang.domain.platform.projectParam.Cell5G;
 import com.datang.domain.testLogItem.TestLogItem;
 import com.datang.service.exceptionevent.GisAndListShowServie;
 import com.datang.service.influx.bean.QuesRoadThreshold;
+import com.datang.service.influx.impl.InfluxServiceImpl;
 import com.datang.service.testLogItem.UnicomLogItemService;
 import com.datang.util.AdjPlaneArithmetic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,11 @@ import java.util.stream.Collectors;
 /**
  * 问题路段处理类
  */
-@Service
-public class QuesRoadProcessor {
+@Service(value = "quesRoadService")
+public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadService {
     @Autowired
     private QuesRoadDao quesRoadDao;
-    @Autowired
-    private InfluxService influxService;
+
     @Autowired
     private UnicomLogItemService unicomLogItemService;
     //问题路段获取基础采样点模板sql
@@ -62,11 +62,11 @@ public class QuesRoadProcessor {
                 List<Map<String, Object>> sampDatas;
                 //有事件条件的处理
                 if(EVTS_MAP.containsKey(key)){
-                    List<Map<String, Object>> evtResults = influxService.evtPointTimes(Long.parseLong(id), EVTS_MAP.get(key));
+                    List<Map<String, Object>> evtResults = evtPointTimes(Long.parseLong(id), EVTS_MAP.get(key));
                     if(existEvt(evtResults,"Ftp Upload Attempt")){
                         List<Map<String,String>> times=getTimeIntervals(evtResults);
                         for(Map<String,String> time:times){
-                            sampDatas = influxService.queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Arrays.asList(time));
+                            sampDatas = queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Arrays.asList(time));
                             Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                             if(result.containsKey(key)){
                                 result.get(key).addAll(tempR.get(key));
@@ -76,7 +76,7 @@ public class QuesRoadProcessor {
                         }
                     }
                 }else{
-                    sampDatas=influxService.queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Collections.emptyList());
+                    sampDatas=queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Collections.emptyList());
                     //问题路段算法
                     Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                     result.putAll(tempR);

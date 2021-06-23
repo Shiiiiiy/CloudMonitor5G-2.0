@@ -1,5 +1,17 @@
 var Jh = {
 
+
+
+    Views:{
+        'view1':'NR主邻区信息窗口',
+        'view2':'NR主小区信息窗口',
+        'view3':'LTE主小区信息窗口',
+        'view4':'LTE主邻区信息窗口',
+        'view5':'信令窗口',
+        'view6':'事件窗口',
+        'view7':'linechart窗口',
+    },
+
     Data:{
 
         ieData:{},
@@ -254,17 +266,30 @@ Jh.fn = function (a) {
                             //确定
                             text: "\u786e\u5b9a", onclick: function () {
                                 var mkey =  $("#modulekey").val();
-
+                                var na = $("#modulekey").find('option:selected').text();
                                 if(mkey){
-                                    Jh.Portal._addNewPortal(mkey,'事件窗口');
+                                    $.fallr("hide");
+                                    Jh.Portal._addNewPortal(mkey,na);
                                 }
-                                $.fallr("hide")
+
                             }
                             //取消
                         }, button2: {text: "\u53d6\u6d88"}
                     },
                     //模块名：   模块Code： 模块位置： 左中右
-                    content: '<form style="margin-left:20px"><p>\u6a21\u5757Code\uff1a</p><input type="text" size="15" id="modulekey" /></form>',
+                    content: '<form style="margin-left:20px"><p>\u6a21\u5757Code\uff1a</p>' +
+                        '<select id="modulekey">' +
+                        '<option value="view1">NR主邻区信息窗口</option>'+
+                        '<option value="view2">NR主小区信息窗口</option>'+
+                        '<option value="view3">LTE主小区信息窗口</option>'+
+                        '<option value="view4">LTE主邻区信息窗口</option>'+
+                        '<option value="view5">信令窗口</option>'+
+                        '<option value="view6">事件窗口</option>'+
+                        '<option value="view7">linechart窗口</option>'+
+                        '</select>'+
+                   //     '<input type="text" size="15" id="modulekey" />' +
+
+                        '</form>',
                     //			content: '<form style="margin-left:20px"><p>\u6a21\u5757\u540d\uff1a</p><input type="text" size="15" id="modulename" /><p>\u6a21\u5757Code\uff1a</p><input type="text" size="15" id="modulekey" /><p>\u6a21\u5757\u4f4d\u7f6e\uff1a</p>\u5de6:<input type="radio" name="modulelayout" checked="checked" value="left"/>&nbsp&nbsp\u4e2d:<input type="radio" name="modulelayout" value="center"/>&nbsp&nbsp\u53f3:<input type="radio" name="modulelayout" value="right"/></form>',
 
                     icon: "add",
@@ -279,13 +304,37 @@ Jh.fn = function (a) {
                 $("." + Jh.Config.layCls + " a").each(function () {
                     $(this).hasClass("active") && (f = $(this).attr("rel"))
                 });
-                //默认
-                "1:1:1" == f && (f = "\u9ed8\u8ba4");
-                $.fallr("show", {
-                    //当前布局
-                    content: "<p>left:[" + a + "]</p><p>center:[" + b + "]</p><p>right[" + d + "]</p><p>\u5f53\u524d\u5e03\u5c40:" + f + "</p>",
-                    position: "center"
+
+
+                var result = {
+                    appL:{},
+                    appM:{},
+                    appR:{}
+                };
+
+                $.each(a,function(k,v){
+                    console.log(v)
+                    result.appL[v] = Jh.Views[v];
+                });
+                $.each(b,function(k,v){
+                    result.appM[v] =  Jh.Views[v];
+                });
+                $.each(d,function(k,v){
+                    result.appR[v] =  Jh.Views[v];
+                });
+
+
+
+                $.each(Jh.Layout.layoutText,function(k,v){
+                    if(f==v){
+                        result.layout = k;
+                    }
                 })
+
+                saveLayoutConfig(JSON.stringify(result));
+
+                return result;
+
             })
         }, _bindEvent: function () {
             a._moduleLiClick();
@@ -471,16 +520,23 @@ Jh.Portal = function (a) {
 
                     $.each(cit,function(ind,it){
 
-
-                        var val = value[_prefix+it.field];
-                        if(!val){
-                            val = '';
+                        var td;
+                        if(value){
+                            var val = value[_prefix+it.field];
+                            if(!val){
+                                val = '';
+                            }
+                            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  it.format ?   $("<td  class='" +  b +"_"   + eval( it.format+"('"+val+"');" )+ "' >"+val+"</td>")   :  $("<td>"+val+"</td>");
+                            // $("<td>"+   eval( it.format+"('"+val+"');" )+"</td>")
+                        }else{
+                            td = $("<td id='ie_"+it.field+"'></td>");
                         }
-                        var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  it.format ?   $("<td  class='" +  b +"_"   + eval( it.format+"('"+val+"');" )+ "' >"+val+"</td>")   :  $("<td>"+val+"</td>");
-                        // $("<td>"+   eval( it.format+"('"+val+"');" )+"</td>")
+
 
                         tr.append(td);
                     });
+
+
 
                     tr.hover(function () {
                         $(this).addClass("datagrid-row-over");
@@ -532,7 +588,8 @@ Jh.Portal = function (a) {
             if(b=="view5"){
                 r.dblclick(function () {
                     if(!MyPlayer.Data.playingStatus){
-                        alert(b);
+                   //     alert(b);
+                        console.log(b);
                     }
                 });
             }
@@ -576,16 +633,8 @@ Jh.Portal = function (a) {
             })
         }, _eventRefresh: function () {
 
-
-
-
-
-
             $("." + Jh.Config.refresh).live("click", function () {
-
                 resizeFunction();
-
-
             })
 
 
@@ -658,8 +707,8 @@ Jh.Portal = function (a) {
             var d = a._elements.m_l;
 
             if($("#"+b).length>0){
-                d.append($("#"+b));
-                $("#"+b).show();
+      //          d.append($("#"+b));
+     //           $("#"+b).show();
             }else{
 
                 if(b=='view7'){
@@ -668,7 +717,7 @@ Jh.Portal = function (a) {
 
                     Mychart.fn.init({
                         sync:function(){
-
+                            setSliderValue();
                             Jh.Portal._syncData("#view7");
                         }
                     });

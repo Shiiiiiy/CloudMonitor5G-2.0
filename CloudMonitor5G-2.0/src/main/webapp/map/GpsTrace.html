@@ -96,7 +96,7 @@
                         </select>
                     </span>
                 </div>
-                <div class="layer_item detail item" onclick="saveMap();">
+                <div style="display:none" class="layer_item detail item" onclick="saveMap();">
                     <span class="icon"></span>
                     <span class="name">导出图片</span>
                 </div>
@@ -123,7 +123,6 @@
     <!-- <script src="js/traceData.js"></script> -->
     <script src="js/GpsTrace.js" type="text/javascript"></script>
     <script type="text/javascript">
-
         function receiveMessage(e) {
             var data = e.data;
             if(data && data.dataType == "logreplay"){
@@ -131,6 +130,7 @@
             }else if(data && data.dataType == "synchlog"){
                 SynchronizeLog(data.logid,data.timestamp);
             }else{
+                document.getElementsByClassName("layer_item detail item")[0].style.display = "";
                 showTrace(data, "NR SS-RSRP");
             }
         }

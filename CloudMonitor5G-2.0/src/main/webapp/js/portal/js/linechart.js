@@ -33,6 +33,23 @@ Mychart.fn = function (a) {
 		init: function (b) {
 			
 			if(container =  document.getElementById(Mychart.Config.container)){
+
+				var d = $("<div></div>");
+
+				var $this = this;
+
+				$.each(Mychart.Data.title,function(k,v){
+
+					var s = $("<span style='cursor:pointer;margin-right: 10px'><a >"+v+"</a></span>");
+					s.click(function(){
+						$this.change(k);
+					})
+
+					d.append(s);
+				});
+
+				$("#"+Mychart.Config.container).before(d);
+
 				chartObject = echarts.init(document.getElementById(Mychart.Config.container));
 				chartObject.setOption(a.getOption());
 			/**

@@ -771,6 +771,7 @@ function showLogTrace(logIds, dataType) {
     pntSource.clear();
     nullPntSource.clear();
     logSource.clear();
+    synchSource.clear();
     var logIdField = "logcode";
     var ieField = "lte_rsrp";
     if (dataType == "NR SS-RSRP") {
@@ -1028,8 +1029,14 @@ function SynchronizeLog(logId, timestamp) {
         if (features.length == 0) {
             return;
         } else {
-            synchSource.addFeature(features[0]);
-            view.fit(synchSource.getExtent());
+            var synchFeat = features[0];
+            synchSource.addFeature(synchFeat);
+            var pntCoor = synchFeat.getGeometry().getCoordinates()
+            var viewExtent =  new ol.geom.Polygon.fromExtent(map.getView().calculateExtent());
+            if(!viewExtent.intersectsCoordinate(pntCoor)){
+                view.setCenter(pntCoor);
+            }
+            //view.fit(synchSource.getExtent());
         }
     });
 }

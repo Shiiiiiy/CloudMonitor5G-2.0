@@ -176,7 +176,7 @@ input:focus, textarea:focus {
     font-size: 12px;
     line-height: 20px;
     position: relative;
-    height:200px;
+    height:300px;
     overflow-y:auto;
 }
 
@@ -325,5 +325,30 @@ input:focus, textarea:focus {
 }
 
 
+.tplay{
+    background: url("../images/tplay.png") no-repeat scroll 0 0 transparent;
+}
+.tstop{
+    background: url("../images/tstop.png") no-repeat scroll 0 0 transparent;
+}
+.tnext{
+    background: url("../images/tnext.png") no-repeat scroll 0 0 transparent;
+}
+.tpause{
+    background: url("../images/tpause.png") no-repeat scroll 0 0 transparent;
+}
+.tfastforwad{
+    background: url("../images/tfastforwad.png") no-repeat scroll 0 0 transparent;
+}
+.trestart{
+    background: url("../images/trestart.png") no-repeat scroll 0 0 transparent;
+}
+.trewind{
+    background: url("../images/trewind.png") no-repeat scroll 0 0 transparent;
+}
 
-
+.ticon{
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+}

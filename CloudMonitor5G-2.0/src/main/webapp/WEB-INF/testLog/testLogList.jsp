@@ -335,19 +335,23 @@
 		function reviewLog(){
 
 			var ids = '';
+			var names = '';
 			var checked = $("#testLogInfoTable").datagrid('getSelections');
 			if(checked.length < 1){// 操作前至少选中一条
 				$.messager.alert("提示","请至少选择一条记录!",'warning');
 				return ;
 			}
+
 			for(var i = 0; i < checked.length;i++){
 				ids = ids + checked[i].recSeqNo;
+				names =names +checked[i].fileName;
 				if(i != checked.length-1){
 					ids = ids + ',';
+					names = names +',';
 				}
 			}
 
-			top.addRepeatableTab(null,"logReplay/toReviewPage","日志回放");
+			top.addRepeatableTab(null,"logReplay/toReviewPage?logIds="+ids+"&logNames="+names,"日志回放");
 //			alert(ids);
 		}
 

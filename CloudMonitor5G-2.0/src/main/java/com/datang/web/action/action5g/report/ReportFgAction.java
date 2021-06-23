@@ -26,6 +26,7 @@ import com.datang.domain.customTemplate.AnalyFileReport;
 import com.datang.domain.customTemplate.CustomLogReportTask;
 import com.datang.domain.testLogItem.UnicomLogItem;
 import com.datang.service.influx.InfluxService;
+import com.datang.service.influx.QuesRoadService;
 import com.datang.service.testLogItem.UnicomLogItemService;
 import com.datang.web.beans.report.*;
 import com.datang.web.beans.testLogItem.UnicomLogItemPageQueryRequestBean;
@@ -110,8 +111,10 @@ public class ReportFgAction extends PageAction implements
 	@Resource
 	private JdbcTemplate jdbcTemplate;
 
-	@Resource
+	@Resource(name="influxService")
 	private InfluxService influxService;
+	@Resource(name="quesRoadService")
+	private QuesRoadService quesRoadService;
 
 	/**
 	 * 日志服务
@@ -193,6 +196,7 @@ public class ReportFgAction extends PageAction implements
 		analyzeTamplateList.add(new AnalyzeEventTemplate());
 		analyzeTamplateList.add(new AnalyzeNetworkTemplate());
 		analyzeTamplateList.add(new AnalyzeVoiceTemplate());
+		analyzeTamplateList.add(new QuesRoadTemplate());
 
 		analyzeTemplateMap = ReportFgAction.analyzeTamplateList.stream().collect(Collectors.toMap(it->it.getId(), Function.identity(),(o1, o2)-> o1));
 	}
@@ -773,7 +777,10 @@ public class ReportFgAction extends PageAction implements
 				customLogReportTask.setLogIds(statisticeTaskRequest.getLogIds());
 			}
 			if (null != statisticeTaskRequest.getTemplateIds()) {
-				customLogReportTask.setTemplateIds(statisticeTaskRequest.getTemplateIds());
+				String tmp = statisticeTaskRequest.getTemplateIds();
+				String tmp1 = tmp.replace("{", "");
+				String tmp2 = tmp1.replace("}", "");
+				customLogReportTask.setTemplateIds(tmp2);
 			}
 			// 查找日志
 			List<TestLogItem> queryTestLogItems = unicomLogItemService
@@ -996,6 +1003,7 @@ public class ReportFgAction extends PageAction implements
 						AnalyzeEventTemplate analyzeEventTemplate = new AnalyzeEventTemplate();
 						AnalyzeNetworkTemplate analyzeNetworkTemplate = new AnalyzeNetworkTemplate();
 						AnalyzeVoiceTemplate analyzeVoiceTemplate = new AnalyzeVoiceTemplate();
+						QuesRoadTemplate quesRoadTemplate = new QuesRoadTemplate();
 
 						List<String> templateIds = Arrays.asList(customLogReportTask.getTemplateIds().split(","));
 						Boolean result = true;
@@ -1009,7 +1017,9 @@ public class ReportFgAction extends PageAction implements
 						if(templateIds.contains(analyzeVoiceTemplate.getId())){
 							result = result && createAnalyFile(analyzeVoiceTemplate, unicomLogItemIdList, customLogReportTask,hibernateSession);
 						}
-
+						if(templateIds.contains(quesRoadTemplate.getId())){
+							result = result && createAnalyFile(quesRoadTemplate, unicomLogItemIdList, customLogReportTask,hibernateSession);
+						}
 						customLogReportTask.setTaskStatus("3");
 						hibernateSession.merge(customLogReportTask);
 						hibernateSession.flush();
@@ -1046,9 +1056,12 @@ public class ReportFgAction extends PageAction implements
 				.toUpperCase().trim();
 		File file = new File(fileSaveUrl + "/" + ANALYZE_TEMPLATE_PATH + "/" + taskName + analyzeTemplate.getTemplateSuffix());
 		String filePath = fileSaveUrl + "/" + ANALYZE_TEMPLATE_PATH + "/" + taskName + analyzeTemplate.getTemplateSuffix();
-		Map<String, Collection> hashMap1 = analyzeTemplate.getData(influxService, unicomLogItemIdList);
-
-
+		Map<String, Collection> hashMap1=null;
+		if(analyzeTemplate instanceof QuesRoadTemplate){
+			hashMap1 = analyzeTemplate.getData(quesRoadService, unicomLogItemIdList);
+		}else{
+			hashMap1 = analyzeTemplate.getData(influxService, unicomLogItemIdList);
+		}
 		AnalyFileReport report = new AnalyFileReport();
 
 		report.setTaskId(customLogReportTask.getId());

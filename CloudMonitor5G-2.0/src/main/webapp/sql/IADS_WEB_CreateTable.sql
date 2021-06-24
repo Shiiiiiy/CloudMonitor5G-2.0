@@ -3234,25 +3234,3 @@ COMMENT ON COLUMN "public"."t_quesroad_threshold"."threshold_cnname" IS '门限I
 COMMENT ON COLUMN "public"."t_quesroad_threshold"."threshold_name" IS '门限Item英文名';
 COMMENT ON COLUMN "public"."t_quesroad_threshold"."value" IS '门限值';
 COMMENT ON COLUMN "public"."t_quesroad_threshold"."unit" IS '单位';
-
--- ----------------------------
--- Records of t_quesroad_threshold
--- ----------------------------
-
-INSERT INTO "public"."t_quesroad_threshold" VALUES (1,'上行质差路段', '上行质差TxPower门限', 'upqualitydifftxpower', 22, 'dBm');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (2,'上行质差路段', '上行质差BLER门限', 'upqualitydiffbler', 10, '%');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (3,'上行质差路段', '上行质差采样点占比门限', 'upqualitydiffsamprate', 50, '%');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (4,'上行质差路段', '上行质差路段长度', 'upqualitydiffroadlen', 30, 'm');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (5,'下行质差路段', '下行质差sinr门限', 'downqualitydiffsinr', -3, NULL);
-INSERT INTO "public"."t_quesroad_threshold" VALUES (6,'下行质差路段', '下行质差电平门限', 'downqualitydiffrsrp', -105, 'dBm');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (7,'下行质差路段', '下行质差采样点占比门限', 'downqualitydiffsamprate', 50, '%');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (8,'下行质差路段', '下行质差路段长度', 'downqualitydiffroadlen', 30, 'm');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (9,'弱覆盖路段', '弱覆盖电平门限', 'weakcoverrsrp', -105, 'dBm');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (10,'弱覆盖路段', '弱覆盖采样点占比门限', 'weakcoversamprate', 50, '%');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (11,'弱覆盖路段', '弱覆盖路段长度', 'weakcoverroadlen', 30, 'm');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (12,'上行低速率路段', '上行低速率RLC门限', 'uplowerspeedrlc', 5, 'Mbps');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (13,'上行低速率路段', '上行低速率采样点占比门限', 'uplowerspeedsamprate', 50, '%');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (14,'上行低速率路段', '上行低速率路段长度', 'uplowerspeedroadlen', 30, 'm');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (15,'下行低速率路段', '下行低速率RLC门限', 'downlowerspeedrlc', 100, 'Mbps');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (16,'下行低速率路段', '下行低速率采样点占比门限', 'downlowerspeedsamprate', 50, '%');
-INSERT INTO "public"."t_quesroad_threshold" VALUES (17,'下行低速率路段', '下行低速率路段长度', 'downlowerspeedroadlen', 30, 'm');

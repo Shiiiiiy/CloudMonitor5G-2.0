@@ -183,11 +183,11 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         }
         Map<String,List<Map<String,Object>>> result=new HashMap<>();
         List<Map<String,Object>> list=new ArrayList<>();
-        int i=0;
+        int m=0;
         for(int[] item:quesRaods){
             List<Map<String, Object>> maps = sampDatas.subList(item[0], item[1] + 1);
             Map<String,Object> obj=new HashMap<>();
-            obj.put("id",i);
+            obj.put("id",m);
             obj.put("logname",testLogItem.getFileName());
             obj.put("area",testLogItem.getCity());
             obj.put("contractor",testLogItem.getContractor());
@@ -203,7 +203,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             obj.put("elat",elat);
             obj.put("totalLen",getSumKm(maps));
             Map<String,Integer> pciCountMap=new HashMap<>();
-            maps.stream().filter(i->i.get("IEValue_50007")!=null).collect(Collectors.groupingBy(i -> i.get("IEValue_50007").toString())).forEach((a,b)->{
+            maps.stream().filter(j->j.get("IEValue_50007")!=null).collect(Collectors.groupingBy(j -> j.get("IEValue_50007").toString())).forEach((a,b)->{
                 pciCountMap.put(a,b.size());
             });
             List<Map.Entry<String, Integer>> collect = pciCountMap.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).collect(Collectors.toList());
@@ -338,7 +338,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             obj.put("71052rate",sumIEValue_71052!=null?Double.parseDouble(sumIEValue_71052)/sum1:null);
             obj.put("71051rate",sumIEValue_71051!=null?Double.parseDouble(sumIEValue_71051)/sum1:null);
             list.add(obj);
-            i++;
+            m++;
         }
         result.put(key,list);
         return result;

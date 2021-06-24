@@ -22,7 +22,7 @@
 	  <script type="text/javascript" src="${pageContext.request.contextPath}/js/portal/js/Jh.js" charset="utf-8"></script>
 	  <script type="text/javascript" src="${pageContext.request.contextPath}/js/portal/js/linechart.js" charset="utf-8"></script>
 	  <script type="text/javascript" src="${pageContext.request.contextPath}/js/portal/js/player.js" charset="utf-8"></script>
-
+	  <script type="text/javascript" src="${pageContext.request.contextPath}/js/portal/js/slider.js" charset="utf-8"></script>
 
 
 <%--
@@ -124,9 +124,9 @@
 					success: function(data){
 
 
-						Mychart.Data.all = data;
+						MyChart.Data.all = data;
 						if(data[0]){
-							Mychart.Data.initTime =  data[0].time;
+							MyChart.Data.initTime =  data[0].time;
 						}
 
 
@@ -139,89 +139,29 @@
 					dataType: "json",
 					success: function(data){
 						config =  eval("("+data+")");
-						config.sync = function(a){
-							Mychart.Data.canSync = false;
-							Mychart.fn.calcIndex(a);
-							Mychart.fn.play();
-							Mychart.Data.canSync = true;
-							setSliderValue();
-							syncMap();
-						};
 						config.resize = function(){
-							Mychart.fn.resize();
+							MyChart.fn.resize();
 						};
-						config.syncViewData = function(id){
-
-							$.ajax({
-								type: "POST",
-								url: "${pageContext.request.contextPath}/logback/synOper.action",
-								data: {'logId': MyPlayer.Data.logId,'time':MyPlayer.Data.currentTime},
-								dataType: "json",
-								success: function(data){
-									Jh.Portal._refresh(data[0],id);
-								}
-							});
-
-
-						};
-
 					}
 				})
 		).done(function(){
+			Jh.base.init(config);
 			Jh.fn.init(config);
-			Jh.Portal.init(config);
+			MyChart.fn.init();
+			MySlider.fn.init($("#timer"));
 
-			Mychart.fn.init({
-				sync:function(){
-					setSliderValue();
-					Jh.Portal._syncData("#view7");
+			MyPlayer.fn.sync = function(sourceId){
+				if(sourceId !== Jh.Config.syncSourceId ){
+					Jh.fn.synced();
 				}
-			});
-
-			MyPlayer.fn.init({
-				playOnce:function(time){
-					Mychart.fn.calcIndex(time);
-					Mychart.fn.play();
-					Jh.Portal._refresh();
-
-					syncMap();
-				},
-				play:function(time){
-					Mychart.fn.disableClick();
-					Mychart.fn.play();
-					Jh.Portal._refresh();
-					Mychart.fn.calcIndex(time);
-					syncMap();
-					setSliderValue();
-				},pause:function(){
-					Mychart.fn.enableClick();
+				if(sourceId !== MyChart.Config.syncSourceId ){
+					MyChart.fn.synced();
 				}
-			});
-
-
-			$('#timer').slider({
-				showTip:true,
-				tipFormatter: function(value){
-					return  getSliderTime(value);
-				},
-				rule:[MyPlayer.Data.startTime,'|',MyPlayer.Data.endTime],
-				onChange:function(newValue,oldValue){
-					MyPlayer.Data.currentTime = getSliderTime(newValue);
-
-					if(sliderSync){
-						var ct = MyPlayer.Data.currentTime;
-						setTimeout(function(){
-							if(ct == MyPlayer.Data.currentTime){
-								console.log("同步。。。。");
-								MyPlayer.fn.playOnce();
-							}
-						},500);
-					}
+				if(sourceId !== MySlider.Config.syncSourceId ){
+					MySlider.fn.synced();
 				}
-			});
-
-			$(".slider-rulelabel").find("span:last-child").css("margin-left","-117px")
-
+				syncMap();
+			}
 
 			initLayoutSelect();
 
@@ -235,13 +175,9 @@
 					loadNewLog();
 				}
 			});
-
 			$('#logs').combobox('setValue',MyPlayer.Data.logId);
 
-
 		});
-
-
 	});
 
 	function initLayoutSelect(){
@@ -288,13 +224,7 @@
 			});
 
 			$('#layoutSelect').combobox('setValue',MyPlayer.Data.layoutId);
-
 		})
-
-
-
-
-
 
 	}
 
@@ -304,9 +234,7 @@
 		if(!src){
 			$("#mapIframe").attr("src", "${pageContext.request.contextPath}/map/GpsTrace.html");
 		}
-
 		setTimeout(function () {
-
 			var data = {
 				'dataType':'logreplay',
 				'logids':MyPlayer.Data.logId
@@ -327,34 +255,6 @@
 		document.getElementById('mapIframe').contentWindow.postMessage(data);
 	}
 
-
-
-
-
-
-
-	function getSliderTime(value){
-
-		var t =  new Date(	MyPlayer.Data.endTime).getTime() - new Date(MyPlayer.Data.startTime).getTime() ;
-		t = t*value/100;
-		var nd =  new Date(	MyPlayer.Data.startTime);
-		nd.setMilliseconds(nd.getMilliseconds()+t);
-
-		return  nd.Format("yyyy-MM-dd hh:mm:ss");
-	}
-
-	var sliderSync = true;
-	function setSliderValue(){
-
-		sliderSync = false;
-		var t =  new Date(	MyPlayer.Data.endTime).getTime() - new Date(MyPlayer.Data.startTime).getTime() ;
-		var t2 =  new Date(MyPlayer.Data.currentTime).getTime() - new Date(MyPlayer.Data.startTime).getTime() ;
-
-		var value = t2/t*100;
-		$('#timer').slider('setValue',value);
-
-		sliderSync = true;
-	}
 
 
 	function saveLayoutConfig(value){
@@ -419,15 +319,22 @@
 
 		$("#portal").remove();
 		config =  eval("("+config+")");
-		Jh.Portal.init(config);
+		Jh.fn.init(config);
+		MyChart.fn.init();
 
-		Mychart.fn.init({
-			sync:function(){
-				setSliderValue();
-				Jh.Portal._syncData("#view7");
+	}
+
+
+	function syncViewData(id){
+		$.ajax({
+			type: "POST",
+			url: "${pageContext.request.contextPath}/logback/synOper.action",
+			data: {'logId': MyPlayer.Data.logId,'time':MyPlayer.Data.currentTime},
+			dataType: "json",
+			success: function(data){
+				Jh.fn._refresh(data[0],id);
 			}
 		});
-
 	}
 
 
@@ -484,14 +391,10 @@
 					data: {'logId': MyPlayer.Data.logId},
 					dataType: "json",
 					success: function(data){
-
-
-						Mychart.Data.all = data;
+						MyChart.Data.all = data;
 						if(data[0]){
-							Mychart.Data.initTime =  data[0].time;
+							MyChart.Data.initTime =  data[0].time;
 						}
-
-
 					}
 				}),
 
@@ -501,30 +404,8 @@
 					dataType: "json",
 					success: function(data){
 						config =  eval("("+data+")");
-						config.sync = function(a){
-							Mychart.Data.canSync = false;
-							Mychart.fn.calcIndex(a);
-							Mychart.fn.play();
-							Mychart.Data.canSync = true;
-							setSliderValue();
-							syncMap();
-						};
 						config.resize = function(){
-							Mychart.fn.resize();
-						};
-						config.syncViewData = function(id){
-
-							$.ajax({
-								type: "POST",
-								url: "${pageContext.request.contextPath}/logback/synOper.action",
-								data: {'logId': MyPlayer.Data.logId,'time':MyPlayer.Data.currentTime},
-								dataType: "json",
-								success: function(data){
-									Jh.Portal._refresh(data[0],id);
-								}
-							});
-
-
+							MyChart.fn.resize();
 						};
 
 					}
@@ -537,53 +418,9 @@
 			$.each( MyPlayer.Data.layoutArr,function(k,v){
 				if(v.id == lay){
 					toNewLayout(v.value);
-				};
-			});
-
-
-			MyPlayer.fn.init({
-				playOnce:function(time){
-					Mychart.fn.calcIndex(time);
-					Mychart.fn.play();
-					Jh.Portal._refresh();
-
-					syncMap();
-				},
-				play:function(time){
-					Mychart.fn.disableClick();
-					Mychart.fn.play();
-					Jh.Portal._refresh();
-					Mychart.fn.calcIndex(time);
-					syncMap();
-					setSliderValue();
-				},pause:function(){
-					Mychart.fn.enableClick();
 				}
 			});
-
-
-			$('#timer').slider({
-				showTip:true,
-				tipFormatter: function(value){
-					return  getSliderTime(value);
-				},
-				rule:[MyPlayer.Data.startTime,'|',MyPlayer.Data.endTime],
-				onChange:function(newValue,oldValue){
-					MyPlayer.Data.currentTime = getSliderTime(newValue);
-
-					if(sliderSync){
-						var ct = MyPlayer.Data.currentTime;
-						setTimeout(function(){
-							if(ct == MyPlayer.Data.currentTime){
-								console.log("同步。。。。");
-								MyPlayer.fn.playOnce();
-							}
-						},500);
-					}
-				}
-			});
-
-			$(".slider-rulelabel").find("span:last-child").css("margin-left","-117px")
+			MySlider.fn.init($("#timer"))
 
 		})
 
@@ -604,29 +441,22 @@
 		<span id="tpause" style="display: none" class="tpause ticon" onclick="MyPlayer.fn.pause()"></span>
 		<span class="trewind ticon" onclick="MyPlayer.fn.rewind()"></span>
 		<span class="tfastforwad ticon" onclick="MyPlayer.fn.fastForward()"></span>
-		<span class="tnext ticon" onclick="MyPlayer.fn.next()"></span>
-		<span class="trestart ticon" onclick="MyPlayer.fn.pause()"></span>
+		<span class="tnext ticon" onclick="MyPlayer.fn.nextFrame()"></span>
+		<span class="trestart ticon" onclick="MyPlayer.fn.restart()"></span>
 		<span id="speedSpan" style="display:inline-block;width:90px;height:30px;line-height:30px;font-size:30px;">1X</span>
 	</div>
 
 	<div style="display:inline-block;width:380px;margin-left:100px;margin-top:30px;">
 		<input style="float:left"  class="easyui-slider" id="timer"  style="width:180px"  data-options="showTip:true">
-
 	</div>
-
-
 
 	<div style="padding-top: 4px;width:100%;">
 		<iframe id ='mapIframe' name="mapIframe"  scrolling="auto" frameborder="0"  style="width:100%;height:50%;border:0;margin: 0;" ></iframe>
 	</div>
 
-
 	<div style="margin:5px 30px;width:200px;display:inline-block;" >
 		<input id="layoutSelect" style="width:100%"  >
 	</div>
-
-
-
 
 
 </body>

@@ -2,9 +2,6 @@ var MyPlayer = {
 	
 	Config:{
 		
-		
-		
-		
 	},
 	Data : {
 
@@ -29,93 +26,80 @@ var MyPlayer = {
 
 MyPlayer.fn = function (a) {
 	
+	function calcNextFrameTime(){
 
-	
-	var playFunction;
-	var pauseFunction;
-	var playOnceFunction;
-    return a = {
-		init: function (b) {
-			
-			playOnceFunction = b.playOnce;
-			playFunction = b.play;
-			pauseFunction = b.pause;
-	
-	
-        },playOnce:function(){
-			playOnceFunction(MyPlayer.Data.currentTime);
 
-		},next:function (){
-			this.calcCurrentTime();
-			this.playOnce();
-			setSliderValue();
-			this.pause();
+		var date =  new Date(MyPlayer.Data.currentTime);
+		date.setSeconds(date.getSeconds()+MyPlayer.Data.speed);
+		MyPlayer.Data.currentTime = date.Format("yyyy-MM-dd hh:mm:ss");
+
+		if(MyPlayer.Data.currentTime<MyPlayer.Data.startTime){
+			MyPlayer.Data.currentTime = MyPlayer.Data.startTime;
 		}
-		,play:function(){
+		if(MyPlayer.Data.currentTime>MyPlayer.Data.endTime){
+			MyPlayer.Data.currentTime = MyPlayer.Data.endTime;
+		}
+		return MyPlayer.Data.currentTime;
+
+	}
+	
+
+
+    return a = {
+		init: function () {
+
+        },sync:function(sourceId){
+
+		},playOnce:function(){
+			Jh.fn.playOneFrame();
+			MyChart.fn.synced();
+			MySlider.fn.synced();
+			syncMap();
+		},nextFrame:function (){
+			calcNextFrameTime();
+			this.sync();
+			this.pause();
+		},restart:function(){
+			this.stop();
+			this.play();
+		},play:function(){
 
 			var $this =this;
 			$("#tplay").hide();
 			$("#tpause").show();
 
 			if(!MyPlayer.Data.playingStatus){
-
 				MyPlayer.Data.playingStatus = true;
-
 				MyPlayer.Data.task = setInterval(function(){
-
-					var currentTime = a.calcCurrentTime();
-
-					if(currentTime>MyPlayer.Data.endTime){
-
-						currentTime = MyPlayer.Data.endTime;
-						$this.playOnce();
-						setSliderValue();
-						$this.pause();
-
-						$("#tplay").show();
-						$("#tpause").hide();
-						return;
-					}
-					if(currentTime<MyPlayer.Data.startTime){
-						currentTime = MyPlayer.Data.startTime;
-						$this.playOnce();
-						setSliderValue();
+					calcNextFrameTime();
+					$this.playOnce();
+					if(MyPlayer.Data.currentTime >= MyPlayer.Data.endTime){
+						MyPlayer.Data.currentTime = MyPlayer.Data.endTime;
 						$this.pause();
 						$("#tplay").show();
 						$("#tpause").hide();
 						return;
 					}
-
-					playFunction(currentTime);
+					if(MyPlayer.Data.currentTime<=MyPlayer.Data.startTime){
+						MyPlayer.Data.currentTime = MyPlayer.Data.startTime;
+						$this.pause();
+						$("#tplay").show();
+						$("#tpause").hide();
+					}
 
 				},1000);
-
 			}
-
-			
-			
-			
 		},pause:function(){
-
 			$("#tplay").show();
 			$("#tpause").hide();
-
 			if(MyPlayer.Data.playingStatus){
 				MyPlayer.Data.playingStatus = false;
-
 				clearInterval(MyPlayer.Data.task);
-
-				pauseFunction();
-
-
 			}
-			
-			
 		},stop:function(){
 			MyPlayer.Data.currentTime = MyPlayer.Data.startTime;
 			this.pause();
 			this.playOnce();
-			setSliderValue();
 		},fastForward:function(){
 
 			if(MyPlayer.Data.speed >=16){
@@ -128,7 +112,7 @@ MyPlayer.fn = function (a) {
 				MyPlayer.Data.speed = 1;
 			}
 
-			$("#speedSpan").html(	MyPlayer.Data.speed +"X");
+			$("#speedSpan").html(MyPlayer.Data.speed +"X");
 
 		},rewind:function(){
 
@@ -141,16 +125,7 @@ MyPlayer.fn = function (a) {
 			}else{
 				MyPlayer.Data.speed = -1;
 			}
-
-			$("#speedSpan").html(	MyPlayer.Data.speed +"X");
-
-		},calcCurrentTime:function(){
-			
-			var date =  new Date(MyPlayer.Data.currentTime);
-			date.setSeconds(date.getSeconds()+MyPlayer.Data.speed);
-			MyPlayer.Data.currentTime = date.Format("yyyy-MM-dd hh:mm:ss");
-			
-			return MyPlayer.Data.currentTime;
+			$("#speedSpan").html(MyPlayer.Data.speed +"X");
 		}
     }
 }();

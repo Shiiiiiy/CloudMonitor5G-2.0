@@ -1,7 +1,5 @@
 var Jh = {
 
-
-
     Views:{
         'view1':'NR主邻区信息窗口',
         'view2':'NR主小区信息窗口',
@@ -17,11 +15,10 @@ var Jh = {
         ieData:{},
         signData:[],
         eventData:[]
-
-
     },
 
     Config: {
+        syncSourceId:"view12346",
         tableCls: "form-list",
         tdCls: "form-text",
         tdCls2: "single",
@@ -42,14 +39,7 @@ var Jh = {
         _allIe:[],
         _listView:['view5','view6']
     },
-
-
-
-
-
     ViewColumns:{
-
-
         'view1':[[
             {field:'58000',title:'CellName',width:'11%'},
             {field:'58032',title:'Distance',width:'11%'},
@@ -61,9 +51,6 @@ var Jh = {
             {field:'70525',title:'SS-SINR',width:'11%'},
             {field:'70005',title:'RSSI',width:'11%'}
         ]],
-
-
-
         'view2':[[
             {field:'50013',title:'SCell Name',width:'11%'},
             {field:'50006',title:'CellID',width:'11%'},
@@ -133,25 +120,12 @@ var Jh = {
 
     }
 
-
-
 };
 Jh.Layout = function () {
     return {
         location: {left: "portal_l", center: "portal_m", right: "portal_r"},
         locationId: {left: "#portal_l", center: "#portal_m", right: "#portal_r"},
-        //   layoutText: {"0": "1:3", 1: "3:1", 2: "1:2:1", 3: "1:1:2", 4: "2:1:1", 5: "1:1:1",6:"100%竖直排列"},
         layoutText: {"0": "1", 1: "1:1", 2: "1:2", 3: "2:1", 4: "1:1:1"},
-        /**	layoutCss: {
-            "0": "w250 w750 wnone",
-            1: "w750 w250 wnone",
-            2: "w250 w500 w250",
-            3: "w250 w250 w500",
-            4: "w500 w250 w250",
-            5: "w250 w250 w250",
-			6: "w1000 wnone wnone",
-        },
-         **/
         layoutCss: {
             "0": "w1000 wnone wnone",
             1: "w500 w500 wnone",
@@ -179,9 +153,8 @@ Jh.Util = {
         $("body").append(a)
     }
 };
-Jh.fn = function (a) {
+Jh.base = function (a) {
     return a = {
-
         init: function (b) {
             a._ele = {};
             a._create();
@@ -269,7 +242,7 @@ Jh.fn = function (a) {
                                 var na = $("#modulekey").find('option:selected').text();
                                 if(mkey){
                                     $.fallr("hide");
-                                    Jh.Portal._addNewPortal(mkey,na);
+                                    Jh.fn._addNewPortal(mkey,na);
                                 }
 
                             }
@@ -287,7 +260,7 @@ Jh.fn = function (a) {
                         '<option value="view6">事件窗口</option>'+
                         '<option value="view7">linechart窗口</option>'+
                         '</select>'+
-                   //     '<input type="text" size="15" id="modulekey" />' +
+                        //     '<input type="text" size="15" id="modulekey" />' +
 
                         '</form>',
                     //			content: '<form style="margin-left:20px"><p>\u6a21\u5757\u540d\uff1a</p><input type="text" size="15" id="modulename" /><p>\u6a21\u5757Code\uff1a</p><input type="text" size="15" id="modulekey" /><p>\u6a21\u5757\u4f4d\u7f6e\uff1a</p>\u5de6:<input type="radio" name="modulelayout" checked="checked" value="left"/>&nbsp&nbsp\u4e2d:<input type="radio" name="modulelayout" value="center"/>&nbsp&nbsp\u53f3:<input type="radio" name="modulelayout" value="right"/></form>',
@@ -313,7 +286,6 @@ Jh.fn = function (a) {
                 };
 
                 $.each(a,function(k,v){
-                    console.log(v)
                     result.appL[v] = Jh.Views[v];
                 });
                 $.each(b,function(k,v){
@@ -376,7 +348,7 @@ Jh.fn = function (a) {
         }
     }
 }();
-Jh.Portal = function (a) {
+Jh.fn = function (a) {
     var b = "<div id='" + Jh.Layout.location.left + "' class='" + Jh.Config._groupWrapperClass + " '/>",
         c = "<div id='" + Jh.Layout.location.center + "' class='" + Jh.Config._groupWrapperClass + " '/>",
         e = "<div id='" + Jh.Layout.location.right + "' class='" + Jh.Config._groupWrapperClass + " '/>",
@@ -384,18 +356,14 @@ Jh.Portal = function (a) {
         d = "<div id='{key}' class='" + Jh.Config._groupItemClass + "'/>",
         f = "<div class='" + Jh.Config._groupItemHead + "'><h3>{name}</h3></div>",
         i = "<div id='{key}'  class='" + Jh.Config._groupItemContent + "'/>";
-    var syncFunction;
-    var resizeFunction;
-    var syncViewDataFunction;
-    return a = {
 
+    var resizeFunction;
+
+    return a = {
         init: function (b) {
-            syncFunction = b.sync;
             resizeFunction = b.resize;
-            syncViewDataFunction = b.syncViewData;
+
             delete b.resize;
-            delete b.sync;
-            delete b.syncViewData;
             a._create(b);
             delete b.layout;
             a._bindData(b);
@@ -516,7 +484,7 @@ Jh.Portal = function (a) {
                 $.each(_data,function(key,value){
 
                     //========表格体
-                    tr = $("<tr style='height:25px;' class='textCenter'></tr>");
+                    tr = $("<tr style='height:25px;' class='textCenter "+b+"_"+key+"'></tr>");
 
                     $.each(cit,function(ind,it){
 
@@ -526,18 +494,14 @@ Jh.Portal = function (a) {
                             if(!val){
                                 val = '';
                             }
-                            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  it.format ?   $("<td  class='" +  b +"_"   + eval( it.format+"('"+val+"');" )+ "' >"+val+"</td>")   :  $("<td>"+val+"</td>");
-                            // $("<td>"+   eval( it.format+"('"+val+"');" )+"</td>")
+                            //          var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  it.format ?   $("<td  class='" +  b +"_"   + eval( it.format+"('"+val+"');" )+ "' >"+val+"</td>")   :  $("<td>"+val+"</td>");
+                            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  $("<td>"+val+"</td>");
+
                         }else{
                             td = $("<td id='ie_"+it.field+"'></td>");
                         }
-
-
                         tr.append(td);
                     });
-
-
-
                     tr.hover(function () {
                         $(this).addClass("datagrid-row-over");
                     }, function () {
@@ -561,6 +525,7 @@ Jh.Portal = function (a) {
             $("#"+b+"Table").append(tbody);
 
         },_bindRowClick:function(b,r){
+            var $this = this;
             r.click(function () {
                 if(!MyPlayer.Data.playingStatus){
 
@@ -569,18 +534,9 @@ Jh.Portal = function (a) {
 
                     var time = $(this).find("td:first").text();
 
-
-                    if(time && time.length >=19){
-                        time = time.slice(0,19);
-                    }
-
                     MyPlayer.Data.currentTime = time;
-
-
-                    a._syncData(b);
-
-                    syncFunction(time);
-
+                    $this.synced(b);
+                    MyPlayer.fn.sync(Jh.Config.syncSourceId);
                 }
             });
 
@@ -588,16 +544,16 @@ Jh.Portal = function (a) {
             if(b=="view5"){
                 r.dblclick(function () {
                     if(!MyPlayer.Data.playingStatus){
-                   //     alert(b);
+                        //     alert(b);
                         console.log(b);
                     }
                 });
             }
-
-
-
-        },_syncData:function(b){
-            syncViewDataFunction(b);
+        },playOneFrame:function(){
+            this._refresh();
+        }
+        ,synced:function(id){
+            syncViewData(id);
         }, _createDiv: function (a) {
             return $("<div/>").addClass(a)
         }, _createA: function (a, b, c,d) {
@@ -620,24 +576,16 @@ Jh.Portal = function (a) {
             })
         }, _eventRemove: function () {
 
-
-
             $("." + Jh.Config.close).live("click", function () {
 
                 var c = $(this), b = c.attr("ref");
                 $("#"+b).remove();
-
                 //		a._elements.m_h.append($("#"+b));
-
-
             })
         }, _eventRefresh: function () {
-
             $("." + Jh.Config.refresh).live("click", function () {
                 resizeFunction();
             })
-
-
         }, _eventSortable: function () {
             $("." + Jh.Config._groupWrapperClass).sortable({
                 handle: "." +Jh.Config._groupItemHead,
@@ -684,22 +632,49 @@ Jh.Portal = function (a) {
 
             $.each(Jh.Config._listView,function(i,view){
 
-                if(id == view){
+                if(id === view){
 
                 }else{
 
-                    var obj = $("."+ view +"_"+Jh.Util.dateSlice(MyPlayer.Data.currentTime)+":first")[0];
+                    var target;
+                    var dataArray;
+
+                    if( view==='view5' ){
+                        dataArray = Jh.Data.signData.map(c=>c.time);
+                    }else{
+                        dataArray = Jh.Data.eventData.map(c=>c.time);
+                    }
+                    dataArray.push(MyPlayer.Data.currentTime);
+                    dataArray.sort();
+                    var position =  dataArray.indexOf(MyPlayer.Data.currentTime);
+
+                    if(position == 0){
+                        target = 0;
+                    }else if(position == dataArray.length - 1){
+                        target = dataArray.length -2;
+                    }else{
+                        var before = new Date(MyPlayer.Data.currentTime).getTime()  - new Date(dataArray[position-1]).getTime();
+                        var after =  new Date(dataArray[position+1]).getTime() - new Date(MyPlayer.Data.currentTime).getTime();
+                        if(before <after){
+                            target = position -1;
+                        }else{
+                            target = position;
+                        }
+                    }
+
+                    var obj = $("."+view+"_"+target)[0];
+                    //				var obj = $("."+ view +"_"+Jh.Util.dateSlice(MyPlayer.Data.currentTime)+":first")[0];
                     if(obj){
                         $("#"+view+"Div").animate({
                             scrollTop:obj.offsetTop
                         });
                         $("#"+view+" .datagrid-row-selected").removeClass("datagrid-row-selected")
-                        $(obj).parent().addClass("datagrid-row-selected");
+                        $(obj).addClass("datagrid-row-selected");
                     }else{
-                        //			console.log("."+ view +"_"+  Jh.Util.dateSlice(MyPlayer.Data.currentTime) +":first");
+                        //console.log("."+ view +"_"+  Jh.Util.dateSlice(MyPlayer.Data.currentTime) +":first");
                     }
-                }
 
+                }
             });
 
         },_addNewPortal:function(b,c){
@@ -707,20 +682,13 @@ Jh.Portal = function (a) {
             var d = a._elements.m_l;
 
             if($("#"+b).length>0){
-      //          d.append($("#"+b));
-     //           $("#"+b).show();
+                //          d.append($("#"+b));
+                //           $("#"+b).show();
             }else{
 
                 if(b=='view7'){
-
                     d.append(a._createPortalOne(b, c));
-
-                    Mychart.fn.init({
-                        sync:function(){
-                            setSliderValue();
-                            Jh.Portal._syncData("#view7");
-                        }
-                    });
+                    MyChart.fn.init();
 
                 }else{
                     d.append(a._createPortalOne(b, c));

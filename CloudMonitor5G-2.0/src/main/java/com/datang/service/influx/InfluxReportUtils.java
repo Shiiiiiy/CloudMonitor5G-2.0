@@ -129,6 +129,16 @@ public class InfluxReportUtils {
         }
     }
 
+    public static Double rate(Long sum2, Long x6) {
+        if(x6==null||sum2==null){
+            return null;
+        }
+        if(sum2!=0){
+            return x6*1.0/sum2;
+        }
+        return null;
+    }
+
     public static Double add(String...ds){
         Double r=0.0;
         for (String d:ds){
@@ -136,6 +146,18 @@ public class InfluxReportUtils {
                 continue;
             }else{
                 r=Double.parseDouble(d)+r;
+            }
+        }
+        return r;
+    }
+
+    public static Double add2(Double...ds){
+        Double r=0.0;
+        for (Double d:ds){
+            if(d==null){
+                continue;
+            }else{
+                r=d+r;
             }
         }
         return r;
@@ -154,6 +176,11 @@ public class InfluxReportUtils {
     public static Double getAvgKpi1(List<Map<String, Object>> list,String index){
         List<Map<String, Object>> collect = list.stream().filter(item -> item.get(getColumnName(index)) != null).collect(Collectors.toList());
         return !collect.isEmpty()?collect.stream().mapToDouble(f -> Double.parseDouble(String.valueOf(f.get(getColumnName(index))))).average().getAsDouble():null;
+    }
+
+    public static Double getAvgKpi2(List<Map<String, Object>> list,String index){
+        List<Map<String, Object>> collect = list.stream().filter(item -> item.get(index) != null).collect(Collectors.toList());
+        return !collect.isEmpty()?collect.stream().mapToDouble(f -> Double.parseDouble(String.valueOf(f.get(index)))).average().getAsDouble():null;
     }
 
     public static Long getCountKpi(List<Map<String, Object>> list,String index){

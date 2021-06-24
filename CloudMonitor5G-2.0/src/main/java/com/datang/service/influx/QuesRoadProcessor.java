@@ -27,7 +27,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     @Autowired
     private UnicomLogItemService unicomLogItemService;
     //问题路段获取基础采样点模板sql
-    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM IE where  Long!='-1' and Lat!='-1' ";
+    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM IE where  Long!='-1' and Lat!='-1' ";
     private static Map<String,String[]> WHERE_MAP=new HashMap<>();
     private static Map<String,String[]> EVTS_MAP=new HashMap<>();
     static {
@@ -46,6 +46,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
      * 问题路段分析入口
      * @param fileLogIds
      */
+    @Override
     public Map<String, List<Map<String, Object>>> analysize(List<String> fileLogIds){
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
@@ -56,8 +57,8 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            //WHERE_MAP.entrySet().parallelStream().forEach(entry->{
-            WHERE_MAP.entrySet().stream().forEach(entry->{
+            WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+            //WHERE_MAP.entrySet().stream().forEach(entry->{
                 String key=entry.getKey();
                 List<Map<String, Object>> sampDatas;
                 //有事件条件的处理
@@ -182,10 +183,14 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         }
         Map<String,List<Map<String,Object>>> result=new HashMap<>();
         List<Map<String,Object>> list=new ArrayList<>();
-        quesRaods.forEach(item->{
+        int i=0;
+        for(int[] item:quesRaods){
             List<Map<String, Object>> maps = sampDatas.subList(item[0], item[1] + 1);
             Map<String,Object> obj=new HashMap<>();
+            obj.put("id",i);
             obj.put("logname",testLogItem.getFileName());
+            obj.put("area",testLogItem.getCity());
+            obj.put("contractor",testLogItem.getContractor());
             obj.put("starttime",maps.get(0).get("time"));
             double slong = Double.parseDouble(maps.get(0).get("Long").toString());
             double slat = Double.parseDouble(maps.get(0).get("Lat").toString());
@@ -194,8 +199,6 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             obj.put("endtime",maps.get(maps.size()-1).get("time"));
             double elong = Double.parseDouble(maps.get(maps.size()-1).get("Long").toString());
             double elat = Double.parseDouble(maps.get(maps.size()-1).get("Lat").toString());
-            obj.put("elong", slong);
-            obj.put("elat",slat);
             obj.put("elong",elong);
             obj.put("elat",elat);
             obj.put("totalLen",getSumKm(maps));
@@ -212,14 +215,16 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             obj.put("pci3",collect.size()>2?collect.get(2).getKey():null);
             obj.put("pci3count",collect.size()>2?collect.get(2).getValue():null);
             obj.put("sumrsrp",InfluxReportUtils.getSumKpi2(maps,"IEValue_50055"));
+            obj.put("avgrsrp",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50055"));
             obj.put("countrsrp",InfluxReportUtils.getCountKpi2(maps,"IEValue_50055"));
             obj.put("sumsinr",InfluxReportUtils.getSumKpi2(maps,"IEValue_50056"));
             obj.put("countsinr",InfluxReportUtils.getCountKpi2(maps,"IEValue_50056"));
-
+            obj.put("avgsinr",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50056"));
             obj.put("sumdistance",InfluxReportUtils.getSumKpi2(maps,"IEValue_50014"));
             obj.put("countdistance",InfluxReportUtils.getCountKpi2(maps,"IEValue_50014"));
             obj.put("maxdistance",InfluxReportUtils.getMaxKpi(maps,"IEValue_50014"));
             obj.put("mindistance",InfluxReportUtils.getMinKpi(maps,"IEValue_50014"));
+            obj.put("avgdistance",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50014"));
 
             Map<String,Integer> arfcnCountMap=new HashMap<>();
             maps.stream().filter(i->i.get("IEValue_53601")!=null).collect(Collectors.groupingBy(i -> i.get("IEValue_53601").toString())).forEach((a,b)->{
@@ -239,57 +244,102 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                 obj.put("gnodebid1",cell!=null?cell.getgNBId():null);
                 obj.put("sectorid1",cell!=null?cell.getLocalCellId():null);
             }
+            obj.put("avgdlinitbler",InfluxReportUtils.getAvgKpi2(maps,"IEValue_73000"));
             obj.put("sumdlinitbler",InfluxReportUtils.getSumKpi2(maps,"IEValue_73000"));
             obj.put("countdlinitbler",InfluxReportUtils.getCountKpi2(maps,"IEValue_73000"));
 
+            obj.put("avgdlresibler",InfluxReportUtils.getAvgKpi2(maps,"IEValue_73001"));
             obj.put("sumdlresibler",InfluxReportUtils.getSumKpi2(maps,"IEValue_73001"));
             obj.put("countdlresibler",InfluxReportUtils.getCountKpi2(maps,"IEValue_73001"));
 
+            obj.put("avgdtxpower",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50097"));
             obj.put("sumdtxpower",InfluxReportUtils.getSumKpi2(maps,"IEValue_50097"));
             obj.put("counttxpower",InfluxReportUtils.getCountKpi2(maps,"IEValue_50097"));
 
+            obj.put("avgulinitbler",InfluxReportUtils.getAvgKpi2(maps,"IEValue_54572"));
             obj.put("sumulinitbler",InfluxReportUtils.getSumKpi2(maps,"IEValue_54572"));
             obj.put("countulinitbler",InfluxReportUtils.getCountKpi2(maps,"IEValue_54572"));
 
+            obj.put("avgulresibler",InfluxReportUtils.getAvgKpi2(maps,"IEValue_71000"));
             obj.put("sumulresibler",InfluxReportUtils.getSumKpi2(maps,"IEValue_71000"));
             obj.put("countulresibler",InfluxReportUtils.getCountKpi2(maps,"IEValue_71000"));
 
             obj.put("sum53483",InfluxReportUtils.getSumKpi2(maps,"IEValue_53483"));
-            obj.put("count53483",InfluxReportUtils.getCountKpi2(maps,"IEValue_53483"));
+            obj.put("avg53483",InfluxReportUtils.getAvgKpi2(maps,"IEValue_53483"));
+            Long ieValue_53483count = InfluxReportUtils.getCountKpi2(maps, "IEValue_53483");
+            obj.put("count53483", ieValue_53483count);
+            
             Predicate<Map<String,Object>> predicate=stringObjectMap->Double.parseDouble(stringObjectMap.get("IEValue_53483").toString())<=100;
-            obj.put("count53483lt100",InfluxReportUtils.getCountFilterKpi2(maps,"IEValue_53483",predicate));
+            Long ieValue_53483lt100count = InfluxReportUtils.getCountFilterKpi2(maps, "IEValue_53483", predicate);
+            obj.put("count53483lt100", ieValue_53483lt100count);
+            obj.put("rate53483lt100",InfluxReportUtils.rate(ieValue_53483count,ieValue_53483lt100count));
+
             obj.put("sum50990",InfluxReportUtils.getSumKpi2(maps,"IEValue_50990"));
+            obj.put("avg53419",InfluxReportUtils.getAvgKpi2(maps,"IEValue_53419"));
             obj.put("sum53419",InfluxReportUtils.getSumKpi2(maps,"IEValue_53419"));
             obj.put("count53419",InfluxReportUtils.getCountKpi2(maps,"IEValue_53419"));
             obj.put("sum51192",InfluxReportUtils.getSumKpi2(maps,"IEValue_51192"));
             obj.put("count51192",InfluxReportUtils.getCountKpi2(maps,"IEValue_51192"));
+            obj.put("avg51192",InfluxReportUtils.getAvgKpi2(maps,"IEValue_51192"));
             obj.put("sum74214",InfluxReportUtils.getSumKpi2(maps,"IEValue_74214"));
+            obj.put("avg74214",InfluxReportUtils.getAvgKpi2(maps,"IEValue_74214"));
             obj.put("count74214",InfluxReportUtils.getCountKpi2(maps,"IEValue_74214"));
+            obj.put("sum53682",InfluxReportUtils.getSumKpi2(maps,"IEValue_53682"));
+            obj.put("avg53682",InfluxReportUtils.getAvgKpi2(maps,"IEValue_53682"));
+            obj.put("count53682",InfluxReportUtils.getCountKpi2(maps,"IEValue_53682"));
             obj.put("sum53456",InfluxReportUtils.getSumKpi2(maps,"IEValue_53456"));
             obj.put("count53456",InfluxReportUtils.getCountKpi2(maps,"IEValue_53456"));
-            obj.put("sum53434",InfluxReportUtils.getSumKpi2(maps,"IEValue_53434"));
-            obj.put("sum53433",InfluxReportUtils.getSumKpi2(maps,"IEValue_53433"));
-            obj.put("sum53432",InfluxReportUtils.getSumKpi2(maps,"IEValue_53434"));
-            obj.put("sum53431",InfluxReportUtils.getSumKpi2(maps,"IEValue_53433"));
+            String sumieValue_53434 = InfluxReportUtils.getSumKpi2(maps, "IEValue_53434");
+            String sumieValue_53433 = InfluxReportUtils.getSumKpi2(maps, "IEValue_53433");
+            String sumieValue_53432 = InfluxReportUtils.getSumKpi2(maps, "IEValue_53432");
+            String sumieValue_53431 = InfluxReportUtils.getSumKpi2(maps, "IEValue_53431");
+            obj.put("sum53434", sumieValue_53434);
+            obj.put("sum53433", sumieValue_53433);
+            obj.put("sum53432", sumieValue_53432);
+            obj.put("sum53431", sumieValue_53431);
+            Double sum=InfluxReportUtils.add(sumieValue_53434, sumieValue_53433,
+                    sumieValue_53432, sumieValue_53431);
+            obj.put("53434rate",sumieValue_53434!=null?Double.parseDouble(sumieValue_53434)/sum:null);
+            obj.put("53433rate",sumieValue_53433!=null?Double.parseDouble(sumieValue_53433)/sum:null);
+            obj.put("53432rate",sumieValue_53432!=null?Double.parseDouble(sumieValue_53432)/sum:null);
+            obj.put("53431rate",sumieValue_53431!=null?Double.parseDouble(sumieValue_53431)/sum:null);
             obj.put("sum50087",InfluxReportUtils.getSumKpi2(maps,"IEValue_50087"));
+            obj.put("avg50087",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50087"));
             obj.put("count50087",InfluxReportUtils.getCountKpi2(maps,"IEValue_50087"));
             obj.put("sum54231",InfluxReportUtils.getSumKpi2(maps,"IEValue_54231"));
-            obj.put("count54231",InfluxReportUtils.getCountKpi2(maps,"IEValue_54231"));
+            Long ieValue_54231count = InfluxReportUtils.getCountKpi2(maps, "IEValue_54231");
+            obj.put("count54231", ieValue_54231count);
+            obj.put("avg54231",InfluxReportUtils.getAvgKpi2(maps,"IEValue_54231"));
             Predicate<Map<String,Object>> predicate1=stringObjectMap->Double.parseDouble(stringObjectMap.get("IEValue_54231").toString())<5;
-            obj.put("count54231lt5",InfluxReportUtils.getCountFilterKpi2(maps,"IEValue_54231",predicate1));
+            Long ieValue_54231lt5count = InfluxReportUtils.getCountFilterKpi2(maps, "IEValue_54231", predicate1);
+            obj.put("count54231lt5", ieValue_54231lt5count);
+            obj.put("rate54231lt5",InfluxReportUtils.rate(ieValue_54231count,ieValue_54231lt5count));
             obj.put("sum50991",InfluxReportUtils.getSumKpi2(maps,"IEValue_50991"));
             obj.put("sum73100",InfluxReportUtils.getSumKpi2(maps,"IEValue_73100"));
+            obj.put("avg73100",InfluxReportUtils.getAvgKpi2(maps,"IEValue_73100"));
             obj.put("count73100",InfluxReportUtils.getCountKpi2(maps,"IEValue_73100"));
             obj.put("sum51193",InfluxReportUtils.getSumKpi2(maps,"IEValue_51193"));
+            obj.put("avg51193",InfluxReportUtils.getAvgKpi2(maps,"IEValue_51193"));
             obj.put("count51193",InfluxReportUtils.getCountKpi2(maps,"IEValue_51193"));
             obj.put("sum53457",InfluxReportUtils.getSumKpi2(maps,"IEValue_53457"));
             obj.put("count53457",InfluxReportUtils.getCountKpi2(maps,"IEValue_53457"));
-            obj.put("sum71054",InfluxReportUtils.getSumKpi2(maps,"IEValue_71054"));
-            obj.put("sum71053",InfluxReportUtils.getSumKpi2(maps,"IEValue_71053"));
-            obj.put("sum71052",InfluxReportUtils.getSumKpi2(maps,"IEValue_71052"));
-            obj.put("sum71051",InfluxReportUtils.getSumKpi2(maps,"IEValue_71051"));
+            String sumIEValue_71054 = InfluxReportUtils.getSumKpi2(maps, "IEValue_71054");
+            String sumIEValue_71053 = InfluxReportUtils.getSumKpi2(maps, "IEValue_71053");
+            String sumIEValue_71052 = InfluxReportUtils.getSumKpi2(maps, "IEValue_71052");
+            String sumIEValue_71051 = InfluxReportUtils.getSumKpi2(maps, "IEValue_71051");
+            obj.put("sum71054", sumIEValue_71054);
+            obj.put("sum71053", sumIEValue_71053);
+            obj.put("sum71052", sumIEValue_71052);
+            obj.put("sum71051", sumIEValue_71051);
+            Double sum1=InfluxReportUtils.add(sumIEValue_71054, sumIEValue_71053,
+                    sumIEValue_71052, sumIEValue_71051);
+            obj.put("71054rate",sumIEValue_71054!=null?Double.parseDouble(sumIEValue_71054)/sum1:null);
+            obj.put("71053rate",sumIEValue_71053!=null?Double.parseDouble(sumIEValue_71053)/sum1:null);
+            obj.put("71052rate",sumIEValue_71052!=null?Double.parseDouble(sumIEValue_71052)/sum1:null);
+            obj.put("71051rate",sumIEValue_71051!=null?Double.parseDouble(sumIEValue_71051)/sum1:null);
             list.add(obj);
-        });
+            i++;
+        }
         result.put(key,list);
         return result;
     }

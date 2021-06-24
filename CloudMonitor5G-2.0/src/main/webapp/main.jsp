@@ -341,6 +341,8 @@
 											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="exceptionparamsamove/exceptionparamsamovelistui">SA模式移动性异常事件分析参数</a></li>
 											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="exceptionparamnsa/exceptionparamsnsalistui">NSA模式异常事件分析参数</a></li>
 											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="exceptionparambussiness/exceptionparambussinesslistui">业务类异常事件分析参数</a></li>
+											<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="questionRoadParam/questionRoadListUI">问题路段分析参数</a></li>
+
 										</shiroextend:hasAnyPermissions>
 									</ul>
 								</li>

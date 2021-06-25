@@ -187,11 +187,11 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 
 		long total = 0;
 		criteria.setProjection(null);
-		int rowsCount = pageList.getRowsCount();// 每页记录数
-		int pageNum = pageList.getPageNum();// 页码
-		criteria.setFirstResult((pageNum - 1) * rowsCount);
-		criteria.setMaxResults(rowsCount);
-		List list = criteria.list();
+	//	int rowsCount = pageList.getRowsCount();// 每页记录数
+	//	int pageNum = pageList.getPageNum();// 页码
+	//	criteria.setFirstResult((pageNum - 1) * rowsCount);
+	//	criteria.setMaxResults(rowsCount);
+	//	List list = criteria.list();
 		total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
 		return total;

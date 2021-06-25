@@ -617,7 +617,7 @@ Jh.fn = function (a) {
             var existData = true;
             //同步ie窗口
             if(!data){
-                data = Jh.Data.ieData[MyPlayer.Data.currentTime];
+                data = Jh.Data.ieData[new Date(MyPlayer.Data.currentTime).Format("yyyy-MM-dd hh:mm:ss")];
             }
 
             if(!data){

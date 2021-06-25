@@ -196,7 +196,7 @@ var styles = {
 
 if (gd_url) {
     map = new ol.Map({
-        layers: [synchVector, gdVector, queryVector, measureVector],
+        layers: [synchVector, gdVector, /* queryVector, */ measureVector],
         interactions: ol.interaction.defaults({ doubleClickZoom: false })
             .extend([new ol.interaction.DragRotateAndZoom()]),
         controls: ol.control.defaults({
@@ -213,7 +213,7 @@ if (gd_url) {
 }
 else {
     map = new ol.Map({
-        layers: [synchVector, roadVector, queryVector, measureVector],
+        layers: [synchVector, roadVector, /* queryVector, */ measureVector],
         interactions: ol.interaction.defaults({ doubleClickZoom: false })
             .extend([new ol.interaction.DragRotateAndZoom()]),
         controls: ol.control.defaults({
@@ -310,6 +310,7 @@ function saveMap() {
 }
 
 var mapTraceData;
+var tracePntLayer = undefined;
 function showTrace(dataInfo, dataType) {
     if (!dataInfo || !dataInfo.mapData)
         return;
@@ -329,12 +330,14 @@ function showTrace(dataInfo, dataType) {
     //地图居中显示并导出图片
     view.fit(querySource.getExtent());
 
-    /* var pointLayer = new ol.layer.WebGLPoints({
+    if (tracePntLayer)
+        map.removeLayer(tracePntLayer);
+    tracePntLayer = new ol.layer.WebGLPoints({
         source: querySource,
         style: getStyleBytype(dataType),
         disableHitDetection: true,
     })
-    map.addLayer(pointLayer); */
+    map.addLayer(tracePntLayer);
 
     //显示图例
     var legendInfo = [];
@@ -447,7 +450,7 @@ function dealTraceData(curNum, logName, dataType, traceData) {
                 lte_sinr: lteSinr,
                 geometry: new ol.geom.Point(ol.proj.transform([gpsLon, gpsLat], 'EPSG:4326', 'EPSG:3857'))
             });
-            var featColor = "#A9ACAE";
+            /* var featColor = "#A9ACAE";
             if (dataType == "NR SS-RSRP" && nrRsrp) {
                 featColor = getGpsColor("5grsrp", nrRsrp);
             }
@@ -472,7 +475,7 @@ function dealTraceData(curNum, logName, dataType, traceData) {
                         width: 1
                     })
                 })
-            }));
+            })); */
             querySource.addFeature(traceFeat);
             resolve({
                 currentNum: curNum,

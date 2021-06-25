@@ -78,10 +78,13 @@ input:focus, textarea:focus {
     padding:5px;
     font-size:14px;
 }
-.layout-list a:hover{
+.layoutText{
+    cursor:pointer;
+}
+.layoutText:hover{
     color:#FF6600;
 }
-.layout-list .active{
+.layoutContent .active{
     color:#FF6600;
     font-weight:bold;
 }
@@ -93,17 +96,17 @@ input:focus, textarea:focus {
     width: 32%;
 }
 .w500 {
-    width: 48%;
+    width: 49%;
 }
 .w660 {
-    width: 64%;
+    width: 65%;
 }
 .w750 {
-    width: 72%;
+    width: 74%;
 }
 
 .w1000{
-    width: 97%;
+    width: 99%;
 }
 
 .wnone {
@@ -351,4 +354,13 @@ input:focus, textarea:focus {
     display: inline-block;
     width: 26px;
     height: 26px;
+    vertical-align: middle;
+}
+
+.noselect{
+    -moz-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    -khtml-user-select:none;
+    user-select:none;
 }

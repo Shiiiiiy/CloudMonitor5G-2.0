@@ -321,7 +321,8 @@
 		config =  eval("("+config+")");
 		Jh.fn.init(config);
 		MyChart.fn.init();
-
+		$(".active").removeClass("active");
+		$($(".layoutText")[b.layout]).addClass('active');
 	}
 
 
@@ -392,8 +393,11 @@
 					dataType: "json",
 					success: function(data){
 						MyChart.Data.all = data;
-						if(data[0]){
-							MyChart.Data.initTime =  data[0].time;
+
+						if(data.length>0){
+							MyPlayer.Data.startTime = new Date(data[0].time).Format("yyyy-MM-dd hh:mm:ss");
+							MyPlayer.Data.currentTime = MyPlayer.Data.startTime;
+							MyPlayer.Data.endTime = new Date(data[data.length-1].time).Format("yyyy-MM-dd hh:mm:ss");
 						}
 					}
 				}),
@@ -430,33 +434,57 @@
 </script>
 <body>
 
+			<div  class="noselect" style="text-align:center;margin-top:18px;user">
+				<div style="widhth:80%;height:40px;line-height:40px;vertical-align:middle">
+					<div style="height:35px;width:380px;display:inline-block;vertical-align:middle"" >
+					<input id="logs" style="width:100%;display: none">
+				</div>
+				<div style="line-height:26px;margin-left:10px;height:40px;display:inline-block;vertical-align:middle">
+					<span class="tstop ticon" onclick="MyPlayer.fn.stop()"></span>
+					<span id="tplay" class="tplay ticon" onclick="MyPlayer.fn.play()"></span>
+					<span id="tpause" style="display: none" class="tpause ticon" onclick="MyPlayer.fn.pause()"></span>
+					<span class="trewind ticon" onclick="MyPlayer.fn.rewind()"></span>
+					<span class="tfastforwad ticon" onclick="MyPlayer.fn.fastForward()"></span>
+					<span class="tnext ticon" onclick="MyPlayer.fn.nextFrame()"></span>
+					<span class="trestart ticon" onclick="MyPlayer.fn.restart()"></span>
+					<span id="speedSpan" class="ticon" style="text-align:left;width:30px;font-size:18px;">1X</span>
+				</div>
 
-	<div style="margin:5px 30px;width:380px;display:inline-block;" >
-		<input id="logs" style="width:100%"  >
-	</div>
+				<div style="margin-left:20px;height:40px;display:inline-block;width:380px;vertical-align:middle;">
+					<input style="float:left"  class="easyui-slider" id="timer"  style="width:180px"  data-options="showTip:true">
+				</div>
+			</div>
 
-	<div style="display: inline-block">
-		<span class="tstop ticon" onclick="MyPlayer.fn.stop()"></span>
-		<span id="tplay" class="tplay ticon" onclick="MyPlayer.fn.play()"></span>
-		<span id="tpause" style="display: none" class="tpause ticon" onclick="MyPlayer.fn.pause()"></span>
-		<span class="trewind ticon" onclick="MyPlayer.fn.rewind()"></span>
-		<span class="tfastforwad ticon" onclick="MyPlayer.fn.fastForward()"></span>
-		<span class="tnext ticon" onclick="MyPlayer.fn.nextFrame()"></span>
-		<span class="trestart ticon" onclick="MyPlayer.fn.restart()"></span>
-		<span id="speedSpan" style="display:inline-block;width:90px;height:30px;line-height:30px;font-size:30px;">1X</span>
-	</div>
+		</div>
 
-	<div style="display:inline-block;width:380px;margin-left:100px;margin-top:30px;">
-		<input style="float:left"  class="easyui-slider" id="timer"  style="width:180px"  data-options="showTip:true">
-	</div>
+		<div style="width:100%;">
+			<iframe id ='mapIframe' name="mapIframe"  scrolling="auto" frameborder="0"  style="width:100%;height:50%;border:0;margin: 0;" ></iframe>
+		</div>
 
-	<div style="padding-top: 4px;width:100%;">
-		<iframe id ='mapIframe' name="mapIframe"  scrolling="auto" frameborder="0"  style="width:100%;height:50%;border:0;margin: 0;" ></iframe>
-	</div>
 
-	<div style="margin:5px 30px;width:200px;display:inline-block;" >
-		<input id="layoutSelect" style="width:100%"  >
-	</div>
+
+
+	<div style="margin-top:5px;margin-left:20px;" class="layoutContent" >
+			<table width="100%">
+				<tr style="font-size:14px;">
+					<td width="1%" align="left"><a class="layoutText" rel="1"  >1</a></td>
+					<td width="2%" align="left"><a class="layoutText" rel="1:1" >1:1</a></td>
+					<td width="2%" align="left"><a class="layoutText" rel="1:2"  >1:2</a></td>
+					<td width="2%" align="left"><a class="layoutText" rel="2:1" >2:1</a></td>
+					<td width="3%" align="left"><a class="layoutText" rel="1:1:1"  >1:1:1</a></td>
+					<td width="5" align="right"><input id = "layoutSelect" style="display: none"> </td>
+					<td width="6%" align="right"><a class="easyui-linkbutton" id="saveLayoutConfig" style="width: 80px;"  >保存配置</a></td>
+					<td width="79%" align="left"><a class="easyui-linkbutton" id="addPanel" style="width: 80px;"  >添加窗口</a></td>
+				</tr>
+			</table>
+		</div>
+
+
+
+		<div id="signDetailDiv" class="easyui-dialog" style="overflow:auto;width:550px;height:400px;padding:10px" data-options="title:'信令明细',resizable:true,border:false,closable:true,closed:true,modal:false">
+			<div id="signDetail">
+			<div>
+		</div>
 
 
 </body>

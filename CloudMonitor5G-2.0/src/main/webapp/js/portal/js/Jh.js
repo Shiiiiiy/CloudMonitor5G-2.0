@@ -103,16 +103,16 @@ var Jh = {
         ]],
 
         'view5':[[
-            {field:'time',title:'\u65f6\u95f4',width:'15%' ,format:'Jh.Util.dateSlice'},//时间
-            {field:'Netmode',title:'\u5236\u5f0f',width:'15%'},//制式
-            {field:'Dir',title:'\u65b9\u5411',width:'14%'},//方向
+            {field:'time',title:'\u65f6\u95f4',width:'15%'},//时间
+            {field:'Netmode',title:'\u5236\u5f0f',width:'15%',format:'Jh.Util.getNetCodeName'},//制式
+            {field:'Dir',title:'\u65b9\u5411',width:'14%',format:'Jh.Util.getDirtName'},//方向
             {field:'signalName',title:'\u4fe1\u4ee4',width:'14%'}//信令
         ]],
 
 
         'view6':[[
-            {field:'time',title:'\u65f6\u95f4',width:'33%',format:'Jh.Util.dateSlice'},//时间
-            {field:'Netmode',title:'\u5236\u5f0f',width:'33%'},//制式
+            {field:'time',title:'\u65f6\u95f4',width:'33%'},//时间
+            {field:'Netmode',title:'\u5236\u5f0f',width:'33%',format:'Jh.Util.getNetCodeName'},//制式
             {field:'evtName',title:'\u4e8b\u4ef6',width:'33%'}//事件
         ]],
 
@@ -136,6 +136,42 @@ Jh.Layout = function () {
     }
 }();
 Jh.Util = {
+    getNetCodeName:function(a){
+        switch(a){
+            case '0' :
+            case '1' :
+                return  a;
+            case '2' :
+                return "HSDPA";
+            case '3' :
+                return "GPRS";
+            case '4' :
+                return "HSDPA";
+            case '5' :
+                return "EVDO";
+            case '6' :
+                return "LTE";
+            case '7' :
+                return a;
+            case '8' :
+                return "NR";
+            case '9' :
+                return "HSR";
+            default : return a;
+        }
+
+    },
+    getDirtName:function(a){
+
+        switch(a){
+            case '1' :
+                return "上行";
+            case '0' :
+                return  "下行";
+            default : return a;
+        }
+
+    },
     dateSlice:function(val){
 
         if(val && val.length>=19 ){
@@ -156,82 +192,13 @@ Jh.Util = {
 Jh.base = function (a) {
     return a = {
         init: function (b) {
-            a._ele = {};
-            a._create();
-            a._createWrap(b);
-            a._bindEvent()
-        }, _create: function () {
-            var b = $("<div id='header'/>");
-            a.box = b;
-            Jh.Util.toBody(b)
-        }, _createWrap: function (b) {
-            var c = a._createTable(Jh.Config.tableCls,b);
-            a._ele.table = c;
-            a._createModuleList(b);
-            a._createActionButton();
-            a._addPanel(c)
-        }, _createTable: function (b,c) {
-            b = $("<table/>").addClass(b);
-            $("<tbody/>").append(a._createLayoutTr(c.layout)).append(a._createBaseTr()).append(a._createActionTr()).appendTo(b);
-            return b
-        }, _createBaseTr: function () {
-            /**      var b = a._createTd(Jh.Config.tdCls2),
-             //功能模块设置
-             c = $("<tr>").append(a._createTd(Jh.Config.tdCls, "\u529f\u80fd\u6a21\u5757\u8bbe\u7f6e\uff1a")).append(b);
-             a._ele.mtd = b;
-             return c
-             **/
-        }, _createActionTr: function () {
-            var b = a._createTd(Jh.Config.tdCls2), c = $("<tr>").append(a._createTd(Jh.Config.tdCls)).append(b);
-            a._ele.atd = b;
-            return c
-        }, _createLayoutTr: function (cc) {
-            var b = a._createTd(Jh.Config.tdCls2);
-            var d = $("<div/>").addClass(Jh.Config.layCls);
-            $.each(Jh.Layout.layoutText, function (c, j) {
-                d.append(a._createA(j,c==cc));
-            });
-            d.appendTo(b);
-            //	.append(a._createA("1:3")).append(a._createA("3:1")).append(a._createA("1:1:2")).append(a._createA("1:2:1")).append(a._createA("2:1:1")).append("<a href='javascript:void(0);' class='active' rel='1:1:1'>\u9ed8\u8ba4</a>").append(a._createA("100%竖直排列"))
-            //	.appendTo(b);
-            //布局设置
-            var c = $("<tr>").append(a._createTd(Jh.Config.tdCls, "\u5e03\u5c40\u8bbe\u7f6e\uff1a")).append(b);
-            a._ele.layoutTd = b;
-            return c
-        }, _createModuleList: function (b) {
-            var c = $("<ul/>").addClass(Jh.Config.ulCls);
-            a._createLis(b.appL, c);
-            a._createLis(b.appM, c);
-            a._createLis(b.appR, c);
-            a._ele.ul = c;
-            c.appendTo(a._ele.mtd)
-        }, _createActionButton: function () {
-            //添加模块
-            var b = $("<a class='button b' href='#' >\u6dfb\u52a0\u6a21\u5757</a>"),
-                //保存配置
-                c = $("<a class='button b' href='#' >\u4fdd\u5b58\u914d\u7f6e</a>");
-            a._ele.atd.append(b).append(c);
-            a._bindAdd(b);
-            a._bindSave(c)
-        }, _createLis: function (b, c) {
-            $.each(b, function (b, d) {
-                c.append(a._createLi(b, d))
-            })
-        }, _createA: function (a,b) {
-            if(b){
-                return $("<a class='active' href='javascript:void(0);' rel='" + a + "'>" + a + "</a>")
-            }else{
-                return $("<a href='javascript:void(0);' rel='" + a + "'>" + a + "</a>")
-            }
-        }, _createLi: function (a, c) {
-            return $("<li/>").append("<a href='#' rel='" + a + "'>" + c + "</a>").append("<span class='ok'></span>")
-        }, _createTd: function (a, c) {
-            var e = $("<td>").addClass(a);
-            void 0 != c && e.text(c);
-            return e
-        }, _addPanel: function (b) {
-            a.box.append(b)
-        }, _bindAdd: function (b) {
+            a._bindEvent(b);
+        }, _bindEvent: function (b) {
+            a._layoutAClick()
+            a._bindAdd($("#addPanel"));
+            a._bindSave($("#saveLayoutConfig"));
+            $($(".layoutText")[b.layout]).addClass('active');
+        },_bindAdd: function (b) {
             b.click(function () {
                 $.fallr("show", {
                     buttons: {
@@ -308,21 +275,21 @@ Jh.base = function (a) {
                 return result;
 
             })
-        }, _bindEvent: function () {
-            a._moduleLiClick();
-            a._layoutAClick()
-        }, _moduleLiClick: function () {
-            $("." + Jh.Config.ulCls + " li").live("click", function () {
-                var a = $(this), c = a.find("a").attr("rel"), c = $("#" + c), a = a.find(".ok");
-                a.is(":visible") ? (a.hide(), c.hide()) : (a.show(), c.show());
-                Jh.Util.refresh()
-            })
         }, _layoutAClick: function () {
-            $("." + Jh.Config.layCls + " a").click(function () {
-                var b = $(this), c = b.attr("rel");
-                a._ToLayout(c);
-                b.addClass("active").siblings().removeClass("active")
+
+            $.each($(".layoutText"),function(k,v){
+                $(v).click(function () {
+
+                    var b = $(this), c = b.attr("rel");
+                    console.log(c);
+                    a._ToLayout(c);
+                    b.parent().parent().find("a").removeClass("active");
+                    b.addClass("active");
+                })
+
             })
+
+
         }, _ToLayout: function (a) {
             var c = Jh.Layout.layoutCss, e = Jh.Layout.locationId, d = 0, f = "";
             $.each(Jh.Layout.layoutText, function (c, j) {
@@ -484,19 +451,19 @@ Jh.fn = function (a) {
                 $.each(_data,function(key,value){
 
                     //========表格体
-                    tr = $("<tr style='height:25px;' class='textCenter "+b+"_"+key+"'></tr>");
+                    tr = $("<tr style='height:25px;' ref='"+key+"'  class='textCenter "+b+"_"+key+"'   ></tr>");
 
                     $.each(cit,function(ind,it){
 
                         var td;
                         if(value){
                             var val = value[_prefix+it.field];
-                            if(!val){
+                            if( val !=0 && !val ){
                                 val = '';
                             }
-                            //          var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  it.format ?   $("<td  class='" +  b +"_"   + eval( it.format+"('"+val+"');" )+ "' >"+val+"</td>")   :  $("<td>"+val+"</td>");
-                            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  $("<td>"+val+"</td>");
-
+                            //            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  it.format ?   $("<td  class='" +  b +"_"   + eval( it.format+"('"+val+"');" )+ "' >"+val+"</td>")   :  $("<td>"+val+"</td>");
+                            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :   it.format ?    $("<td>" + eval( it.format+"('"+val+"');") + "</td>" )  : $("<td>"+val+"</td>");
+//
                         }else{
                             td = $("<td id='ie_"+it.field+"'></td>");
                         }
@@ -544,8 +511,11 @@ Jh.fn = function (a) {
             if(b=="view5"){
                 r.dblclick(function () {
                     if(!MyPlayer.Data.playingStatus){
-                        //     alert(b);
-                        console.log(b);
+
+                        $("#signDetailDiv").dialog('open');
+                        $("#signDetailDiv").window('center');
+                        $("#signDetail").html();
+                        $("#signDetail").html(Jh.Data.signData[r.attr('ref')].DetailMsg);
                     }
                 });
             }

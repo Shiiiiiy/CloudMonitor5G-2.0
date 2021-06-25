@@ -38,8 +38,8 @@ MyChart.fn = function (a) {
 		}else if(position == timeArray.length - 1){
 			target = timeArray.length -2;
 		}else{
-		//	var before = timeArray[position-1];
-		//	var after = timeArray[position+1];
+			//	var before = timeArray[position-1];
+			//	var after = timeArray[position+1];
 			target = position;
 		}
 
@@ -70,6 +70,15 @@ MyChart.fn = function (a) {
 				trigger:'axis',
 				alwaysShowContent: true,
 				snap:true,
+				formatter:function(params){
+					var res =  params[0].name.slice(11 ,params[0].name.length);
+					//	var res = new Date(params[0].name).Format("hh:mm:ss") ;
+					for(var i=0;i<params.length;i++){
+						res+= "<br>"+params[i].marker+params[i].seriesName+":"+params[i].data;
+					}
+					return res;
+
+				},
 				position: function(pt,b) {
 					if(syncOther){
 						var time = b[0].axisValue;
@@ -77,7 +86,7 @@ MyChart.fn = function (a) {
 						MyPlayer.fn.sync(MyChart.Config.syncSourceId);
 					}
 					syncOther = true;
-					return [pt[0]-100, 130];
+					return [pt[0]-68, 100];
 				},
 				lineStyle:{
 					color:"red"
@@ -86,7 +95,7 @@ MyChart.fn = function (a) {
 
 			legend: {
 				data: MyChart.Data.col[MyChart.Data.currentIndex],
-				top:'7%'
+				top:'11%'
 			},
 
 			xAxis: {

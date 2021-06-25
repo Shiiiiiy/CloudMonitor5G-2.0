@@ -49,7 +49,7 @@ MyPlayer.fn = function (a) {
 		init: function () {
 
         },sync:function(sourceId){
-
+			//需要等其他组件初始化好了之后，动态设置该方法
 		},playOnce:function(){
 			Jh.fn.playOneFrame();
 			MyChart.fn.synced();

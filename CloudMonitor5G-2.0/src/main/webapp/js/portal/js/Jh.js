@@ -415,7 +415,7 @@ Jh.fn = function (a) {
             return a
         },_createViewTable:function(b,c){
 
-            var tbody=$("<tbody class='datagrid-body' style='height:200px'></tbody>");
+            var tbody=$("<tbody class='datagrid-body' ></tbody>");
 
             $.each(c,function(cind,cit){
 
@@ -571,41 +571,10 @@ Jh.fn = function (a) {
             a._eventMin()
         },_refresh:function(data,id){
 
-            if(!data){
-                data = Jh.Data.ieData[MyPlayer.Data.currentTime];
-            }
-
-            if(!data){
-                //       console.log(MyPlayer.Data.currentTime);
-                return;
-            }
-
-            if(Jh.Config._allIe.length>0){
-                $.each(Jh.Config._allIe,function(iii,item){
-                    $("#ie_"+item).html(data["ie_"+item]);
-                });
-            }else{
-
-                $.each(Jh.ViewColumns,function(i,columns){
-
-                    if(!Jh.Config._listView.includes(i)){
-                        $.each(columns,function(ii,column){
-                            $.each(column,function(iii,item){
-                                Jh.Config._allIe.push(item.field);
-                                $("#ie_"+item.field).html(data["ie_"+item.field]);
-                            });
-                        })
-                    }
-
-                });
-            }
-
+            //同步信令、事件窗口
             $.each(Jh.Config._listView,function(i,view){
-
                 if(id === view){
-
                 }else{
-
                     var target;
                     var dataArray;
 
@@ -631,7 +600,6 @@ Jh.fn = function (a) {
                             target = position;
                         }
                     }
-
                     var obj = $("."+view+"_"+target)[0];
                     //				var obj = $("."+ view +"_"+Jh.Util.dateSlice(MyPlayer.Data.currentTime)+":first")[0];
                     if(obj){
@@ -643,9 +611,50 @@ Jh.fn = function (a) {
                     }else{
                         //console.log("."+ view +"_"+  Jh.Util.dateSlice(MyPlayer.Data.currentTime) +":first");
                     }
-
                 }
             });
+
+            var existData = true;
+            //同步ie窗口
+            if(!data){
+                data = Jh.Data.ieData[MyPlayer.Data.currentTime];
+            }
+
+            if(!data){
+                //console.log(MyPlayer.Data.currentTime);
+                existData = false;
+            }
+
+            if(Jh.Config._allIe.length>0){
+                $.each(Jh.Config._allIe,function(iii,item){
+
+                    if(existData){
+                        $("#ie_"+item).html(data["ie_"+item]);
+                    }else{
+                        $("#ie_"+item).html('');
+                    }
+
+                });
+            }else{
+
+                $.each(Jh.ViewColumns,function(i,columns){
+                    if(!Jh.Config._listView.includes(i)){
+                        $.each(columns,function(ii,column){
+                            $.each(column,function(iii,item){
+                                Jh.Config._allIe.push(item.field);
+                                if(existData){
+                                    $("#ie_"+item.field).html(data["ie_"+item.field]);
+                                }else{
+                                    $("#ie_"+item.field).html('');
+                                }
+                            });
+                        })
+                    }
+
+                });
+            }
+
+
 
         },_addNewPortal:function(b,c){
 

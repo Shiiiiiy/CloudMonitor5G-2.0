@@ -1343,7 +1343,7 @@ public class InfluxServiceImpl implements InfluxService {
                     rm.put("causeBy",obj.get("evtName"));
                     rm.put("network01",InfluxReportUtils.getNetWork(obj.get("Netmode")));
                     rm.put("cellId",obj.get("SellID"));
-                    rm.put("gnbId",getGnbID(testLogItem.getOperatorName(),testLogItem.getNetworkStandard(),obj.get("SellID")));
+                    rm.put("gnbId",getGnbID(testLogItem.getOperatorName(),InfluxReportUtils.getNetWork(obj.get("Netmode")),obj.get("SellID")));
                     rm.put("pci",obj.get("Pci"));
                     rm.put("fcn",obj.get("Enfarcn"));
                     rm.put("destTac",null);
@@ -1481,7 +1481,7 @@ public class InfluxServiceImpl implements InfluxService {
 
 
     private Integer getGnbID(String operator,String network,Object cellId){
-        if(cellId!=null||StringUtils.isNotBlank(cellId.toString())||StringUtils.isNotBlank(operator)||StringUtils.isNotBlank(network)){
+        if(cellId==null||StringUtils.isBlank(cellId.toString())||StringUtils.isBlank(network)){
             return null;
         }
         long cellid=Long.parseLong(cellId.toString());
@@ -1495,10 +1495,10 @@ public class InfluxServiceImpl implements InfluxService {
             if(operator.equalsIgnoreCase("电信")){
                 return (int)(cellid/Math.pow(2.0,36-ctccGlen));
             }
+            return (int)(cellid/Math.pow(2.0,36-cuccGlen));
         }else{
             return (int)cellid/256;
         }
-        return null;
     }
     @Override
     public Map<String, String> getAbevtKpiConfig(){

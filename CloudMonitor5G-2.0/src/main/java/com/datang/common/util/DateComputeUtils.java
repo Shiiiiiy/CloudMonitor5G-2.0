@@ -202,7 +202,7 @@ public class DateComputeUtils {
 
 	public static List<List<Map<String,Object>>> getDatasBySplitEvt(List<Map<String,Object>> result, String evtName) {
 		if(result.isEmpty()){
-			return null;
+			return Collections.emptyList();
 		}
 		List<List<Map<String,Object>>> re=new ArrayList<>();
 		int i=0;

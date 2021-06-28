@@ -2217,10 +2217,10 @@ public class InfluxServiceImpl implements InfluxService {
                     item.get("pci") + "_" + item.get("fcn") + "_" + item.get("cellId") + "_" + item.get("builder")
                     + "_" + item.get("contractor")));
             //语音日志小区对应的最近的一条记录
-            Predicate<Map<String,Object>> p=item->item.get("logName").toString().contains("EPSFallBack语音业");
+            Predicate<Map<String,Object>> p=item->item.get("logName").toString().contains("EPSFallBack语音业")&&item.get("time")!=null;
             Map<String,Object> voiceCellFirstRecordMap=creatPartOfSheetData(list, collect,p);
             //数据业务日志小区对应的最近的一条记录
-            Predicate<Map<String,Object>> p1=item->!item.get("logName").toString().contains("EPSFallBack语音业");
+            Predicate<Map<String,Object>> p1=item->!item.get("logName").toString().contains("EPSFallBack语音业")&&item.get("time")!=null;
             Map<String,Object> dataCellFirstRecordMap=creatPartOfSheetData(list, collect,p1);
             partSheet.add(voiceCellFirstRecordMap);
             partSheet.add(dataCellFirstRecordMap);

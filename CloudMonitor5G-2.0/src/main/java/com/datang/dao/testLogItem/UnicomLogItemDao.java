@@ -779,7 +779,7 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 			String sql0 = "SELECT FILE_NAME FROM IADS_TESTLOG_ITEM LOG WHERE 1=1" + idWhere;
 			List<Map<String, Object>> sqlObj0 = jdbcTemplate.objectQueryAll(sql0);
 			for(int i=0;i<sqlObj0.size();i++){
-				String fileName = (String)sqlObj0.get(i).get("FILE_NAME");
+				String fileName = (String)sqlObj0.get(i).get("file_name");
 				if(fileName!=null && StringUtils.hasText(fileName)){
 					fileName = "'" + fileName + "'";
 					if(i!=0){
@@ -898,7 +898,7 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 			String sql0 = "SELECT FILE_NAME FROM IADS_TESTLOG_ITEM LOG WHERE 1=1" + idWhere;
 			List<Map<String, Object>> sqlObj0 = jdbcTemplate.objectQueryAll(sql0);
 			for(int i=0;i<sqlObj0.size();i++){
-				String fileName = (String)sqlObj0.get(i).get("FILE_NAME");
+				String fileName = (String)sqlObj0.get(i).get("file_name");
 				if(fileName!=null && StringUtils.hasText(fileName)){
 					fileName = "'" + fileName + "'";
 					if(i!=0){

@@ -31,11 +31,11 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     private static Map<String,String[]> WHERE_MAP=new HashMap<>();
     private static Map<String,String[]> EVTS_MAP=new HashMap<>();
     static {
-        /*WHERE_MAP.put("上行质差路段",new String[]{"IEValue_50097","IEValue_54333"});
-        WHERE_MAP.put("下行质差路段",new String[]{"IEValue_50055","IEValue_50056"});*/
+        WHERE_MAP.put("上行质差路段",new String[]{"IEValue_50097","IEValue_54333"});
+        WHERE_MAP.put("下行质差路段",new String[]{"IEValue_50055","IEValue_50056"});
         WHERE_MAP.put("弱覆盖路段",new String[]{"IEValue_50055"});
-        /*WHERE_MAP.put("上行低速率路段",new String[]{"IEValue_54231"});
-        WHERE_MAP.put("下行低速率路段",new String[]{"IEValue_53483"});*/
+        WHERE_MAP.put("上行低速率路段",new String[]{"IEValue_54231"});
+        WHERE_MAP.put("下行低速率路段",new String[]{"IEValue_53483"});
         EVTS_MAP.put("上行低速率路段",new String[]{"Ftp Upload Attempt","Ftp Upload Success","FTP UpLoad Drop"});
         EVTS_MAP.put("下行低速率路段",new String[]{"Ftp Upload Attempt","Ftp Upload Success","FTP UpLoad Drop"});
     }

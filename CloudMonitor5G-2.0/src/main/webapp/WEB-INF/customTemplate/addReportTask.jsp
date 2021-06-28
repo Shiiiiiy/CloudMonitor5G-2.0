@@ -296,6 +296,7 @@ $(function(){
 			boxIds.push(box.rows[i].boxId);
 		}
 		var boxIdsString = boxIds.join(","); */
+		var filename = $("#fileName").textbox('getValue');
 		
 		var beginDate = $('#beginDate').datebox('getValue');
 		if(beginDate===""){
@@ -309,7 +310,7 @@ $(function(){
 		}
 		$('#winLog').window('open');
 		
-		$.post("${pageContext.request.contextPath}/report5g/testUnicomLogItem.action?prov="+prov+"&city="+city+"&beginDate="+beginDate+"&endDate="+endDate,
+		$.post("${pageContext.request.contextPath}/report5g/testUnicomLogItem.action?prov="+prov+"&city="+city+"&beginDate="+beginDate+"&endDate="+endDate+"&filename="+filename,
 				function(result){
 					if (result.errorMsg) {
 						$.messager.alert("系统提示", result.errorMsg,'error');
@@ -692,9 +693,9 @@ $(function(){
 	    			    	<a iconCls="icon-add" class="easyui-linkbutton" style="width:138px;margin:2px 2px 2px 0;" onclick="addTemplate();" >添加</a><a iconCls="icon-cancel" class="easyui-linkbutton" style="width:138px;margin:2px 0px 2px 2px;" onclick="del(4);" >删除</a>
 				    	</div>
       				</div>
-       				<input  type="hidden"    name="statisticeTaskRequest.id" value="${statisticeTask.id}"  id="id">
+       				<input  type="hidden"  name="statisticeTaskRequest.id" value="${statisticeTask.id}"  id="id">
 					<input  type="hidden"  name="statisticeTaskRequest.cityIds" value="${statisticeTask.cityIds}"  id="cityIds">
-					<input  type="hidden"   name="statisticeTaskRequest.boxIds" value="${statisticeTask.boxIds}"  id="boxIds">
+					<input  type="hidden"  name="statisticeTaskRequest.boxIds" value="${statisticeTask.boxIds}"  id="boxIds">
 					<input  type="hidden"  name="statisticeTaskRequest.logIds" value="${statisticeTask.logIds}"  id="logIds">
 					<input  type="hidden"  name="statisticeTaskRequest.templateIds" value="${statisticeTask.templateIds}"  id="templateIds">
 					<input  type="hidden"  name="statisticeTaskRequest.createrName" value="${statisticeTask.createrName}"  id="createrName">

@@ -446,6 +446,7 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 	 */
 	public List<UnicomLogItem> getTestLogItemsByOther(String prov,String city,List<String> boxIds,
 			List<String> terminalGroup, List<String> testRankList,
+			String filename,
 			Date beginDate, Date endDate) {
 		List<UnicomLogItem> testLogItems = new ArrayList<>();
 		if (null == boxIds) {
@@ -463,6 +464,9 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 		// 筛选市
 		if (null != city && StringUtils.hasText(city)) {
 			criteria.add(Restrictions.eq("city", city));
+		}
+		if (null != filename && StringUtils.hasText(filename)) {
+			criteria.add(Restrictions.like("fileName", filename,MatchMode.ANYWHERE));
 		}
 
 		// 筛选参数日志开始时间

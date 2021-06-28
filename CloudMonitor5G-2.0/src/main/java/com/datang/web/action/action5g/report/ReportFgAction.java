@@ -396,6 +396,7 @@ public class ReportFgAction extends PageAction implements
 		String cityIds = statisticeTaskRequest.getCityIds();
 		String prov = statisticeTaskRequest.getProv();
 		String city = statisticeTaskRequest.getCity();
+		String filename = statisticeTaskRequest.getFilename();
 
 		// String testRanks = statisticeTaskRequest.getTestRank();
 		String boxIds = "";
@@ -433,6 +434,7 @@ public class ReportFgAction extends PageAction implements
 
 			List<UnicomLogItem> testLogItemsByBoxIds = unicomLogItemService
 					.queryTestLogItemsByOther(prov,city,boxList, cityList, testRankList,
+							filename,
 							beginDate, endDate);
 			List<TestInfoRequestBean> responseBeans = new ArrayList<>();
 			if (null != testLogItemsByBoxIds

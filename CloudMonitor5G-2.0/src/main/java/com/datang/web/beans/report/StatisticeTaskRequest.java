@@ -9,6 +9,7 @@ public class StatisticeTaskRequest implements Serializable {
 	 */
 	private static final long serialVersionUID = 274653069108830834L;
 
+	private String filename;
 	private String prov;
 	private String city;
 	/**
@@ -304,4 +305,11 @@ public class StatisticeTaskRequest implements Serializable {
 		return "";
 	}
 
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
 }

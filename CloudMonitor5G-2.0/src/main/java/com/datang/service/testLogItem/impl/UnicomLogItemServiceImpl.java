@@ -135,10 +135,11 @@ public class UnicomLogItemServiceImpl implements UnicomLogItemService {
 	@Override
 	public List<UnicomLogItem> queryTestLogItemsByOther(String prov,String city,List<String> boxIds,
 			List<String> terminalGroup, List<String> testRankList,
+			String filename,
 			Date beginDate, Date endDate) {
 
 		return unicomLogItemDao.getTestLogItemsByOther(prov,city,boxIds, terminalGroup,
-				testRankList, beginDate, endDate);
+				testRankList,filename, beginDate, endDate);
 	}
 
 	@Override

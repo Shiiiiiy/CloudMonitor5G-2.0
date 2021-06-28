@@ -82,7 +82,7 @@ public interface UnicomLogItemService {
 	 * @return
 	 */
 	public List<UnicomLogItem> queryTestLogItemsByOther(String prov,String city,List<String> boxIds,
-                                                      List<String> terminalGroup, List<String> testRankList,
+                                                      List<String> terminalGroup, List<String> testRankList, String filename,
                                                       Date beginDate, Date endDate);
 
 	/**

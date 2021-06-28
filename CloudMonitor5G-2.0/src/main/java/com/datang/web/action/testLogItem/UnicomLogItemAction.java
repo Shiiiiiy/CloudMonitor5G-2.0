@@ -690,10 +690,10 @@ public class UnicomLogItemAction extends PageAction implements
 		List<Map<String, Object>> sqlObj1 = unicomLogItemService.logCheckMd5(beginDate,endDate,testLogItemIds);
 		List<Map<String, Object>> sqlObj2 = unicomLogItemService.logCheckBiz(beginDate,endDate,testLogItemIds);
 
-		Map<String, Collection> hashMap1 = new HashMap<>();
+		Map<String, Object> hashMap1 = new HashMap<>();
 
-		hashMap1.put("sqlObj1", sqlObj1);
-		hashMap1.put("sqlObj2", sqlObj2);
+		hashMap1.put("sqlObj1", ClassUtil.mapKeyUpper(sqlObj1));
+		hashMap1.put("sqlObj2", ClassUtil.mapKeyUpper(sqlObj2));
 
 		try {
 			Workbook transformToExcel = POIExcelUtil.transformToExcel(

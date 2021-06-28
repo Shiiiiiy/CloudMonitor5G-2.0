@@ -10,11 +10,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.management.ReflectionException;
 
@@ -457,5 +454,24 @@ public class ClassUtil {
 			return file.getName().toLowerCase().endsWith(".jar");
 		}
 	}
+
+	public static List<Map<String,Object>> mapKeyUpper(List<Map<String,Object>> mapList) {
+		mapList.stream().forEach(it -> mapKeyUpper(it));
+		return mapList;
+	}
+
+	public static Map<String,Object> mapKeyUpper(Map<String,Object> map) {
+		try{
+			map.keySet().stream().collect(Collectors.toList()).stream().forEach(s -> {
+						map.put(s.toUpperCase(), map.get(s));
+					}
+			);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return map;
+	}
+
 }
 // on checkstyle

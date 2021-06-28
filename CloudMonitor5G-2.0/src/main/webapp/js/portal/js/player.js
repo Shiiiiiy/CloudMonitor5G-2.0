@@ -63,7 +63,7 @@ MyPlayer.fn = function (a) {
 			this.stop();
 			this.play();
 		},play:function(){
-
+			MyChart.fn.disableClick();
 			var $this =this;
 			$("#tplay").hide();
 			$("#tpause").show();
@@ -90,6 +90,7 @@ MyPlayer.fn = function (a) {
 				},1000);
 			}
 		},pause:function(){
+			MyChart.fn.enableClick();
 			$("#tplay").show();
 			$("#tpause").hide();
 			if(MyPlayer.Data.playingStatus){

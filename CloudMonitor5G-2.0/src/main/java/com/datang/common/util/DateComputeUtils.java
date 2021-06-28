@@ -220,7 +220,7 @@ public class DateComputeUtils {
 		}
 		if(indexes.size()>1){
 			for(int m=0;m<indexes.size()-1;m++){
-				re.add(result.subList(m,m+1));
+				re.add(result.subList(indexes.get(m),indexes.get(m+1)));
 			}
 		}else{
 			re.add(result);

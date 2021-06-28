@@ -1651,7 +1651,6 @@ public class InfluxServiceImpl implements InfluxService {
      * @param lteCells
      * @param connect
      * @param activeConfigs
-     * @param callTypeMap
      * @param activeColumnList
      * @param busiType
      */

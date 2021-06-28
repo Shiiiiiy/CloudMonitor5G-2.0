@@ -1579,7 +1579,7 @@ public class InfluxServiceImpl implements InfluxService {
     public List<Map<String, Object>> getVoiceBusiReports(List<String> fileLogIds) {
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .readTimeout(timeout,TimeUnit.SECONDS);
-        List<Map<String, Object>> results=new ArrayList<>();
+        List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Assert.notEmpty(testLogItems);
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
@@ -1592,7 +1592,6 @@ public class InfluxServiceImpl implements InfluxService {
             connect.setDatabase("Task_" + id);
             List<VoiceBusiConfig> activeConfigs = InitialConfig.voiceBusiConfigs.stream().filter(item -> item.getBusiType().equalsIgnoreCase("主叫")).collect(Collectors.toList());
             List<VoiceBusiConfig> positiveConfigs =InitialConfig.voiceBusiConfigs.stream().filter(item->item.getBusiType().equalsIgnoreCase("被叫")).collect(Collectors.toList());
-            Map<String, String> callTypeMap = InitialConfig.voiceBusiConfigs.stream().collect(Collectors.toMap(item -> item.getBusiType() + item.getTriggerEvt() + item.getNetwork() + item.getFbtype() + item.getRlingNet(), item -> item.getCallType()));
             List<String[]> activeColumnList=new ArrayList<>();
             activeColumnList.add(activeRingEvt);
             activeColumnList.add(activeConnEvt);
@@ -1606,8 +1605,8 @@ public class InfluxServiceImpl implements InfluxService {
             positiveColumnList.add(positiveCallEndEvt);
             positiveColumnList.add(positiveCallFailEvt);
             positiveColumnList.add(positiveDropFailEvt);
-            callAna(results, testLogItem, nrCells, lteCells, connect, activeConfigs, callTypeMap, activeColumnList,"主叫");
-            callAna(results, testLogItem, nrCells, lteCells, connect, positiveConfigs, callTypeMap, positiveColumnList,"被叫");
+            callAna(results, testLogItem, nrCells, lteCells, connect, activeConfigs,  activeColumnList,"主叫");
+            callAna(results, testLogItem, nrCells, lteCells, connect, positiveConfigs, positiveColumnList,"被叫");
             connect.close();
         });
         return results;
@@ -1656,16 +1655,12 @@ public class InfluxServiceImpl implements InfluxService {
      * @param activeColumnList
      * @param busiType
      */
-    void callAna(List<Map<String, Object>> results, TestLogItem testLogItem, List<Cell5G> nrCells, List<LteCell> lteCells, InfluxDB connect, List<VoiceBusiConfig> activeConfigs, Map<String, String> callTypeMap, List<String[]> activeColumnList,String busiType) {
+    void callAna(List<Map<String, Object>> results, TestLogItem testLogItem, List<Cell5G> nrCells, List<LteCell> lteCells, InfluxDB connect, List<VoiceBusiConfig> activeConfigs,List<String[]> activeColumnList,String busiType) {
         activeConfigs.stream().map(VoiceBusiConfig::getTriggerEvt).collect(Collectors.toSet()).forEach(item->{
             List<String> sqlFreg=new ArrayList<>();
             StringBuilder sb=new StringBuilder();
             sb.append("SELECT MsgID,evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,extrainfo from EVT where ");
-            Set<String> allevts = Arrays.asList(activeRingEvt).stream().collect(Collectors.toSet());
-            allevts.addAll(Arrays.asList(activeConnEvt).stream().collect(Collectors.toSet()));
-            allevts.addAll(Arrays.asList(activeCallEndEvt).stream().collect(Collectors.toSet()));
-            allevts.addAll(Arrays.asList(activeCallFailEvt).stream().collect(Collectors.toSet()));
-            allevts.addAll(Arrays.asList(activeDropFailEvt).stream().collect(Collectors.toSet()));
+            Set<String> allevts = activeColumnList.stream().flatMap(strs -> Arrays.stream(strs)).collect(Collectors.toSet());
             allevts.add("EPSFallBack Start");
             allevts.add("NR Event B1");
             allevts.add("NR Event B2");

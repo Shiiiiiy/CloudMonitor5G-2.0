@@ -151,7 +151,7 @@ public class InfluxServiceImpl implements InfluxService {
         return result;
     }
     @Override
-    public List<Map<String, Object>> queryRoadSampDatas(String sql,long logId,  List<Map<String,String>> timeLists) {
+    public List<Map<String, Object>> queryRoadSampDatas(String sql,long logId,  List<Map<String,String>> timeLists,String[] wheres) {
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .readTimeout(timeout,TimeUnit.SECONDS);
         List<String> timeWheres=new ArrayList<>();
@@ -170,6 +170,11 @@ public class InfluxServiceImpl implements InfluxService {
             timeWheres.add(sb.toString());
         });
         sbSql.append(timeWheres.stream().collect(Collectors.joining(" or ")));
+        if(null!=wheres){
+            for(String where:wheres){
+                sbSql.append(MessageFormat.format(" and {0}!="+ -1+"",where));
+            }
+        }
         InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
         connect.setDatabase("Task_"+logId);
         QueryResult query=connect.query(new Query(sbSql.toString(), "Task_"+logId));

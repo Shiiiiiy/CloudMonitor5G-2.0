@@ -125,7 +125,7 @@ public interface InfluxService {
      * @param timeLists
      * @return
      */
-    List<Map<String, Object>> queryRoadSampDatas(String sql,long logId, List<Map<String,String>> timeLists);
+    List<Map<String, Object>> queryRoadSampDatas(String sql,long logId, List<Map<String,String>> timeLists,String[] wheres);
 
 
 

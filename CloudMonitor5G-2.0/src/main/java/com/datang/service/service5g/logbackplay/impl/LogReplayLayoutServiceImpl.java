@@ -41,6 +41,9 @@ public class LogReplayLayoutServiceImpl implements LogReplayLayoutService {
             LayoutConfig config = new LayoutConfig();
             config.setValue(configValue);
             config.setStatus("1");
+            if(name==null || name.length()<1){
+                name="默认布局";
+            }
             config.setName(name);
             return configDao.saveConfig(config);
         }

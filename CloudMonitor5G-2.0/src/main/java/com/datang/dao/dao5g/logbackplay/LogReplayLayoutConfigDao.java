@@ -28,9 +28,8 @@ public class LogReplayLayoutConfigDao extends GenericHibernateDao<LayoutConfig, 
     public LayoutConfig getLayoutConfig(Long id) {
 
         Criteria criteria = this.getHibernateSession().createCriteria(LayoutConfig.class);
-        List<LayoutConfig> list = (List<LayoutConfig>)criteria.list();
         criteria.add(Restrictions.eq("id",id));
-
+        List<LayoutConfig> list = (List<LayoutConfig>)criteria.list();
         return list.get(0);
     }
 

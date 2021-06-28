@@ -41,15 +41,85 @@ var Jh = {
     },
     ViewColumns:{
         'view1':[[
-            {field:'58000',title:'CellName',width:'11%'},
+            {field:'58000',title:'CellName',width:'11%',height:'233px'},
             {field:'58032',title:'Distance',width:'11%'},
-            {field:'50165',title:'ARFCNSSB',width:'11%'},
-            {field:'50101',title:'PCI',width:'11%'},
+            {field:'50165',title:'ARFCNSSB',width:'13%'},
+            {field:'50101',title:'PCI',width:'9%'},
             {field:'70070',title:'BeamID',width:'11%'},
-            {field:'50229',title:'SS-RSRP',width:'11%'},
-            {field:'50293',title:'SS-RSRQ',width:'11%'},
-            {field:'70525',title:'SS-SINR',width:'11%'},
-            {field:'70005',title:'RSSI',width:'11%'}
+            {field:'50229',title:'SS-RSRP',width:'12%'},
+            {field:'50293',title:'SS-RSRQ',width:'12%'},
+            {field:'70525',title:'SS-SINR',width:'12%'},
+            {field:'70005',title:'RSSI',width:'9%'}
+        ],[
+            {field:'58001',title:'CellName',width:'11%',hiddenTitle:true},
+            {field:'58033',title:'Distance',width:'11%',hiddenTitle:true},
+            {field:'50166',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
+            {field:'50102',title:'PCI',width:'9%',hiddenTitle:true},
+            {field:'70071',title:'BeamID',width:'11%',hiddenTitle:true},
+            {field:'50230',title:'SS-RSRP',width:'12%',hiddenTitle:true},
+            {field:'50294',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
+            {field:'70526',title:'SS-SINR',width:'12%',hiddenTitle:true},
+            {field:'70006',title:'RSSI',width:'9%',hiddenTitle:true}
+        ],[
+            {field:'58002',title:'CellName',width:'11%',hiddenTitle:true},
+            {field:'58034',title:'Distance',width:'11%',hiddenTitle:true},
+            {field:'50167',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
+            {field:'50103',title:'PCI',width:'9%',hiddenTitle:true},
+            {field:'70072',title:'BeamID',width:'11%',hiddenTitle:true},
+            {field:'50231',title:'SS-RSRP',width:'12%',hiddenTitle:true},
+            {field:'50295',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
+            {field:'70527',title:'SS-SINR',width:'12%',hiddenTitle:true},
+            {field:'70007',title:'RSSI',width:'9%',hiddenTitle:true}
+        ],[
+            {field:'58003',title:'CellName',width:'11%',hiddenTitle:true},
+            {field:'58035',title:'Distance',width:'11%',hiddenTitle:true},
+            {field:'50168',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
+            {field:'50104',title:'PCI',width:'9%',hiddenTitle:true},
+            {field:'70073',title:'BeamID',width:'11%',hiddenTitle:true},
+            {field:'50232',title:'SS-RSRP',width:'12%',hiddenTitle:true},
+            {field:'50296',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
+            {field:'70528',title:'SS-SINR',width:'12%',hiddenTitle:true},
+            {field:'70008',title:'RSSI',width:'9%',hiddenTitle:true}
+        ],[
+            {field:'58004',title:'CellName',width:'11%',hiddenTitle:true},
+            {field:'58036',title:'Distance',width:'11%',hiddenTitle:true},
+            {field:'50169',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
+            {field:'50105',title:'PCI',width:'9%',hiddenTitle:true},
+            {field:'70074',title:'BeamID',width:'11%',hiddenTitle:true},
+            {field:'50233',title:'SS-RSRP',width:'12%',hiddenTitle:true},
+            {field:'50297',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
+            {field:'70529',title:'SS-SINR',width:'12%',hiddenTitle:true},
+            {field:'70009',title:'RSSI',width:'9%',hiddenTitle:true}
+        ],[
+            {field:'58005',title:'CellName',width:'11%',hiddenTitle:true},
+            {field:'58037',title:'Distance',width:'11%',hiddenTitle:true},
+            {field:'50170',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
+            {field:'50106',title:'PCI',width:'9%',hiddenTitle:true},
+            {field:'70075',title:'BeamID',width:'11%',hiddenTitle:true},
+            {field:'50234',title:'SS-RSRP',width:'12%',hiddenTitle:true},
+            {field:'50298',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
+            {field:'70530',title:'SS-SINR',width:'12%',hiddenTitle:true},
+            {field:'70005',title:'RSSI',width:'9%',hiddenTitle:true}
+        ],[
+            {field:'58006',title:'CellName',width:'11%',hiddenTitle:true},
+            {field:'58038',title:'Distance',width:'11%',hiddenTitle:true},
+            {field:'50171',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
+            {field:'50107',title:'PCI',width:'9%',hiddenTitle:true},
+            {field:'70076',title:'BeamID',width:'11%',hiddenTitle:true},
+            {field:'50235',title:'SS-RSRP',width:'12%',hiddenTitle:true},
+            {field:'50299',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
+            {field:'70531',title:'SS-SINR',width:'12%',hiddenTitle:true},
+            {field:'70005',title:'RSSI',width:'9%',hiddenTitle:true}
+        ],[
+            {field:'58007',title:'CellName',width:'11%',hiddenTitle:true},
+            {field:'58039',title:'Distance',width:'11%',hiddenTitle:true},
+            {field:'50172',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
+            {field:'50108',title:'PCI',width:'9%',hiddenTitle:true},
+            {field:'70077',title:'BeamID',width:'11%',hiddenTitle:true},
+            {field:'50236',title:'SS-RSRP',width:'12%',hiddenTitle:true},
+            {field:'50300',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
+            {field:'70532',title:'SS-SINR',width:'12%',hiddenTitle:true},
+            {field:'70005',title:'RSSI',width:'9%',hiddenTitle:true}
         ]],
         'view2':[[
             {field:'50013',title:'SCell Name',width:'11%'},
@@ -61,46 +131,103 @@ var Jh = {
             {field:'50056',title:'SS-SINR',width:'17%'},
             {field:'50057',title:'SS-RSRQ',width:'17%'}
         ],[
-            {field:'50013',title:'MCC',width:'11%'},
-            {field:'50006',title:'MNC',width:'11%'},
-            {field:'53601',title:'TAC',width:'11%'},
-            {field:'50007',title:'UL BandWidth',width:'11%'},
-            {field:'50015',title:'DL BandWidth',width:'11%'},
-            {field:'50055',title:'DuplexMode',width:'11%'},
-            {field:'50056',title:'subCarrierSpacingCommon',width:'17%'},
-            {field:'50057',title:'SSB-subcarrierSpacing',width:'17%'}
+            {field:'50001',title:'MCC',width:'11%'},
+            {field:'50002',title:'MNC',width:'11%'},
+            {field:'50003',title:'TAC',width:'11%'},
+            {field:'50046',title:'UL BandWidth',width:'11%'},
+            {field:'50051',title:'DL BandWidth',width:'11%'},
+            {field:'50016',title:'DuplexMode',width:'11%'},
+            {field:'50017',title:'subCarrierSpacingCommon',width:'17%'},
+            {field:'50021',title:'SSB-subcarrierSpacing',width:'17%'}
         ]],
 
 
         'view3':[[
-            {field:'40006',title:'Scell_Name',width:'11%'},
-            {field:'40007',title:'Scell ID',width:'11%'},
-            {field:'40010',title:'EARFCN DL',width:'11%'},
-            {field:'40008',title:'PCI',width:'11%'},
-            {field:'40028',title:'RSRP',width:'11%'},
-            {field:'40035',title:'SINR',width:'11%'},
+            {field:'40006',title:'Scell_Name',width:'10%'},
+            {field:'40007',title:'Scell ID',width:'10%'},
+            {field:'40010',title:'EARFCN DL',width:'10%'},
+            {field:'40008',title:'PCI',width:'10%'},
+            {field:'40028',title:'RSRP',width:'10%'},
+            {field:'40035',title:'SINR',width:'16%'},
             {field:'40031',title:'RSRQ',width:'17%'},
             {field:'40034',title:'RSSI',width:'17%'}
         ],[
-            {field:'40001',title:'MCC',width:'11%'},
-            {field:'40002',title:'MNC',width:'11%'},
-            {field:'40009',title:'TAC',width:'11%'},
-            {field:'40014',title:'Band',width:'11%'},
-            {field:'40019',title:'WorkMode',width:'11%'},
-            {field:'40015',title:'PCC_Bandwidth_DL(M)',width:'11%'},
+            {field:'40001',title:'MCC',width:'10%'},
+            {field:'40002',title:'MNC',width:'10%'},
+            {field:'40009',title:'TAC',width:'10%'},
+            {field:'40014',title:'Band',width:'10%'},
+            {field:'40019',title:'WorkMode',width:'10%'},
+            {field:'40015',title:'PCC_Bandwidth_DL(M)',width:'16%'},
             {field:'40016',title:'SubframeAssignType',width:'17%'},
             {field:'40017',title:'SpecialSubFramePatterns',width:'17%'}
         ]],
 
         'view4':[[
-            {field:'40075',title:'CellName',width:'15%'},
+            {field:'40075',title:'CellName',width:'15%',height:'233px'},
             {field:'44206',title:'Distance',width:'15%'},
             {field:'40139',title:'EARFCN',width:'14%'},
             {field:'40171',title:'PCI',width:'14%'},
             {field:'40203',title:'RSRP',width:'14%'},
             {field:'40299',title:'SINR',width:'14%'},
             {field:'40235',title:'RSRQ',width:'14%'}
-        ]],
+        ],[
+            {field:'40076',title:'CellName',width:'15%',hiddenTitle:true},
+            {field:'44207',title:'Distance',width:'15%',hiddenTitle:true},
+            {field:'40140',title:'EARFCN',width:'14%',hiddenTitle:true},
+            {field:'40172',title:'PCI',width:'14%',hiddenTitle:true},
+            {field:'40204',title:'RSRP',width:'14%',hiddenTitle:true},
+            {field:'40300',title:'SINR',width:'14%',hiddenTitle:true},
+            {field:'40236',title:'RSRQ',width:'14%',hiddenTitle:true}
+        ],[
+            {field:'40077',title:'CellName',width:'15%',hiddenTitle:true},
+            {field:'44208',title:'Distance',width:'15%',hiddenTitle:true},
+            {field:'40141',title:'EARFCN',width:'14%',hiddenTitle:true},
+            {field:'40173',title:'PCI',width:'14%',hiddenTitle:true},
+            {field:'40205',title:'RSRP',width:'14%',hiddenTitle:true},
+            {field:'40301',title:'SINR',width:'14%',hiddenTitle:true},
+            {field:'40237',title:'RSRQ',width:'14%',hiddenTitle:true}
+        ],[
+            {field:'40078',title:'CellName',width:'15%',hiddenTitle:true},
+            {field:'44209',title:'Distance',width:'15%',hiddenTitle:true},
+            {field:'40142',title:'EARFCN',width:'14%',hiddenTitle:true},
+            {field:'40174',title:'PCI',width:'14%',hiddenTitle:true},
+            {field:'40206',title:'RSRP',width:'14%',hiddenTitle:true},
+            {field:'40302',title:'SINR',width:'14%',hiddenTitle:true},
+            {field:'40238',title:'RSRQ',width:'14%',hiddenTitle:true}
+        ],[
+            {field:'40079',title:'CellName',width:'15%',hiddenTitle:true},
+            {field:'44210',title:'Distance',width:'15%',hiddenTitle:true},
+            {field:'40143',title:'EARFCN',width:'14%',hiddenTitle:true},
+            {field:'40175',title:'PCI',width:'14%',hiddenTitle:true},
+            {field:'40207',title:'RSRP',width:'14%',hiddenTitle:true},
+            {field:'40303',title:'SINR',width:'14%',hiddenTitle:true},
+            {field:'40239',title:'RSRQ',width:'14%',hiddenTitle:true}
+        ]
+            ,[
+                {field:'40080',title:'CellName',width:'15%',hiddenTitle:true},
+                {field:'44211',title:'Distance',width:'15%',hiddenTitle:true},
+                {field:'40144',title:'EARFCN',width:'14%',hiddenTitle:true},
+                {field:'40176',title:'PCI',width:'14%',hiddenTitle:true},
+                {field:'40208',title:'RSRP',width:'14%',hiddenTitle:true},
+                {field:'40304',title:'SINR',width:'14%',hiddenTitle:true},
+                {field:'40240',title:'RSRQ',width:'14%',hiddenTitle:true}
+            ],[
+                {field:'40081',title:'CellName',width:'15%',hiddenTitle:true},
+                {field:'44212',title:'Distance',width:'15%',hiddenTitle:true},
+                {field:'40145',title:'EARFCN',width:'14%',hiddenTitle:true},
+                {field:'40177',title:'PCI',width:'14%',hiddenTitle:true},
+                {field:'40209',title:'RSRP',width:'14%',hiddenTitle:true},
+                {field:'40305',title:'SINR',width:'14%',hiddenTitle:true},
+                {field:'40241',title:'RSRQ',width:'14%',hiddenTitle:true}
+            ],[
+                {field:'40082',title:'CellName',width:'15%',hiddenTitle:true},
+                {field:'44213',title:'Distance',width:'15%',hiddenTitle:true},
+                {field:'40146',title:'EARFCN',width:'14%',hiddenTitle:true},
+                {field:'40178',title:'PCI',width:'14%',hiddenTitle:true},
+                {field:'40210',title:'RSRP',width:'14%',hiddenTitle:true},
+                {field:'40306',title:'SINR',width:'14%',hiddenTitle:true},
+                {field:'40242',title:'RSRQ',width:'14%',hiddenTitle:true}
+            ]],
 
         'view5':[[
             {field:'time',title:'\u65f6\u95f4',width:'15%'},//时间
@@ -115,6 +242,8 @@ var Jh = {
             {field:'Netmode',title:'\u5236\u5f0f',width:'33%',format:'Jh.Util.getNetCodeName'},//制式
             {field:'evtName',title:'\u4e8b\u4ef6',width:'33%'}//事件
         ]],
+
+
 
 
 
@@ -165,9 +294,9 @@ Jh.Util = {
 
         switch(a){
             case '1' :
-                return "上行";
+                return "下行";
             case '0' :
-                return  "下行";
+                return  "上行";
             default : return a;
         }
 
@@ -195,93 +324,112 @@ Jh.base = function (a) {
             a._bindEvent(b);
         }, _bindEvent: function (b) {
             a._layoutAClick()
-            a._bindAdd($("#addPanel"));
+            a._bindAdd($("#addPanelBtn"));
+            a._bindAddPanel($("#submitAddPanelBtn"));
             a._bindSave($("#saveLayoutConfig"));
             $($(".layoutText")[b.layout]).addClass('active');
         },_bindAdd: function (b) {
+            b.unbind();
             b.click(function () {
-                $.fallr("show", {
-                    buttons: {
-                        button1: {
-                            //确定
-                            text: "\u786e\u5b9a", onclick: function () {
-                                var mkey =  $("#modulekey").val();
-                                var na = $("#modulekey").find('option:selected').text();
-                                if(mkey){
-                                    $.fallr("hide");
-                                    Jh.fn._addNewPortal(mkey,na);
-                                }
 
-                            }
-                            //取消
-                        }, button2: {text: "\u53d6\u6d88"}
-                    },
-                    //模块名：   模块Code： 模块位置： 左中右
-                    content: '<form style="margin-left:20px"><p>\u6a21\u5757Code\uff1a</p>' +
-                        '<select id="modulekey">' +
-                        '<option value="view1">NR主邻区信息窗口</option>'+
-                        '<option value="view2">NR主小区信息窗口</option>'+
-                        '<option value="view3">LTE主小区信息窗口</option>'+
-                        '<option value="view4">LTE主邻区信息窗口</option>'+
-                        '<option value="view5">信令窗口</option>'+
-                        '<option value="view6">事件窗口</option>'+
-                        '<option value="view7">linechart窗口</option>'+
-                        '</select>'+
-                        //     '<input type="text" size="15" id="modulekey" />' +
+                var existViews = [];
 
-                        '</form>',
-                    //			content: '<form style="margin-left:20px"><p>\u6a21\u5757\u540d\uff1a</p><input type="text" size="15" id="modulename" /><p>\u6a21\u5757Code\uff1a</p><input type="text" size="15" id="modulekey" /><p>\u6a21\u5757\u4f4d\u7f6e\uff1a</p>\u5de6:<input type="radio" name="modulelayout" checked="checked" value="left"/>&nbsp&nbsp\u4e2d:<input type="radio" name="modulelayout" value="center"/>&nbsp&nbsp\u53f3:<input type="radio" name="modulelayout" value="right"/></form>',
+                $.each($(".groupWrapper .groupItem"),function(k,v){
 
-                    icon: "add",
-                    position: "center"
+                    existViews.push($(v).attr("id"));
                 })
-            })
-        }, _bindSave: function (a) {
-            a.click(function () {
-                var a = $("#" + Jh.Layout.location.left).sortable("toArray"),
-                    b = $("#" + Jh.Layout.location.center).sortable("toArray"),
-                    d = $("#" + Jh.Layout.location.right).sortable("toArray"), f = "";
-                $("." + Jh.Config.layCls + " a").each(function () {
-                    $(this).hasClass("active") && (f = $(this).attr("rel"))
-                });
+
+                var notExistViews = [];
+
+                $.each(Jh.Views,function(k,v){
+
+                    if(!existViews.includes(k)){
 
 
-                var result = {
-                    appL:{},
-                    appM:{},
-                    appR:{}
-                };
-
-                $.each(a,function(k,v){
-                    result.appL[v] = Jh.Views[v];
-                });
-                $.each(b,function(k,v){
-                    result.appM[v] =  Jh.Views[v];
-                });
-                $.each(d,function(k,v){
-                    result.appR[v] =  Jh.Views[v];
-                });
-
-
-
-                $.each(Jh.Layout.layoutText,function(k,v){
-                    if(f==v){
-                        result.layout = k;
+                        var n = {};
+                        n['id'] = k ;
+                        n['value'] = v ;
+                        notExistViews.push(n);
                     }
-                })
+                });
+                $('#panelSelect').combobox({
+                    data:notExistViews,
+                    valueField:'id',
+                    textField:'value',
+                    editable:false,
+                    required:true,
+                    loadFilter:function(data){
 
-                saveLayoutConfig(JSON.stringify(result));
+                        var o = {};
+                        o.id = '';
+                        o.valie = '请选择..';
+                        data.splice(0,0,data);
+                        return data;
 
-                return result;
+                    }
+                });
 
+                $("#addPanel").dialog('open');
+                $("#addPanel").window('center');
+
+            })
+        },_bindAddPanel:function(a){
+            a.unbind();
+            a.click(function(){
+
+                var s =  $("#addPanel").form('validate');
+
+                if(s){
+                    var id = $("#panelSelect").combobox('getValue');
+                    var name = $("#panelSelect").combobox('getText');
+                    Jh.fn._addNewPortal(id,name);
+                }
+                $("#addPanel").dialog('close');
+            });
+
+        },_getConfig:function(){
+            var a = $("#" + Jh.Layout.location.left).sortable("toArray"),
+                b = $("#" + Jh.Layout.location.center).sortable("toArray"),
+                d = $("#" + Jh.Layout.location.right).sortable("toArray"), f = "";
+            $(".layoutText").each(function () {
+                $(this).hasClass("active") && (f = $(this).attr("rel"))
+            });
+
+
+            var result = {
+                appL:{},
+                appM:{},
+                appR:{}
+            };
+
+            $.each(a,function(k,v){
+                result.appL[v] = Jh.Views[v];
+            });
+            $.each(b,function(k,v){
+                result.appM[v] =  Jh.Views[v];
+            });
+            $.each(d,function(k,v){
+                result.appR[v] =  Jh.Views[v];
+            });
+            $.each(Jh.Layout.layoutText,function(k,v){
+                if(f==v){
+                    result.layout = k;
+                }
+            })
+            return JSON.stringify(result);
+        }
+        ,_bindSave: function (a) {
+            a.unbind();
+            a.click(function () {
+                saveLayoutConfig();
             })
         }, _layoutAClick: function () {
 
             $.each($(".layoutText"),function(k,v){
+                $(v).unbind();
                 $(v).click(function () {
 
                     var b = $(this), c = b.attr("rel");
-                    console.log(c);
                     a._ToLayout(c);
                     b.parent().parent().find("a").removeClass("active");
                     b.addClass("active");
@@ -332,7 +480,6 @@ Jh.fn = function (a) {
 
             delete b.resize;
             a._create(b);
-            delete b.layout;
             a._bindData(b);
             a._bindEvent()
         }, _create: function (b) {
@@ -373,6 +520,9 @@ Jh.fn = function (a) {
                     break;
                 case "appR":
                     d = a._elements.m_r
+            }
+            if(!d){
+                return;
             }
             $.each(c, function (b, c) {
                 d.append(a._createPortalOne(b, c));
@@ -415,19 +565,41 @@ Jh.fn = function (a) {
             return a
         },_createViewTable:function(b,c){
 
-            var tbody=$("<tbody class='datagrid-body' ></tbody>");
-
+            var tbody=$("<tbody id='"+b+"_tbody' ></tbody>");
+            if(c[0][0].height){
+                tbody.css('height',c[0][0].height);
+            }
             $.each(c,function(cind,cit){
 
                 //======表格头
-                var tr = $("<tr style='height:30px;line-height:30px;' class ='textCenter datagrid-header'></tr>");
 
-                $.each(cit,function(index,item){
-                    var td = item.width ?   $("<td style='width:"+item.width+"'>"+item.title+"</td>") :  $("<td>"+item.title+"</td>")   ;
-                    tr.append(td);
-                });
+                if(Jh.Config._listView.includes(b)){
 
-                tbody.append(tr);
+                    var thead=$("<thead class='' ></thead>");
+
+                    var tr = $("<tr style='height:30px;line-height:15px;' class ='textCenter datagrid-header'></tr>");
+
+                    $.each(cit,function(index,item){
+                        var th = item.width ?   $("<th   style='width:"+item.width+"'>"+item.title+"</th>") :  $("<th class='tableth'>"+item.title+"</th>")   ;
+                        tr.append(th);
+                    });
+
+                    thead.append(tr);
+                    $("#"+b+"Table").append(thead);
+
+                }else{
+
+                    if(!cit[0].hiddenTitle){
+                        var tr = $("<tr style='height:30px;line-height:15px;' class ='textCenter datagrid-header'></tr>");
+
+                        $.each(cit,function(index,item){
+                            var td = item.width ?   $("<td style='width:"+item.width+"'>"+item.title+"</td>") :  $("<td>"+item.title+"</td>")   ;
+                            tr.append(td);
+                        });
+
+                        tbody.append(tr);
+                    }
+                }
                 //==============
 
                 var _data;
@@ -467,6 +639,12 @@ Jh.fn = function (a) {
                         }else{
                             td = $("<td id='ie_"+it.field+"'></td>");
                         }
+
+
+                        if(it.width){
+                            td.css('width',it.width);
+                        }
+
                         tr.append(td);
                     });
                     tr.hover(function () {
@@ -601,10 +779,11 @@ Jh.fn = function (a) {
                         }
                     }
                     var obj = $("."+view+"_"+target)[0];
+                    var firstobj = $("."+view+"_0")[0];
                     //				var obj = $("."+ view +"_"+Jh.Util.dateSlice(MyPlayer.Data.currentTime)+":first")[0];
                     if(obj){
-                        $("#"+view+"Div").animate({
-                            scrollTop:obj.offsetTop
+                        $("#"+view+"_tbody").animate({
+                            scrollTop:obj.offsetTop-firstobj.offsetTop
                         });
                         $("#"+view+" .datagrid-row-selected").removeClass("datagrid-row-selected")
                         $(obj).addClass("datagrid-row-selected");
@@ -621,10 +800,8 @@ Jh.fn = function (a) {
             }
 
             if(!data){
-                //console.log(MyPlayer.Data.currentTime);
                 existData = false;
             }
-
             if(Jh.Config._allIe.length>0){
                 $.each(Jh.Config._allIe,function(iii,item){
 

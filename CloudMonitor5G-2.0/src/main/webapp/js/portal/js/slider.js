@@ -30,8 +30,8 @@ MySlider.fn = function (a) {
 			b.slider({
 				showTip:true,
 				tipFormatter: function(value){
-
-					return  getSliderTime(value,"hh:mm:ss");
+					return	new Date(MyPlayer.Data.currentTime).Format("hh:mm:ss");
+					//	return  getSliderTime(value,"hh:mm:ss");
 				},
 				rule:[ new Date(MyPlayer.Data.startTime).Format("hh:mm:ss") ,new Date(MyPlayer.Data.endTime).Format("hh:mm:ss") ],
 				onChange:function(newValue,oldValue){

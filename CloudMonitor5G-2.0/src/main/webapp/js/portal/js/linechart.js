@@ -161,7 +161,7 @@ MyChart.fn = function (a) {
 	}
 
 	function setOption(options){
-		if(chartObject){
+		if(!$.isEmptyObject(chartObject)){
 			chartObject.setOption(options);
 		}
 	}
@@ -178,7 +178,7 @@ MyChart.fn = function (a) {
 
 				$.each(MyChart.Data.title,function(k, v){
 
-					var s = $("<span style='cursor:pointer;margin-right: 10px'><a >"+v+"</a></span>");
+					var s = $("<span style='cursor:pointer;margin-left: 10px'><a >"+v+"</a></span>");
 					s.click(function(){
 						$this.change(k);
 					})
@@ -186,9 +186,14 @@ MyChart.fn = function (a) {
 					d.append(s);
 				});
 
-				$("#"+MyChart.Config.container).before(d);
+				$("#"+MyChart.Config.container).empty(d);
 
-				chartObject = echarts.init(document.getElementById(MyChart.Config.container));
+				$("#"+MyChart.Config.container).append(d);
+
+				var l = $("<div style='height:215px;overflow-x:auto' id='lineChart'> </div>");
+				$("#"+MyChart.Config.container).append(l);
+
+				chartObject = echarts.init(document.getElementById("lineChart"));
 				setOption(getOption());
 			}
 
@@ -210,15 +215,22 @@ MyChart.fn = function (a) {
 			};
 			setOption(opt);
 		},resize:function(){
-			chartObject.resize();
+			if(!$.isEmptyObject(chartObject)){
+				chartObject.resize();
+			}
 		},synced:function(){
-			calcIndex();
-			syncOther = false;
-			chartObject.dispatchAction({
-				type: 'showTip',
-				seriesIndex: 0,
-				dataIndex: frameIndex
-			});
+
+			if(!$.isEmptyObject(chartObject)){
+				calcIndex();
+				syncOther = false;
+				chartObject.dispatchAction({
+					type: 'showTip',
+					seriesIndex: 0,
+					dataIndex: frameIndex
+				});
+			}
+
+
 		}
 	}
 }();

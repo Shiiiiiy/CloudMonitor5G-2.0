@@ -1,7 +1,7 @@
 var MyPlayer = {
-	
+
 	Config:{
-		
+
 	},
 	Data : {
 
@@ -25,7 +25,7 @@ var MyPlayer = {
 
 
 MyPlayer.fn = function (a) {
-	
+
 	function calcNextFrameTime(){
 
 
@@ -42,13 +42,13 @@ MyPlayer.fn = function (a) {
 		return MyPlayer.Data.currentTime;
 
 	}
-	
 
 
-    return a = {
+
+	return a = {
 		init: function () {
 
-        },sync:function(sourceId){
+		},sync:function(sourceId){
 			//需要等其他组件初始化好了之后，动态设置该方法
 		},playOnce:function(){
 			Jh.fn.playOneFrame();
@@ -127,5 +127,5 @@ MyPlayer.fn = function (a) {
 			}
 			$("#speedSpan").html(MyPlayer.Data.speed +"X");
 		}
-    }
+	}
 }();

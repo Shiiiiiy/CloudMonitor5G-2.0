@@ -47,6 +47,8 @@
 
 	$(function(){
 
+		$("#outDiv").css('margin-top',$("#innerDiv").height());
+
 		initMap();
 
 
@@ -257,10 +259,12 @@
 
 
 
-	function saveLayoutConfig(value){
+	function saveLayoutConfig(){
 
 		$.messager.confirm("提示","是否保存到当前配置",function(r){
 			if(r){
+
+				var value = Jh.base._getConfig();
 
 				$.ajax({
 
@@ -276,53 +280,46 @@
 
 			}else{
 
+				$("#addLayConfig").dialog('open');
+				$("#addLayConfig").window('center');
 
-				$.fallr("show", {
-					buttons: {
-						button1: {
-							//确定
-							text: "\u786e\u5b9a", onclick: function () {
-								var configName =  $("#configName").val();
-								if(configName){
-									$.fallr("hide");
-									$.ajax({
-										type: "POST",
-										url: "${pageContext.request.contextPath}/logReplay/saveLayout.action",
-										data:{'configValue':value,'configName':configName},
-										dataType: "json",
-										success: function(data){
-											$.messager.alert('操作提示','新增配置成功');
-											initLayoutSelect();
-										}
-									});
-								}
-							}
-							//取消
-						}, button2: {text: "\u53d6\u6d88"}
-					},
-					//模块名：   模块Code： 模块位置： 左中右
-					content: '<form style="margin-left:20px"><p>配置名称:</p>' +
-							'<input type="text" size="15" id="configName">' +
-
-							//     '<input type="text" size="15" id="modulekey" />' +
-							'</form>',
-					//			content: '<form style="margin-left:20px"><p>\u6a21\u5757\u540d\uff1a</p><input type="text" size="15" id="modulename" /><p>\u6a21\u5757Code\uff1a</p><input type="text" size="15" id="modulekey" /><p>\u6a21\u5757\u4f4d\u7f6e\uff1a</p>\u5de6:<input type="radio" name="modulelayout" checked="checked" value="left"/>&nbsp&nbsp\u4e2d:<input type="radio" name="modulelayout" value="center"/>&nbsp&nbsp\u53f3:<input type="radio" name="modulelayout" value="right"/></form>',
-
-					icon: "add",
-					position: "center"
-				});
 			}
 		});
+	}
+
+
+	function submitSaveLayout(){
+
+		var s =  $("#addLayConfig").form('validate');
+
+		if(s){
+			var value = Jh.base._getConfig();
+			var name = $("#layoutName").textbox('getValue');
+			$.ajax({
+				type: "POST",
+				url: "${pageContext.request.contextPath}/logReplay/saveLayout.action",
+				data:{'configValue':value,'configName':name},
+				dataType: "json",
+				success: function(data){
+					$.messager.alert('操作提示','新增配置成功');
+					initLayoutSelect();
+				}
+			});
+			$("#addLayConfig").dialog('close');
+		}
 	}
 
 	function toNewLayout(config){
 
 		$("#portal").remove();
 		config =  eval("("+config+")");
+		config.resize = function(){
+			MyChart.fn.resize();
+		};
 		Jh.fn.init(config);
 		MyChart.fn.init();
 		$(".active").removeClass("active");
-		$($(".layoutText")[b.layout]).addClass('active');
+		$($(".layoutText")[config.layout]).addClass('active');
 	}
 
 
@@ -425,7 +422,6 @@
 				}
 			});
 			MySlider.fn.init($("#timer"))
-
 		})
 
 }
@@ -433,35 +429,37 @@
 
 </script>
 <body>
+	<div id="outDiv" style="width:100%;">
+		<div id ="innerDiv" style="height: 50%;width:100%;position:fixed;left:0;top:0;background:white;z-index:8000">
+			<div  class="noselect" style="height:11%;text-align:center;margin-top:18px;">
+				<div style="width:80%;height:40px;line-height:40px;vertical-align:middle">
+					<div style="height:35px;width:380px;display:inline-block;vertical-align:middle" >
+						<input id="logs" style="width:100%;display: none">
+					</div>
+					<div style="line-height:26px;margin-left:10px;height:40px;display:inline-block;vertical-align:middle">
+						<span class="tstop ticon" onclick="MyPlayer.fn.stop()"></span>
+						<span id="tplay" class="tplay ticon" onclick="MyPlayer.fn.play()"></span>
+						<span id="tpause" style="display: none" class="tpause ticon" onclick="MyPlayer.fn.pause()"></span>
+						<span class="trewind ticon" onclick="MyPlayer.fn.rewind()"></span>
+						<span class="tfastforwad ticon" onclick="MyPlayer.fn.fastForward()"></span>
+						<span class="tnext ticon" onclick="MyPlayer.fn.nextFrame()"></span>
+						<span class="trestart ticon" onclick="MyPlayer.fn.restart()"></span>
+						<span id="speedSpan" class="ticon" style="text-align:left;width:30px;font-size:18px;">1X</span>
+					</div>
 
-			<div  class="noselect" style="text-align:center;margin-top:18px;user">
-				<div style="widhth:80%;height:40px;line-height:40px;vertical-align:middle">
-					<div style="height:35px;width:380px;display:inline-block;vertical-align:middle"" >
-					<input id="logs" style="width:100%;display: none">
-				</div>
-				<div style="line-height:26px;margin-left:10px;height:40px;display:inline-block;vertical-align:middle">
-					<span class="tstop ticon" onclick="MyPlayer.fn.stop()"></span>
-					<span id="tplay" class="tplay ticon" onclick="MyPlayer.fn.play()"></span>
-					<span id="tpause" style="display: none" class="tpause ticon" onclick="MyPlayer.fn.pause()"></span>
-					<span class="trewind ticon" onclick="MyPlayer.fn.rewind()"></span>
-					<span class="tfastforwad ticon" onclick="MyPlayer.fn.fastForward()"></span>
-					<span class="tnext ticon" onclick="MyPlayer.fn.nextFrame()"></span>
-					<span class="trestart ticon" onclick="MyPlayer.fn.restart()"></span>
-					<span id="speedSpan" class="ticon" style="text-align:left;width:30px;font-size:18px;">1X</span>
-				</div>
-
-				<div style="margin-left:20px;height:40px;display:inline-block;width:380px;vertical-align:middle;">
-					<input style="float:left"  class="easyui-slider" id="timer"  style="width:180px"  data-options="showTip:true">
+					<div style="margin-left:20px;height:40px;display:inline-block;width:380px;vertical-align:middle;">
+						<input style="float:left"  class="easyui-slider" id="timer"  style="width:180px"  data-options="showTip:true">
+					</div>
 				</div>
 			</div>
 
+
+			<div style="height:83%;width:100%;">
+				<iframe id ='mapIframe' name="mapIframe"  scrolling="auto" frameborder="0"  style="width:100%;height:100%;border:0;margin: 0;" ></iframe>
+			</div>
+
 		</div>
-
-		<div style="width:100%;">
-			<iframe id ='mapIframe' name="mapIframe"  scrolling="auto" frameborder="0"  style="width:100%;height:50%;border:0;margin: 0;" ></iframe>
-		</div>
-
-
+	</div>
 
 
 	<div style="margin-top:5px;margin-left:20px;" class="layoutContent" >
@@ -474,10 +472,43 @@
 					<td width="3%" align="left"><a class="layoutText" rel="1:1:1"  >1:1:1</a></td>
 					<td width="5" align="right"><input id = "layoutSelect" style="display: none"> </td>
 					<td width="6%" align="right"><a class="easyui-linkbutton" id="saveLayoutConfig" style="width: 80px;"  >保存配置</a></td>
-					<td width="79%" align="left"><a class="easyui-linkbutton" id="addPanel" style="width: 80px;"  >添加窗口</a></td>
+					<td width="79%" align="left"><a class="easyui-linkbutton" id="addPanelBtn"  style="width: 80px;">添加窗口</a></td>
 				</tr>
 			</table>
 		</div>
+
+		<div id="addPanel" class="easyui-dialog" style="overflow:auto;width:400px;height:200px;padding:10px" data-options="title:'添加窗口',resizable:true,border:false,closable:true,closed:true,modal:false">
+			<table style="margin-top:20px;width:100%;">
+				<tr  style="width:100%;">
+					<td style="width:100%;" align="center"> <input id="panelSelect" style="margin-left:100px ;width:200px"></td>
+				</tr>
+			</table>
+			<table style="width:100%;margin-top:50px;">
+				<tr style="width:100%">
+					<td style="width:43%" align="right" > <a iconCls="icon-ok" id="submitAddPanelBtn" class="easyui-linkbutton"  >确定</a></td>
+					<td style="width:13%" align="center"> </td>
+					<td style="width:43%" align="left"> <a class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#addPanel').dialog('close');" >取消</a></td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="addLayConfig" class="easyui-dialog" style="overflow:auto;width:400px;height:200px;padding:10px" data-options="title:'添加窗口',resizable:true,border:false,closable:true,closed:true,modal:false">
+			<table style="margin-top:20px;width:100%;">
+				<tr  style="width:100%;">
+					<td style="width:27%" align="right">配置名称:</td>
+					<td style="width:3%" align="center"> </td>
+					<td style="width:70%;" align="left"> <input class="easyui-textbox" type="text" data-options="required:true" id="layoutName" style=""></td>
+				</tr>
+			</table>
+			<table style="width:100%;margin-top:50px;">
+				<tr style="width:100%">
+					<td style="width:43%" align="right" > <a iconCls="icon-ok" id="addLayConfigBtn" onclick="submitSaveLayout()" class="easyui-linkbutton"  >确定</a></td>
+					<td style="width:13%" align="center"> </td>
+					<td style="width:43%" align="left"> <a class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#addLayConfig').dialog('close');" >取消</a></td>
+				</tr>
+			</table>
+		</div>
+
 
 
 

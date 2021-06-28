@@ -23,7 +23,7 @@ i, em {
     font-style: normal;
 }
 table {
-    border-collapse: collapse;
+//    border-collapse: collapse;
     border-spacing: 0;
 }
 input, textarea {
@@ -122,7 +122,7 @@ input:focus, textarea:focus {
     border-radius: 2px 2px 2px 2px;
     box-shadow: 1px 2px 5px #CCCCCC;
     border: 1px solid #DDDDDD;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     width: 100%;
 }
 
@@ -179,9 +179,10 @@ input:focus, textarea:focus {
     font-size: 12px;
     line-height: 20px;
     position: relative;
-    height:200px;
-    overflow-y:auto;
+    height:230px;
+
 }
+
 
 .groupItem .itemContent td{
     font-size: 12px;
@@ -364,3 +365,36 @@ input:focus, textarea:focus {
     -khtml-user-select:none;
     user-select:none;
 }
+
+
+
+.itemContent table tbody {
+    display: block;
+    height: 200px;
+    overflow-y: auto;
+}
+
+.itemContent th, .itemContent td{
+
+    font-weight:normal;
+    border-width: 0 1px 1px 0;
+    border-color: #ccc;
+    border-style: dotted;
+    word-wrap:break-word;
+    font-size:12px;
+
+}
+
+.itemContent    table thead,
+.itemContent   tbody,
+.itemContent    tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+
+.itemContent  table thead {
+    width: calc( 100% - 1.4em)
+}
+

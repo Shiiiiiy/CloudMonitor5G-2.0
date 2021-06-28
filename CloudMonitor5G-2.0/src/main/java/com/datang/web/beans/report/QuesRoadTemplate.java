@@ -75,7 +75,7 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
 
     //  5G
     private void toSqlObj1(Map<String, List<Map<String, Object>>> map, List<Map<String,Object>> sqlObj1){
-        List<Map<String, Object>> maps = map.get("下行弱覆盖路段");
+        List<Map<String, Object>> maps = map.get("弱覆盖路段");
         if(CollectionUtils.isEmpty(maps)) return;
         sqlObj1.addAll(maps);
     }

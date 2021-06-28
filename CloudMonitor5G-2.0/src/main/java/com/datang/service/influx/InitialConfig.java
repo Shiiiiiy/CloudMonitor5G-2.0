@@ -175,7 +175,7 @@ public class InitialConfig {
             while ((line9 = fr9.readLine()) != null){
                 if(StringUtils.isNotBlank((line9))){
                     String[] ss=line9.split(",",-1);
-                    if(ss[0].toLowerCase().equalsIgnoreCase("lte")){
+                    if(ss[0].toLowerCase().contains("lte")){
                         lteNetToatls.add(new NetTotalConfig(ss[0],ss[1],ss[2],ss[3]));
                     }
                     if(ss[0].toLowerCase().contains("nr")){

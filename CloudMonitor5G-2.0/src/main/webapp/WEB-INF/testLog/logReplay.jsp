@@ -399,29 +399,32 @@
 					}
 				}),
 
-				$.ajax({
-					type: "POST",
-					url: "${pageContext.request.contextPath}/logReplay/getLayout.action",
-					dataType: "json",
-					success: function(data){
-						config =  eval("("+data+")");
-						config.resize = function(){
-							MyChart.fn.resize();
-						};
 
-					}
-				})
 
 
 		).done(function(){
 
 			var lay =  $("#layoutSelect").combobox('getValue');
-			$.each( MyPlayer.Data.layoutArr,function(k,v){
-				if(v.id == lay){
-					toNewLayout(v.value);
-				}
-			});
-			MySlider.fn.init($("#timer"))
+
+			if(lay){
+				$.each( MyPlayer.Data.layoutArr,function(k,v){
+					if(v.id == lay){
+						toNewLayout(v.value);
+						MySlider.fn.init($("#timer"));
+					}
+				});
+			}else{
+
+				$.ajax({
+					type: "POST",
+					url: "${pageContext.request.contextPath}/logReplay/getLayout.action",
+					dataType: "json",
+					success: function(data){
+						toNewLayout(data);
+						MySlider.fn.init($("#timer"));
+					}
+				})
+			}
 		})
 
 }

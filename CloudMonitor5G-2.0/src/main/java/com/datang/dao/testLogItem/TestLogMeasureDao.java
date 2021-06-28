@@ -39,9 +39,7 @@ public class TestLogMeasureDao extends
 		}
 		long total = 0;
 		criteria.setProjection(null);
-		criteria.setFirstResult((page - 1) * rows);
-		criteria.setMaxResults(rows);
-		List list = criteria.list();
+		criteria.setFirstResult(0);
 		total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
 		return total;

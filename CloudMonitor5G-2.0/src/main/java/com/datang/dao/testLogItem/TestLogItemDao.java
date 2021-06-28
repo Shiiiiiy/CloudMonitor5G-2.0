@@ -107,6 +107,7 @@ public class TestLogItemDao extends GenericHibernateDao<TestLogItem, Long> {
 	//	criteria.setFirstResult((pageNum - 1) * rowsCount);
 	//	criteria.setMaxResults(rowsCount);
 	//	List list = criteria.list();
+		criteria.setFirstResult(0);
 		total = (Long) criteria.setProjection(Projections.rowCount())
 				.uniqueResult();
 		return total;

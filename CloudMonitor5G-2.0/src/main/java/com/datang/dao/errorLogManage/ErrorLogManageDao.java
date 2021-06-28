@@ -71,6 +71,7 @@ public class ErrorLogManageDao extends GenericHibernateDao<ErrorLogManagePojo, L
 				criteria.add(Restrictions.lt("uploadTime", pageList.getParam("endTime")));
 			}
 		}
+		criteria.setFirstResult(0);
 		long total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		return total;
 	}

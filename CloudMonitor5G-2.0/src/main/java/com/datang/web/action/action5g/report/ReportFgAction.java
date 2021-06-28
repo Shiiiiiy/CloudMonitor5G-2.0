@@ -1093,7 +1093,7 @@ public class ReportFgAction extends PageAction implements
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(file);
 			Workbook transformToExcel = POIExcelUtil.transformToExcel(
-					hashMap1, "templates/" + analyzeTemplate.getTemplate());
+					hashMap1, analyzeTemplate.getTemplateInputStream(influxService));
 			if (null != transformToExcel) {
 				transformToExcel.write(fileOutputStream);
 				report.setFilePath(filePath);

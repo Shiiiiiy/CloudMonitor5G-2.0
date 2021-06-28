@@ -407,11 +407,24 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 	 * @param filename
 	 * @return
 	 */
-	public TestLogItem queryTestLogByLogName(String filename){
+	public UnicomLogItem queryTestLogByLogName(String filename){
 		Criteria criteria = this.getHibernateSession().createCriteria(
-				TestLogItem.class);
+				UnicomLogItem.class);
 		criteria.add(Restrictions.eq("filelink", filename));
-		TestLogItem testLogItems = (TestLogItem)criteria.uniqueResult();
+		UnicomLogItem testLogItems = (UnicomLogItem)criteria.uniqueResult();
+		return testLogItems;
+	}
+
+	/**
+	 * 根据日志文件名查询日志
+	 * @param filename
+	 * @return
+	 */
+	public UnicomLogItem queryTestLogByLogName2(String filename){
+		Criteria criteria = this.getHibernateSession().createCriteria(
+				UnicomLogItem.class);
+		criteria.add(Restrictions.eq("fileName", filename));
+		UnicomLogItem testLogItems = (UnicomLogItem)criteria.uniqueResult();
 		return testLogItems;
 	}
 

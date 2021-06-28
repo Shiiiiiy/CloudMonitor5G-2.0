@@ -694,7 +694,12 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							Map<String, Object> logKpiValue = new HashMap<String, Object>();
 							for (Map.Entry<String, List<String>> map : commonTableMap.entrySet()) {
 								Map<String, Object> rltTemp = new HashMap<String, Object>();
-								String sql = getSqlByParam(map.getKey(), map.getValue(), taskName, fileCondition);
+								UnicomLogItem unicomLogItem = unicomLogItemService.queryTestLogByLogName2(fileCondition);
+								String singleTaskName = "";
+								if(unicomLogItem!=null){
+									singleTaskName = unicomLogItem.getTaskName();
+								}
+								String sql = getSqlByParam(map.getKey(), map.getValue(), singleTaskName, fileCondition);
 								rltTemp = jdbc.objectQueryNoPage(sql);
 //								if(rltTemp == null || rltTemp.isEmpty()){
 //									throw new ApplicationException("任务解析失败，请联系管理员");
@@ -727,7 +732,12 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							logKpiValue.clear();
 							for (Map.Entry<String, List<String>> map : timeTableMap.entrySet()) {
 								Map<String, Object> rltTemp = new HashMap<String, Object>();
-								String sql = getSqlByParam(map.getKey(), map.getValue(), taskName, fileCondition);
+								UnicomLogItem unicomLogItem = unicomLogItemService.queryTestLogByLogName2(fileCondition);
+								String singleTaskName = "";
+								if(unicomLogItem!=null){
+									singleTaskName = unicomLogItem.getTaskName();
+								}
+								String sql = getSqlByParam(map.getKey(), map.getValue(), singleTaskName, fileCondition);
 								rltTemp = jdbc.objectQueryNoPage(sql);
 //								if(rltTemp == null || rltTemp.isEmpty()){
 //									throw new ApplicationException("任务解析失败，请联系管理员");
@@ -760,7 +770,12 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							logKpiValue.clear();
 							for (Map.Entry<String, List<String>> map : mileTableMap.entrySet()) {
 								Map<String, Object> rltTemp = new HashMap<String, Object>();
-								String sql = getSqlByParam(map.getKey(), map.getValue(), taskName, fileCondition);
+								UnicomLogItem unicomLogItem = unicomLogItemService.queryTestLogByLogName2(fileCondition);
+								String singleTaskName = "";
+								if(unicomLogItem!=null){
+									singleTaskName = unicomLogItem.getTaskName();
+								}
+								String sql = getSqlByParam(map.getKey(), map.getValue(), singleTaskName, fileCondition);
 								rltTemp = jdbc.objectQueryNoPage(sql);
 //								if(rltTemp == null || rltTemp.isEmpty()){
 //									throw new ApplicationException("任务解析失败，请联系管理员");
@@ -1267,7 +1282,7 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 		}
 		
 		buffer.append(" from "+tablename+" where TASK_NAME='"+taskName+"'");
-		buffer.append(" and LOG_NAME='"+fileName+"'");
+		buffer.append(" and log_name='"+fileName+"'");
 		
 		return buffer.toString();
 	}

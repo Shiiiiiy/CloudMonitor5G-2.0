@@ -41,11 +41,11 @@ public class AnalyzeNetworkTemplate implements AnalyzeTemplate{
         List<Map<String,Object>> sqlObj5 = new ArrayList<>();
         List<Map<String,Object>> sqlObj6 = new ArrayList<>();
 
-        for(String log:logFileIdList){
-            List<String> each = new ArrayList<>();
-            each.add(log);
+//        for(String log:logFileIdList){
+//            List<String> each = new ArrayList<>();
+//            each.add(log);
             try{
-                Map<String, List<Map<String, Object>>> netConfigReports = influxService.getNetConfigReports(each);
+                Map<String, List<Map<String, Object>>> netConfigReports = influxService.getNetConfigReports(logFileIdList);
                 toSqlObj1(netConfigReports,sqlObj1);
                 toSqlObj2(netConfigReports,sqlObj2);
                 toSqlObj3(netConfigReports,sqlObj3);
@@ -56,7 +56,7 @@ public class AnalyzeNetworkTemplate implements AnalyzeTemplate{
             }catch (Exception e){
                 LOGGER.error(" influxDb is error");
             }
-        }
+//        }
 
         // 加 id
         TestLogItemUtils.addId(sqlObj3);

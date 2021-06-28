@@ -1528,8 +1528,8 @@ public class InfluxServiceImpl implements InfluxService {
                 //生成事件名和记录的map集合
                 Map<String, List<Map<String, Object>>> evtNameDatas = result.stream().collect(Collectors.groupingBy(i -> i.get("evtName").toString()));
                 //筛选触发事件的记录
-                        List<Map.Entry<String, List<Map<String, Object>>>> triggerEvtDatas = evtNameDatas.entrySet().stream().filter(entry ->
-                                Arrays.asList(item.getTriggerEvt()).contains(entry.getKey())
+                List<Map.Entry<String, List<Map<String, Object>>>> triggerEvtDatas = evtNameDatas.entrySet().stream().filter(entry ->
+                    Arrays.asList(item.getTriggerEvt()).contains(entry.getKey())
                 ).collect(Collectors.toList());
                 if(item.getType().equalsIgnoreCase("lte")){
                     evtNetConfigBusiProcess(testLogItem, connect, item, result, triggerEvtDatas,InitialConfig.netLteKpiMap,sheetDatas);
@@ -2232,15 +2232,15 @@ public class InfluxServiceImpl implements InfluxService {
                 if(item!=null&&item.containsKey(cellKey))
                 r.putAll((Map<String,Object>)item.get(cellKey));
             });
-            if(sheetName.equalsIgnoreCase("4G")){
+            if(r.size()>0&&sheetName.equalsIgnoreCase("4G")){
                 if(StringUtils.isNotBlank(r.get("kpi1").toString())&&StringUtils.isNotBlank(r.get("kpi2").toString())&&StringUtils.isNotBlank(r.get("kpi3").toString())){
                     r.put("exsistTestRediectDetail","是");
                 }else{
                     r.put("exsistTestRediectDetail","否");
                 }
+                r.put("key",cellKey);
+                rel.add(r);
             }
-            r.put("key",cellKey);
-            rel.add(r);
         });
         mixReportsMap.put(sheetName,rel);
     }
@@ -2273,9 +2273,9 @@ public class InfluxServiceImpl implements InfluxService {
             value.forEach(record->{
                 Map<String, Object> r=new HashMap<>();
                 String triggerTime = record.get("time").toString();
-                String cellId = record.get("SellID").toString();
-                String fcn = record.get("Enfarcn").toString();
-                String pci = record.get("Pci").toString();
+                Object cellId = Optional.ofNullable(record.get("SellID")).orElse("");
+                Object fcn = Optional.ofNullable(record.get("Enfarcn")).orElse("");
+                Object pci = Optional.ofNullable(record.get("Pci")).orElse("");
                 //判断是否有前置条件
                 String[] preCons = item.getPreCon();
                 boolean flag;
@@ -2315,6 +2315,7 @@ public class InfluxServiceImpl implements InfluxService {
                         r.put("triggerTime",DateComputeUtils.formatMicroTime(triggerTime));
                         setBebindValue(r,item,result,triggerTime);
                         InfluxReportUtils.setNetIEKpi(connect,r,netKpiMap,triggerTime);
+                        sheetDatas.add(r);
                     }
                 }else{
                     //无前置条件

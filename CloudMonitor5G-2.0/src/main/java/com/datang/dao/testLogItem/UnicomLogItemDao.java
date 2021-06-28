@@ -46,12 +46,12 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 			.getLogger(UnicomLogItemAction.class);
 
 
-	private static final String BOX_ID = "BOX_ID";
-	private static final String FILE_NAME = "FILE_NAME";
-	private static final String EVENTTYPE = "EVENTTYPE";
-	private static final String TIMESTAMP = "TIMESTAMP";
-	private static final String LONGITUDE = "LONGITUDE";
-	private static final String LATITUDE = "LATITUDE";
+	private static final String BOX_ID = "box_id";
+	private static final String FILE_NAME = "file_name";
+	private static final String EVENTTYPE = "eventtype";
+	private static final String TIMESTAMP = "timestamp";
+	private static final String LONGITUDE = "longitude";
+	private static final String LATITUDE = "latitude";
 
 
 	@Resource
@@ -1054,8 +1054,8 @@ try{
 				@Override
 				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
 
-					String timestamp1 = (String)o1.get("TIMESTAMP3");
-					String timestamp2 = (String)o2.get("TIMESTAMP3");
+					String timestamp1 = (String)o1.get("timestamp3");
+					String timestamp2 = (String)o2.get("timestamp3");
 
 					Date date1 = null;
 					Date date2 = null;

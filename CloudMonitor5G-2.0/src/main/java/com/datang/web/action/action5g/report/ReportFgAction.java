@@ -90,6 +90,7 @@ public class ReportFgAction extends PageAction implements
 		ModelDriven<StatisticeTaskRequest> {
 	private static Logger LOGGER = LoggerFactory.getLogger(ReportAction.class);
 	private static String ANALYZE_TEMPLATE_PATH = "分析型报表";
+	private static String STATISTICE_TEMPLATE_PATH = "uploadReportTemplate";
 	/**
 	 * 统计任务服务
 	 */
@@ -190,6 +191,9 @@ public class ReportFgAction extends PageAction implements
 
 	@Value("${appTaskReportFileLink}")
 	private String fileSaveUrl;
+
+	@Value("${stationReportFileLink}")
+	private String customFileSaveUrl;
 
 
 	static{
@@ -954,7 +958,12 @@ public class ReportFgAction extends PageAction implements
 				customLogReportTask.setEndDate(statisticeTaskRequest.getEndDate());
 			}
 			customLogReportTask.setCreatDate(new Date());
-			customLogReportTask.setTaskStatus("1");
+			if(StatisticeTaskRequest.typeIsAnylyFileReport(statisticeTaskRequest.getReportType())){
+				customLogReportTask.setTaskStatus("1");
+			}
+			else {
+				customLogReportTask.setTaskStatus("2");
+			}
 			customLogReportTask.setTaskType("1");
 			if (null != statisticeTaskRequest.getId()) {
 				customLogReportTask.setId(statisticeTaskRequest.getId());
@@ -1031,17 +1040,29 @@ public class ReportFgAction extends PageAction implements
 				return ReturnType.JSON;
 			}
 
-
-
+			// wuchch
+			//else if(!StatisticeTaskRequest.typeIsAnylyFileReport(statisticeTaskRequest.getReportType())){
+			else{
+				File file1 = new File(customFileSaveUrl+ "/" + STATISTICE_TEMPLATE_PATH + "/");
+				if (!file1.exists()) {
+					try{
+						file1.mkdirs();
+					}catch (Exception e){
+						LOGGER.error("无法创建目录",e);
+						ActionContext.getContext().getValueStack().set("errorMsg", "无法创建目录"+ file1.getAbsolutePath());
+						return ReturnType.JSON;
+					}
+				}
+				return ReturnType.JSON;
+			}
 
 			//下发任务到后台
-
-			String errotMsg = goUnicomSocket(customLogReportTask);
-			if(StringUtils.hasText(errotMsg)){
-				customLogReportTaskDao.delete(customLogReportTask.getId());
-				LOGGER.info("下发自定义任务失败,无法保存任务:"+ errotMsg);
-				ActionContext.getContext().getValueStack().set("errorMsg", "下发自定义任务失败,无法保存任务："+ errotMsg);
-			}
+			//String errotMsg = goUnicomSocket(customLogReportTask);
+			//if(StringUtils.hasText(errotMsg)){
+			//	customLogReportTaskDao.delete(customLogReportTask.getId());
+			//	LOGGER.info("下发自定义任务失败,无法保存任务:"+ errotMsg);
+			//	ActionContext.getContext().getValueStack().set("errorMsg", "下发自定义任务失败,无法保存任务："+ errotMsg);
+			//}
 
 
 		}
@@ -1297,7 +1318,12 @@ public class ReportFgAction extends PageAction implements
 				statisticeTask.setEndDate(statisticeTaskRequest.getEndDate());
 			}
 			statisticeTask.setCreatDate(new Date());
-			statisticeTask.setTaskStatus("1");
+			if(StatisticeTaskRequest.typeIsAnylyFileReport(statisticeTaskRequest.getReportType())) {
+				statisticeTask.setTaskStatus("1");
+			}
+			else{
+				statisticeTask.setTaskStatus("2");
+			}
 			if (null != statisticeTaskRequest.getId()) {
 				statisticeTask.setId(statisticeTaskRequest.getId());
 				reportService.update(statisticeTask);

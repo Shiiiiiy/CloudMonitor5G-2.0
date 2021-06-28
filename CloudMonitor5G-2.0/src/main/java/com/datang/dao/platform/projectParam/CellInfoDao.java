@@ -200,11 +200,7 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 		
 		long total = 0;
 		criteria.setProjection(null);
-		int rowsCount = pageList.getRowsCount();// 每页记录数
-		int pageNum = pageList.getPageNum();// 页码
-		criteria.setFirstResult((pageNum - 1) * rowsCount);
-		criteria.setMaxResults(rowsCount);
-		List<CellInfo> list = (List<CellInfo>)criteria.list();
+		criteria.setFirstResult(0);
 		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		return total;
 	}
@@ -261,11 +257,7 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 		}
 		long total = 0;
 		criteria.setProjection(null);
-		int rowsCount = pageList.getRowsCount();// 每页记录数
-		int pageNum = pageList.getPageNum();// 页码
-		criteria.setFirstResult((pageNum - 1) * rowsCount);
-		criteria.setMaxResults(rowsCount);
-		List<PlanParamPojo> list = (List<PlanParamPojo>)criteria.list();
+		criteria.setFirstResult(0);
 		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		return total;
 	}
@@ -309,11 +301,7 @@ public class CellInfoDao extends GenericHibernateDao<CellInfo, Long> {
 		}
 		long total = 0;
 		criteria.setProjection(null);
-		int rowsCount = pageList.getRowsCount();// 每页记录数
-		int pageNum = pageList.getPageNum();// 页码
-		criteria.setFirstResult((pageNum - 1) * rowsCount);
-		criteria.setMaxResults(rowsCount);
-		List<Plan4GParam> list = (List<Plan4GParam>)criteria.list();
+		criteria.setFirstResult(0);
 		total = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		return total;
 	}

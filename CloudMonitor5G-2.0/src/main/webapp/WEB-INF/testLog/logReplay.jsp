@@ -435,7 +435,7 @@
 	<div id="outDiv" style="width:100%;">
 		<div id ="innerDiv" style="height: 50%;width:100%;position:fixed;left:0;top:0;background:white;z-index:8000">
 			<div  class="noselect" style="height:11%;text-align:center;margin-top:18px;">
-				<div style="width:80%;height:40px;line-height:40px;vertical-align:middle">
+				<div style="width:100%;height:40px;line-height:40px;vertical-align:middle">
 					<div style="height:35px;width:380px;display:inline-block;vertical-align:middle" >
 						<input id="logs" style="width:100%;display: none">
 					</div>

@@ -1,7 +1,5 @@
 package com.datang.domain.testLogItem;
 
-import org.apache.struts2.json.annotations.JSON;
-
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +23,16 @@ public class IEItem {
     private Double ie_50293;
     private Double ie_70525;
     private Double ie_70005;
+
+    private String ie_58007;
+    private Double ie_58039;
+    private Double ie_50172;
+    private Double ie_50108;
+    private Double ie_70077;
+    private Double ie_50236;
+    private Double ie_50300;
+    private Double ie_70532;
+    private Double ie_70012;
    //NR主小区信息窗口
     private String ie_50013;
     private Double ie_50006;
@@ -70,8 +78,144 @@ public class IEItem {
     private Double ie_40171;
     private Double ie_40203;
     private Double ie_40299;
-
     private Double ie_40235;
+
+    private Double ie_40082;
+    private Double ie_44213;
+    private Double ie_40146;
+    private Double ie_40178;
+    private Double ie_40210;
+    private Double ie_40306;
+    private Double ie_40242;
+    @Column(name = "ie_58007")
+    public String getIe_58007() {
+        return ie_58007;
+    }
+
+    public void setIe_58007(String ie_58007) {
+        this.ie_58007 = ie_58007;
+    }
+    @Column(name = "ie_58039")
+    public Double getIe_58039() {
+        return ie_58039;
+    }
+
+    public void setIe_58039(Double ie_58039) {
+        this.ie_58039 = ie_58039;
+    }
+    @Column(name = "ie_50172")
+    public Double getIe_50172() {
+        return ie_50172;
+    }
+
+    public void setIe_50172(Double ie_50172) {
+        this.ie_50172 = ie_50172;
+    }
+    @Column(name = "ie_50108")
+    public Double getIe_50108() {
+        return ie_50108;
+    }
+
+    public void setIe_50108(Double ie_50108) {
+        this.ie_50108 = ie_50108;
+    }
+    @Column(name = "ie_70077")
+    public Double getIe_70077() {
+        return ie_70077;
+    }
+
+    public void setIe_70077(Double ie_70077) {
+        this.ie_70077 = ie_70077;
+    }
+    @Column(name = "ie_50236")
+    public Double getIe_50236() {
+        return ie_50236;
+    }
+
+    public void setIe_50236(Double ie_50236) {
+        this.ie_50236 = ie_50236;
+    }
+    @Column(name = "ie_50300")
+    public Double getIe_50300() {
+        return ie_50300;
+    }
+
+    public void setIe_50300(Double ie_50300) {
+        this.ie_50300 = ie_50300;
+    }
+    @Column(name = "ie_70532")
+    public Double getIe_70532() {
+        return ie_70532;
+    }
+
+    public void setIe_70532(Double ie_70532) {
+        this.ie_70532 = ie_70532;
+    }
+    @Column(name = "ie_70012")
+    public Double getIe_70012() {
+        return ie_70012;
+    }
+
+    public void setIe_70012(Double ie_70012) {
+        this.ie_70012 = ie_70012;
+    }
+    @Column(name = "ie_40082")
+    public Double getIe_40082() {
+        return ie_40082;
+    }
+
+    public void setIe_40082(Double ie_40082) {
+        this.ie_40082 = ie_40082;
+    }
+    @Column(name = "ie_44213")
+    public Double getIe_44213() {
+        return ie_44213;
+    }
+
+    public void setIe_44213(Double ie_44213) {
+        this.ie_44213 = ie_44213;
+    }
+    @Column(name = "ie_40146")
+    public Double getIe_40146() {
+        return ie_40146;
+    }
+
+    public void setIe_40146(Double ie_40146) {
+        this.ie_40146 = ie_40146;
+    }
+    @Column(name = "ie_40178")
+    public Double getIe_40178() {
+        return ie_40178;
+    }
+
+    public void setIe_40178(Double ie_40178) {
+        this.ie_40178 = ie_40178;
+    }
+    @Column(name = "ie_40210")
+    public Double getIe_40210() {
+        return ie_40210;
+    }
+
+    public void setIe_40210(Double ie_40210) {
+        this.ie_40210 = ie_40210;
+    }
+    @Column(name = "ie_40306")
+    public Double getIe_40306() {
+        return ie_40306;
+    }
+
+    public void setIe_40306(Double ie_40306) {
+        this.ie_40306 = ie_40306;
+    }
+    @Column(name = "ie_40242")
+    public Double getIe_40242() {
+        return ie_40242;
+    }
+
+    public void setIe_40242(Double ie_40242) {
+        this.ie_40242 = ie_40242;
+    }
+
     @Column(name = "timestamp")
     public String getTime() {
        return time;

@@ -123,8 +123,12 @@ public class UnicomLogItemServiceImpl implements UnicomLogItemService {
 	}
 	
 	@Override
-	public TestLogItem queryTestLogByLogName(String filename){
+	public UnicomLogItem queryTestLogByLogName(String filename){
 		return unicomLogItemDao.queryTestLogByLogName(filename);
+	}
+	@Override
+	public UnicomLogItem queryTestLogByLogName2(String filename){
+		return unicomLogItemDao.queryTestLogByLogName2(filename);
 	}
 
 	@Override

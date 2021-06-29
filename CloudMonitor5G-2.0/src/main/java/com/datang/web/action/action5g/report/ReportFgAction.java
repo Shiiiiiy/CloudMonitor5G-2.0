@@ -921,6 +921,14 @@ public class ReportFgAction extends PageAction implements
 //				taskName.append('-');
 //				taskName.append(DateUtil
 //						.getShortDateTimeStr(statisticeTaskRequest.getEndDate()));
+
+//				if(!StatisticeTaskRequest.typeIsAnylyFileReport(statisticeTaskRequest.getReportType())){
+//					UnicomLogItem testLogItem = unicomLogItemService.queryTestLogById();
+//					taskName = new StringBuilder();
+//					taskName.append(testLogItem.getTaskName());
+//				}
+
+
 				if(!statisticeTaskRequest.getName().contains("定点测试-DD")){
 					customLogReportTask.setName(taskName.toString().trim());
 				}else{
@@ -1093,7 +1101,7 @@ public class ReportFgAction extends PageAction implements
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(file);
 			Workbook transformToExcel = POIExcelUtil.transformToExcel(
-					hashMap1, "templates/" + analyzeTemplate.getTemplate());
+					hashMap1, analyzeTemplate.getTemplateInputStream(influxService));
 			if (null != transformToExcel) {
 				transformToExcel.write(fileOutputStream);
 				report.setFilePath(filePath);

@@ -61,7 +61,14 @@ public interface UnicomLogItemService {
 	 * @param filename
 	 * @return
 	 */
-	public TestLogItem queryTestLogByLogName(String filename);
+	public UnicomLogItem queryTestLogByLogName(String filename);
+
+	/**
+	 * 根据日志文件名查询日志信息
+	 * @param filename
+	 * @return
+	 */
+	public UnicomLogItem queryTestLogByLogName2(String filename);
 
 	/**
 	 * 根据BoxId查询

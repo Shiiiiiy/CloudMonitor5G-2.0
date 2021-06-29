@@ -204,9 +204,14 @@ public class DateComputeUtils {
 		if(result.isEmpty()){
 			return Collections.emptyList();
 		}
+		long evtName1 = result.stream().filter(o -> o.get("evtName").toString().equalsIgnoreCase(evtName)).count();
+		if(evtName1<=0){
+			return Collections.emptyList();
+		}
 		List<List<Map<String,Object>>> re=new ArrayList<>();
 		int i=0;
 		List<Integer> indexes=new ArrayList<>();
+		
 		for(Map<String,Object> o:result){
 			if(o.get("evtName").toString().equalsIgnoreCase(evtName)){
 				indexes.add(i);
@@ -215,7 +220,7 @@ public class DateComputeUtils {
 		}
 		if(indexes.size()>1){
 			for(int m=0;m<indexes.size()-1;m++){
-				re.add(result.subList(m,m+1));
+				re.add(result.subList(indexes.get(m),indexes.get(m+1)));
 			}
 		}else{
 			re.add(result);

@@ -60,6 +60,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             WHERE_MAP.entrySet().parallelStream().forEach(entry->{
             //WHERE_MAP.entrySet().stream().forEach(entry->{
                 String key=entry.getKey();
+                String[] values=entry.getValue();
                 List<Map<String, Object>> sampDatas;
                 //有事件条件的处理
                 if(EVTS_MAP.containsKey(key)){
@@ -67,20 +68,29 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                     if(existEvt(evtResults,"Ftp Upload Attempt")){
                         List<Map<String,String>> times=getTimeIntervals(evtResults);
                         for(Map<String,String> time:times){
-                            sampDatas = queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Arrays.asList(time));
+                            sampDatas = queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Arrays.asList(time),null);
                             Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
-                            if(result.containsKey(key)){
-                                result.get(key).addAll(tempR.get(key));
-                            }else{
-                                result.putAll(tempR);
+                            if(!tempR.isEmpty()){
+                                if(result.containsKey(key)){
+                                    result.get(key).addAll(tempR.get(key));
+                                }else{
+                                    result.putAll(tempR);
+                                }
                             }
                         }
                     }
                 }else{
-                    sampDatas=queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Collections.emptyList());
+                    sampDatas=queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Collections.emptyList(),values);
                     //问题路段算法
                     Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
-                    result.putAll(tempR);
+                    if(!tempR.isEmpty()){
+                        if(result.containsKey(key)){
+                            result.get(key).addAll(tempR.get(key));
+                        }else{
+                            result.putAll(tempR);
+                        }
+                    }
+
                 }
 
             });
@@ -114,72 +124,33 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             Double lon2=Double.parseDouble(point2.get("Long").toString());
             Double lat2=Double.parseDouble(point2.get("Lat").toString());
             Double distance = AdjPlaneArithmetic.getDistance(lon, lat, lon2, lat2);
+            SlideWindowAlg slideWindowAlg=null;
             if("弱覆盖路段".equalsIgnoreCase(key)){
-                if(distance>=thresholdMap.get("weakcoverroadlen")){
-                    Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_50055", "weakcoverrsrp")).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate,sampDatas.size()).invoke("weakcoversamprate");
-                    start = ss.getStart();
-                    end = ss.getEnd();
-                    flag = ss.isFlag();
-                    slideWindow.remove(0);
-                    slideWindow.add(sampDatas.get(i));
-                }else{
-                    slideWindow.add(sampDatas.get(i));
-                    end++;
-                }
+                Double tlen=thresholdMap.get("weakcoverroadlen");
+                Double weakcoversamprate=thresholdMap.get("weakcoversamprate");
+                slideWindowAlg = new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_50055", "weakcoverrsrp"),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
             } else if("上行质差路段".equalsIgnoreCase(key)){
-                if(distance>=thresholdMap.get("upqualitydiffroadlen")){
-                    Double rate=slideWindow.stream().filter(getMapPredicate1(thresholdMap)).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("upqualitydiffsamprate");
-                    start = ss.getStart();
-                    end = ss.getEnd();
-                    flag = ss.isFlag();
-                    slideWindow.remove(0);
-                    slideWindow.add(sampDatas.get(i));
-                }else{
-                    slideWindow.add(sampDatas.get(i));
-                    end++;
-                }
+                Double tlen=thresholdMap.get("upqualitydiffroadlen");
+                Double weakcoversamprate=thresholdMap.get("upqualitydiffsamprate");
+                slideWindowAlg = new SlideWindowAlg(getMapPredicate1(thresholdMap),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
             }else if("下行质差路段".equalsIgnoreCase(key)){
-                if(distance>=thresholdMap.get("downqualitydiffroadlen")){
-                    Double rate=slideWindow.stream().filter(getMapPredicate(thresholdMap)).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("downqualitydiffsamprate");
-                    start = ss.getStart();
-                    end = ss.getEnd();
-                    flag = ss.isFlag();
-                    slideWindow.remove(0);
-                    slideWindow.add(sampDatas.get(i));
-                }else{
-                    slideWindow.add(sampDatas.get(i));
-                    end++;
-                }
+                Double tlen=thresholdMap.get("downqualitydiffroadlen");
+                Double weakcoversamprate=thresholdMap.get("downqualitydiffsamprate");
+                slideWindowAlg = new SlideWindowAlg(getMapPredicate(thresholdMap),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
             }else if("上行低速率路段".equalsIgnoreCase(key)){
-                if(distance>=thresholdMap.get("uplowerspeedroadlen")){
-                    Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_54231", "uplowerspeedrlc")).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("uplowerspeedsamprate");
-                    start = ss.getStart();
-                    end = ss.getEnd();
-                    flag = ss.isFlag();
-                    slideWindow.remove(0);
-                    slideWindow.add(sampDatas.get(i));
-                }else{
-                    slideWindow.add(sampDatas.get(i));
-                    end++;
-                }
+                Double tlen=thresholdMap.get("uplowerspeedroadlen");
+                Double weakcoversamprate=thresholdMap.get("uplowerspeedsamprate");
+                slideWindowAlg = new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_54231", "uplowerspeedrlc"),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
             }else if("下行低速率路段".equalsIgnoreCase(key)){
-                if(distance>=thresholdMap.get("downlowerspeedroadlen")){
-                    Double rate=slideWindow.stream().filter(getMapPredicate2(thresholdMap, "IEValue_53483", "downlowerspeedrlc")).count()*1.0/slideWindow.size();
-                    Ss ss = new Ss(thresholdMap, quesRaods, slideWindow, start, end, flag, i, rate, sampDatas.size()).invoke("downlowerspeedsamprate");
-                    start = ss.getStart();
-                    end = ss.getEnd();
-                    flag = ss.isFlag();
-                    slideWindow.remove(0);
-                    slideWindow.add(sampDatas.get(i));
-                }else{
-                    slideWindow.add(sampDatas.get(i));
-                    end++;
-                }
+                Double tlen=thresholdMap.get("downlowerspeedroadlen");
+                Double weakcoversamprate=thresholdMap.get("downlowerspeedsamprate");
+                slideWindowAlg = new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_53483", "downlowerspeedrlc"),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
             }
+            lon = slideWindowAlg.getLon();
+            lat = slideWindowAlg.getLat();
+            start = slideWindowAlg.getStart();
+            end = slideWindowAlg.getEnd();
+            flag = slideWindowAlg.isFlag();
         }
         Map<String,List<Map<String,Object>>> result=new HashMap<>();
         List<Map<String,Object>> list=new ArrayList<>();
@@ -439,28 +410,45 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         return false;
     }
 
-
-    private class Ss {
-        private Map<String, Double> thresholdMap;
+    private class SlideWindowAlg {
+        private List<Map<String, Object>> sampDatas;
+        private Double lon;
+        private Double lat;
         private List<int[]> quesRaods;
         private List<Map<String, Object>> slideWindow;
         private int start;
         private int end;
         private boolean flag;
         private int i;
-        private Double rate;
-        private int sampPointSize;
+        private Map<String, Object> point2;
+        private Double distance;
+        private Double roadThresold;
+        private Double rateThreshold;
+        private Predicate<Map<String,Object>> mapPredicate1;
 
-        public Ss(Map<String, Double> thresholdMap, List<int[]> quesRaods, List<Map<String, Object>> slideWindow, int start, int end, boolean flag, int i, Double rate, int size) {
-            this.thresholdMap = thresholdMap;
+        public SlideWindowAlg(Predicate<Map<String,Object>> mapPredicate1, List<Map<String, Object>> sampDatas, Map<String, Double> thresholdMap, Double lon, Double lat, List<int[]> quesRaods, List<Map<String, Object>> slideWindow, int start, int end, boolean flag, int i, Map<String, Object> point2, Double distance,Double roadThresold,Double rateThreshold) {
+            this.sampDatas = sampDatas;
+            this.lon = lon;
+            this.lat = lat;
             this.quesRaods = quesRaods;
             this.slideWindow = slideWindow;
             this.start = start;
             this.end = end;
             this.flag = flag;
             this.i = i;
-            this.rate = rate;
-            this.sampPointSize=size;
+            this.point2 = point2;
+            this.distance = distance;
+            this.roadThresold = roadThresold;
+            this.rateThreshold = rateThreshold;
+            this.mapPredicate1=mapPredicate1;
+        }
+
+        public Double getLon() {
+            return lon;
+        }
+
+        public Double getLat() {
+            return lat;
         }
 
         public int getStart() {
@@ -474,35 +462,48 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         public boolean isFlag() {
             return flag;
         }
-        public Ss invoke(String thresholdName) {
-            if(rate*100>thresholdMap.get(thresholdName)){
-                if(flag){
-                    start=i;
-                }
-                //滑窗滑到采样点最后一个满足问题路段开始条件
-                if(end==sampPointSize-1){
-                    quesRaods.add(new int[]{start,end});
-                }
-                end++;
-                flag=false;
 
-            }else if(rate*100<=thresholdMap.get(thresholdName)-20){
-                if(!flag){
-                    quesRaods.add(new int[]{start,end-1});
-                    slideWindow.clear();
-                    start=i;
-                    end=i;
-                    flag=true;
+        public SlideWindowAlg invoke() {
+            if(distance>=roadThresold){
+                Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
+                if(rate*100>rateThreshold){
+                    if(flag){
+                        start=i;
+                    }
+                    //滑窗滑到采样点最后一个满足问题路段开始条件
+                    if(end==sampDatas.size()-1){
+                        quesRaods.add(new int[]{start,end});
+                    }
+                    end++;
+                    flag=false;
+                    slideWindow.remove(0);
+                    slideWindow.add(sampDatas.get(i));
+                }else if(rate*100<rateThreshold-20){
+                    if(!flag){
+                        quesRaods.add(new int[]{start,end-1});
+                        slideWindow.clear();
+                        start=i;
+                        end=i;
+                        lon=Double.parseDouble(point2.get("Long").toString());
+                        lat=Double.parseDouble(point2.get("Lat").toString());
+                        flag=true;
+                    }else{
+                        if(flag){
+                            start++;
+                        }
+                        end++;
+                    }
                 }else{
                     if(flag){
                         start++;
                     }
                     end++;
+                    slideWindow.remove(0);
+                    slideWindow.add(sampDatas.get(i));
                 }
+
             }else{
-                if(flag){
-                    start++;
-                }
+                slideWindow.add(sampDatas.get(i));
                 end++;
             }
             return this;

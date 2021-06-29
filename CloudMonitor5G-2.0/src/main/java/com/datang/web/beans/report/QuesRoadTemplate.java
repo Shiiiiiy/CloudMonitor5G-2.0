@@ -39,20 +39,16 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
         List<Map<String,Object>> sqlObj4 = new ArrayList<>();
         List<Map<String,Object>> sqlObj5 = new ArrayList<>();
         QuesRoadService quesRoadService = (QuesRoadService) influxService;
-        for(String log:logFileIdList){
-            List<String> each = new ArrayList<>();
-            each.add(log);
-            try{
-                Map<String, List<Map<String, Object>>> netConfigReports = quesRoadService.analysize(each);
-                toSqlObj1(netConfigReports,sqlObj1);
-                toSqlObj2(netConfigReports,sqlObj2);
-                toSqlObj3(netConfigReports,sqlObj3);
-                toSqlObj4(netConfigReports,sqlObj4);
-                toSqlObj5(netConfigReports,sqlObj5);
-                LOGGER.info(" influxDb " + netConfigReports.size() );
-            }catch (Exception e){
-                LOGGER.error(" influxDb is error");
-            }
+        try{
+            Map<String, List<Map<String, Object>>> netConfigReports = quesRoadService.analysize(logFileIdList);
+            toSqlObj1(netConfigReports,sqlObj1);
+            toSqlObj2(netConfigReports,sqlObj2);
+            toSqlObj3(netConfigReports,sqlObj3);
+            toSqlObj4(netConfigReports,sqlObj4);
+            toSqlObj5(netConfigReports,sqlObj5);
+            LOGGER.info(" influxDb " + netConfigReports.size() );
+        }catch (Exception e){
+            LOGGER.error(" influxDb is error");
         }
 
         // 加 id
@@ -61,15 +57,12 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
         TestLogItemUtils.addId(sqlObj3);
         TestLogItemUtils.addId(sqlObj4);
         TestLogItemUtils.addId(sqlObj5);
-
-
         // 转数字
         TestLogItemUtils.formatNumber(sqlObj1);
         TestLogItemUtils.formatNumber(sqlObj2);
         TestLogItemUtils.formatNumber(sqlObj3);
         TestLogItemUtils.formatNumber(sqlObj4);
         TestLogItemUtils.formatNumber(sqlObj5);
-
         Map<String, Collection> hashMap1 = new HashMap<>();
         hashMap1.put("sqlObj1", sqlObj1);
         hashMap1.put("sqlObj2", sqlObj2);
@@ -82,7 +75,7 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
 
     //  5G
     private void toSqlObj1(Map<String, List<Map<String, Object>>> map, List<Map<String,Object>> sqlObj1){
-        List<Map<String, Object>> maps = map.get("下行弱覆盖路段");
+        List<Map<String, Object>> maps = map.get("弱覆盖路段");
         if(CollectionUtils.isEmpty(maps)) return;
         sqlObj1.addAll(maps);
     }

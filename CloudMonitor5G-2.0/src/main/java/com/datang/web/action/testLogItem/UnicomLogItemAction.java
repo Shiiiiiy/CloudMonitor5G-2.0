@@ -202,8 +202,8 @@ public class UnicomLogItemAction extends PageAction implements
 
 
 		for(Map<String, Object> m:kpiList){
-			if(m.get("TASK_NAME")!=null && m.get("LOG_NAME")!=null){
-				kpiMap.put((String)m.get("TASK_NAME" )  + (String)m.get("LOG_NAME" ),m);
+			if(m.get("task_name")!=null && m.get("log_name")!=null){
+				kpiMap.put((String)m.get("task_name" )  + (String)m.get("log_name" ),m);
 			}
 		}
 
@@ -218,14 +218,14 @@ public class UnicomLogItemAction extends PageAction implements
 
 			// KPI
 			Map<String, Object> colMap = kpiMap.get(testLogItem.getTaskName() + testLogItem.getFileName());
-			testLogItem.setKpi1(getMap(colMap,"KPI1"));
-			testLogItem.setKpi2(getMap(colMap,"KPI2"));
-			testLogItem.setKpi3(getMap(colMap,"KPI3"));
-			testLogItem.setKpi4(getMap(colMap,"KPI4"));
-			testLogItem.setKpi5(getMap(colMap,"KPI5"));
-			testLogItem.setKpi6(getMap(colMap,"KPI6"));
-			testLogItem.setKpi7(getMap(colMap,"KPI7"));
-			testLogItem.setKpi8(getMap(colMap,"KPI8"));
+			testLogItem.setKpi1(getMap(colMap,"kpi1"));
+			testLogItem.setKpi2(getMap(colMap,"kpi2"));
+			testLogItem.setKpi3(getMap(colMap,"kpi3"));
+			testLogItem.setKpi4(getMap(colMap,"kpi4"));
+			testLogItem.setKpi5(getMap(colMap,"kpi5"));
+			testLogItem.setKpi6(getMap(colMap,"kpi6"));
+			testLogItem.setKpi7(getMap(colMap,"kpi7"));
+			testLogItem.setKpi8(getMap(colMap,"kpi8"));
 
  		}
 		return pageRlt;

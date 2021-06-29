@@ -66,7 +66,7 @@ public class AnalyzeEventTemplate implements AnalyzeTemplate {
             XSSFWorkbook workbook = null;
 
             try {
-                InputStream resourceAsStream = ClassUtil.getResourceAsStream("templates/2.异常事件分析.xlsx");
+                InputStream resourceAsStream = ClassUtil.getResourceAsStream(BASE_TEMPLATE_CLASSPATH + "/" + getTemplate());
                 workbook = new XSSFWorkbook(resourceAsStream);
                 resourceAsStream.close();
                 XSSFSheet sheetAt = workbook.getSheetAt(0);

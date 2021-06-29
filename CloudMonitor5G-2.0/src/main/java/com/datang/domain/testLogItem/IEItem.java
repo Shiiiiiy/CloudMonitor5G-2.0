@@ -24,6 +24,66 @@ public class IEItem {
     private Double ie_70525;
     private Double ie_70005;
 
+    private String ie_58001;
+    private Double ie_58033;
+    private Double ie_50166;
+    private Double ie_50102;
+    private Double ie_70071;
+    private Double ie_50230;
+    private Double ie_50294;
+    private Double ie_70526;
+    private Double ie_70006;
+
+    private String ie_58002;
+    private Double ie_58034;
+    private Double ie_50167;
+    private Double ie_50103;
+    private Double ie_70072;
+    private Double ie_50231;
+    private Double ie_50295;
+    private Double ie_70527;
+    private Double ie_70007;
+
+    private String ie_58003;
+    private Double ie_58035;
+    private Double ie_50168;
+    private Double ie_50104;
+    private Double ie_70073;
+    private Double ie_50232;
+    private Double ie_50296;
+    private Double ie_70528;
+    private Double ie_70008;
+
+    private String ie_58004;
+    private Double ie_58036;
+    private Double ie_50169;
+    private Double ie_50105;
+    private Double ie_70074;
+    private Double ie_50233;
+    private Double ie_50297;
+    private Double ie_70529;
+    private Double ie_70009;
+
+    private String ie_58005;
+    private Double ie_58037;
+    private Double ie_50170;
+    private Double ie_50106;
+    private Double ie_70075;
+    private Double ie_50234;
+    private Double ie_50298;
+    private Double ie_70530;
+    private Double ie_70010;
+
+    private String ie_58006;
+    private Double ie_58038;
+    private Double ie_50171;
+    private Double ie_50107;
+    private Double ie_70076;
+    private Double ie_50235;
+    private Double ie_50299;
+    private Double ie_70531;
+    private Double ie_70011;
+
     private String ie_58007;
     private Double ie_58039;
     private Double ie_50172;
@@ -80,6 +140,54 @@ public class IEItem {
     private Double ie_40299;
     private Double ie_40235;
 
+    private Double ie_40076;
+    private Double ie_44207;
+    private Double ie_40140;
+    private Double ie_40172;
+    private Double ie_40204;
+    private Double ie_40300;
+    private Double ie_40236;
+
+    private Double ie_40077;
+    private Double ie_44208;
+    private Double ie_40141;
+    private Double ie_40173;
+    private Double ie_40205;
+    private Double ie_40301;
+    private Double ie_40237;
+
+    private Double ie_40078;
+    private Double ie_44209;
+    private Double ie_40142;
+    private Double ie_40174;
+    private Double ie_40206;
+    private Double ie_40302;
+    private Double ie_40238;
+
+    private Double ie_40079;
+    private Double ie_44210;
+    private Double ie_40143;
+    private Double ie_40175;
+    private Double ie_40207;
+    private Double ie_40303;
+    private Double ie_40239;
+
+    private Double ie_40080;
+    private Double ie_44211;
+    private Double ie_40144;
+    private Double ie_40176;
+    private Double ie_40208;
+    private Double ie_40304;
+    private Double ie_40240;
+
+    private Double ie_40081;
+    private Double ie_44212;
+    private Double ie_40145;
+    private Double ie_40177;
+    private Double ie_40209;
+    private Double ie_40305;
+    private Double ie_40241;
+
     private Double ie_40082;
     private Double ie_44213;
     private Double ie_40146;
@@ -87,6 +195,775 @@ public class IEItem {
     private Double ie_40210;
     private Double ie_40306;
     private Double ie_40242;
+    @Column(name = "ie_58001")
+    public String getIe_58001() {
+        return ie_58001;
+    }
+
+    public void setIe_58001(String ie_58001) {
+        this.ie_58001 = ie_58001;
+    }
+    @Column(name = "ie_58033")
+    public Double getIe_58033() {
+        return ie_58033;
+    }
+
+    public void setIe_58033(Double ie_58033) {
+        this.ie_58033 = ie_58033;
+    }
+    @Column(name = "ie_50166")
+    public Double getIe_50166() {
+        return ie_50166;
+    }
+
+    public void setIe_50166(Double ie_50166) {
+        this.ie_50166 = ie_50166;
+    }
+    @Column(name = "ie_50102")
+    public Double getIe_50102() {
+        return ie_50102;
+    }
+
+    public void setIe_50102(Double ie_50102) {
+        this.ie_50102 = ie_50102;
+    }
+    @Column(name = "ie_70071")
+    public Double getIe_70071() {
+        return ie_70071;
+    }
+
+    public void setIe_70071(Double ie_70071) {
+        this.ie_70071 = ie_70071;
+    }
+    @Column(name = "ie_50230")
+    public Double getIe_50230() {
+        return ie_50230;
+    }
+
+    public void setIe_50230(Double ie_50230) {
+        this.ie_50230 = ie_50230;
+    }
+    @Column(name = "ie_50294")
+    public Double getIe_50294() {
+        return ie_50294;
+    }
+
+    public void setIe_50294(Double ie_50294) {
+        this.ie_50294 = ie_50294;
+    }
+    @Column(name = "ie_70526")
+    public Double getIe_70526() {
+        return ie_70526;
+    }
+
+    public void setIe_70526(Double ie_70526) {
+        this.ie_70526 = ie_70526;
+    }
+    @Column(name = "ie_70006")
+    public Double getIe_70006() {
+        return ie_70006;
+    }
+
+    public void setIe_70006(Double ie_70006) {
+        this.ie_70006 = ie_70006;
+    }
+    @Column(name = "ie_58002")
+    public String getIe_58002() {
+        return ie_58002;
+    }
+
+    public void setIe_58002(String ie_58002) {
+        this.ie_58002 = ie_58002;
+    }
+    @Column(name = "ie_58034")
+    public Double getIe_58034() {
+        return ie_58034;
+    }
+
+    public void setIe_58034(Double ie_58034) {
+        this.ie_58034 = ie_58034;
+    }
+    @Column(name = "ie_50167")
+    public Double getIe_50167() {
+        return ie_50167;
+    }
+
+    public void setIe_50167(Double ie_50167) {
+        this.ie_50167 = ie_50167;
+    }
+    @Column(name = "ie_50103")
+    public Double getIe_50103() {
+        return ie_50103;
+    }
+
+    public void setIe_50103(Double ie_50103) {
+        this.ie_50103 = ie_50103;
+    }
+    @Column(name = "ie_70072")
+    public Double getIe_70072() {
+        return ie_70072;
+    }
+
+    public void setIe_70072(Double ie_70072) {
+        this.ie_70072 = ie_70072;
+    }
+    @Column(name = "ie_50231")
+    public Double getIe_50231() {
+        return ie_50231;
+    }
+
+    public void setIe_50231(Double ie_50231) {
+        this.ie_50231 = ie_50231;
+    }
+    @Column(name = "ie_50295")
+    public Double getIe_50295() {
+        return ie_50295;
+    }
+
+    public void setIe_50295(Double ie_50295) {
+        this.ie_50295 = ie_50295;
+    }
+    @Column(name = "ie_70527")
+    public Double getIe_70527() {
+        return ie_70527;
+    }
+
+    public void setIe_70527(Double ie_70527) {
+        this.ie_70527 = ie_70527;
+    }
+    @Column(name = "ie_70007")
+    public Double getIe_70007() {
+        return ie_70007;
+    }
+
+    public void setIe_70007(Double ie_70007) {
+        this.ie_70007 = ie_70007;
+    }
+    @Column(name = "ie_58003")
+    public String getIe_58003() {
+        return ie_58003;
+    }
+
+    public void setIe_58003(String ie_58003) {
+        this.ie_58003 = ie_58003;
+    }
+    @Column(name = "ie_58035")
+    public Double getIe_58035() {
+        return ie_58035;
+    }
+
+    public void setIe_58035(Double ie_58035) {
+        this.ie_58035 = ie_58035;
+    }
+    @Column(name = "ie_50168")
+    public Double getIe_50168() {
+        return ie_50168;
+    }
+
+    public void setIe_50168(Double ie_50168) {
+        this.ie_50168 = ie_50168;
+    }
+    @Column(name = "ie_50104")
+    public Double getIe_50104() {
+        return ie_50104;
+    }
+
+    public void setIe_50104(Double ie_50104) {
+        this.ie_50104 = ie_50104;
+    }
+    @Column(name = "ie_70073")
+    public Double getIe_70073() {
+        return ie_70073;
+    }
+
+    public void setIe_70073(Double ie_70073) {
+        this.ie_70073 = ie_70073;
+    }
+    @Column(name = "ie_50232")
+    public Double getIe_50232() {
+        return ie_50232;
+    }
+
+    public void setIe_50232(Double ie_50232) {
+        this.ie_50232 = ie_50232;
+    }
+    @Column(name = "ie_50296")
+    public Double getIe_50296() {
+        return ie_50296;
+    }
+
+    public void setIe_50296(Double ie_50296) {
+        this.ie_50296 = ie_50296;
+    }
+    @Column(name = "ie_70528")
+    public Double getIe_70528() {
+        return ie_70528;
+    }
+
+    public void setIe_70528(Double ie_70528) {
+        this.ie_70528 = ie_70528;
+    }
+    @Column(name = "ie_70008")
+    public Double getIe_70008() {
+        return ie_70008;
+    }
+
+    public void setIe_70008(Double ie_70008) {
+        this.ie_70008 = ie_70008;
+    }
+    @Column(name = "ie_58004")
+    public String getIe_58004() {
+        return ie_58004;
+    }
+
+    public void setIe_58004(String ie_58004) {
+        this.ie_58004 = ie_58004;
+    }
+    @Column(name = "ie_58036")
+    public Double getIe_58036() {
+        return ie_58036;
+    }
+
+    public void setIe_58036(Double ie_58036) {
+        this.ie_58036 = ie_58036;
+    }
+    @Column(name = "ie_50169")
+    public Double getIe_50169() {
+        return ie_50169;
+    }
+
+    public void setIe_50169(Double ie_50169) {
+        this.ie_50169 = ie_50169;
+    }
+    @Column(name = "ie_50105")
+    public Double getIe_50105() {
+        return ie_50105;
+    }
+
+    public void setIe_50105(Double ie_50105) {
+        this.ie_50105 = ie_50105;
+    }
+    @Column(name = "ie_70074")
+    public Double getIe_70074() {
+        return ie_70074;
+    }
+
+    public void setIe_70074(Double ie_70074) {
+        this.ie_70074 = ie_70074;
+    }
+    @Column(name = "ie_50233")
+    public Double getIe_50233() {
+        return ie_50233;
+    }
+
+    public void setIe_50233(Double ie_50233) {
+        this.ie_50233 = ie_50233;
+    }
+    @Column(name = "ie_50297")
+    public Double getIe_50297() {
+        return ie_50297;
+    }
+
+    public void setIe_50297(Double ie_50297) {
+        this.ie_50297 = ie_50297;
+    }
+    @Column(name = "ie_70529")
+    public Double getIe_70529() {
+        return ie_70529;
+    }
+
+    public void setIe_70529(Double ie_70529) {
+        this.ie_70529 = ie_70529;
+    }
+    @Column(name = "ie_70009")
+    public Double getIe_70009() {
+        return ie_70009;
+    }
+
+    public void setIe_70009(Double ie_70009) {
+        this.ie_70009 = ie_70009;
+    }
+    @Column(name = "ie_58005")
+    public String getIe_58005() {
+        return ie_58005;
+    }
+
+    public void setIe_58005(String ie_58005) {
+        this.ie_58005 = ie_58005;
+    }
+    @Column(name = "ie_58037")
+    public Double getIe_58037() {
+        return ie_58037;
+    }
+
+    public void setIe_58037(Double ie_58037) {
+        this.ie_58037 = ie_58037;
+    }
+    @Column(name = "ie_50170")
+    public Double getIe_50170() {
+        return ie_50170;
+    }
+
+    public void setIe_50170(Double ie_50170) {
+        this.ie_50170 = ie_50170;
+    }
+    @Column(name = "ie_50106")
+    public Double getIe_50106() {
+        return ie_50106;
+    }
+
+    public void setIe_50106(Double ie_50106) {
+        this.ie_50106 = ie_50106;
+    }
+    @Column(name = "ie_70075")
+    public Double getIe_70075() {
+        return ie_70075;
+    }
+
+    public void setIe_70075(Double ie_70075) {
+        this.ie_70075 = ie_70075;
+    }
+    @Column(name = "ie_50234")
+    public Double getIe_50234() {
+        return ie_50234;
+    }
+
+    public void setIe_50234(Double ie_50234) {
+        this.ie_50234 = ie_50234;
+    }
+    @Column(name = "ie_50298")
+    public Double getIe_50298() {
+        return ie_50298;
+    }
+
+    public void setIe_50298(Double ie_50298) {
+        this.ie_50298 = ie_50298;
+    }
+    @Column(name = "ie_70530")
+    public Double getIe_70530() {
+        return ie_70530;
+    }
+
+    public void setIe_70530(Double ie_70530) {
+        this.ie_70530 = ie_70530;
+    }
+    @Column(name = "ie_70010")
+    public Double getIe_70010() {
+        return ie_70010;
+    }
+
+    public void setIe_70010(Double ie_70010) {
+        this.ie_70010 = ie_70010;
+    }
+    @Column(name = "ie_58006")
+    public String getIe_58006() {
+        return ie_58006;
+    }
+
+    public void setIe_58006(String ie_58006) {
+        this.ie_58006 = ie_58006;
+    }
+    @Column(name = "ie_58038")
+    public Double getIe_58038() {
+        return ie_58038;
+    }
+
+    public void setIe_58038(Double ie_58038) {
+        this.ie_58038 = ie_58038;
+    }
+    @Column(name = "ie_50171")
+    public Double getIe_50171() {
+        return ie_50171;
+    }
+
+    public void setIe_50171(Double ie_50171) {
+        this.ie_50171 = ie_50171;
+    }
+    @Column(name = "ie_50107")
+    public Double getIe_50107() {
+        return ie_50107;
+    }
+
+    public void setIe_50107(Double ie_50107) {
+        this.ie_50107 = ie_50107;
+    }
+    @Column(name = "ie_70076")
+    public Double getIe_70076() {
+        return ie_70076;
+    }
+
+    public void setIe_70076(Double ie_70076) {
+        this.ie_70076 = ie_70076;
+    }
+    @Column(name = "ie_50235")
+    public Double getIe_50235() {
+        return ie_50235;
+    }
+
+    public void setIe_50235(Double ie_50235) {
+        this.ie_50235 = ie_50235;
+    }
+    @Column(name = "ie_50299")
+    public Double getIe_50299() {
+        return ie_50299;
+    }
+
+    public void setIe_50299(Double ie_50299) {
+        this.ie_50299 = ie_50299;
+    }
+    @Column(name = "ie_70531")
+    public Double getIe_70531() {
+        return ie_70531;
+    }
+
+    public void setIe_70531(Double ie_70531) {
+        this.ie_70531 = ie_70531;
+    }
+    @Column(name = "ie_70011")
+    public Double getIe_70011() {
+        return ie_70011;
+    }
+
+    public void setIe_70011(Double ie_70011) {
+        this.ie_70011 = ie_70011;
+    }
+    @Column(name = "ie_40076")
+    public Double getIe_40076() {
+        return ie_40076;
+    }
+
+    public void setIe_40076(Double ie_40076) {
+        this.ie_40076 = ie_40076;
+    }
+    @Column(name = "ie_44207")
+    public Double getIe_44207() {
+        return ie_44207;
+    }
+
+    public void setIe_44207(Double ie_44207) {
+        this.ie_44207 = ie_44207;
+    }
+    @Column(name = "ie_40140")
+    public Double getIe_40140() {
+        return ie_40140;
+    }
+
+    public void setIe_40140(Double ie_40140) {
+        this.ie_40140 = ie_40140;
+    }
+    @Column(name = "ie_40172")
+    public Double getIe_40172() {
+        return ie_40172;
+    }
+
+    public void setIe_40172(Double ie_40172) {
+        this.ie_40172 = ie_40172;
+    }
+    @Column(name = "ie_40204")
+    public Double getIe_40204() {
+        return ie_40204;
+    }
+
+    public void setIe_40204(Double ie_40204) {
+        this.ie_40204 = ie_40204;
+    }
+    @Column(name = "ie_40300")
+    public Double getIe_40300() {
+        return ie_40300;
+    }
+
+    public void setIe_40300(Double ie_40300) {
+        this.ie_40300 = ie_40300;
+    }
+    @Column(name = "ie_40236")
+    public Double getIe_40236() {
+        return ie_40236;
+    }
+
+    public void setIe_40236(Double ie_40236) {
+        this.ie_40236 = ie_40236;
+    }
+    @Column(name = "ie_40077")
+    public Double getIe_40077() {
+        return ie_40077;
+    }
+
+    public void setIe_40077(Double ie_40077) {
+        this.ie_40077 = ie_40077;
+    }
+    @Column(name = "ie_44208")
+    public Double getIe_44208() {
+        return ie_44208;
+    }
+
+    public void setIe_44208(Double ie_44208) {
+        this.ie_44208 = ie_44208;
+    }
+    @Column(name = "ie_40141")
+    public Double getIe_40141() {
+        return ie_40141;
+    }
+
+    public void setIe_40141(Double ie_40141) {
+        this.ie_40141 = ie_40141;
+    }
+    @Column(name = "ie_40173")
+    public Double getIe_40173() {
+        return ie_40173;
+    }
+
+    public void setIe_40173(Double ie_40173) {
+        this.ie_40173 = ie_40173;
+    }
+    @Column(name = "ie_40205")
+    public Double getIe_40205() {
+        return ie_40205;
+    }
+
+    public void setIe_40205(Double ie_40205) {
+        this.ie_40205 = ie_40205;
+    }
+    @Column(name = "ie_40301")
+    public Double getIe_40301() {
+        return ie_40301;
+    }
+
+    public void setIe_40301(Double ie_40301) {
+        this.ie_40301 = ie_40301;
+    }
+    @Column(name = "ie_40237")
+    public Double getIe_40237() {
+        return ie_40237;
+    }
+
+    public void setIe_40237(Double ie_40237) {
+        this.ie_40237 = ie_40237;
+    }
+    @Column(name = "ie_40078")
+    public Double getIe_40078() {
+        return ie_40078;
+    }
+
+    public void setIe_40078(Double ie_40078) {
+        this.ie_40078 = ie_40078;
+    }
+    @Column(name = "ie_44209")
+    public Double getIe_44209() {
+        return ie_44209;
+    }
+
+    public void setIe_44209(Double ie_44209) {
+        this.ie_44209 = ie_44209;
+    }
+    @Column(name = "ie_40142")
+    public Double getIe_40142() {
+        return ie_40142;
+    }
+
+    public void setIe_40142(Double ie_40142) {
+        this.ie_40142 = ie_40142;
+    }
+    @Column(name = "ie_40174")
+    public Double getIe_40174() {
+        return ie_40174;
+    }
+
+    public void setIe_40174(Double ie_40174) {
+        this.ie_40174 = ie_40174;
+    }
+    @Column(name = "ie_40206")
+    public Double getIe_40206() {
+        return ie_40206;
+    }
+
+    public void setIe_40206(Double ie_40206) {
+        this.ie_40206 = ie_40206;
+    }
+    @Column(name = "ie_40302")
+    public Double getIe_40302() {
+        return ie_40302;
+    }
+
+    public void setIe_40302(Double ie_40302) {
+        this.ie_40302 = ie_40302;
+    }
+    @Column(name = "ie_40238")
+    public Double getIe_40238() {
+        return ie_40238;
+    }
+
+    public void setIe_40238(Double ie_40238) {
+        this.ie_40238 = ie_40238;
+    }
+    @Column(name = "ie_40079")
+    public Double getIe_40079() {
+        return ie_40079;
+    }
+
+    public void setIe_40079(Double ie_40079) {
+        this.ie_40079 = ie_40079;
+    }
+    @Column(name = "ie_44210")
+    public Double getIe_44210() {
+        return ie_44210;
+    }
+
+    public void setIe_44210(Double ie_44210) {
+        this.ie_44210 = ie_44210;
+    }
+    @Column(name = "ie_40143")
+    public Double getIe_40143() {
+        return ie_40143;
+    }
+
+    public void setIe_40143(Double ie_40143) {
+        this.ie_40143 = ie_40143;
+    }
+    @Column(name = "ie_40175")
+    public Double getIe_40175() {
+        return ie_40175;
+    }
+
+    public void setIe_40175(Double ie_40175) {
+        this.ie_40175 = ie_40175;
+    }
+    @Column(name = "ie_40207")
+    public Double getIe_40207() {
+        return ie_40207;
+    }
+
+    public void setIe_40207(Double ie_40207) {
+        this.ie_40207 = ie_40207;
+    }
+    @Column(name = "ie_40303")
+    public Double getIe_40303() {
+        return ie_40303;
+    }
+
+    public void setIe_40303(Double ie_40303) {
+        this.ie_40303 = ie_40303;
+    }
+    @Column(name = "ie_40239")
+    public Double getIe_40239() {
+        return ie_40239;
+    }
+
+    public void setIe_40239(Double ie_40239) {
+        this.ie_40239 = ie_40239;
+    }
+    @Column(name = "ie_40080")
+    public Double getIe_40080() {
+        return ie_40080;
+    }
+
+    public void setIe_40080(Double ie_40080) {
+        this.ie_40080 = ie_40080;
+    }
+    @Column(name = "ie_44211")
+    public Double getIe_44211() {
+        return ie_44211;
+    }
+
+    public void setIe_44211(Double ie_44211) {
+        this.ie_44211 = ie_44211;
+    }
+    @Column(name = "ie_40144")
+    public Double getIe_40144() {
+        return ie_40144;
+    }
+
+    public void setIe_40144(Double ie_40144) {
+        this.ie_40144 = ie_40144;
+    }
+    @Column(name = "ie_40176")
+    public Double getIe_40176() {
+        return ie_40176;
+    }
+
+    public void setIe_40176(Double ie_40176) {
+        this.ie_40176 = ie_40176;
+    }
+    @Column(name = "ie_40208")
+    public Double getIe_40208() {
+        return ie_40208;
+    }
+
+    public void setIe_40208(Double ie_40208) {
+        this.ie_40208 = ie_40208;
+    }
+    @Column(name = "ie_40304")
+    public Double getIe_40304() {
+        return ie_40304;
+    }
+
+    public void setIe_40304(Double ie_40304) {
+        this.ie_40304 = ie_40304;
+    }
+    @Column(name = "ie_40240")
+    public Double getIe_40240() {
+        return ie_40240;
+    }
+
+    public void setIe_40240(Double ie_40240) {
+        this.ie_40240 = ie_40240;
+    }
+    @Column(name = "ie_40081")
+    public Double getIe_40081() {
+        return ie_40081;
+    }
+
+    public void setIe_40081(Double ie_40081) {
+        this.ie_40081 = ie_40081;
+    }
+    @Column(name = "ie_44212")
+    public Double getIe_44212() {
+        return ie_44212;
+    }
+
+    public void setIe_44212(Double ie_44212) {
+        this.ie_44212 = ie_44212;
+    }
+    @Column(name = "ie_40145")
+    public Double getIe_40145() {
+        return ie_40145;
+    }
+
+    public void setIe_40145(Double ie_40145) {
+        this.ie_40145 = ie_40145;
+    }
+    @Column(name = "ie_40177")
+    public Double getIe_40177() {
+        return ie_40177;
+    }
+
+    public void setIe_40177(Double ie_40177) {
+        this.ie_40177 = ie_40177;
+    }
+    @Column(name = "ie_40209")
+    public Double getIe_40209() {
+        return ie_40209;
+    }
+
+    public void setIe_40209(Double ie_40209) {
+        this.ie_40209 = ie_40209;
+    }
+    @Column(name = "ie_40305")
+    public Double getIe_40305() {
+        return ie_40305;
+    }
+
+    public void setIe_40305(Double ie_40305) {
+        this.ie_40305 = ie_40305;
+    }
+    @Column(name = "ie_40241")
+    public Double getIe_40241() {
+        return ie_40241;
+    }
+
+    public void setIe_40241(Double ie_40241) {
+        this.ie_40241 = ie_40241;
+    }
+
     @Column(name = "ie_58007")
     public String getIe_58007() {
         return ie_58007;

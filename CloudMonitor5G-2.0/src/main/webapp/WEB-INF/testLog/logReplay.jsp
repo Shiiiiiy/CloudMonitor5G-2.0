@@ -495,7 +495,7 @@
 			</table>
 		</div>
 
-		<div id="addLayConfig" class="easyui-dialog" style="overflow:auto;width:400px;height:200px;padding:10px" data-options="title:'添加窗口',resizable:true,border:false,closable:true,closed:true,modal:false">
+		<div id="addLayConfig" class="easyui-dialog" style="overflow:auto;width:400px;height:200px;padding:10px" data-options="title:'布局配置',resizable:true,border:false,closable:true,closed:true,modal:false">
 			<table style="margin-top:20px;width:100%;">
 				<tr  style="width:100%;">
 					<td style="width:27%" align="right">配置名称:</td>

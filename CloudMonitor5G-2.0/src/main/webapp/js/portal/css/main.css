@@ -395,6 +395,6 @@ input:focus, textarea:focus {
 
 
 .itemContent  table thead {
-    width: calc( 100% - 1.4em)
+    width: calc( 100% - 1.1em)
 }
 

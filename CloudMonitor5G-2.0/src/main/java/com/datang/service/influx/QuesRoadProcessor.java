@@ -57,8 +57,8 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            WHERE_MAP.entrySet().parallelStream().forEach(entry->{
-            //WHERE_MAP.entrySet().stream().forEach(entry->{
+            //WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+            WHERE_MAP.entrySet().stream().forEach(entry->{
                 String key=entry.getKey();
                 String[] values=entry.getValue();
                 List<Map<String, Object>> sampDatas;
@@ -332,11 +332,11 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     }
 
     private Predicate<Map<String, Object>> getMapPredicate1(Map<String, Double> thresholdMap) {
-        return item->null!=item.get("IEValue_50097")&&null!=item.get("IEValue_54333")&&Double.parseDouble(item.get("IEValue_50097").toString())>=thresholdMap.get("upqualitydiffsamprate")&&Double.parseDouble(item.get("IEValue_54333").toString())>=thresholdMap.get("upqualitydiffbler");
+        return item->null!=item.get("IEValue_50097")&&null!=item.get("IEValue_54333")&&Double.parseDouble(item.get("IEValue_50097").toString())>=thresholdMap.get("upqualitydifftxpower")&&Double.parseDouble(item.get("IEValue_54333").toString())>=thresholdMap.get("upqualitydiffbler");
     }
 
     private Predicate<Map<String, Object>> getMapPredicate(Map<String, Double> thresholdMap) {
-        return item->null!=item.get("IEValue_50056")&&null!=item.get("IEValue_50055")&&Double.parseDouble(item.get("IEValue_50055").toString())<=thresholdMap.get("upqualitydiffsamprate")&&Double.parseDouble(item.get("IEValue_50056").toString())<=thresholdMap.get("downqualitydiffrsrp");
+        return item->null!=item.get("IEValue_50056")&&null!=item.get("IEValue_50055")&&Double.parseDouble(item.get("IEValue_50055").toString())<=thresholdMap.get("downqualitydiffrsrp")&&Double.parseDouble(item.get("IEValue_50056").toString())<=thresholdMap.get("downqualitydiffsinr");
     }
 
     /**

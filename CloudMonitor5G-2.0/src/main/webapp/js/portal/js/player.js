@@ -57,7 +57,7 @@ MyPlayer.fn = function (a) {
 			syncMap();
 		},nextFrame:function (){
 			calcNextFrameTime();
-			this.sync();
+			this.playOnce();
 			this.pause();
 		},restart:function(){
 			this.stop();

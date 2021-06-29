@@ -25,6 +25,8 @@ MyChart.fn = function (a) {
 	var frameIndex = 0;
 	var syncOther = true;
 
+	var lastPosition;
+
 	function calcIndex(){
 
 		var target;
@@ -80,13 +82,15 @@ MyChart.fn = function (a) {
 
 				},
 				position: function(pt,b) {
-					if(syncOther){
+					var newPosition = pt[0] -68;
+					if(syncOther && newPosition != lastPosition ){
 						var time = b[0].axisValue;
 						MyPlayer.Data.currentTime = time;
 						MyPlayer.fn.sync(MyChart.Config.syncSourceId);
 					}
 					syncOther = true;
-					return [pt[0]-68, 100];
+					lastPosition = newPosition;
+					return [ newPosition , 100];
 				},
 				lineStyle:{
 					color:"red"

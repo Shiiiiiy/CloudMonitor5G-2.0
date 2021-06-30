@@ -254,22 +254,21 @@ public class DateComputeUtils {
 		return null;
 	}
 
-	static String[] formats=new String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSS Z","yyyy-MM-dd'T'HH:mm:ss.SS Z","yyyy-MM-dd'T'HH:mm:ss.S Z","yyyy-MM-dd'T'HH:mm:ss Z"};
-	static String[] formats2=new String[]{ "yyyy-MM-dd HH:mm:ss.SSS","yyyy-MM-dd HH:mm:ss.SS","yyyy-MM-dd HH:mm:ss.S","yyyy-MM-dd HH:mm:ss"};
+	static String[] formats=new String[]{ "yyyy-MM-dd'T'HH:mm:ss Z","yyyy-MM-dd'T'HH:mm:ss.S Z","yyyy-MM-dd'T'HH:mm:ss.SS Z","yyyy-MM-dd'T'HH:mm:ss.SSS Z"};
+	static String[] formats2=new String[]{"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd HH:mm:ss.S ","yyyy-MM-dd HH:mm:ss.SS","yyyy-MM-dd HH:mm:ss.SSS"};
 	static String[] utcformats=new String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","yyyy-MM-dd'T'HH:mm:ss.SS'Z'","yyyy-MM-dd'T'HH:mm:ss.S'Z'","yyyy-MM-dd'T'HH:mm:ss'Z'"};
+
 	public static String formatMicroTime(String date){
-		Date d = null;
-		for(int i=0;i<formats.length;i++){
-			SimpleDateFormat sdf = new SimpleDateFormat(formats[i]);
-			String tempTime = date.replace("Z", " UTC");
-			try {
-				d = sdf.parse(tempTime);
-				SimpleDateFormat sdf1 = new SimpleDateFormat(formats2[i]);
-				String str= sdf1.format(d);
-				return str;
-			} catch (ParseException e) {
-				continue;
-			}
+		String substring = date.substring(date.indexOf(".")+1, date.indexOf(" "));
+		SimpleDateFormat sdf = new SimpleDateFormat(formats[substring.length()]);
+		String tempTime = date.replace("Z", " UTC");
+		try {
+			Date d = sdf.parse(tempTime);
+			SimpleDateFormat sdf1 = new SimpleDateFormat(formats2[substring.length()]);
+			String str= sdf1.format(d);
+			return str;
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 		return "";
 	}

@@ -57,8 +57,8 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            //WHERE_MAP.entrySet().parallelStream().forEach(entry->{
-            WHERE_MAP.entrySet().stream().forEach(entry->{
+            WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+            //WHERE_MAP.entrySet().stream().forEach(entry->{
                 String key=entry.getKey();
                 String[] values=entry.getValue();
                 List<Map<String, Object>> sampDatas;
@@ -112,46 +112,29 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
        if(sampDatas==null||sampDatas.isEmpty()){
            return Collections.emptyMap();
        }
-        Map<String, Object> point = sampDatas.get(0);
-        Double lon=Double.parseDouble(point.get("Long").toString());
-        Double lat=Double.parseDouble(point.get("Lat").toString());
         List<int[]> quesRaods=new ArrayList<>();
-        List<Map<String, Object>> slideWindow=new ArrayList<>();
-        int start=0,end=0;//问题路段的起点和终点index
-        boolean flag=true;//新路段开启标志
-        for(int i=0;i<sampDatas.size();i++){
-            Map<String, Object> point2 = sampDatas.get(i);
-            Double lon2=Double.parseDouble(point2.get("Long").toString());
-            Double lat2=Double.parseDouble(point2.get("Lat").toString());
-            Double distance = AdjPlaneArithmetic.getDistance(lon, lat, lon2, lat2);
-            SlideWindowAlg slideWindowAlg=null;
-            if("弱覆盖路段".equalsIgnoreCase(key)){
-                Double tlen=thresholdMap.get("weakcoverroadlen");
-                Double weakcoversamprate=thresholdMap.get("weakcoversamprate");
-                slideWindowAlg = new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_50055", "weakcoverrsrp"),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
-            } else if("上行质差路段".equalsIgnoreCase(key)){
-                Double tlen=thresholdMap.get("upqualitydiffroadlen");
-                Double weakcoversamprate=thresholdMap.get("upqualitydiffsamprate");
-                slideWindowAlg = new SlideWindowAlg(getMapPredicate1(thresholdMap),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
-            }else if("下行质差路段".equalsIgnoreCase(key)){
-                Double tlen=thresholdMap.get("downqualitydiffroadlen");
-                Double weakcoversamprate=thresholdMap.get("downqualitydiffsamprate");
-                slideWindowAlg = new SlideWindowAlg(getMapPredicate(thresholdMap),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
-            }else if("上行低速率路段".equalsIgnoreCase(key)){
-                Double tlen=thresholdMap.get("uplowerspeedroadlen");
-                Double weakcoversamprate=thresholdMap.get("uplowerspeedsamprate");
-                slideWindowAlg = new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_54231", "uplowerspeedrlc"),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
-            }else if("下行低速率路段".equalsIgnoreCase(key)){
-                Double tlen=thresholdMap.get("downlowerspeedroadlen");
-                Double weakcoversamprate=thresholdMap.get("downlowerspeedsamprate");
-                slideWindowAlg = new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_53483", "downlowerspeedrlc"),sampDatas, thresholdMap, lon, lat, quesRaods, slideWindow, start, end, flag, i, point2, distance,tlen,weakcoversamprate).invoke();
-            }
-            lon = slideWindowAlg.getLon();
-            lat = slideWindowAlg.getLat();
-            start = slideWindowAlg.getStart();
-            end = slideWindowAlg.getEnd();
-            flag = slideWindowAlg.isFlag();
+        if("弱覆盖路段".equalsIgnoreCase(key)){
+            Double tlen=thresholdMap.get("weakcoverroadlen");
+            Double weakcoversamprate=thresholdMap.get("weakcoversamprate");
+            quesRaods=new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_50055", "weakcoverrsrp"),sampDatas,tlen,weakcoversamprate).invoke();
+        } else if("上行质差路段".equalsIgnoreCase(key)){
+            Double tlen=thresholdMap.get("upqualitydiffroadlen");
+            Double weakcoversamprate=thresholdMap.get("upqualitydiffsamprate");
+            quesRaods=new SlideWindowAlg(getMapPredicate1(thresholdMap),sampDatas,tlen,weakcoversamprate).invoke();
+        }else if("下行质差路段".equalsIgnoreCase(key)){
+            Double tlen=thresholdMap.get("downqualitydiffroadlen");
+            Double weakcoversamprate=thresholdMap.get("downqualitydiffsamprate");
+            quesRaods= new SlideWindowAlg(getMapPredicate(thresholdMap),sampDatas,tlen,weakcoversamprate).invoke();
+        }else if("上行低速率路段".equalsIgnoreCase(key)){
+            Double tlen=thresholdMap.get("uplowerspeedroadlen");
+            Double weakcoversamprate=thresholdMap.get("uplowerspeedsamprate");
+            new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_54231", "uplowerspeedrlc"),sampDatas, tlen,weakcoversamprate).invoke();
+        }else if("下行低速率路段".equalsIgnoreCase(key)){
+            Double tlen=thresholdMap.get("downlowerspeedroadlen");
+            Double weakcoversamprate=thresholdMap.get("downlowerspeedsamprate");
+            quesRaods=new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_53483", "downlowerspeedrlc"),sampDatas,tlen,weakcoversamprate).invoke();
         }
+
         Map<String,List<Map<String,Object>>> result=new HashMap<>();
         List<Map<String,Object>> list=new ArrayList<>();
         int m=0;
@@ -412,101 +395,92 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
 
     private class SlideWindowAlg {
         private List<Map<String, Object>> sampDatas;
-        private Double lon;
-        private Double lat;
-        private List<int[]> quesRaods;
-        private List<Map<String, Object>> slideWindow;
-        private int start;
-        private int end;
-        private boolean flag;
-        private int i;
-        private Map<String, Object> point2;
-        private Double distance;
         private Double roadThresold;
         private Double rateThreshold;
         private Predicate<Map<String,Object>> mapPredicate1;
 
-        public SlideWindowAlg(Predicate<Map<String,Object>> mapPredicate1, List<Map<String, Object>> sampDatas, Map<String, Double> thresholdMap, Double lon, Double lat, List<int[]> quesRaods, List<Map<String, Object>> slideWindow, int start, int end, boolean flag, int i, Map<String, Object> point2, Double distance,Double roadThresold,Double rateThreshold) {
+        public SlideWindowAlg(Predicate<Map<String,Object>> mapPredicate1, List<Map<String, Object>> sampDatas,Double roadThresold,Double rateThreshold) {
             this.sampDatas = sampDatas;
-            this.lon = lon;
-            this.lat = lat;
-            this.quesRaods = quesRaods;
-            this.slideWindow = slideWindow;
-            this.start = start;
-            this.end = end;
-            this.flag = flag;
-            this.i = i;
-            this.point2 = point2;
-            this.distance = distance;
             this.roadThresold = roadThresold;
             this.rateThreshold = rateThreshold;
             this.mapPredicate1=mapPredicate1;
         }
-
-        public Double getLon() {
-            return lon;
-        }
-
-        public Double getLat() {
-            return lat;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-        public boolean isFlag() {
-            return flag;
-        }
-
-        public SlideWindowAlg invoke() {
-            if(distance>=roadThresold){
-                Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
-                if(rate*100>rateThreshold){
-                    if(flag){
-                        start=i;
+        public List<int[]> invoke() {
+            List<int[]> quesRaods=new ArrayList<>();
+            Map<String, Object> point = sampDatas.get(0);
+            Double lon=Double.parseDouble(point.get("Long").toString());
+            Double lat=Double.parseDouble(point.get("Lat").toString());
+            List<Map<String, Object>> slideWindow=new ArrayList<>();
+            int start=0,end=0;//问题路段的起点和终点index
+            boolean flag=false;//控制问题路段是否开始
+            boolean flag1=false;//滑窗长度是否固定
+            for(int i=0;i<sampDatas.size();i++){
+                Map<String, Object> point2 = sampDatas.get(i);
+                if(!flag1){
+                    Double lon2=Double.parseDouble(point2.get("Long").toString());
+                    Double lat2=Double.parseDouble(point2.get("Lat").toString());
+                    Double distance = AdjPlaneArithmetic.getDistance(lon, lat, lon2, lat2);
+                    if(distance>=roadThresold){
+                        flag1=true;
+                        slideWindow.add(sampDatas.get(i));
+                        Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
+                        if(rate*100>rateThreshold){
+                            if(!flag){
+                                start=i;
+                            }
+                            //滑窗滑到采样点最后一个满足问题路段开始条件
+                            if(end==sampDatas.size()-1){
+                                quesRaods.add(new int[]{start,end});
+                            }
+                            end++;
+                            flag=true;
+                        }
+                    }else{
+                        if(!flag1){
+                            slideWindow.add(sampDatas.get(i));
+                            end++;
+                        }
                     }
-                    //滑窗滑到采样点最后一个满足问题路段开始条件
-                    if(end==sampDatas.size()-1){
-                        quesRaods.add(new int[]{start,end});
-                    }
-                    end++;
-                    flag=false;
+                }else{
                     slideWindow.remove(0);
                     slideWindow.add(sampDatas.get(i));
-                }else if(rate*100<rateThreshold-20){
-                    if(!flag){
-                        quesRaods.add(new int[]{start,end-1});
-                        slideWindow.clear();
-                        start=i;
-                        end=i;
-                        lon=Double.parseDouble(point2.get("Long").toString());
-                        lat=Double.parseDouble(point2.get("Lat").toString());
+                    Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
+                    if(rate*100>rateThreshold){
+                        if(!flag){
+                            start=i;
+                        }
+                        //滑窗滑到采样点最后一个满足问题路段开始条件
+                        if(end==sampDatas.size()-1){
+                            quesRaods.add(new int[]{start,end});
+                        }
+                        end++;
                         flag=true;
-                    }else{
+                    }else if(rate*100<rateThreshold-20){
                         if(flag){
+                            quesRaods.add(new int[]{start,end-1});
+                            slideWindow.clear();
+                            start=i;
+                            end=i;
+                            lon=Double.parseDouble(point2.get("Long").toString());
+                            lat=Double.parseDouble(point2.get("Lat").toString());
+                            flag=false;
+                            flag1=false;
+                            continue;
+                        }
+                        if(!flag){
+                            start++;
+                        }
+                        end++;
+                    }else{
+                        if(!flag){
                             start++;
                         }
                         end++;
                     }
-                }else{
-                    if(flag){
-                        start++;
-                    }
-                    end++;
-                    slideWindow.remove(0);
-                    slideWindow.add(sampDatas.get(i));
-                }
 
-            }else{
-                slideWindow.add(sampDatas.get(i));
-                end++;
+                }
             }
-            return this;
+            return quesRaods;
         }
     }
 }

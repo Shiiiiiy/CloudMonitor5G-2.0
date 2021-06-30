@@ -150,13 +150,15 @@ MyChart.fn = function (a) {
 				{
 					name: MyChart.Data.col[MyChart.Data.currentIndex][0],
 					type: 'line',
-					data: MyChart.Data.all.map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][0]])
+					data: MyChart.Data.all.map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][0]]),
+					connectNulls:true
 				},
 				{
 					name: MyChart.Data.col[MyChart.Data.currentIndex][1],
 					type: 'line',
 					yAxisIndex: 1,
-					data: MyChart.Data.all.map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][1]])
+					data: MyChart.Data.all.map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][1]]),
+					connectNulls:true
 				}
 			]
 		}

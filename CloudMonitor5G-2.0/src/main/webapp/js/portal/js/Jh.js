@@ -52,74 +52,74 @@ var Jh = {
             {field:'70005',title:'RSSI',width:'9%'}
         ],[
             {field:'58001',title:'CellName',width:'11%',hiddenTitle:true},
-            {field:'58033',title:'Distance',width:'11%',hiddenTitle:true},
-            {field:'50166',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
-            {field:'50102',title:'PCI',width:'9%',hiddenTitle:true},
-            {field:'70071',title:'BeamID',width:'11%',hiddenTitle:true},
-            {field:'50230',title:'SS-RSRP',width:'12%',hiddenTitle:true},
-            {field:'50294',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
-            {field:'70526',title:'SS-SINR',width:'12%',hiddenTitle:true},
-            {field:'70006',title:'RSSI',width:'9%',hiddenTitle:true}
+            {field:'58033',title:'Distance',width:'11%'},
+            {field:'50166',title:'ARFCNSSB',width:'13%'},
+            {field:'50102',title:'PCI',width:'9%'},
+            {field:'70071',title:'BeamID',width:'11%'},
+            {field:'50230',title:'SS-RSRP',width:'12%'},
+            {field:'50294',title:'SS-RSRQ',width:'12%'},
+            {field:'70526',title:'SS-SINR',width:'12%'},
+            {field:'70006',title:'RSSI',width:'9%'}
         ],[
             {field:'58002',title:'CellName',width:'11%',hiddenTitle:true},
-            {field:'58034',title:'Distance',width:'11%',hiddenTitle:true},
-            {field:'50167',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
-            {field:'50103',title:'PCI',width:'9%',hiddenTitle:true},
-            {field:'70072',title:'BeamID',width:'11%',hiddenTitle:true},
-            {field:'50231',title:'SS-RSRP',width:'12%',hiddenTitle:true},
-            {field:'50295',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
-            {field:'70527',title:'SS-SINR',width:'12%',hiddenTitle:true},
-            {field:'70007',title:'RSSI',width:'9%',hiddenTitle:true}
+            {field:'58034',title:'Distance',width:'11%'},
+            {field:'50167',title:'ARFCNSSB',width:'13%'},
+            {field:'50103',title:'PCI',width:'9%'},
+            {field:'70072',title:'BeamID',width:'11%'},
+            {field:'50231',title:'SS-RSRP',width:'12%'},
+            {field:'50295',title:'SS-RSRQ',width:'12%'},
+            {field:'70527',title:'SS-SINR',width:'12%'},
+            {field:'70007',title:'RSSI',width:'9%'}
         ],[
             {field:'58003',title:'CellName',width:'11%',hiddenTitle:true},
-            {field:'58035',title:'Distance',width:'11%',hiddenTitle:true},
-            {field:'50168',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
-            {field:'50104',title:'PCI',width:'9%',hiddenTitle:true},
-            {field:'70073',title:'BeamID',width:'11%',hiddenTitle:true},
-            {field:'50232',title:'SS-RSRP',width:'12%',hiddenTitle:true},
-            {field:'50296',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
-            {field:'70528',title:'SS-SINR',width:'12%',hiddenTitle:true},
-            {field:'70008',title:'RSSI',width:'9%',hiddenTitle:true}
+            {field:'58035',title:'Distance',width:'11%'},
+            {field:'50168',title:'ARFCNSSB',width:'13%'},
+            {field:'50104',title:'PCI',width:'9%'},
+            {field:'70073',title:'BeamID',width:'11%'},
+            {field:'50232',title:'SS-RSRP',width:'12%'},
+            {field:'50296',title:'SS-RSRQ',width:'12%'},
+            {field:'70528',title:'SS-SINR',width:'12%'},
+            {field:'70008',title:'RSSI',width:'9%'}
         ],[
             {field:'58004',title:'CellName',width:'11%',hiddenTitle:true},
-            {field:'58036',title:'Distance',width:'11%',hiddenTitle:true},
-            {field:'50169',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
-            {field:'50105',title:'PCI',width:'9%',hiddenTitle:true},
-            {field:'70074',title:'BeamID',width:'11%',hiddenTitle:true},
-            {field:'50233',title:'SS-RSRP',width:'12%',hiddenTitle:true},
-            {field:'50297',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
-            {field:'70529',title:'SS-SINR',width:'12%',hiddenTitle:true},
-            {field:'70009',title:'RSSI',width:'9%',hiddenTitle:true}
+            {field:'58036',title:'Distance',width:'11%'},
+            {field:'50169',title:'ARFCNSSB',width:'13%'},
+            {field:'50105',title:'PCI',width:'9%'},
+            {field:'70074',title:'BeamID',width:'11%'},
+            {field:'50233',title:'SS-RSRP',width:'12%'},
+            {field:'50297',title:'SS-RSRQ',width:'12%'},
+            {field:'70529',title:'SS-SINR',width:'12%'},
+            {field:'70009',title:'RSSI',width:'9%'}
         ],[
             {field:'58005',title:'CellName',width:'11%',hiddenTitle:true},
-            {field:'58037',title:'Distance',width:'11%',hiddenTitle:true},
-            {field:'50170',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
-            {field:'50106',title:'PCI',width:'9%',hiddenTitle:true},
-            {field:'70075',title:'BeamID',width:'11%',hiddenTitle:true},
-            {field:'50234',title:'SS-RSRP',width:'12%',hiddenTitle:true},
-            {field:'50298',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
-            {field:'70530',title:'SS-SINR',width:'12%',hiddenTitle:true},
-            {field:'70005',title:'RSSI',width:'9%',hiddenTitle:true}
+            {field:'58037',title:'Distance',width:'11%'},
+            {field:'50170',title:'ARFCNSSB',width:'13%'},
+            {field:'50106',title:'PCI',width:'9%'},
+            {field:'70075',title:'BeamID',width:'11%'},
+            {field:'50234',title:'SS-RSRP',width:'12%'},
+            {field:'50298',title:'SS-RSRQ',width:'12%'},
+            {field:'70530',title:'SS-SINR',width:'12%'},
+            {field:'70005',title:'RSSI',width:'9%'}
         ],[
             {field:'58006',title:'CellName',width:'11%',hiddenTitle:true},
-            {field:'58038',title:'Distance',width:'11%',hiddenTitle:true},
-            {field:'50171',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
-            {field:'50107',title:'PCI',width:'9%',hiddenTitle:true},
-            {field:'70076',title:'BeamID',width:'11%',hiddenTitle:true},
-            {field:'50235',title:'SS-RSRP',width:'12%',hiddenTitle:true},
-            {field:'50299',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
-            {field:'70531',title:'SS-SINR',width:'12%',hiddenTitle:true},
-            {field:'70005',title:'RSSI',width:'9%',hiddenTitle:true}
+            {field:'58038',title:'Distance',width:'11%'},
+            {field:'50171',title:'ARFCNSSB',width:'13%'},
+            {field:'50107',title:'PCI',width:'9%'},
+            {field:'70076',title:'BeamID',width:'11%'},
+            {field:'50235',title:'SS-RSRP',width:'12%'},
+            {field:'50299',title:'SS-RSRQ',width:'12%'},
+            {field:'70531',title:'SS-SINR',width:'12%'},
+            {field:'70005',title:'RSSI',width:'9%'}
         ],[
             {field:'58007',title:'CellName',width:'11%',hiddenTitle:true},
-            {field:'58039',title:'Distance',width:'11%',hiddenTitle:true},
-            {field:'50172',title:'ARFCNSSB',width:'13%',hiddenTitle:true},
-            {field:'50108',title:'PCI',width:'9%',hiddenTitle:true},
-            {field:'70077',title:'BeamID',width:'11%',hiddenTitle:true},
-            {field:'50236',title:'SS-RSRP',width:'12%',hiddenTitle:true},
-            {field:'50300',title:'SS-RSRQ',width:'12%',hiddenTitle:true},
-            {field:'70532',title:'SS-SINR',width:'12%',hiddenTitle:true},
-            {field:'70005',title:'RSSI',width:'9%',hiddenTitle:true}
+            {field:'58039',title:'Distance',width:'11%'},
+            {field:'50172',title:'ARFCNSSB',width:'13%'},
+            {field:'50108',title:'PCI',width:'9%'},
+            {field:'70077',title:'BeamID',width:'11%'},
+            {field:'50236',title:'SS-RSRP',width:'12%'},
+            {field:'50300',title:'SS-RSRQ',width:'12%'},
+            {field:'70532',title:'SS-SINR',width:'12%'},
+            {field:'70005',title:'RSSI',width:'9%'}
         ]],
         'view2':[[
             {field:'50013',title:'SCell Name',width:'11%'},
@@ -134,11 +134,11 @@ var Jh = {
             {field:'50001',title:'MCC',width:'11%'},
             {field:'50002',title:'MNC',width:'11%'},
             {field:'50003',title:'TAC',width:'11%'},
-            {field:'50046',title:'UL BandWidth',width:'11%'},
-            {field:'50051',title:'DL BandWidth',width:'11%'},
-            {field:'50016',title:'DuplexMode',width:'11%'},
-            {field:'50017',title:'subCarrierSpacingCommon',width:'17%'},
-            {field:'50021',title:'SSB-subcarrierSpacing',width:'17%'}
+            {field:'54321',title:'UL BandWidth',width:'11%',format:'Jh.Util.getWidth'},
+            {field:'54322',title:'DL BandWidth',width:'11%',format:'Jh.Util.getWidth'},
+            {field:'50016',title:'DuplexMode',width:'11%',format:'Jh.Util.getModeName'},
+            {field:'50017',title:'subCarrierSpacingCommon',width:'17%',format:'Jh.Util.getSubCarrierSpacingName'},
+            {field:'50021',title:'SSB-subcarrierSpacing',width:'17%',format:'Jh.Util.getSubCarrierSpacingName'}
         ]],
 
 
@@ -156,10 +156,10 @@ var Jh = {
             {field:'40002',title:'MNC',width:'10%'},
             {field:'40009',title:'TAC',width:'10%'},
             {field:'40014',title:'Band',width:'10%'},
-            {field:'40019',title:'WorkMode',width:'10%'},
-            {field:'40015',title:'PCC_Bandwidth_DL(M)',width:'16%'},
-            {field:'40016',title:'SubframeAssignType',width:'17%'},
-            {field:'40017',title:'SpecialSubFramePatterns',width:'17%'}
+            {field:'40019',title:'WorkMode',width:'10%',format:'Jh.Util.getModeName'},
+            {field:'40015',title:'PCC_Bandwidth_DL(M)',width:'16%',format:'Jh.Util.get40015Name'},
+            {field:'40016',title:'SubframeAssignType',width:'17%',format:'Jh.Util.get40016Name'},
+            {field:'40017',title:'SpecialSubFramePatterns',width:'17%',format:'Jh.Util.get40017Name'}
         ]],
 
         'view4':[[
@@ -172,61 +172,61 @@ var Jh = {
             {field:'40235',title:'RSRQ',width:'14%'}
         ],[
             {field:'40076',title:'CellName',width:'15%',hiddenTitle:true},
-            {field:'44207',title:'Distance',width:'15%',hiddenTitle:true},
-            {field:'40140',title:'EARFCN',width:'14%',hiddenTitle:true},
-            {field:'40172',title:'PCI',width:'14%',hiddenTitle:true},
-            {field:'40204',title:'RSRP',width:'14%',hiddenTitle:true},
-            {field:'40300',title:'SINR',width:'14%',hiddenTitle:true},
-            {field:'40236',title:'RSRQ',width:'14%',hiddenTitle:true}
+            {field:'44207',title:'Distance',width:'15%'},
+            {field:'40140',title:'EARFCN',width:'14%'},
+            {field:'40172',title:'PCI',width:'14%'},
+            {field:'40204',title:'RSRP',width:'14%'},
+            {field:'40300',title:'SINR',width:'14%'},
+            {field:'40236',title:'RSRQ',width:'14%'}
         ],[
             {field:'40077',title:'CellName',width:'15%',hiddenTitle:true},
-            {field:'44208',title:'Distance',width:'15%',hiddenTitle:true},
-            {field:'40141',title:'EARFCN',width:'14%',hiddenTitle:true},
-            {field:'40173',title:'PCI',width:'14%',hiddenTitle:true},
-            {field:'40205',title:'RSRP',width:'14%',hiddenTitle:true},
-            {field:'40301',title:'SINR',width:'14%',hiddenTitle:true},
-            {field:'40237',title:'RSRQ',width:'14%',hiddenTitle:true}
+            {field:'44208',title:'Distance',width:'15%'},
+            {field:'40141',title:'EARFCN',width:'14%'},
+            {field:'40173',title:'PCI',width:'14%'},
+            {field:'40205',title:'RSRP',width:'14%'},
+            {field:'40301',title:'SINR',width:'14%'},
+            {field:'40237',title:'RSRQ',width:'14%'}
         ],[
             {field:'40078',title:'CellName',width:'15%',hiddenTitle:true},
-            {field:'44209',title:'Distance',width:'15%',hiddenTitle:true},
-            {field:'40142',title:'EARFCN',width:'14%',hiddenTitle:true},
-            {field:'40174',title:'PCI',width:'14%',hiddenTitle:true},
-            {field:'40206',title:'RSRP',width:'14%',hiddenTitle:true},
-            {field:'40302',title:'SINR',width:'14%',hiddenTitle:true},
-            {field:'40238',title:'RSRQ',width:'14%',hiddenTitle:true}
+            {field:'44209',title:'Distance',width:'15%'},
+            {field:'40142',title:'EARFCN',width:'14%'},
+            {field:'40174',title:'PCI',width:'14%'},
+            {field:'40206',title:'RSRP',width:'14%'},
+            {field:'40302',title:'SINR',width:'14%'},
+            {field:'40238',title:'RSRQ',width:'14%'}
         ],[
             {field:'40079',title:'CellName',width:'15%',hiddenTitle:true},
-            {field:'44210',title:'Distance',width:'15%',hiddenTitle:true},
-            {field:'40143',title:'EARFCN',width:'14%',hiddenTitle:true},
-            {field:'40175',title:'PCI',width:'14%',hiddenTitle:true},
-            {field:'40207',title:'RSRP',width:'14%',hiddenTitle:true},
-            {field:'40303',title:'SINR',width:'14%',hiddenTitle:true},
-            {field:'40239',title:'RSRQ',width:'14%',hiddenTitle:true}
+            {field:'44210',title:'Distance',width:'15%'},
+            {field:'40143',title:'EARFCN',width:'14%'},
+            {field:'40175',title:'PCI',width:'14%'},
+            {field:'40207',title:'RSRP',width:'14%'},
+            {field:'40303',title:'SINR',width:'14%'},
+            {field:'40239',title:'RSRQ',width:'14%'}
         ]
             ,[
                 {field:'40080',title:'CellName',width:'15%',hiddenTitle:true},
-                {field:'44211',title:'Distance',width:'15%',hiddenTitle:true},
-                {field:'40144',title:'EARFCN',width:'14%',hiddenTitle:true},
-                {field:'40176',title:'PCI',width:'14%',hiddenTitle:true},
-                {field:'40208',title:'RSRP',width:'14%',hiddenTitle:true},
-                {field:'40304',title:'SINR',width:'14%',hiddenTitle:true},
-                {field:'40240',title:'RSRQ',width:'14%',hiddenTitle:true}
+                {field:'44211',title:'Distance',width:'15%'},
+                {field:'40144',title:'EARFCN',width:'14%'},
+                {field:'40176',title:'PCI',width:'14%'},
+                {field:'40208',title:'RSRP',width:'14%'},
+                {field:'40304',title:'SINR',width:'14%'},
+                {field:'40240',title:'RSRQ',width:'14%'}
             ],[
                 {field:'40081',title:'CellName',width:'15%',hiddenTitle:true},
-                {field:'44212',title:'Distance',width:'15%',hiddenTitle:true},
-                {field:'40145',title:'EARFCN',width:'14%',hiddenTitle:true},
-                {field:'40177',title:'PCI',width:'14%',hiddenTitle:true},
-                {field:'40209',title:'RSRP',width:'14%',hiddenTitle:true},
-                {field:'40305',title:'SINR',width:'14%',hiddenTitle:true},
-                {field:'40241',title:'RSRQ',width:'14%',hiddenTitle:true}
+                {field:'44212',title:'Distance',width:'15%'},
+                {field:'40145',title:'EARFCN',width:'14%'},
+                {field:'40177',title:'PCI',width:'14%'},
+                {field:'40209',title:'RSRP',width:'14%'},
+                {field:'40305',title:'SINR',width:'14%'},
+                {field:'40241',title:'RSRQ',width:'14%'}
             ],[
                 {field:'40082',title:'CellName',width:'15%',hiddenTitle:true},
-                {field:'44213',title:'Distance',width:'15%',hiddenTitle:true},
-                {field:'40146',title:'EARFCN',width:'14%',hiddenTitle:true},
-                {field:'40178',title:'PCI',width:'14%',hiddenTitle:true},
-                {field:'40210',title:'RSRP',width:'14%',hiddenTitle:true},
-                {field:'40306',title:'SINR',width:'14%',hiddenTitle:true},
-                {field:'40242',title:'RSRQ',width:'14%',hiddenTitle:true}
+                {field:'44213',title:'Distance',width:'15%'},
+                {field:'40146',title:'EARFCN',width:'14%'},
+                {field:'40178',title:'PCI',width:'14%'},
+                {field:'40210',title:'RSRP',width:'14%'},
+                {field:'40306',title:'SINR',width:'14%'},
+                {field:'40242',title:'RSRQ',width:'14%'}
             ]],
 
         'view5':[[
@@ -265,6 +265,88 @@ Jh.Layout = function () {
     }
 }();
 Jh.Util = {
+    getWidth:function(a){
+        if(!a){return "";}
+        var scs = a >> 16;
+        var cbp = a & 0xffff;
+        if (cbp == -1)
+        {
+            var data = [ "5MHz","10MHz","15MHz","20MHz","25MHz","30MHz","40MHz","50MHz","60MHz","80MHz","100MHz" ,"200MHz" , "400MHz"];
+            if (0 <= scs && 0 <= 13)
+                return data[scs];
+            else
+                return scs + "MHz";
+        }
+        if (scs == -1){
+            return "";
+        }
+        var matrix = [
+            [ "5MHz","10MHz","15MHz","20MHz","25MHz","30MHz","40MHz","50MHz","60MHz","80MHz","100MHz" ],
+            [ "25","52","79","106","133","160","216","270","N/A","N/A","N/A" ],
+            [ "11","24","38","51","65","78","106","133","162","217","273" ],
+            [ "N/A","11","18","24","31","38","51","65","79","107","135" ]
+        ];
+        if (scs > -1 && scs < 3)
+        {
+            var tmp = cbp;
+            var v = matrix[scs + 1];
+
+            for (var i = 0; i < 11; i++)
+            {
+                if (tmp == v[i])
+                    return matrix[0][i];
+            }
+        }
+        var res;
+        var num = scs*cbp * 12;
+        res = num + 'MHz';
+        return res;
+    },
+    getModeName:function(a){
+        var data = [ "FDD", "TDD", "SA", "NSA" ];
+        var name = data[a];
+        if(!name){
+            return a;
+        }else{
+            return name;
+        }
+    },
+    getSubCarrierSpacingName:function(a){
+        var data = [ "15kHz","30kHz","60kHz","120kHz","240kHz", "NRRC_NPHY_SCS_TYPE_COMM_ENUM_BUTT" ];
+        var name = data[a];
+        if(!name){
+            return a;
+        }else{
+            return name;
+        }
+    },
+    get40015Name:function(a){
+        var data  = [ "1.4MHz","3MHz","5MHz","10MHz","15MHz","20MHz" , 	"6RB", "15RB", "25RB", "50RB", "75RB", "100RB","" ];
+        var name = data[a];
+        if(!name && name!=''){
+            return a;
+        }else{
+            return name;
+        }
+    },
+    get40016Name:function(a){
+        var data  = [  "SA0","SA1", "SA2", "SA3", "SA4", "SA5", "SA6"  ];
+        var name = data[a];
+        if(!name){
+            return a;
+        }else{
+            return name;
+        }
+    },
+    get40017Name:function(a){
+        var data  = ["SSP0", "SSP1", "SSP2", "SSP3", "SSP4", "SSP5", "SSP6", "SSP7", "SSP8" ];
+        var name = data[a];
+        if(!name){
+            return a;
+        }else{
+            return name;
+        }
+    },
     getNetCodeName:function(a){
         switch(a){
             case '0' :

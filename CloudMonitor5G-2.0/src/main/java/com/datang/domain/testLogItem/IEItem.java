@@ -13,6 +13,7 @@ public class IEItem {
 
     private long logId;
     private String time;
+    private Long timeCol;
     //NR主邻区信息窗口
     private String ie_58000;
     private Double ie_58032;
@@ -1092,14 +1093,21 @@ public class IEItem {
     public void setIe_40242(Double ie_40242) {
         this.ie_40242 = ie_40242;
     }
-
     @Column(name = "timestamp")
+    public Long getTimeCol() {
+        return timeCol;
+    }
+
+    public void setTimeCol(Long timeCol) {
+        this.timeCol = timeCol;
+    }
+
     public String getTime() {
-       return time;
+       return sd.format(new Date(this.getTimeCol()));
     }
     private static final SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public void setTime(String time) {
-        this.time = sd.format(new Date(Long.parseLong(time)));
+        this.time = time;
     }
 
     @Id

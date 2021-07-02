@@ -170,11 +170,11 @@
 		    </div>
 	    	<div style="width:100%;height:33%;">
 			    <div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">下行质差路段判定</div></div>
-	    			<div class="inputDivShow">下行质差采样点定义:SS-SINR<=
-			    		<input id="downqualitydiffsinr" name="downqualitydiffsinr" style="width:120px;"  value="${questionRoadParam.downqualitydiffsinr}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-			    		dB 且NR覆盖电平>=
+	    			<div class="inputDivShow">下行质差采样点定义:NR SS-RSRP<=
 			    		<input id="downqualitydiffrsrp" name="downqualitydiffrsrp" style="width:120px;"  value="${questionRoadParam.downqualitydiffrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'"  />
-			    		dBm
+						dBm 且NR SS-SINR<=
+						<input id="downqualitydiffsinr" name="downqualitydiffsinr" style="width:120px;"  value="${questionRoadParam.downqualitydiffsinr}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+			    		dB
 			    	</div>
 					<div class="inputDivShow">下行质差路段定义:质差采样点占比>=
 						<input id="downqualitydiffsamprate" name="downqualitydiffsamprate" style="width:120px;"  value="${questionRoadParam.downqualitydiffsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
@@ -211,7 +211,7 @@
 	  	<div data-options="region:'east',border:false,split:true">
 	  		<div style="width:100%;height:33%;">
 				<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">下行低速率路段判定</div></div>
-					<div class="inputDivShow">下行低速率采样点定义:下行RLC层速率>=
+					<div class="inputDivShow">下行低速率采样点定义:下行RLC层速率<=
 						<input id="downlowerspeedrlc" name="downlowerspeedrlc" style="width:120px;"  value="${questionRoadParam.downlowerspeedrlc}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
 						Mbps
 					</div>
@@ -227,7 +227,7 @@
 		    </div>
 	    	<div style="width:100%;height:66%;">
 				<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">上行低速率路段判定</div></div>
-					<div class="inputDivShow">上行低速率采样点定义:上行RLC层速率>=
+					<div class="inputDivShow">上行低速率采样点定义:上行RLC层速率<=
 						<input id="uplowerspeedrlc" name="uplowerspeedrlc" style="width:120px;"  value="${questionRoadParam.uplowerspeedrlc}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
 						Mbps
 					</div>

@@ -715,9 +715,12 @@ Jh.fn = function (a) {
                             if( val !=0 && !val ){
                                 val = '';
                             }
-                            //            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  it.format ?   $("<td  class='" +  b +"_"   + eval( it.format+"('"+val+"');" )+ "' >"+val+"</td>")   :  $("<td>"+val+"</td>");
-                            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :   it.format ?    $("<td>" + eval( it.format+"('"+val+"');") + "</td>" )  : $("<td>"+val+"</td>");
-//
+
+                            if(it.format){
+                                val = eval( it.format+"('"+val+"');");
+                            }
+                            var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  $("<td>"+val+"</td>");
+
                         }else{
                             td = $("<td id='ie_"+it.field+"'></td>");
                         }
@@ -884,7 +887,7 @@ Jh.fn = function (a) {
             if(!data){
                 existData = false;
             }
-            if(Jh.Config._allIe.length>0){
+ /**           if(Jh.Config._allIe.length>0){
                 $.each(Jh.Config._allIe,function(iii,item){
 
                     if(existData){
@@ -894,15 +897,21 @@ Jh.fn = function (a) {
                     }
 
                 });
-            }else{
+            }else{   **/
 
                 $.each(Jh.ViewColumns,function(i,columns){
                     if(!Jh.Config._listView.includes(i)){
                         $.each(columns,function(ii,column){
                             $.each(column,function(iii,item){
-                                Jh.Config._allIe.push(item.field);
+                       //         Jh.Config._allIe.push(item.field);
                                 if(existData){
-                                    $("#ie_"+item.field).html(data["ie_"+item.field]);
+
+                                    var val = data["ie_"+item.field];
+                                    if(item.format && ( val || val == '0' ) ){
+                                        val = eval( item.format+"('"+val+"');");
+                                    }
+                                    $("#ie_"+item.field).html(val);
+
                                 }else{
                                     $("#ie_"+item.field).html('');
                                 }
@@ -911,7 +920,9 @@ Jh.fn = function (a) {
                     }
 
                 });
-            }
+
+
+      //}
 
 
 

@@ -13,7 +13,8 @@ var MyChart = {
 			[ 'SS_RSRP', 'SS_SINR'],
 			[ 'LTE PDCP Thrput DL(Mbps)', 'LTE PDCP Thrput UL(Mbps)'],
 			[ 'NR PHY Thrput UL(Mbps)', 'NR PHY Thrput DL(Mbps)']
-		]
+		],
+		seriesIndex:0
 	}
 };
 
@@ -30,7 +31,7 @@ MyChart.fn = function (a) {
 	function calcIndex(){
 
 		var target;
-		var timeArray = MyChart.Data.all.map(c=>c.time);
+		var timeArray = MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(c=>c.time);
 		timeArray.push(MyPlayer.Data.currentTime);
 		timeArray.sort();
 		var position =  timeArray.indexOf(MyPlayer.Data.currentTime);
@@ -48,8 +49,19 @@ MyChart.fn = function (a) {
 		//判断当前位置有没有值，如果两个指标都没值的话，折线图里的tooltip不变而且axisPointer会消失
 		var flag = true;
 		while( flag &&  target< timeArray.length -2  ){
-			if(MyChart.Data.all[target][MyChart.Data.col[MyChart.Data.currentIndex][0]] ||  MyChart.Data.all[target][MyChart.Data.col[MyChart.Data.currentIndex][1]]){
+			if(
+
+				MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] )[target][MyChart.Data.col[MyChart.Data.currentIndex][0]]
+			||  MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] )[target][MyChart.Data.col[MyChart.Data.currentIndex][1]] ){
 				flag = false;
+
+				if(MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] )[target][MyChart.Data.col[MyChart.Data.currentIndex][0]]){
+					MyChart.Data.seriesIndex = 0;
+				}else{
+					MyChart.Data.seriesIndex = 1;
+				}
+
+
 			}else{
 				target++;
 			}
@@ -68,15 +80,17 @@ MyChart.fn = function (a) {
 			},
 
 			tooltip: {
-				triggerOn: "click",
+				triggerOn: MyPlayer.Data.playingStatus ? "none" :  "click",
 				trigger:'axis',
-				alwaysShowContent: true,
+				alwaysShowContent:  MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a.time).length > 0 ? true : false,
 				snap:true,
 				formatter:function(params){
 					var res =  params[0].name.slice(11 ,params[0].name.length);
 					//	var res = new Date(params[0].name).Format("hh:mm:ss") ;
 					for(var i=0;i<params.length;i++){
-						res+= "<br>"+params[i].marker+params[i].seriesName+":"+params[i].data;
+						if(params[i].data){
+							res+= "<br>"+params[i].marker+params[i].seriesName+":"+params[i].data;
+						}
 					}
 					return res;
 
@@ -104,7 +118,7 @@ MyChart.fn = function (a) {
 
 			xAxis: {
 				type: "category",
-				data: MyChart.Data.all.map(a=>a.time),
+				data: MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a.time),
 
 				axisPointer: {
 					value: MyPlayer.Data.startTime,
@@ -150,14 +164,14 @@ MyChart.fn = function (a) {
 				{
 					name: MyChart.Data.col[MyChart.Data.currentIndex][0],
 					type: 'line',
-					data: MyChart.Data.all.map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][0]]),
+					data: MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][0]]),
 					connectNulls:true
 				},
 				{
 					name: MyChart.Data.col[MyChart.Data.currentIndex][1],
 					type: 'line',
 					yAxisIndex: 1,
-					data: MyChart.Data.all.map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][1]]),
+					data: MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][1]]),
 					connectNulls:true
 				}
 			]
@@ -225,13 +239,12 @@ MyChart.fn = function (a) {
 				chartObject.resize();
 			}
 		},synced:function(){
-
 			if(!$.isEmptyObject(chartObject)){
 				calcIndex();
 				syncOther = false;
 				chartObject.dispatchAction({
 					type: 'showTip',
-					seriesIndex: 0,
+					seriesIndex: MyChart.Data.seriesIndex,
 					dataIndex: frameIndex
 				});
 			}

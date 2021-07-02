@@ -1009,7 +1009,6 @@ function SynchronizeLog(logId, timestamp) {
     if (!logId)
         return;
 
-    synchSource.clear();
     var logIdField = "logcode";
     var timeField = "timestamp";
     var idFilter = new ol.format.filter.equalTo(logIdField, logId);
@@ -1033,6 +1032,7 @@ function SynchronizeLog(logId, timestamp) {
             return;
         } else {
             var synchFeat = features[0];
+            synchSource.clear();
             synchSource.addFeature(synchFeat);
             var pntCoor = synchFeat.getGeometry().getCoordinates()
             var viewExtent =  new ol.geom.Polygon.fromExtent(map.getView().calculateExtent());

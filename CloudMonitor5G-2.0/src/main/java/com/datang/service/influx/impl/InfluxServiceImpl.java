@@ -1585,8 +1585,8 @@ public class InfluxServiceImpl implements InfluxService {
     String[] positiveCallEndEvt=new String[]{"Incoming SIP Call End","Incoming SIP Call Drop","Incoming Call End","Incoming Call Drop","CSFB Call End MT","CSFB Call Drop MT"};
     String[] activeCallFailEvt=new String[]{"Outgoing SIP Call Block","Outgoing Call Block"};
     String[] positiveCallFailEvt=new String[]{"Incoming SIP Call Block","Incoming Call Block"};
-    String[] activeDropFailEvt=new String[]{"Outgoing SIP Call Drop","CSFB Drop MO、Outgoing Call Drop"};
-    String[] positiveDropFailEvt=new String[]{"Incoming SIP Call Drop","CSFB Drop MT、Incoming Call Drop"};
+    String[] activeDropFailEvt=new String[]{"Outgoing SIP Call Drop","CSFB Drop MO","Outgoing Call Drop"};
+    String[] positiveDropFailEvt=new String[]{"Incoming SIP Call Drop","CSFB Drop MT","Incoming Call Drop"};
 
     String[] esfFailCauses=new String[]{"Mobility From NR Failure","N2L_REDIRECT_FAIL","LTE TAU Failure"};
     @Override
@@ -1623,7 +1623,7 @@ public class InfluxServiceImpl implements InfluxService {
             callAna(results, testLogItem, nrCells, lteCells, connect, positiveConfigs, positiveColumnList,"被叫");
             connect.close();
         });
-        return results;
+        return results.parallelStream().sorted(Comparator.comparing((Map<String, Object> f) -> f.get("basic01").toString()).thenComparing((Map<String, Object> f) -> f.get("call02").toString())).collect(Collectors.toList());
     }
 
     private String getCellType(String busiType, String triggerEvt, String netmode, boolean flag, String ringNet){
@@ -1681,11 +1681,11 @@ public class InfluxServiceImpl implements InfluxService {
             allevts.add("Fast_Return_Start");
             allevts.add("Fast_Return_Success");
             allevts.add("Fast_Return_Failure");
+            allevts.add(item);
             allevts.addAll(Arrays.asList());
             allevts.forEach(i->{
                 sqlFreg.add("evtName ='"+i+"'");
             });
-            sqlFreg.add("evtName ='"+item+"'");
             sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
             QueryResult query = connect.query(new Query(sb.toString()));
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
@@ -1732,9 +1732,14 @@ public class InfluxServiceImpl implements InfluxService {
         Map<String, Object> fallBackRecord = getEvtRecord(objs,"EPSFallBack Start");
         Map<String, Object> rm = new HashMap<>();
         String ringTime = exsistEvtTime(objs, columnList.get(0));
+        Double ringTimeStamp = exsistEvtTimestamp(objs, columnList.get(0));
+        String attemptTime = DateComputeUtils.formatMicroTime(objs.get(0).get("time").toString());
+        Double attemptTimestamp = objs.get(0).containsKey("TimeStamp")?Double.parseDouble(objs.get(0).get("TimeStamp").toString()):null;
         String ringNet=getRingNet(objs, columnList.get(0));
         String connTime = exsistEvtTime(objs, columnList.get(1));
+        Double connTimeStamp = exsistEvtTimestamp(objs, columnList.get(1));
         String endTime = exsistEvtTime(objs, columnList.get(2));
+        Double endTimeStamp = exsistEvtTimestamp(objs, columnList.get(2));
         //LOG名称
         rm.put("basic01", testLogItem.getFileName());
         //主叫/被叫
@@ -1743,17 +1748,17 @@ public class InfluxServiceImpl implements InfluxService {
         //呼叫类型
         rm.put("call01",getCellType(busiType,item,InfluxReportUtils.getNetWork(objs.get(0).get("Netmode")),flag,ringNet));
         //起呼时间
-        rm.put("call02", DateComputeUtils.formatMicroTime(objs.get(0).get("time").toString()));
+        rm.put("call02", attemptTime);
         //振铃时间
         rm.put("call03", ringTime);
         //接通时间
         rm.put("call04", connTime);
         //呼叫时延(s)
-        rm.put("call05", DateComputeUtils.getDelay(ringTime, connTime));
+        rm.put("call05", DateComputeUtils.getDelay(attemptTimestamp, ringTimeStamp));
         //呼叫结束时间
         rm.put("call06", endTime);
         //呼叫保持时长(s)
-        rm.put("call07", DateComputeUtils.getDelay(connTime, endTime));
+        rm.put("call07", DateComputeUtils.getDelay(connTimeStamp, endTimeStamp));
         //呼叫失败时间
         rm.put("call08", exsistEvtTime(objs, columnList.get(3)));
         //掉话时间
@@ -1853,8 +1858,8 @@ public class InfluxServiceImpl implements InfluxService {
                 abevtKpiMap.put(frColumnIndexs[6],"avg(50056)");
                 InfluxReportUtils.setNetIEKpi(connect,rm,abevtKpiMap,time1);
 
-                rm.put(dropColumnIndexs[10],null);
-                rm.put(dropColumnIndexs[11],null);
+                rm.put(frColumnIndexs[10],null);
+                rm.put(frColumnIndexs[11],null);
                 break;
             }
             if(frs!=null){
@@ -1862,10 +1867,9 @@ public class InfluxServiceImpl implements InfluxService {
                 String longg=frs.get("Long").toString();
                 String lat=frs.get("Lat").toString();
                 Map<String, String> abevtKpiMap=new HashMap<>();
-                abevtKpiMap.put(dropColumnIndexs[0],"是");
-                abevtKpiMap.put(dropColumnIndexs[1],longg);
-                abevtKpiMap.put(dropColumnIndexs[2],lat);
-
+                abevtKpiMap.put(frColumnIndexs[0],"是");
+                abevtKpiMap.put(frColumnIndexs[1],longg);
+                abevtKpiMap.put(frColumnIndexs[2],lat);
             }
         }
         if(time1!=null&&time2!=null){
@@ -2158,6 +2162,15 @@ public class InfluxServiceImpl implements InfluxService {
         for(Map<String, Object> r:rs){
             if(Arrays.asList(evts).contains(r.get("evtName").toString())){
                 return DateComputeUtils.formatMicroTime(r.get("time").toString());
+            }
+        }
+        return null;
+    }
+
+    private Double exsistEvtTimestamp(List<Map<String, Object>> rs, String[] evts){
+        for(Map<String, Object> r:rs){
+            if(Arrays.asList(evts).contains(r.get("evtName").toString())){
+                return r.containsKey("TimeStamp")?Double.parseDouble(r.get("TimeStamp").toString()):null;
             }
         }
         return null;

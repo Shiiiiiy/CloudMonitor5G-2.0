@@ -1,5 +1,6 @@
 package com.datang.service.influx;
 
+import com.datang.common.util.DateComputeUtils;
 import com.datang.dao.quesroad.QuesRoadDao;
 import com.datang.domain.platform.projectParam.Cell5G;
 import com.datang.domain.testLogItem.TestLogItem;
@@ -145,12 +146,12 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             obj.put("logname",testLogItem.getFileName());
             obj.put("area",testLogItem.getCity());
             obj.put("contractor",testLogItem.getContractor());
-            obj.put("starttime",maps.get(0).get("time"));
+            obj.put("starttime",DateComputeUtils.formatTime(maps.get(0).get("time").toString()));
             double slong = Double.parseDouble(maps.get(0).get("Long").toString());
             double slat = Double.parseDouble(maps.get(0).get("Lat").toString());
             obj.put("slong", slong);
             obj.put("slat",slat);
-            obj.put("endtime",maps.get(maps.size()-1).get("time"));
+            obj.put("endtime",DateComputeUtils.formatTime(maps.get(maps.size()-1).get("time").toString()));
             double elong = Double.parseDouble(maps.get(maps.size()-1).get("Long").toString());
             double elat = Double.parseDouble(maps.get(maps.size()-1).get("Lat").toString());
             obj.put("elong",elong);

@@ -289,5 +289,12 @@ public class DateComputeUtils {
 		}
 		return null;
 	}
+
+	public static String getDelay(Double startTime,Double endTime){
+		if(null!=startTime&&null!=endTime){
+				return (endTime-startTime)/1000+"";
+		}
+		return "";
+	}
 	
 }

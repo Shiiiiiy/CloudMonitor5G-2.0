@@ -107,8 +107,8 @@ public class IEItem {
     private Double ie_50001;
     private Double ie_50002;
     private Double ie_50003;
-    private Double ie_50046;
-    private Double ie_50051;
+    private Double ie_54321;
+    private Double ie_54322;
     private Double ie_50016;
     private Double ie_50017;
     private Double ie_50021;
@@ -1287,21 +1287,21 @@ public class IEItem {
     public void setIe_50003(Double ie_50003) {
         this.ie_50003 = ie_50003;
     }
-    @Column(name = "ie_50046")
-    public Double getIe_50046() {
-        return ie_50046;
+    @Column(name = "ie_54321")
+    public Double getIe_54321() {
+        return ie_54321;
     }
 
-    public void setIe_50046(Double ie_50046) {
-        this.ie_50046 = ie_50046;
+    public void setIe_54321(Double ie_54321) {
+        this.ie_54321 = ie_54321;
     }
-    @Column(name = "ie_50051")
-    public Double getIe_50051() {
-        return ie_50051;
+    @Column(name = "ie_54322")
+    public Double getIe_54322() {
+        return ie_54322;
     }
 
-    public void setIe_50051(Double ie_50051) {
-        this.ie_50051 = ie_50051;
+    public void setIe_54322(Double ie_54322) {
+        this.ie_54322 = ie_54322;
     }
     @Column(name = "ie_50016")
     public Double getIe_50016() {

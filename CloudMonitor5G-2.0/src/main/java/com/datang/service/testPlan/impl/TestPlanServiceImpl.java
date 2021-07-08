@@ -280,6 +280,7 @@ public class TestPlanServiceImpl implements TestPlanService {
 		JSONObject requJson = new JSONObject();
 		requJson.put("conftestplan", map);
 		String request = requJson.toString();
+		logger.info("请求参数为:"+request);
 		Socket socket = ZMQUtils.getZMQSocket();
 		try {
 			socket.setReceiveTimeOut(5000);
@@ -287,11 +288,13 @@ public class TestPlanServiceImpl implements TestPlanService {
 			socket.send(request.getBytes()); // 向reponse端发送数据
 			byte[] responseBytes = socket.recv(); // 接收response发送回来的数据
 			if (null == responseBytes) {
+				logger.error("返回结果为空");
 				throw new ApplicationException("下发到终端时,后台通信异常!");
 			} else {
 				ZMQUtils.releaseZMQSocket(socket);
 				Integer result = null;
 				String response = new String(responseBytes, "UTF8");
+				logger.info("返回结果为:"+response);
 				JSONObject respJson = JSONObject.fromObject(response);
 				if (null != respJson) {
 					JSONObject conftestplan = respJson
@@ -301,6 +304,7 @@ public class TestPlanServiceImpl implements TestPlanService {
 					}
 				}
 				if (null == result) {
+					logger.error("result 字段为空");
 					throw new ApplicationException("下发到终端时,后台下发异常!");
 				} else {
 					switch (result) {
@@ -316,6 +320,7 @@ public class TestPlanServiceImpl implements TestPlanService {
 				}
 			}
 		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
 			if (e instanceof ApplicationException) {
 				throw new ApplicationException(e.getMessage());
 			} else {

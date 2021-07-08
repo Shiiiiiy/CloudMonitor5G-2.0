@@ -246,8 +246,8 @@ public class TestPlanServiceImpl implements TestPlanService {
 		setCallNo(testPlan, terminal);
 		// 设置ModelLock
 		fliterModelLock(testPlan, terminal);
-		String fileLink = testPlanFileLink + File.separator
-				+ terminal.getBoxId() + File.separator + testPlan.getName()
+		String fileLink = testPlanFileLink +  File.separator  + terminal.getBoxId() +  File.separator
+				+ testPlan.getName()
 				+ ".xml";
 		File testPlanFile = new File(fileLink);
 		if (!testPlanFile.exists() && !testPlanFile.getParentFile().exists()) {
@@ -257,8 +257,9 @@ public class TestPlanServiceImpl implements TestPlanService {
 				throw new ApplicationException("下发到终端时,保存测试计划文件异常!");
 			}
 		}
+		String xmlString;
 		try {
-			String xmlString = XStreamUtil.toXMLStr(testPlan).replaceAll(
+			xmlString = XStreamUtil.toXMLStr(testPlan).replaceAll(
 					"\r|\n", "\r\n");
 			FileCopyUtils.copy(xmlString.getBytes(), testPlanFile);
 		} catch (Exception e) {
@@ -275,6 +276,7 @@ public class TestPlanServiceImpl implements TestPlanService {
 		map.put("boxid", terminal.getBoxId());
 		map.put("version", configVersion);
 		map.put("testplanfilelink", fileLink);
+		map.put("testplanfilecontent",xmlString);
 		JSONObject requJson = new JSONObject();
 		requJson.put("conftestplan", map);
 		String request = requJson.toString();

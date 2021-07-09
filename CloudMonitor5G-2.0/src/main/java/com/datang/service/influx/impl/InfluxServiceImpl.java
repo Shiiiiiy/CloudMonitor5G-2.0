@@ -1672,7 +1672,7 @@ public class InfluxServiceImpl implements InfluxService {
         activeConfigs.stream().map(VoiceBusiConfig::getTriggerEvt).collect(Collectors.toSet()).forEach(item->{
             List<String> sqlFreg=new ArrayList<>();
             StringBuilder sb=new StringBuilder();
-            sb.append("SELECT MsgID,evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,extrainfo from EVT where ");
+            sb.append("SELECT MsgID,evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,extrainfo,TimeStamp from EVT where ");
             Set<String> allevts = activeColumnList.stream().flatMap(strs -> Arrays.stream(strs)).collect(Collectors.toSet());
             allevts.add("EPSFallBack Start");
             allevts.add("NR Event B1");
@@ -1870,13 +1870,13 @@ public class InfluxServiceImpl implements InfluxService {
                 abevtKpiMap.put(frColumnIndexs[0],"是");
                 abevtKpiMap.put(frColumnIndexs[1],longg);
                 abevtKpiMap.put(frColumnIndexs[2],lat);
+                rm.putAll(abevtKpiMap);
             }
         }
         if(time1!=null&&time2!=null){
-            exsistByContentFromSign(connect,time2,time1);
+            rm.putAll(exsistByContentFromSign(connect,time2,time1));
         }
     }
-
     /**
      * 掉话业务
      * @param nrCells

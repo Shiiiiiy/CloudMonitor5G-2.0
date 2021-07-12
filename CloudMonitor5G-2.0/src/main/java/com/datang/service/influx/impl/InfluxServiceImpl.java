@@ -1777,23 +1777,23 @@ public class InfluxServiceImpl implements InfluxService {
                 rm.put(esfbColumnIndexs[2],time1);
                 //切换回落失败
                 rm.put(esfbColumnIndexs[3],time2);
-                if(null!=time1&&null!=time2){
+                if(null!=time&&null!=time1){
                     //切换回落时延
-                    rm.put(esfbColumnIndexs[4],DateComputeUtils.getDelay(time1, time));
+                    rm.put(esfbColumnIndexs[4],DateComputeUtils.getDelay(time, time1));
+                }else{
+                    rm.put(esfbColumnIndexs[4],null);
                 }
-            }else if(!"切换".equalsIgnoreCase(fbackWay)){
+            }else if(null!=fbackWay&&!"切换".equalsIgnoreCase(fbackWay)){
                 String time1=getBehindExsistEvtTime(fallBackRecord, objs,"RedirectedTargetRAT","EPSFallBack Success");
                 String time2=getBehindExsistEvtTime(fallBackRecord, objs,"RedirectedTargetRAT","EPSFallBack Failure");
                 //重定向回落尝试
-                rm.put(esfbColumnIndexs[4], time);
-                //重定向回落尝试
-                rm.put(esfbColumnIndexs[5],time1);
+                rm.put(esfbColumnIndexs[5], time);
                 //重定向回落成功
                 rm.put(esfbColumnIndexs[6],time1);
                 //重定向回落失败
                 rm.put(esfbColumnIndexs[7],time2);
-                if(null!=time1&&null!=time2){
-                    rm.put(esfbColumnIndexs[8],DateComputeUtils.getDelay(time1, time));
+                if(null!=time1&&null!=time){
+                    rm.put(esfbColumnIndexs[8],DateComputeUtils.getDelay(time, time1));
                 }else{
                     rm.put(esfbColumnIndexs[8],null);
                 }
@@ -1801,19 +1801,20 @@ public class InfluxServiceImpl implements InfluxService {
                 rm.put(esfbColumnIndexs[5],null);
                 rm.put(esfbColumnIndexs[6],null);
                 rm.put(esfbColumnIndexs[7],null);
+                rm.put(esfbColumnIndexs[8],null);
             }
             //返回5G尝试	时间	事件“Fast_Return_Start”
             String fastrstime = exsistEvtTime(objs, new String[]{"Fast_Return_Start"});
-            rm.put(esfbColumnIndexs[8], fastrstime);
+            rm.put(esfbColumnIndexs[9], fastrstime);
             //返回5G成功	时间	事件“Fast_Return_Success”
             String fastrsucctime = exsistEvtTime(objs, new String[]{"Fast_Return_Success"});
-            rm.put(esfbColumnIndexs[9], fastrsucctime);
+            rm.put(esfbColumnIndexs[10], fastrsucctime);
             //返回5G失败	时间	事件“Fast_Return_Failure”
             String fastrfailtime = exsistEvtTime(objs, new String[]{"Fast_Return_Failure"});
             rm.put(esfbColumnIndexs[11], fastrfailtime);
             //返回5G时延	时延	“返回5G成功时间”-“返回5G尝试时间”
             if(null!=fastrstime&&null!=fastrsucctime){
-                rm.put(esfbColumnIndexs[12],DateComputeUtils.getDelay(fastrsucctime, fastrstime));
+                rm.put(esfbColumnIndexs[12],DateComputeUtils.getDelay(fastrstime, fastrsucctime));
             }else{
                 rm.put(esfbColumnIndexs[12],null);
             }
@@ -1844,12 +1845,10 @@ public class InfluxServiceImpl implements InfluxService {
             }
             //是否存在事件“Fast_Return_Failure”
             if("Fast_Return_Failure".equalsIgnoreCase(obj.get("evtName").toString())){
+                rm.put(frColumnIndexs[3],"是");
                 List<Map<String, Object>> result1 = getRecordByMsgIDFromSign(connect, obj);
                 if(result1!=null&&!result1.isEmpty()){
-                    rm.put(frColumnIndexs[3],"是");
                     rm.put(frColumnIndexs[4],result1.get(0).get("signalName"));
-                }else{
-                    rm.put(frColumnIndexs[3],"否");
                 }
                 time1=obj.get("time").toString();
                 //nr
@@ -1857,10 +1856,11 @@ public class InfluxServiceImpl implements InfluxService {
                 abevtKpiMap.put(frColumnIndexs[5],"avg(50055)");
                 abevtKpiMap.put(frColumnIndexs[6],"avg(50056)");
                 InfluxReportUtils.setNetIEKpi(connect,rm,abevtKpiMap,time1);
-
                 rm.put(frColumnIndexs[10],null);
                 rm.put(frColumnIndexs[11],null);
                 break;
+            }else{
+                rm.put(frColumnIndexs[3],"否");
             }
             if(frs!=null){
                 time2=frs.get("time").toString();

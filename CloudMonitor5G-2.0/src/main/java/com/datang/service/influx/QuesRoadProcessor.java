@@ -427,7 +427,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                         Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
                         if(rate*100>rateThreshold){
                             if(!flag){
-                                start=i;
+                                start=i-slideWindow.size();
                             }
                             //滑窗滑到采样点最后一个满足问题路段开始条件
                             if(end==sampDatas.size()-1){
@@ -448,7 +448,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                     Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
                     if(rate*100>rateThreshold){
                         if(!flag){
-                            start=i;
+                            start=i-slideWindow.size();
                         }
                         //滑窗滑到采样点最后一个满足问题路段开始条件
                         if(end==sampDatas.size()-1){

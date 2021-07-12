@@ -146,12 +146,12 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             obj.put("logname",testLogItem.getFileName());
             obj.put("area",testLogItem.getCity());
             obj.put("contractor",testLogItem.getContractor());
-            obj.put("starttime",DateComputeUtils.formatTime(maps.get(0).get("time").toString()));
+            obj.put("starttime",DateComputeUtils.formatMicroTime(maps.get(0).get("time").toString()));
             double slong = Double.parseDouble(maps.get(0).get("Long").toString());
             double slat = Double.parseDouble(maps.get(0).get("Lat").toString());
             obj.put("slong", slong);
             obj.put("slat",slat);
-            obj.put("endtime",DateComputeUtils.formatTime(maps.get(maps.size()-1).get("time").toString()));
+            obj.put("endtime",DateComputeUtils.formatMicroTime(maps.get(maps.size()-1).get("time").toString()));
             double elong = Double.parseDouble(maps.get(maps.size()-1).get("Long").toString());
             double elat = Double.parseDouble(maps.get(maps.size()-1).get("Lat").toString());
             obj.put("elong",elong);

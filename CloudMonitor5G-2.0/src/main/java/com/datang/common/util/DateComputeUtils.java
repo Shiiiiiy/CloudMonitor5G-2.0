@@ -223,7 +223,7 @@ public class DateComputeUtils {
 				re.add(result.subList(indexes.get(m),indexes.get(m+1)));
 			}
 		}else{
-			re.add(result);
+			re=Collections.emptyList();
 		}
 		return re;
 	}

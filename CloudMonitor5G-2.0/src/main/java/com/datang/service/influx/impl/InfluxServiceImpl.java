@@ -1631,7 +1631,7 @@ public class InfluxServiceImpl implements InfluxService {
             if("Outgoing SIP Call Attempt".equalsIgnoreCase(triggerEvt)&&"nr".equalsIgnoreCase(netmode)&&"nr".equalsIgnoreCase(ringNet)){
                 return "VoNR";
             }else if("Outgoing SIP Call Attempt".equalsIgnoreCase(triggerEvt)&&"lte".equalsIgnoreCase(netmode)&&"lte".equalsIgnoreCase(ringNet)){
-                return "VoNR";
+                return "VoLTE";
             }else if("Outgoing SIP Call Attempt".equalsIgnoreCase(triggerEvt)&&"nr".equalsIgnoreCase(netmode)&&flag){
                 return "EPS FallBack";
             }else if("CSFB Start MO".equalsIgnoreCase(triggerEvt)){
@@ -1644,7 +1644,7 @@ public class InfluxServiceImpl implements InfluxService {
             if("Incoming SIP Call Attempt".equalsIgnoreCase(triggerEvt)&&"nr".equalsIgnoreCase(netmode)&&"nr".equalsIgnoreCase(ringNet)){
                 return "VoNR";
             } else if("Incoming SIP Call Attempt".equalsIgnoreCase(triggerEvt)&&"lte".equalsIgnoreCase(netmode)&&"lte".equalsIgnoreCase(ringNet)){
-                return "VoNR";
+                return "VoLTE";
             } else if("Incoming SIP Call Attempt".equalsIgnoreCase(triggerEvt)&&"nr".equalsIgnoreCase(netmode)&&flag){
                 return "EPS FallBack";
             } else if("CSFB Start MT".equalsIgnoreCase(triggerEvt)){
@@ -2114,7 +2114,7 @@ public class InfluxServiceImpl implements InfluxService {
      * @return
      */
     private String getFbackWay( Map<String, Object> epsFallBackRecord, List<Map<String, Object>> result){
-        String extraInfo = epsFallBackRecord==null?"":epsFallBackRecord.containsKey("ExtraInfo")?epsFallBackRecord.get("ExtraInfo").toString():"";
+        String extraInfo = epsFallBackRecord==null?"":epsFallBackRecord.containsKey("extrainfo")?epsFallBackRecord.get("extrainfo").toString():"";
         if(extraInfo.contains("HandoverTargetRAT")){
             return "切换";
         }else if(extraInfo.contains("RedirectedTargetRAT")){
@@ -2131,10 +2131,10 @@ public class InfluxServiceImpl implements InfluxService {
     }
 
     private String getBehindExsistEvtTime( Map<String, Object> epsFallBackRecord, List<Map<String, Object>> result,String containValue,String evt){
-        String extraInfo = epsFallBackRecord==null?"":epsFallBackRecord.containsKey("ExtraInfo")?epsFallBackRecord.get("ExtraInfo").toString():"";
+        String extraInfo = epsFallBackRecord==null?"":epsFallBackRecord.containsKey("extrainfo")?epsFallBackRecord.get("extrainfo").toString():"";
         if(extraInfo.contains(containValue)){
-            List<Map<String, Object>> timePre2sDatas = DateComputeUtils.getPre2sDatas(result, epsFallBackRecord.get("time").toString());
-            Optional<Map<String, Object>> optinal = timePre2sDatas.stream().filter(item -> item.get("evtName").toString().equalsIgnoreCase(evt))
+            List<Map<String, Object>> timeAfterDatas = DateComputeUtils.getAfterDatas(result, epsFallBackRecord.get("time").toString());
+            Optional<Map<String, Object>> optinal = timeAfterDatas.stream().filter(item -> item.get("evtName").toString().equalsIgnoreCase(evt))
                     .findAny();
             if(optinal.isPresent()){
                 return DateComputeUtils.formatMicroTime(optinal.get().get("time").toString());

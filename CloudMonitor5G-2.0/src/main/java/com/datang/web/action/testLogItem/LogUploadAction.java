@@ -183,7 +183,7 @@ public class LogUploadAction extends PageAction implements
 		Long length = null;
 		File f = null;
 		try {
-			f = IoUtil.getFile(filename, parentFilePath);
+			f = IoUtil.getFile(filename + ".fin", parentFilePath);
 			length = myfile.length();
 			FileCopyUtils.copy(myfile, f);
 
@@ -192,14 +192,14 @@ public class LogUploadAction extends PageAction implements
 			success = false;
 		}
 		if (success) {
-			 File logFile=new File(parentFilePath + File.separator + filename);
+			 File logFile=new File(parentFilePath + File.separator + filename +".fin");
 			  String newfilename = filename;
-			  File newNameFile = new File(parentFilePath + File.separator + newfilename+".fin");
+			  File newNameFile = new File(parentFilePath + File.separator + newfilename);
 			  //重命名
 			  if(newNameFile.exists()){
 				  for (int i = 2; i < 365; i++) {
 					  newfilename = filename.substring(0,filename.lastIndexOf(".")) + "(" +i+")" + filename.substring(filename.lastIndexOf("."),filename.length()) ;
-					  newNameFile = new File(parentFilePath + File.separator + newfilename+".fin");
+					  newNameFile = new File(parentFilePath + File.separator + newfilename);
 					  if(!newNameFile.exists()){
 						  break;
 					  }
@@ -257,7 +257,7 @@ public class LogUploadAction extends PageAction implements
 		switch (method) {
 		case "GET":
 			try {
-				File file = new File(parentFilePath + File.separator + filename);
+				File file = new File(parentFilePath + File.separator + filename + ".fin");
 				if (file.exists()){
 					boolean result = file.delete();
 					if(!result)
@@ -271,7 +271,7 @@ public class LogUploadAction extends PageAction implements
 					message = "Error: 文件大小为0Byte!";
 					success = false;
 				} else {
-					File f = IoUtil.getFile(filename, parentFilePath);
+					File f = IoUtil.getFile(filename + ".fin" , parentFilePath);
 					start = f.length();
 				}
 			} catch (IOException fne) {
@@ -284,7 +284,7 @@ public class LogUploadAction extends PageAction implements
 			InputStream content = null;
 			try {
 				Range range = IoUtil.parseRange(request);
-				File f = IoUtil.getFile(filename, parentFilePath);
+				File f = IoUtil.getFile(filename + ".fin", parentFilePath);
 				if (f.length() != range.getFrom()) {
 					throw new IOException("File from position error!");
 				}
@@ -297,14 +297,14 @@ public class LogUploadAction extends PageAction implements
 				}
 				start = f.length();
 				if (range.getTo() == start && range.getTo() == range.getSize()) {
-					  File logFile=new File(parentFilePath + File.separator + filename);
+					  File logFile=new File(parentFilePath + File.separator + filename +".fin");
 					  String newfilename = filename;
-					  File newNameFile = new File(parentFilePath + File.separator + newfilename+".fin");
+					  File newNameFile = new File(parentFilePath + File.separator + newfilename);
 					  //重命名
 					  if(newNameFile.exists()){
 						  for (int i = 2; i < 365; i++) {
 							  newfilename = filename.substring(0,filename.lastIndexOf(".")) + "(" +i+")" + filename.substring(filename.lastIndexOf("."),filename.length()) ;
-							  newNameFile = new File(parentFilePath + File.separator + newfilename+".fin");
+							  newNameFile = new File(parentFilePath + File.separator + newfilename);
 							  if(!newNameFile.exists()){
 								  break;
 							  }

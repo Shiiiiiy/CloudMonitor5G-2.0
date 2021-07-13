@@ -200,11 +200,11 @@ public class DateComputeUtils {
 		}).collect(Collectors.toList());
 	}
 
-	public static List<List<Map<String,Object>>> getDatasBySplitEvt(List<Map<String,Object>> result, String evtName) {
+	public static List<List<Map<String,Object>>> getDatasBySplitEvt(List<Map<String,Object>> result, Set<String> evtNames) {
 		if(result.isEmpty()){
 			return Collections.emptyList();
 		}
-		long evtName1 = result.stream().filter(o -> o.get("evtName").toString().equalsIgnoreCase(evtName)).count();
+		long evtName1 = result.stream().filter(o -> evtNames.contains(o.get("evtName").toString())).count();
 		if(evtName1<=0){
 			return Collections.emptyList();
 		}
@@ -213,7 +213,7 @@ public class DateComputeUtils {
 		List<Integer> indexes=new ArrayList<>();
 		
 		for(Map<String,Object> o:result){
-			if(o.get("evtName").toString().equalsIgnoreCase(evtName)){
+			if(evtNames.contains(o.get("evtName").toString())){
 				indexes.add(i);
 			}
 			i++;

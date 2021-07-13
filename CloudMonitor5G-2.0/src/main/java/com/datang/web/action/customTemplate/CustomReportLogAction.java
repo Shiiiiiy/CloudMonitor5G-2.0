@@ -133,6 +133,9 @@ public class CustomReportLogAction extends PageAction implements
 	 */
 	private String dPage;
 
+	@Value("${appTaskReportFileLink}")
+	private String fileSaveUrl;
+
 
 	/**
 	 * 跳转到 list界面
@@ -432,7 +435,149 @@ public class CustomReportLogAction extends PageAction implements
 		}
 		return null;
 	}
-	
+
+
+	/**
+	 * 批量导出报表excel
+	 *
+	 * @return
+	 */
+	public String batchDownloadExcel() {
+		return "batchDownloadExcel";
+	}
+
+	public InputStream getBatchDownloadExcelFile() throws IOException {
+
+		CustomLogReportTask task = customLogReportService.queryOneByID(idLong);
+		HttpSession session = ServletActionContext.getRequest().getSession();
+		session.setAttribute("idLong", idLong);
+
+		File zipFile = new File(fileSaveUrl +File.separator+ task.getName() +".zip");
+
+		if(!zipFile.exists()){
+			List<Map<String,Object>> templateList = new ArrayList<>();
+			boolean isAnylyReport = CustomLogReportTask.typeIsAnylyFileReport(task);
+
+			if(isAnylyReport){
+				PageList pageList = new PageList();
+				AnalyFileReportRequertBean analyFileReportRequertBean = new AnalyFileReportRequertBean();
+				analyFileReportRequertBean.setTaskId(task.getId());
+				pageList.putParam("pageQueryBean", analyFileReportRequertBean);
+				EasyuiPageList pageItem = analyFileReportDao.getPageItem(pageList);
+				List<AnalyFileReport> rows = pageItem.getRows();
+
+				// *****
+
+				if (rows!=null && rows.size()>0) {
+					for (AnalyFileReport analyFileReport : rows) {
+						//  '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%'
+						if(ReportFgAction.analyzeTemplateMap.containsKey(analyFileReport.getReportId())){
+							Map<String,Object> map = new HashMap<String,Object>();
+							map.put("valueField",analyFileReport.getReportId());
+							map.put("textField", ReportFgAction.analyzeTemplateMap.get(analyFileReport.getReportId()).getTemplateFileName());
+							templateList.add(map);
+						}
+					}
+				}
+			}else{
+				List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(new PageList());
+				Set<String> unionTeplateSet = new HashSet<String>();
+				for (CustomReportTemplatePojo customReportTemplatePojo : queryTemplateByParam) {
+					unionTeplateSet.add(customReportTemplatePojo.getTemplateName());
+				}
+				// *****
+				if (unionTeplateSet!=null && unionTeplateSet.size()>0) {
+					for (String name : unionTeplateSet) {
+						//  '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%'
+						if(name!=null && (name.contains("指标报表_CQT模板") || name.contains("指标报表_DT模板"))){
+							Map<String,Object> map = new HashMap<String,Object>();
+							map.put("valueField",name);
+							map.put("textField",name);
+							templateList.add(map);
+						}
+					}
+				}
+			}
+
+
+			List<File> fileList = new ArrayList<>();
+			String zipPath = "";
+
+			for (Map<String, Object> map : templateList) {
+				String tName = map.get("valueField").toString();
+
+				File exportfile = null;
+				String exportFilePath;
+				// 分析报表
+				if(isAnylyReport){
+					AnalyzeTemplate analyzeTemplate = ReportFgAction.analyzeTemplateMap.get(tName);
+					if(analyzeTemplate==null || analyzeTemplate.getId()==null){
+						throw new ApplicationException("模板文件不存在");
+					}
+
+					PageList analyPageList = new PageList();
+					AnalyFileReportRequertBean anlayParam = new AnalyFileReportRequertBean();
+					anlayParam.setTaskId(task.getId());
+					anlayParam.setReportId(analyzeTemplate.getId());
+					analyPageList.putParam("pageQueryBean",anlayParam);
+					EasyuiPageList pageItem = analyFileReportDao.getPageItem(analyPageList);
+					List<AnalyFileReport> rows = pageItem.getRows();
+					if(rows==null || rows.size()==0){
+						throw new ApplicationException("模板文件不存在!");
+					}
+					exportFilePath = rows.get(0).getFilePath();
+				}else{
+					PageList selectConditions = new PageList();
+					selectConditions.putParam("templateName", tName);
+					List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(selectConditions);
+					File file = new File(queryTemplateByParam.get(0).getSaveFilePath());
+					String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+task.getId()
+							+ file.getName().substring(file.getName().lastIndexOf("."));
+					exportFilePath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
+				}
+
+				if(exportFilePath==null||!StringUtils.hasText(exportFilePath)){
+					throw new ApplicationException("报表文件生成异常");
+				}
+
+				exportfile = new File(exportFilePath);
+
+				if(exportfile!=null && exportfile.exists()){
+					fileList.add(exportfile);
+				}else{
+					if(!isAnylyReport) {
+						this.templateName = tName;
+						this.exportKpiExcel();
+						exportfile = new File(exportFilePath);
+
+						if(exportfile!=null && exportfile.exists()){
+							fileList.add(exportfile);
+						}else{
+							LOGGER.error("报表文件生成异常:"+tName);
+							throw new ApplicationException("报表文件生成异常");
+						}
+					}else{
+						LOGGER.error("报表文件生成异常:未找到分析报表:"+tName);
+						throw new ApplicationException("报表文件生成异常");
+					}
+				}
+			}
+			ZipMultiFile.zipFiles(fileList,zipFile);
+		}
+
+		FileInputStream inputStream = null ;
+		try {
+			ActionContext.getContext().put("fileName",new String(zipFile.getName().getBytes(),"ISO8859-1"));
+			inputStream = new FileInputStream(zipFile);
+
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return inputStream;
+	}
+
 	/**
 	 * 获取终端类型
 	 * 

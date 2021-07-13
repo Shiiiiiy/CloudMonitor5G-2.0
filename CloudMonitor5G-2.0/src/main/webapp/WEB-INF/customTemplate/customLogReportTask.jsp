@@ -45,10 +45,11 @@
 					{field:'name',width:80,align:'center',title:'任务名称',formatter:showTooltip},
 					//{field:'terminalGroup',width:20,align:'center',title:'域',formatter:showTooltip},
 					{field:'creatDate',width:80,align:'center',title:'创建时间',formatter:showTooltip},
-					{field:'nam',width:80,align:'center',title:'查看详情',
+					{field:'nam',width:80,align:'center',title:'操作',
 						formatter:function(value,row,index){
 							if(row.taskStatus == 2 || row.taskStatus == 3 || row.taskStatus == null){
-								return '<a href="#" title="查看详情" onclick="seeInfo('+row.id+');" >查看详情</a>';
+								return '<a href="#" title="查看详情" onclick="seeInfo('+row.id+');" >查看详情</a>'
+										+'&nbsp;&nbsp;<a href="#" title="报表下载" onclick="batchDownload('+row.id+');" >报表下载</a>';
 							}else{
 								return '<a style="opacity: 0.2" href="javascript:return false;" title="查看详情" onclick="return false;" >查看详情</a>';
 							}
@@ -133,6 +134,13 @@
 			parent.addTab(null,"${pageContext.request.contextPath}/customeLogReport/goSee.action?idLong="+id,"报表统计",null);
 			//goToPage("${pageContext.request.contextPath}/customeLogReport/seeInfo.action?idLong="+id+"&dPage=0");
 		}
+
+		function batchDownload(id){
+
+			window.open("${pageContext.request.contextPath}/customeLogReport/batchDownloadExcel.action?idLong="+id);
+			//goToPage("${pageContext.request.contextPath}/customeLogReport/seeInfo.action?idLong="+id+"&dPage=0");
+		}
+
 		/* 删除任务*/
 		function delReport(){
 			var row = $('#mainTable').datagrid('getChecked');

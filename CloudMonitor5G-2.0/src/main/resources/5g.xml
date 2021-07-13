@@ -229,6 +229,11 @@
                	<param name="contentDisposition">attachment;fileName="${fileName}"</param>  
                	<param name="inputName">downloadTemplateExcel</param>  
             </result>
+			<result name="batchDownloadExcel" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">batchDownloadExcelFile</param>
+			</result>
 		</action>
 	</package>
 	

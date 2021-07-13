@@ -1669,54 +1669,53 @@ public class InfluxServiceImpl implements InfluxService {
      * @param busiType
      */
     void callAna(List<Map<String, Object>> results, TestLogItem testLogItem, List<Cell5G> nrCells, List<LteCell> lteCells, InfluxDB connect, List<VoiceBusiConfig> activeConfigs,List<String[]> activeColumnList,String busiType) {
-        activeConfigs.stream().map(VoiceBusiConfig::getTriggerEvt).collect(Collectors.toSet()).forEach(item->{
-            List<String> sqlFreg=new ArrayList<>();
-            StringBuilder sb=new StringBuilder();
-            sb.append("SELECT MsgID,evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,extrainfo,TimeStamp from EVT where ");
-            Set<String> allevts = activeColumnList.stream().flatMap(strs -> Arrays.stream(strs)).collect(Collectors.toSet());
-            allevts.add("EPSFallBack Start");
-            allevts.add("NR Event B1");
-            allevts.add("NR Event B2");
-            allevts.add("EPSFallBack Success");
-            allevts.add("Fast_Return_Start");
-            allevts.add("Fast_Return_Success");
-            allevts.add("Fast_Return_Failure");
-            allevts.add(item);
-            allevts.addAll(Arrays.asList());
-            allevts.forEach(i->{
-                sqlFreg.add("evtName ='"+i+"'");
-            });
-            sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
-            QueryResult query = connect.query(new Query(sb.toString()));
-            List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
-            List<List<Map<String, Object>>> datasBySplitEvt = DateComputeUtils.getDatasBySplitEvt(result, item);
-
-            for(List<Map<String, Object>> objs:datasBySplitEvt){
-                Map<String, Object> rm = getCallDetailMap(testLogItem, item, objs,busiType,activeColumnList);
-                Map<String, Object> epsFallBack_failure = getEvtRecord(objs, "EPSFallBack Failure");
-                String time = epsFallBack_failure==null?null:epsFallBack_failure.get("time").toString();
-                if(epsFallBack_failure!=null){
-                    rm.put(esfbColumnIndexs[13],InfluxReportUtils.getNetWork(epsFallBack_failure.get("Netmode")));
-                    List<Map<String, Object>> datas = DateComputeUtils.getPreDatasToEndEvt(objs, time, "EPSFallBack Start");
-                    List<String> evtRecords = getEvtValues(datas, esfFailCauses);
-                    rm.put(esfbColumnIndexs[14], evtRecords.get(0));
-                    rm.put(esfbColumnIndexs[15], evtRecords.stream().collect(Collectors.joining(",")));
-                    rm.put(esfbColumnIndexs[16],epsFallBack_failure.get("Long"));
-                    rm.put(esfbColumnIndexs[17],epsFallBack_failure.get("Lat"));
-                    setNrVoiceIEKpi(connect,nrVoiceMap,testLogItem, rm, epsFallBack_failure,"lte");
-                    setLteVoiceIEKpi(connect,lteVoiceMap,testLogItem, rm, epsFallBack_failure,"NR");
-                }else{
-                    for(int i=13;i<34;i++){
-                        rm.put(esfbColumnIndexs[i],null);
-                    }
-                }
-                //掉话业务
-                dropBusi(nrCells, lteCells, connect, objs, rm);
-                //fr失败
-                frFailBusi(connect, objs, rm);
-                results.add(rm);
-            }
+        Set<String> collect = activeConfigs.stream().map(VoiceBusiConfig::getTriggerEvt).collect(Collectors.toSet());
+        Set<String> allevts = activeColumnList.stream().flatMap(strs -> Arrays.stream(strs)).collect(Collectors.toSet());
+        allevts.addAll(collect);
+        List<String> sqlFreg=new ArrayList<>();
+        StringBuilder sb=new StringBuilder();
+        sb.append("SELECT MsgID,evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,extrainfo,TimeStamp from EVT where ");
+        allevts.add("EPSFallBack Start");
+        allevts.add("NR Event B1");
+        allevts.add("NR Event B2");
+        allevts.add("EPSFallBack Success");
+        allevts.add("Fast_Return_Start");
+        allevts.add("Fast_Return_Success");
+        allevts.add("Fast_Return_Failure");
+        allevts.addAll(Arrays.asList());
+        allevts.forEach(i->{
+            sqlFreg.add("evtName ='"+i+"'");
         });
+        sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
+        QueryResult query = connect.query(new Query(sb.toString()));
+        List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
+        List<List<Map<String, Object>>> datasBySplitEvt = DateComputeUtils.getDatasBySplitEvt(result, collect);
+
+        for(List<Map<String, Object>> objs:datasBySplitEvt){
+            Map<String, Object> rm = getCallDetailMap(testLogItem, objs,busiType,activeColumnList);
+            Map<String, Object> epsFallBack_failure = getEvtRecord(objs, "EPSFallBack Failure");
+            String time = epsFallBack_failure==null?null:epsFallBack_failure.get("time").toString();
+            if(epsFallBack_failure!=null){
+                rm.put(esfbColumnIndexs[13],InfluxReportUtils.getNetWork(epsFallBack_failure.get("Netmode")));
+                List<Map<String, Object>> datas = DateComputeUtils.getPreDatasToEndEvt(objs, time, "EPSFallBack Start");
+                List<String> evtRecords = getEvtValues(datas, esfFailCauses);
+                rm.put(esfbColumnIndexs[14], evtRecords.get(0));
+                rm.put(esfbColumnIndexs[15], evtRecords.stream().collect(Collectors.joining(",")));
+                rm.put(esfbColumnIndexs[16],epsFallBack_failure.get("Long"));
+                rm.put(esfbColumnIndexs[17],epsFallBack_failure.get("Lat"));
+                setNrVoiceIEKpi(connect,nrVoiceMap,testLogItem, rm, epsFallBack_failure,"lte");
+                setLteVoiceIEKpi(connect,lteVoiceMap,testLogItem, rm, epsFallBack_failure,"NR");
+            }else{
+                for(int i=13;i<34;i++){
+                    rm.put(esfbColumnIndexs[i],null);
+                }
+            }
+            //掉话业务
+            dropBusi(nrCells, lteCells, connect, objs, rm);
+            //fr失败
+            frFailBusi(connect, objs, rm);
+            results.add(rm);
+        }
     }
 
     /**
@@ -1728,7 +1727,7 @@ public class InfluxServiceImpl implements InfluxService {
      * @param columnList
      * @return
      */
-    Map<String, Object> getCallDetailMap(TestLogItem testLogItem, String item, List<Map<String, Object>> objs,String busiType,List<String[]> columnList) {
+    Map<String, Object> getCallDetailMap(TestLogItem testLogItem,List<Map<String, Object>> objs,String busiType,List<String[]> columnList) {
         Map<String, Object> fallBackRecord = getEvtRecord(objs,"EPSFallBack Start");
         Map<String, Object> rm = new HashMap<>();
         String ringTime = exsistEvtTime(objs, columnList.get(0));
@@ -1746,7 +1745,7 @@ public class InfluxServiceImpl implements InfluxService {
         rm.put("basic02",busiType);
         boolean flag=fallBackRecord==null?false:true;
         //呼叫类型
-        rm.put("call01",getCellType(busiType,item,InfluxReportUtils.getNetWork(objs.get(0).get("Netmode")),flag,ringNet));
+        rm.put("call01",getCellType(busiType,objs.get(0).get("evtName").toString(),InfluxReportUtils.getNetWork(objs.get(0).get("Netmode")),flag,ringNet));
         //起呼时间
         rm.put("call02", attemptTime);
         //振铃时间

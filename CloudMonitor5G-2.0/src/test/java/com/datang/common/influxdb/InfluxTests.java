@@ -50,7 +50,9 @@ public class InfluxTests {
     }
     @Test
     public void testQuesroad(){
-        Map<String, List<Map<String, Object>>> analysize = quesRoadProcessor.analysize(Arrays.asList("569"));
+        Map<String, List<Map<String, Object>>> analysize = quesRoadProcessor.analysize(Arrays.asList("42703","42707","42708","42704","42706","42705","42710","42709","42870","42790","42791"
+
+        ));
         System.out.println(analysize.size());
 
     }
@@ -82,9 +84,11 @@ public class InfluxTests {
     @Test
     public void test4(){
         List<String> fileNames=new ArrayList<>();
-        fileNames.addAll(Arrays.asList("4611"));
-        List<Map<String, Object>> abEvtAnaList = influxService.getAbEvtAnaList(fileNames);
-        System.out.println(abEvtAnaList);
+        //fileNames.addAll(Arrays.asList("42703","42707","42708","42704","42706","42705","42710","42709","42870","42790","42791"
+        fileNames.addAll(Arrays.asList("42705"
+        ));
+      /*  List<Map<String, Object>> abEvtAnaList = influxService.getAbEvtAnaList(fileNames);
+        System.out.println(abEvtAnaList);*/
        /* List<Map<String, Object>> eventByLogFiles = influxService.getEventByLogFiles(fileNames);
         System.out.println(eventByLogFiles.size());*/
         /*List<Map<String, Object>> mapTrailByLogFiles = influxService.getMapTrailByLogFiles(fileNames);
@@ -100,8 +104,8 @@ public class InfluxTests {
        /* List<Map<String, Object>> reportCellKpi = influxService.getReportCellKpi(fileNames);
         System.out.println(reportCellKpi.size());*/
 
-        /* List<Map<String, Object>> reportCellKpi = influxService.getVoiceBusiReports(fileNames);
-        System.out.println(reportCellKpi.size());*/
+         List<Map<String, Object>> reportCellKpi = influxService.getVoiceBusiReports(fileNames);
+        System.out.println(reportCellKpi.size());
 
     }
 

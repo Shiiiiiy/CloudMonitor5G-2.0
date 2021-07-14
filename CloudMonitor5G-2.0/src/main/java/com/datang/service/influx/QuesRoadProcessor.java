@@ -12,6 +12,7 @@ import com.datang.util.AdjPlaneArithmetic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,7 +29,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     @Autowired
     private UnicomLogItemService unicomLogItemService;
     //问题路段获取基础采样点模板sql
-    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM IE where  Long!='-1' and Lat!='-1' ";
+    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM {0} where  Long!='-1' and Lat!='-1' ";
     private static Map<String,String[]> WHERE_MAP=new HashMap<>();
     private static Map<String,String[]> EVTS_MAP=new HashMap<>();
     static {
@@ -55,6 +56,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         Map<String,Double> thresholdMap=quesRoadThresholds.stream().collect(Collectors.toMap(QuesRoadThreshold::getName,QuesRoadThreshold::getValue));
         Map<String, List<Map<String, Object>>> result=Collections.synchronizedMap(new HashMap<>());
         fileLogIds.stream().forEach(id->{
+            String sql=MessageFormat.format(BASE_ROAD_SAMP_SQL,InfluxReportUtils.getTableName(Long.parseLong(id),"IE"));
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
@@ -69,7 +71,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                     if(existEvt(evtResults,"Ftp Upload Attempt")){
                         List<Map<String,String>> times=getTimeIntervals(evtResults);
                         for(Map<String,String> time:times){
-                            sampDatas = queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Arrays.asList(time),null);
+                            sampDatas = queryRoadSampDatas(sql, Arrays.asList(time),null);
                             Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                             if(!tempR.isEmpty()){
                                 if(result.containsKey(key)){

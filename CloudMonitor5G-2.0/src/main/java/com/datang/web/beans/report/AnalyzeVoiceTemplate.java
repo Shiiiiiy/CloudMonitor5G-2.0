@@ -1,13 +1,10 @@
 package com.datang.web.beans.report;
 
 
-import com.datang.common.util.ClassUtil;
 import com.datang.service.influx.InfluxService;
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.util.*;
 
 

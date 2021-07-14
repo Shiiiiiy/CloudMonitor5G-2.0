@@ -1,6 +1,7 @@
 package com.datang.common.influxdb;
 
 
+import okhttp3.OkHttpClient;
 import org.influxdb.BatchOptions;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
@@ -30,8 +31,9 @@ public class InfluxDbConnection {
     private String retentionPolicyTime;
     private InfluxDB influxdb;
     private BatchOptions batchOptions;
+    private OkHttpClient.Builder client;
 
-    public InfluxDbConnection(String userName, String password, String url, String database, String retentionPolicy, String retentionPolicyTime, BatchOptions batchOptions) {
+    public InfluxDbConnection(String userName, String password, String url, String database, String retentionPolicy, String retentionPolicyTime, BatchOptions batchOptions,OkHttpClient.Builder client) {
         this.userName = userName;
         this.password = password;
         this.url = url;
@@ -41,6 +43,7 @@ public class InfluxDbConnection {
         this.retentionPolicyTime = retentionPolicyTime == null || "".equals(retentionPolicyTime) ? "0s" : retentionPolicyTime;
         this.batchOptions = batchOptions == null ? BatchOptions.DEFAULTS : batchOptions;
         this.influxdb = buildInfluxDb();
+        this.client=client;
     }
 
     public InfluxDB buildInfluxDb() {

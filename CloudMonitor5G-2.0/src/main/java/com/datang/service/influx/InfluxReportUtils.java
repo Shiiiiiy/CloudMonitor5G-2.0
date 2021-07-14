@@ -1,6 +1,7 @@
 package com.datang.service.influx;
 
 import com.datang.common.influxdb.InfludbUtil;
+import com.datang.common.influxdb.InfluxDbConnection;
 import com.datang.domain.platform.projectParam.LteCell;
 import com.datang.util.GPSUtils;
 import com.googlecode.aviator.AviatorEvaluator;
@@ -253,7 +254,7 @@ public class InfluxReportUtils {
      * @param rm
      * @param abevtKpiMap
      */
-    public static void setAbevtKpi(InfluxDB connect, Map<String, Object> rm, Map<String, String> abevtKpiMap, String endTime) {
+    public static void setAbevtKpi(Map<String, Object> rm, Map<String, String> abevtKpiMap, String endTime) {
         String sql="select {1} from IE WHERE time<''{0}'' and time>=''{0}''-2s";
         List<String> fregs=new ArrayList<>();
         if(rm.get("exsistTauFail").toString().equalsIgnoreCase("是")){
@@ -261,7 +262,7 @@ public class InfluxReportUtils {
         }else{
             rm.put("srcTac",null);
         }
-        rm.putAll(commonIEVlaueSet(connect, abevtKpiMap, endTime, sql, fregs));
+        rm.putAll(commonIEVlaueSet(abevtKpiMap, endTime, sql, fregs));
     }
 
     /**
@@ -270,8 +271,8 @@ public class InfluxReportUtils {
      * @param rm
      * @param abevtKpiMap
      */
-    public static void setNetIEKpi(InfluxDB connect, Map<String, Object> rm, Map<String, String> abevtKpiMap, String endTime) {
-        String sql="select {1} from IE WHERE time<''{0}'' and time>=''{0}''-2s";
+    public static void setNetIEKpi(InfluxDbConnection connect, Map<String, Object> rm, Map<String, String> abevtKpiMap, String endTime,String id) {
+        String sql="select {1} from "+getTableName(id,"IE")+" WHERE time<''{0}'' and time>=''{0}''-2s";
         List<String> fregs=new ArrayList<>();
         rm.putAll(commonIEVlaueSet(connect, abevtKpiMap, endTime, sql, fregs));
     }
@@ -279,16 +280,15 @@ public class InfluxReportUtils {
     /**
      * 语音报表查询IE最近信息
      * @param connect
-     * @param rm
      * @param abevtKpiMap
      */
-    public static Map<String, Object> setVoiceIEKpi(InfluxDB connect, Map<String, Object> rm, Map<String, String> abevtKpiMap, String endTime) {
-        String sql="select {1} from IE WHERE time<''{0}''";
+    public static Map<String, Object> setVoiceIEKpi(InfluxDbConnection connect, Map<String, String> abevtKpiMap, String endTime,String id) {
+        String sql="select {1} from "+getTableName(id,"IE")+" WHERE time<''{0}''";
         List<String> fregs=new ArrayList<>();
         return commonIEVlaueSet(connect, abevtKpiMap, endTime, sql, fregs);
     }
 
-    public static Map<String, Object> commonIEVlaueSet(InfluxDB connect, Map<String, String> abevtKpiMap, String endTime, String sql, List<String> fregs) {
+    public static Map<String, Object> commonIEVlaueSet(InfluxDbConnection connect, Map<String, String> abevtKpiMap, String endTime, String sql, List<String> fregs) {
         abevtKpiMap.forEach((key,value)->{
             if(value.toLowerCase().contains("avg")){
                 fregs.add(value.replaceAll("avg\\s*\\(\\s*","MEAN\\("+FILED_PREFIX)+" as "+key);
@@ -302,7 +302,7 @@ public class InfluxReportUtils {
         });
         String kpi=fregs.stream().collect(Collectors.joining(","));
         sql=MessageFormat.format(sql,endTime,kpi);
-        QueryResult query = connect.query(new Query(sql));
+        QueryResult query = connect.query(sql);
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         if(result!=null&&!result.isEmpty()){
             return result.get(0);
@@ -310,7 +310,13 @@ public class InfluxReportUtils {
         return Collections.emptyMap();
     }
 
+    public static String getTableName(Long logid,String suffix){
+        return "Task_"+logid+"_"+suffix;
+    }
 
+    public static String getTableName(String logid,String suffix){
+        return "Task_"+logid+"_"+suffix;
+    }
     /**
      * 通过计算3公里范围内的小区距离计算出离坐标最近的小区
      * @param lat

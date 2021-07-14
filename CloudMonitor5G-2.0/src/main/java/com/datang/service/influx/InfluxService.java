@@ -121,11 +121,10 @@ public interface InfluxService {
     /**
      * 查询问题路段相关采样点
      * @param sql
-     * @param logId
      * @param timeLists
      * @return
      */
-    List<Map<String, Object>> queryRoadSampDatas(String sql,long logId, List<Map<String,String>> timeLists,String[] wheres);
+    List<Map<String, Object>> queryRoadSampDatas(String sql,List<Map<String,String>> timeLists,String[] wheres);
 
 
 

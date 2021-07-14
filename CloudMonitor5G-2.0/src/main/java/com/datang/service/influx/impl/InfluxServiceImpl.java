@@ -1,6 +1,7 @@
 package com.datang.service.influx.impl;
 
 import com.datang.common.influxdb.InfludbUtil;
+import com.datang.common.influxdb.InfluxDbConnection;
 import com.datang.common.util.DateComputeUtils;
 import com.datang.domain.platform.projectParam.Cell5G;
 import com.datang.domain.platform.projectParam.LteCell;
@@ -41,17 +42,6 @@ import java.util.stream.Collectors;
 @Service(value = "influxService")
 public class InfluxServiceImpl implements InfluxService {
 
-    @Value("${influxdb.url}")
-    private String url;
-    @Value("${influxdb.password}")
-    private String password;
-    @Value("${influxdb.username}")
-    private String username;
-    @Value("${influxdb.timeout}")
-    private long timeout;
-    @Value("${influxdb.radius}")
-    private long radius;
-
     @Value("${nr.cmcc.length}")
     private int cmccGlen;
     @Value("${nr.ctcc.length}")
@@ -59,7 +49,7 @@ public class InfluxServiceImpl implements InfluxService {
     @Value("${nr.cucc.length}")
     private int cuccGlen;
 
-    private static String MAPTRAILSQL="SELECT last({0}) as LTE_PCC_RSRP, last({1}) as LTE_PCC_SINR, last({2}) as NR_SS_RSRP, last({3}) as NR_SS_SINR,last(Lat) as Lat,last(Long) as Long FROM IE  where Lat!=''91.0'' and Long!=''181.0'' GROUP BY time(1s) fill(none)";
+    private static String MAPTRAILSQL="SELECT last({0}) as LTE_PCC_RSRP, last({1}) as LTE_PCC_SINR, last({2}) as NR_SS_RSRP, last({3}) as NR_SS_SINR,last(Lat) as Lat,last(Long) as Long FROM {4}  where Lat!=''91.0'' and Long!=''181.0'' GROUP BY time(1s) fill(none)";
     private static String[] refStrs=new String[]{"LTE PCC_RSRP","LTE PCC_SINR","NR SS-RSRP","NR SS-SINR"};
     private static String[] refStrsGrid=new String[]{"X","Y","Height","NR SS-RSRP","NR SS-RSRQ","NR SS-SINR","NR PCI","NR SSB ARFCN","NR ssb-Index[0]",
             "NR Ncell PCI[0]","NR Ncell ARFCNSSB_DL[0]","NR Ncell SS-RSRP[0]","NR Ncell SS-RSRQ[0]","NR Ncell SS-SINR[0]","NR Ncell ssb-index[0]",
@@ -79,23 +69,26 @@ public class InfluxServiceImpl implements InfluxService {
 
     private static DecimalFormat df = new DecimalFormat("#0.00");
 
-    private static String lineChartSql="SELECT IEValue_40028 as RSRP, IEValue_40035 as SINR, IEValue_50055 as SS_RSRP, IEValue_50056 as SS_SINR ,IEValue_43724 as \"LTE PDCP Thrput DL(Mbps)\",IEValue_43725 as \"LTE PDCP Thrput UL(Mbps)\",IEValue_50962 as \"NR PHY Thrput UL(Mbps)\",IEValue_51213 as \"NR PHY Thrput DL(Mbps)\" FROM IE";
+    private static String lineChartSql="SELECT IEValue_40028 as RSRP, IEValue_40035 as SINR, IEValue_50055 as SS_RSRP, IEValue_50056 as SS_SINR ,IEValue_43724 as \"LTE PDCP Thrput DL(Mbps)\",IEValue_43725 as \"LTE PDCP Thrput UL(Mbps)\",IEValue_50962 as \"NR PHY Thrput UL(Mbps)\",IEValue_51213 as \"NR PHY Thrput DL(Mbps)\" FROM {0}";
 
     @Override
     public List<Map<String, Object>> lineChartDatas(long logId, String startTime, String endTime) {
-        return commonQueryDatas(lineChartSql,logId,startTime,endTime);
+        String sql=MessageFormat.format(lineChartSql,InfluxReportUtils.getTableName(logId,"IE"));
+        return commonQueryDatas(sql,startTime,endTime);
     }
 
     @Override
     public List<Map<String, Object>> sigleDatas(long logId, String startTime, String endTime) {
-        return commonQueryDatas(sigSql,logId,startTime,endTime);
+        String sql=MessageFormat.format(sigSql,InfluxReportUtils.getTableName(logId,"SIG"));
+        return commonQueryDatas(sql,startTime,endTime);
     }
 
-    private static final String evtSql="SELECT evtName,Netmode,extrainfo from EVT";
-    private static final String sigSql="select Netmode,signalName,Dir,DetailMsg from SIG";
+    private static final String evtSql="SELECT evtName,Netmode,extrainfo from {0}";
+    private static final String sigSql="select Netmode,signalName,Dir,DetailMsg from {0}";
     @Override
     public List<Map<String, Object>> evtDatas(long logId, String startTime, String endTime) {
-        return commonQueryDatas(evtSql,logId,startTime,endTime);
+        String sql=MessageFormat.format(evtSql,InfluxReportUtils.getTableName(logId,"EVT"));
+        return commonQueryDatas(sql,startTime,endTime);
     }
 
    /* public static void main(String[] args) {
@@ -111,37 +104,34 @@ public class InfluxServiceImpl implements InfluxService {
     }*/
 
     private static final String synSql="select last(IEValue_40001) as ie_40001,last(IEValue_40002) as ie_40002,last(IEValue_40006) as ie_40006,last(IEValue_40007) as ie_40007,last(IEValue_40008) as ie_40008,last(IEValue_40009) as ie_40009,last(IEValue_40010) as ie_40010,last(IEValue_40014) as ie_40014,last(IEValue_40015) as ie_40015,last(IEValue_40016) as ie_40016,last(IEValue_40017) as ie_40017,last(IEValue_40019) as ie_40019,last(IEValue_40028) as ie_40028,last(IEValue_40031) as ie_40031,last(IEValue_40034) as ie_40034,last(IEValue_40035) as ie_40035,last(IEValue_40075) as ie_40075,last(IEValue_40139) as ie_40139,last(IEValue_40171) as ie_40171,last(IEValue_40203) as ie_40203,last(IEValue_40235) as ie_40235,last(IEValue_40299) as ie_40299,last(IEValue_44206) as ie_44206,last(IEValue_50001) as ie_50001,last(IEValue_50002) as ie_50002,last(IEValue_50003) as ie_50003,last(IEValue_50006) as ie_50006,last(IEValue_50007) as ie_50007,last(IEValue_50013) as ie_50013,last(IEValue_50015) as ie_50015,last(IEValue_50016) as ie_50016,last(IEValue_50017) as ie_50017,last(IEValue_50021) as ie_50021,last(IEValue_54321) as ie_54321,last(IEValue_54322) as ie_54322,last(IEValue_50055) as ie_50055,last(IEValue_50056) as ie_50056,last(IEValue_50057) as ie_50057,last(IEValue_50101) as ie_50101,last(IEValue_50165) as ie_50165,last(IEValue_50229) as ie_50229,last(IEValue_50293) as ie_50293,last(IEValue_53601) as ie_53601,last(IEValue_58000) as ie_58000,last(IEValue_58032) as ie_58032,last(IEValue_70005) as ie_70005,last(IEValue_70070) as ie_70070,last(IEValue_70525) as ie_70525" +
-            ",last(IEValue_58001) as ie_58001,last(IEValue_58033) as ie_58033,last(IEValue_50166) as ie_50166,last(IEValue_50102) as ie_50102,last(IEValue_70071) as ie_70071,last(IEValue_50230) as ie_50230,last(IEValue_50294) as ie_50294,last(IEValue_70526) as ie_70526,last(IEValue_70006) as ie_70006,last(IEValue_58002) as ie_58002,last(IEValue_58034) as ie_58034,last(IEValue_50167) as ie_50167,last(IEValue_50103) as ie_50103,last(IEValue_70072) as ie_70072,last(IEValue_50231) as ie_50231,last(IEValue_50295) as ie_50295,last(IEValue_70527) as ie_70527,last(IEValue_70007) as ie_70007,last(IEValue_58003) as ie_58003,last(IEValue_58035) as ie_58035,last(IEValue_50168) as ie_50168,last(IEValue_50104) as ie_50104,last(IEValue_70073) as ie_70073,last(IEValue_50232) as ie_50232,last(IEValue_50296) as ie_50296,last(IEValue_70528) as ie_70528,last(IEValue_70008) as ie_70008,last(IEValue_58004) as ie_58004,last(IEValue_58036) as ie_58036,last(IEValue_50169) as ie_50169,last(IEValue_50105) as ie_50105,last(IEValue_70074) as ie_70074,last(IEValue_50233) as ie_50233,last(IEValue_50297) as ie_50297,last(IEValue_70529) as ie_70529,last(IEValue_70009) as ie_70009,last(IEValue_58005) as ie_58005,last(IEValue_58037) as ie_58037,last(IEValue_50170) as ie_50170,last(IEValue_50106) as ie_50106,last(IEValue_70075) as ie_70075,last(IEValue_50234) as ie_50234,last(IEValue_50298) as ie_50298,last(IEValue_70530) as ie_70530,last(IEValue_70010) as ie_70010,last(IEValue_58006) as ie_58006,last(IEValue_58038) as ie_58038,last(IEValue_50171) as ie_50171,last(IEValue_50107) as ie_50107,last(IEValue_70076) as ie_70076,last(IEValue_50235) as ie_50235,last(IEValue_50299) as ie_50299,last(IEValue_70531) as ie_70531,last(IEValue_70011) as ie_70011,last(IEValue_58007) as ie_58007,last(IEValue_58039) as ie_58039,last(IEValue_50172) as ie_50172,last(IEValue_50108) as ie_50108,last(IEValue_70077) as ie_70077,last(IEValue_50236) as ie_50236,last(IEValue_50300) as ie_50300,last(IEValue_70532) as ie_70532,last(IEValue_70012) as ie_70012,last(IEValue_40076) as ie_40076,last(IEValue_44207) as ie_44207,last(IEValue_40140) as ie_40140,last(IEValue_40172) as ie_40172,last(IEValue_40204) as ie_40204,last(IEValue_40300) as ie_40300,last(IEValue_40236) as ie_40236,last(IEValue_40077) as ie_40077,last(IEValue_44208) as ie_44208,last(IEValue_40141) as ie_40141,last(IEValue_40173) as ie_40173,last(IEValue_40205) as ie_40205,last(IEValue_40301) as ie_40301,last(IEValue_40237) as ie_40237,last(IEValue_40078) as ie_40078,last(IEValue_44209) as ie_44209,last(IEValue_40142) as ie_40142,last(IEValue_40174) as ie_40174,last(IEValue_40206) as ie_40206,last(IEValue_40302) as ie_40302,last(IEValue_40238) as ie_40238,last(IEValue_40079) as ie_40079,last(IEValue_44210) as ie_44210,last(IEValue_40143) as ie_40143,last(IEValue_40175) as ie_40175,last(IEValue_40207) as ie_40207,last(IEValue_40303) as ie_40303,last(IEValue_40239) as ie_40239,last(IEValue_40080) as ie_40080,last(IEValue_44211) as ie_44211,last(IEValue_40144) as ie_40144,last(IEValue_40176) as ie_40176,last(IEValue_40208) as ie_40208,last(IEValue_40304) as ie_40304,last(IEValue_40240) as ie_40240,last(IEValue_40081) as ie_40081,last(IEValue_44212) as ie_44212,last(IEValue_40145) as ie_40145,last(IEValue_40177) as ie_40177,last(IEValue_40209) as ie_40209,last(IEValue_40305) as ie_40305,last(IEValue_40241) as ie_40241,last(IEValue_40082) as ie_40082,last(IEValue_44213) as ie_44213,last(IEValue_40146) as ie_40146,last(IEValue_40178) as ie_40178,last(IEValue_40210) as ie_40210,last(IEValue_40306) as ie_40306,last(IEValue_40242) as ie_40242 from IE";
+            ",last(IEValue_58001) as ie_58001,last(IEValue_58033) as ie_58033,last(IEValue_50166) as ie_50166,last(IEValue_50102) as ie_50102,last(IEValue_70071) as ie_70071,last(IEValue_50230) as ie_50230,last(IEValue_50294) as ie_50294,last(IEValue_70526) as ie_70526,last(IEValue_70006) as ie_70006,last(IEValue_58002) as ie_58002,last(IEValue_58034) as ie_58034,last(IEValue_50167) as ie_50167,last(IEValue_50103) as ie_50103,last(IEValue_70072) as ie_70072,last(IEValue_50231) as ie_50231,last(IEValue_50295) as ie_50295,last(IEValue_70527) as ie_70527,last(IEValue_70007) as ie_70007,last(IEValue_58003) as ie_58003,last(IEValue_58035) as ie_58035,last(IEValue_50168) as ie_50168,last(IEValue_50104) as ie_50104,last(IEValue_70073) as ie_70073,last(IEValue_50232) as ie_50232,last(IEValue_50296) as ie_50296,last(IEValue_70528) as ie_70528,last(IEValue_70008) as ie_70008,last(IEValue_58004) as ie_58004,last(IEValue_58036) as ie_58036,last(IEValue_50169) as ie_50169,last(IEValue_50105) as ie_50105,last(IEValue_70074) as ie_70074,last(IEValue_50233) as ie_50233,last(IEValue_50297) as ie_50297,last(IEValue_70529) as ie_70529,last(IEValue_70009) as ie_70009,last(IEValue_58005) as ie_58005,last(IEValue_58037) as ie_58037,last(IEValue_50170) as ie_50170,last(IEValue_50106) as ie_50106,last(IEValue_70075) as ie_70075,last(IEValue_50234) as ie_50234,last(IEValue_50298) as ie_50298,last(IEValue_70530) as ie_70530,last(IEValue_70010) as ie_70010,last(IEValue_58006) as ie_58006,last(IEValue_58038) as ie_58038,last(IEValue_50171) as ie_50171,last(IEValue_50107) as ie_50107,last(IEValue_70076) as ie_70076,last(IEValue_50235) as ie_50235,last(IEValue_50299) as ie_50299,last(IEValue_70531) as ie_70531,last(IEValue_70011) as ie_70011,last(IEValue_58007) as ie_58007,last(IEValue_58039) as ie_58039,last(IEValue_50172) as ie_50172,last(IEValue_50108) as ie_50108,last(IEValue_70077) as ie_70077,last(IEValue_50236) as ie_50236,last(IEValue_50300) as ie_50300,last(IEValue_70532) as ie_70532,last(IEValue_70012) as ie_70012,last(IEValue_40076) as ie_40076,last(IEValue_44207) as ie_44207,last(IEValue_40140) as ie_40140,last(IEValue_40172) as ie_40172,last(IEValue_40204) as ie_40204,last(IEValue_40300) as ie_40300,last(IEValue_40236) as ie_40236,last(IEValue_40077) as ie_40077,last(IEValue_44208) as ie_44208,last(IEValue_40141) as ie_40141,last(IEValue_40173) as ie_40173,last(IEValue_40205) as ie_40205,last(IEValue_40301) as ie_40301,last(IEValue_40237) as ie_40237,last(IEValue_40078) as ie_40078,last(IEValue_44209) as ie_44209,last(IEValue_40142) as ie_40142,last(IEValue_40174) as ie_40174,last(IEValue_40206) as ie_40206,last(IEValue_40302) as ie_40302,last(IEValue_40238) as ie_40238,last(IEValue_40079) as ie_40079,last(IEValue_44210) as ie_44210,last(IEValue_40143) as ie_40143,last(IEValue_40175) as ie_40175,last(IEValue_40207) as ie_40207,last(IEValue_40303) as ie_40303,last(IEValue_40239) as ie_40239,last(IEValue_40080) as ie_40080,last(IEValue_44211) as ie_44211,last(IEValue_40144) as ie_40144,last(IEValue_40176) as ie_40176,last(IEValue_40208) as ie_40208,last(IEValue_40304) as ie_40304,last(IEValue_40240) as ie_40240,last(IEValue_40081) as ie_40081,last(IEValue_44212) as ie_44212,last(IEValue_40145) as ie_40145,last(IEValue_40177) as ie_40177,last(IEValue_40209) as ie_40209,last(IEValue_40305) as ie_40305,last(IEValue_40241) as ie_40241,last(IEValue_40082) as ie_40082,last(IEValue_44213) as ie_44213,last(IEValue_40146) as ie_40146,last(IEValue_40178) as ie_40178,last(IEValue_40210) as ie_40210,last(IEValue_40306) as ie_40306,last(IEValue_40242) as ie_40242 from {0}";
     @Override
     public List<Map<String, Object>> syncIEWindow(Long logId, String time) {
         Date date = DateComputeUtils.formatDate(time);
         Date startDate = DateUtils.truncate(date, Calendar.SECOND);
-        return commonQueryDatas(synSql,logId,startDate,time);
+        String sql=MessageFormat.format(synSql,InfluxReportUtils.getTableName(logId,"IE"));
+        return commonQueryDatas(sql,startDate,time);
     }
+    @Autowired
+    private InfluxDbConnection influxDbConnection;
 
-    private static final String evtPointSql="SELECT evtName from EVT WHERE ";
+    private static final String evtPointSql="SELECT evtName from {0} WHERE ";
     @Override
     public List<Map<String, Object>> evtPointTimes(Long logId,String[] evts) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
+
         StringBuilder sb=new StringBuilder(evtPointSql);
         Set<String> cols=new HashSet<>();
         for(String evt:evts){
             cols.add("evtName='"+evt+"'");
         };
         sb.append(cols.stream().collect(Collectors.joining(" or ")));
-        InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-        connect.setDatabase("Task_"+logId);
-        QueryResult query=connect.query(new Query(sb.toString(), "Task_"+logId));
+        QueryResult query=influxDbConnection.query(MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(logId,"EVT")));
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
-        connect.close();
         return result;
     }
 
 
-    private List<Map<String, Object>> commonQueryDatas(String sql,long logId, Object startTime, Object endTime) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
+    private List<Map<String, Object>> commonQueryDatas(String sql, Object startTime, Object endTime) {
         StringBuilder sb=new StringBuilder(sql);
         if(startTime instanceof String){
             sb.append(" where time>='"+ DateComputeUtils.localToUTC(DateComputeUtils.formatDate(startTime.toString()))+"'");
@@ -153,21 +143,15 @@ public class InfluxServiceImpl implements InfluxService {
         }else if(endTime instanceof java.util.Date){
             sb.append(" AND time<'"+DateComputeUtils.localToUTC((Date)endTime)+"'");
         }
-
-        InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-        connect.setDatabase("Task_"+logId);
-        QueryResult query=connect.query(new Query(sb.toString(), "Task_"+logId));
+        QueryResult query=influxDbConnection.query(sql);
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         result.forEach(item->{
             item.put("time", DateComputeUtils.formatMicroTime(item.get("time").toString()));
         });
-        connect.close();
         return result;
     }
     @Override
-    public List<Map<String, Object>> queryRoadSampDatas(String sql,long logId,  List<Map<String,String>> timeLists,String[] wheres) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
+    public List<Map<String, Object>> queryRoadSampDatas(String sql, List<Map<String,String>> timeLists,String[] wheres) {
         List<String> timeWheres=new ArrayList<>();
         StringBuilder sbSql=new StringBuilder(sql);
         timeLists.forEach(item->{
@@ -189,36 +173,30 @@ public class InfluxServiceImpl implements InfluxService {
                 sbSql.append(MessageFormat.format(" and {0}!="+ -1+"",where));
             }
         }
-        InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-        connect.setDatabase("Task_"+logId);
-        QueryResult query=connect.query(new Query(sbSql.toString(), "Task_"+logId));
+        QueryResult query=influxDbConnection.query(sbSql.toString());
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
-        connect.close();
         return result;
     }
 
     @Override
     public List<Map<String, Object>> getMapTrailByLogFiles(List<String> fileLogIds) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
         List<String> columns=new ArrayList<>();
         Arrays.asList(refStrs).forEach(item->{
             columns.add(InfluxReportUtils.getColumnName(item));
         });
+
         String sql=MessageFormat.format(MAPTRAILSQL,columns.toArray());
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
         List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         fileLogIds.parallelStream().forEach(id->{
             Map<String,Object> resultMap=new HashMap<>();
-            InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-            connect.setDatabase("Task_"+id);
-            QueryResult query=connect.query(new Query(sql, "Task_"+id));
+            String s=MessageFormat.format(sql,InfluxReportUtils.getTableName(id,"IE"));
+            QueryResult query=influxDbConnection.query(s);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             resultMap.put("logName",id2LogBeanMap.get(Long.parseLong(id)).getFileName());
             resultMap.put("gpsData",result);
             results.add(resultMap);
-            connect.close();
         });
         return results;
     }
@@ -229,32 +207,26 @@ public class InfluxServiceImpl implements InfluxService {
     private GisAndListShowServie gisAndListShowServie;
     @Override
     public List<Map<String, Object>> getSampPointByLogFiles(List<String> ids) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
         List<Map<String, Object>> results=new ArrayList<>();
         List<String> sqlFreg=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
         sb.append("select last(Height) as Height,");
         InitialConfig.map2.forEach((key,value)->{
             if(InitialConfig.map.containsKey(key)){
-                System.out.println(InfluxReportUtils.getColumnName(key)+","+value);
                 sqlFreg.add("last("+InfluxReportUtils.getColumnName(key)+") as "+InfluxReportUtils.getColumnName(key));
             }
         });
         sqlFreg.add("last(Lat) as Lat");
         sqlFreg.add("last(Long) as Long");
         String collect = sqlFreg.stream().collect(Collectors.joining(","));
-        sb.append(collect).append(" from IE GROUP BY time(1s) fill(none)");
+        sb.append(collect).append(" from {0} GROUP BY time(1s) fill(none)");
         String sql=sb.toString();
-
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(ids.stream().collect(Collectors.joining(",")));
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
         ids.parallelStream().forEach(id->{
-            InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-            connect.setDatabase("Task_"+id);
-            QueryResult query=connect.query(new Query(sql, "Task_"+id));
+            String s=MessageFormat.format(sql,InfluxReportUtils.getTableName(id,"IE"));
+            QueryResult query=influxDbConnection.query(s);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
-            connect.close();
             results.addAll(fillColumns(id,result,id2LogBeanMap));
 
         });
@@ -263,8 +235,6 @@ public class InfluxServiceImpl implements InfluxService {
 
     @Override
     public List<Map<String, Object>> getEventByLogFiles(List<String> fileLogIds) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
         List<Map<String, Object>> results=new ArrayList<>();
         List<String> sqlFreg=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
@@ -281,12 +251,10 @@ public class InfluxServiceImpl implements InfluxService {
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
         fileLogIds.parallelStream().forEach(file->{
-            InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-            connect.setDatabase("Task_"+file);
+            String s=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"IE"));
+            QueryResult query=influxDbConnection.query(s);
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(file));
-            QueryResult query=connect.query(new Query(sql, "Task_"+file));
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
-            connect.close();
             results.addAll(fillColumns(result,testLogItem));
         });
         return results;
@@ -294,8 +262,6 @@ public class InfluxServiceImpl implements InfluxService {
 
 
     private List<Map<String, Object>> getEventKpisByLogFiles(String file) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
         StringBuilder sb=new StringBuilder();
         Collection<String> map = InitialConfig.kpiMap.values();
         Set<String> cols=new HashSet<>();
@@ -305,14 +271,11 @@ public class InfluxServiceImpl implements InfluxService {
             }
         });
         //改造去除group by
-        String sql="SELECT Lat,X,Y,evtName from EVT where {0}";
+        String sql="SELECT Lat,X,Y,evtName from {1} where {0}";
         sb.append(cols.stream().collect(Collectors.joining(" or ")));
-        String execSql=MessageFormat.format(sql,sb.toString());
-        InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-        connect.setDatabase("Task_"+file);
-        QueryResult query=connect.query(new Query(execSql, "Task_"+file));
+        String execSql=MessageFormat.format(sql,sb.toString(),InfluxReportUtils.getTableName(file,"IE"));
+        QueryResult query=influxDbConnection.query(execSql);
         List<Map<String, Object>> temp = InfludbUtil.paraseQueryResult(query);
-        connect.close();
         Map<String, List<Map<String, Object>>> collect = temp.stream().collect(Collectors.groupingBy(item -> item.get("X") + "-" + item.get("Y") + "-" + item.get("evtName")));
         List<Map<String, Object>> result=new ArrayList<>();
         collect.forEach((key,value)->{
@@ -349,8 +312,6 @@ public class InfluxServiceImpl implements InfluxService {
     private static String samplon ="120.523456";
     @Override
     public List<Map.Entry<String, List<Map<String, Object>>>>   getGridDatasByLogFiles(List<String> fileLogIds) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
         List<Map<String, Object>> results=new ArrayList<>();
         List<String> sqlFreg=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
@@ -365,7 +326,7 @@ public class InfluxServiceImpl implements InfluxService {
         sqlFreg.add("Long as Lon");
         sqlFreg.add("Lat");
         String collect = sqlFreg.stream().collect(Collectors.joining(","));
-        sb.append(collect).append(" from IE where X!=-1 AND Y!=-1");
+        sb.append(collect).append(" from {0} where X!=-1 AND Y!=-1");
 
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Assert.notEmpty(testLogItems);
@@ -377,10 +338,8 @@ public class InfluxServiceImpl implements InfluxService {
             sb.append(" AND time>='"+ DateComputeUtils.localToUTC(testLogItem.getStartDate())+"' AND time<='"+DateComputeUtils.localToUTC(testLogItem.getEndDate())+"'");
             String sql=sb.toString();
             Map<String,Object> opratorMap=new HashMap<>();
-            InfluxDB connect = InfluxDBFactory.connect(url, username, password,client);
-            connect.setDatabase("Task_"+file);
-
-            QueryResult query=connect.query(new Query(sql, "Task_"+file));
+            String execSql=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"IE"));
+            QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             opratorMap.put("operator",testLogItem.getOperatorName());
             opratorMap.put("city",testLogItem.getCity());
@@ -389,7 +348,6 @@ public class InfluxServiceImpl implements InfluxService {
             opratorMap.put("evtList",eventKpisByLogFiles);
             eventKpis.addAll(eventKpisByLogFiles);
             opratorMaps.add(opratorMap);
-            connect.close();
         });
         Map<String, List<Map<String, Object>>> totalDatas = opratorMaps.stream().collect(Collectors.groupingBy(item -> item.get("operator") + "_" + item.get("city")));
         totalDatas.entrySet().stream().parallel().forEach(entry-> {
@@ -1311,8 +1269,6 @@ public class InfluxServiceImpl implements InfluxService {
 
     @Override
     public List<Map<String, Object>> getAbEvtAnaList(List<String> fileLogIds) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
         List<Map<String, Object>> results=new ArrayList<>();
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Assert.notEmpty(testLogItems);
@@ -1324,8 +1280,6 @@ public class InfluxServiceImpl implements InfluxService {
             List<LteCell> lteCells = gisAndListShowServie.getLteCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
             Map<String, List<LteCell>> ltePciFcn2BeanMap = lteCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            InfluxDB connect = InfluxDBFactory.connect(url, username, password, client);
-            connect.setDatabase("Task_" + id);
             Map<String,AbEventConfig> evtCnNameMap=new HashMap<>();
             InitialConfig.abEventConfigs.stream().forEach(item->{
                 Arrays.stream(item.getTriggerEvt()).forEach(evt->{
@@ -1336,7 +1290,7 @@ public class InfluxServiceImpl implements InfluxService {
             });
             List<String> sqlFreg=new ArrayList<>();
             StringBuilder sb=new StringBuilder();
-            sb.append("SELECT evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr from EVT where ");
+            sb.append("SELECT evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr from {0} where ");
             Set<String> evts = Arrays.asList(startEvts).stream().collect(Collectors.toSet());
             Set<String> allevts = Arrays.asList(swfailureEvts).stream().collect(Collectors.toSet());
             allevts.addAll(evtCnNameMap.keySet());
@@ -1346,7 +1300,8 @@ public class InfluxServiceImpl implements InfluxService {
                 sqlFreg.add("evtName ='"+item+"'");
             });
             sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
-            QueryResult query = connect.query(new Query(sb.toString()));
+            String execSql=MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(file,"EVT"));
+            QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             result.forEach(obj->{
                 if(evtCnNameMap.keySet().contains(obj.get("evtName").toString())){
@@ -1370,15 +1325,14 @@ public class InfluxServiceImpl implements InfluxService {
                     List<Map<String, Object>> pre2sDatas = DateComputeUtils.getPre2sDatas(result, obj.get("time").toString());
                     setEvtMsg(pre2sDatas,startEvtDatas,rm,nrPciFcn2BeanMap,ltePciFcn2BeanMap);
                     if("lte".equalsIgnoreCase(InfluxReportUtils.getNetWork(obj.get("Netmode")))){
-                        InfluxReportUtils.setAbevtKpi(connect,rm,InitialConfig.abevtLteKpiMap,obj.get("time").toString());
+                        InfluxReportUtils.setAbevtKpi(rm,InitialConfig.abevtLteKpiMap,obj.get("time").toString());
                     }
                     if("nr".equalsIgnoreCase(InfluxReportUtils.getNetWork(obj.get("Netmode")))){
-                        InfluxReportUtils.setAbevtKpi(connect,rm,InitialConfig.abevtNrKpiMap,obj.get("time").toString());
+                        InfluxReportUtils.setAbevtKpi(rm,InitialConfig.abevtNrKpiMap,obj.get("time").toString());
                     }
                     results.add(rm);
                 }
             });
-            connect.close();
         });
         return results;
     }
@@ -1591,8 +1545,6 @@ public class InfluxServiceImpl implements InfluxService {
     String[] esfFailCauses=new String[]{"Mobility From NR Failure","N2L_REDIRECT_FAIL","LTE TAU Failure"};
     @Override
     public List<Map<String, Object>> getVoiceBusiReports(List<String> fileLogIds) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .readTimeout(timeout,TimeUnit.SECONDS);
         List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Assert.notEmpty(testLogItems);
@@ -1602,8 +1554,6 @@ public class InfluxServiceImpl implements InfluxService {
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(file.trim()));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             List<LteCell> lteCells = gisAndListShowServie.getLteCellsByRegion(testLogItem.getCity());
-            InfluxDB connect = InfluxDBFactory.connect(url, username, password, client);
-            connect.setDatabase("Task_" + id);
             List<VoiceBusiConfig> activeConfigs = InitialConfig.voiceBusiConfigs.stream().filter(item -> item.getBusiType().equalsIgnoreCase("主叫")).collect(Collectors.toList());
             List<VoiceBusiConfig> positiveConfigs =InitialConfig.voiceBusiConfigs.stream().filter(item->item.getBusiType().equalsIgnoreCase("被叫")).collect(Collectors.toList());
             List<String[]> activeColumnList=new ArrayList<>();
@@ -1619,9 +1569,8 @@ public class InfluxServiceImpl implements InfluxService {
             positiveColumnList.add(positiveCallEndEvt);
             positiveColumnList.add(positiveCallFailEvt);
             positiveColumnList.add(positiveDropFailEvt);
-            callAna(results, testLogItem, nrCells, lteCells, connect, activeConfigs,  activeColumnList,"主叫");
-            callAna(results, testLogItem, nrCells, lteCells, connect, positiveConfigs, positiveColumnList,"被叫");
-            connect.close();
+            callAna(results, testLogItem, nrCells, lteCells,activeConfigs,  activeColumnList,"主叫",id);
+            callAna(results, testLogItem, nrCells, lteCells,positiveConfigs, positiveColumnList,"被叫",id);
         });
         return results.parallelStream().sorted(Comparator.comparing((Map<String, Object> f) -> f.get("basic01").toString()).thenComparing((Map<String, Object> f) -> f.get("call02").toString())).collect(Collectors.toList());
     }
@@ -1659,22 +1608,23 @@ public class InfluxServiceImpl implements InfluxService {
 
     /**
      * 呼叫分析
+     * @param connect
      * @param results
      * @param testLogItem
      * @param nrCells
      * @param lteCells
-     * @param connect
      * @param activeConfigs
      * @param activeColumnList
      * @param busiType
+     * @param id
      */
-    void callAna(List<Map<String, Object>> results, TestLogItem testLogItem, List<Cell5G> nrCells, List<LteCell> lteCells, InfluxDB connect, List<VoiceBusiConfig> activeConfigs,List<String[]> activeColumnList,String busiType) {
+    void callAna(List<Map<String, Object>> results, TestLogItem testLogItem, List<Cell5G> nrCells, List<LteCell> lteCells, List<VoiceBusiConfig> activeConfigs, List<String[]> activeColumnList, String busiType, String id) {
         Set<String> collect = activeConfigs.stream().map(VoiceBusiConfig::getTriggerEvt).collect(Collectors.toSet());
         Set<String> allevts = activeColumnList.stream().flatMap(strs -> Arrays.stream(strs)).collect(Collectors.toSet());
         allevts.addAll(collect);
         List<String> sqlFreg=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
-        sb.append("SELECT MsgID,evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,extrainfo,TimeStamp from EVT where ");
+        sb.append("SELECT MsgID,evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,extrainfo,TimeStamp from {0} where ");
         allevts.add("EPSFallBack Start");
         allevts.add("NR Event B1");
         allevts.add("NR Event B2");
@@ -1687,7 +1637,7 @@ public class InfluxServiceImpl implements InfluxService {
             sqlFreg.add("evtName ='"+i+"'");
         });
         sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
-        QueryResult query = connect.query(new Query(sb.toString()));
+        QueryResult query = influxDbConnection.query(MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(id,"EVT")));
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         List<List<Map<String, Object>>> datasBySplitEvt = DateComputeUtils.getDatasBySplitEvt(result, collect);
 
@@ -1703,17 +1653,17 @@ public class InfluxServiceImpl implements InfluxService {
                 rm.put(esfbColumnIndexs[15], evtRecords.stream().collect(Collectors.joining(",")));
                 rm.put(esfbColumnIndexs[16],epsFallBack_failure.get("Long"));
                 rm.put(esfbColumnIndexs[17],epsFallBack_failure.get("Lat"));
-                setNrVoiceIEKpi(connect,nrVoiceMap,testLogItem, rm, epsFallBack_failure,"lte");
-                setLteVoiceIEKpi(connect,lteVoiceMap,testLogItem, rm, epsFallBack_failure,"NR");
+                setNrVoiceIEKpi(influxDbConnection,nrVoiceMap,testLogItem, rm, epsFallBack_failure,"lte",id);
+                setLteVoiceIEKpi(influxDbConnection,lteVoiceMap,testLogItem, rm, epsFallBack_failure,"NR",id);
             }else{
                 for(int i=13;i<34;i++){
                     rm.put(esfbColumnIndexs[i],null);
                 }
             }
             //掉话业务
-            dropBusi(nrCells, lteCells, connect, objs, rm);
+            dropBusi(nrCells, lteCells, objs, rm,id);
             //fr失败
-            frFailBusi(connect, objs, rm);
+            frFailBusi( objs, rm,id);
             results.add(rm);
         }
     }
@@ -1831,7 +1781,7 @@ public class InfluxServiceImpl implements InfluxService {
      * @param objs
      * @param rm
      */
-    private void frFailBusi(InfluxDB connect, List<Map<String,Object>> objs, Map<String,Object> rm) {
+    private void frFailBusi(InfluxDB connect, List<Map<String,Object>> objs, Map<String,Object> rm,String id) {
         List<String> dropFailEvts=new ArrayList<>();
         dropFailEvts.add("Fast_Return_Failure");
         Map<String, Object> frs=null;
@@ -1854,7 +1804,7 @@ public class InfluxServiceImpl implements InfluxService {
                 Map<String, String> abevtKpiMap=new HashMap<>();
                 abevtKpiMap.put(frColumnIndexs[5],"avg(50055)");
                 abevtKpiMap.put(frColumnIndexs[6],"avg(50056)");
-                InfluxReportUtils.setNetIEKpi(connect,rm,abevtKpiMap,time1);
+                InfluxReportUtils.setNetIEKpi(influxDbConnection,rm,abevtKpiMap,time1,id);
                 rm.put(frColumnIndexs[10],null);
                 rm.put(frColumnIndexs[11],null);
                 break;
@@ -1884,7 +1834,7 @@ public class InfluxServiceImpl implements InfluxService {
      * @param objs
      * @param rm
      */
-    void dropBusi(List<Cell5G> nrCells, List<LteCell> lteCells, InfluxDB connect, List<Map<String, Object>> objs, Map<String, Object> rm) {
+    void dropBusi(List<Cell5G> nrCells, List<LteCell> lteCells, InfluxDB connect, List<Map<String, Object>> objs, Map<String, Object> rm,String id) {
         List<String> dropFailEvts=new ArrayList<>();
         dropFailEvts.addAll(Arrays.asList(activeDropFailEvt));
         dropFailEvts.addAll(Arrays.asList(positiveDropFailEvt));
@@ -1920,7 +1870,7 @@ public class InfluxServiceImpl implements InfluxService {
                     Map<String, String> abevtKpiMap=new HashMap<>();
                     abevtKpiMap.put(dropColumnIndexs[8],"avg(40028)");
                     abevtKpiMap.put(dropColumnIndexs[9],"avg(40035)");
-                    InfluxReportUtils.setNetIEKpi(connect,rm,abevtKpiMap,time1);
+                    InfluxReportUtils.setNetIEKpi(influxDbConnection,rm,abevtKpiMap,time1,id);
                 }
                 //nr
                 if(netType.equalsIgnoreCase("8")&&nrPlanParamPojos!=null){
@@ -1931,7 +1881,7 @@ public class InfluxServiceImpl implements InfluxService {
                     Map<String, String> abevtKpiMap=new HashMap<>();
                     abevtKpiMap.put(dropColumnIndexs[8],"avg(50055)");
                     abevtKpiMap.put(dropColumnIndexs[9],"avg(50056)");
-                    InfluxReportUtils.setNetIEKpi(connect,rm,abevtKpiMap,time1);
+                    InfluxReportUtils.setNetIEKpi(influxDbConnection,rm,abevtKpiMap,time1,id);
                 }
                 rm.put(dropColumnIndexs[6],pci);
                 rm.put(dropColumnIndexs[7],fcn);
@@ -1944,7 +1894,7 @@ public class InfluxServiceImpl implements InfluxService {
             Map<String, String> abevtKpiMap=new HashMap<>();
             abevtKpiMap.put(dropColumnIndexs[12],"是");
             abevtKpiMap.put(dropColumnIndexs[13],"LAST(40009)");
-            InfluxReportUtils.setVoiceIEKpi(connect,rm,abevtKpiMap, tauFailObj.get("time").toString());
+            InfluxReportUtils.setVoiceIEKpi(influxDbConnection,abevtKpiMap, tauFailObj.get("time").toString(),id);
         }
 
     }
@@ -2073,8 +2023,8 @@ public class InfluxServiceImpl implements InfluxService {
         lteVoiceMap.put("epsfb33","LAST(40056)");
         lteVoiceMap.put("epsfb34","LAST(43368)");
     }
-    private void setNrVoiceIEKpi(InfluxDB conn,Map<String, String> columnMap, TestLogItem testLogItem, Map<String, Object> rm, Map<String, Object> epsFallBack_failure,String destnetwork) {
-        Map<String, Object> map = InfluxReportUtils.setVoiceIEKpi(conn, rm, columnMap, epsFallBack_failure.get("time").toString());
+    private void setNrVoiceIEKpi(Map<String, String> columnMap, TestLogItem testLogItem, Map<String, Object> rm, Map<String, Object> epsFallBack_failure,String destnetwork,String id) {
+        Map<String, Object> map = InfluxReportUtils.setVoiceIEKpi(influxDbConnection, rm, columnMap, epsFallBack_failure.get("time").toString(),id);
         if(rm.get(esfbColumnIndexs[13]).toString().equalsIgnoreCase(destnetwork)){
             rm.putAll(map);
         }else{

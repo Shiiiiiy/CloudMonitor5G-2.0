@@ -1,6 +1,8 @@
 package com.datang.common.influxdb;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @ClassNmae lc
@@ -10,10 +12,9 @@ import lombok.Data;
  * @Version 1.0
  **/
 @Data
+@Configuration
 public class InfluxDbProperties {
-    private String url;
-    private String userName;
-    private String password;
+    @Value("${influxdb.db}")
     private String database;
     private String retentionPolicy = "autogen";
     private String retentionPolicyTime = "0s";
@@ -21,4 +22,15 @@ public class InfluxDbProperties {
     private int flushDuration = 1000;
     private int jitterDuration = 0;
     private int bufferLimit = 10000;
+
+    @Value("${influxdb.url}")
+    private String url;
+    @Value("${influxdb.password}")
+    private String password;
+    @Value("${influxdb.username}")
+    private String username;
+    @Value("${influxdb.timeout}")
+    private long timeout;
+    @Value("${influxdb.radius}")
+    private long radius;
 }

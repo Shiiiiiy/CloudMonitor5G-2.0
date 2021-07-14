@@ -83,7 +83,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                         }
                     }
                 }else{
-                    sampDatas=queryRoadSampDatas(BASE_ROAD_SAMP_SQL, Long.parseLong(id), Collections.emptyList(),values);
+                    sampDatas=queryRoadSampDatas(sql, Collections.emptyList(),values);
                     //问题路段算法
                     Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                     if(!tempR.isEmpty()){

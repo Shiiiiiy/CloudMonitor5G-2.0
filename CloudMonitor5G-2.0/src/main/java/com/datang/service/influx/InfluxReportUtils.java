@@ -254,15 +254,15 @@ public class InfluxReportUtils {
      * @param rm
      * @param abevtKpiMap
      */
-    public static void setAbevtKpi(Map<String, Object> rm, Map<String, String> abevtKpiMap, String endTime) {
-        String sql="select {1} from IE WHERE time<''{0}'' and time>=''{0}''-2s";
+    public static void setAbevtKpi(InfluxDbConnection connect,Map<String, Object> rm, Map<String, String> abevtKpiMap, String endTime,String id) {
+        String sql="select {1} from "+getTableName(id,"IE")+" WHERE time<''{0}'' and time>=''{0}''-2s";
         List<String> fregs=new ArrayList<>();
         if(rm.get("exsistTauFail").toString().equalsIgnoreCase("是")){
             fregs.add(FILED_PREFIX+"40009 as srcTac");
         }else{
             rm.put("srcTac",null);
         }
-        rm.putAll(commonIEVlaueSet(abevtKpiMap, endTime, sql, fregs));
+        rm.putAll(commonIEVlaueSet(connect,abevtKpiMap, endTime, sql, fregs));
     }
 
     /**

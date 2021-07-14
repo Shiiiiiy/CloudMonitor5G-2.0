@@ -325,7 +325,7 @@ public class TerminalAction extends PageAction implements ModelDriven<Terminal> 
 		Map<String,Map<String, Object>> fullCuccTrafficMap = new HashMap<>();
 
 		for(Map<String, Object> m:fullCuccTraffic){
-			Object boxId = m.get("BOX_ID");
+			Object boxId = m.get("box_id");
 			if(boxId==null) continue;
 			fullCuccTrafficMap.put(boxId.toString(),m);
 		}
@@ -335,10 +335,10 @@ public class TerminalAction extends PageAction implements ModelDriven<Terminal> 
 			String boxId = t.getBoxId();
 			if(boxId==null) continue;
 			Map<String, Object> stringObjectMap = fullCuccTrafficMap.get(boxId);
-			t.setException(getMap(stringObjectMap,"EVENTTYPE"));
-			t.setLongitude(getMap(stringObjectMap,"LONGITUDE"));
-			t.setLatitude(getMap(stringObjectMap,"LATITUDE"));
-			t.setFileName(getMap(stringObjectMap,"FILE_NAME"));
+			t.setException(getMap(stringObjectMap,"eventtype"));
+			t.setLongitude(getMap(stringObjectMap,"longitude"));
+			t.setLatitude(getMap(stringObjectMap,"latitude"));
+			t.setFileName(getMap(stringObjectMap,"file_name"));
 		}
 		return terminalList;
 	}

@@ -42,13 +42,13 @@ public class InfluxDbConnection {
         this.retentionPolicy = retentionPolicy == null || "".equals(retentionPolicy) ? "autogen" : retentionPolicy;
         this.retentionPolicyTime = retentionPolicyTime == null || "".equals(retentionPolicyTime) ? "0s" : retentionPolicyTime;
         this.batchOptions = batchOptions == null ? BatchOptions.DEFAULTS : batchOptions;
-        this.influxdb = buildInfluxDb();
+        this.influxdb = buildInfluxDb(client);
         this.client=client;
     }
 
-    public InfluxDB buildInfluxDb() {
+    public InfluxDB buildInfluxDb(OkHttpClient.Builder client) {
         if (influxdb == null) {
-            influxdb = InfluxDBFactory.connect(url, userName, password);
+            influxdb = InfluxDBFactory.connect(url, userName, password,client);
             try {
                 createDatabase(this.database);
             } catch (Exception e) {

@@ -122,7 +122,7 @@ public class InfluxServiceImpl implements InfluxService {
         StringBuilder sb=new StringBuilder(evtPointSql);
         Set<String> cols=new HashSet<>();
         for(String evt:evts){
-            cols.add("evtName='"+evt+"'");
+            cols.add("evtName=''"+evt+"''");
         };
         sb.append(cols.stream().collect(Collectors.joining(" or ")));
         QueryResult query=influxDbConnection.query(MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(logId,"EVT")));
@@ -334,7 +334,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<Map<String, Object>> eventKpis=Collections.synchronizedList(new ArrayList<>());
         fileLogIds.parallelStream().forEach(file->{
             TestLogItem testLogItem= id2LogBeanMap.get(Long.parseLong(file));
-            sb.append(" AND time>='"+ DateComputeUtils.localToUTC(testLogItem.getStartDate())+"' AND time<='"+DateComputeUtils.localToUTC(testLogItem.getEndDate())+"'");
+            sb.append(" AND time>=''"+ DateComputeUtils.localToUTC(testLogItem.getStartDate())+"'' AND time<=''"+DateComputeUtils.localToUTC(testLogItem.getEndDate())+"''");
             String sql=sb.toString();
             Map<String,Object> opratorMap=new HashMap<>();
             String execSql=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"IE"));

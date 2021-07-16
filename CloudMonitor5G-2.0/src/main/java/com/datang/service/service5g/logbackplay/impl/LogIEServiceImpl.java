@@ -36,7 +36,7 @@ public class LogIEServiceImpl implements LogIEService {
         List<Map<String, Object>> sigleOrderList = list.stream().sorted(Comparator.comparing((Map<String, Object> item) -> item.get("time").toString(), new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
-                return DateComputeUtils.toUtcDate(o1).before(DateComputeUtils.toUtcDate(o2)) ? -1 : 1;
+                return DateComputeUtils.formatDate(o1).before(DateComputeUtils.formatDate(o2)) ? -1 : 1;
             }
         }).thenComparingInt(item->Integer.parseInt(item.get("MsgID").toString()))).collect(Collectors.toList());
         return sigleOrderList;

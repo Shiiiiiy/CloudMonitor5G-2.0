@@ -139,7 +139,7 @@ public class InitialConfig {
                     if(ss[0].equalsIgnoreCase("lte")){
                         abevtNrKpiMap.put(ss[1],ss[3]);
                     }
-                    abevtKpiMap2.put(ss[1],ss[3]);
+                    abevtKpiMap2.put(ss[1],ss[2]);
                 }
             }
 

@@ -1962,7 +1962,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         List<Map<String, Object>> results1=new ArrayList<>();
         fileLogIds.parallelStream().forEach(id->{
-            String execSql=MessageFormat.format(sql,id);
+            String execSql=MessageFormat.format(sql,InfluxReportUtils.getTableName(id,"IE"));
             QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             result.forEach(item->{

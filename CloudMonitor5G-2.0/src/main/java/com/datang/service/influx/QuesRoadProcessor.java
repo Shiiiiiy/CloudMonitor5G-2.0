@@ -29,9 +29,10 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     @Autowired
     private UnicomLogItemService unicomLogItemService;
     //问题路段获取基础采样点模板sql
-    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM {0} where  Long!='-1' and Lat!='-1' ";
+    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM {0} where  Long!=''-1'' and Lat!=''-1'' ";
     private static Map<String,String[]> WHERE_MAP=new HashMap<>();
     private static Map<String,String[]> EVTS_MAP=new HashMap<>();
+
     static {
         WHERE_MAP.put("上行质差路段",new String[]{"IEValue_50097","IEValue_54333"});
         WHERE_MAP.put("下行质差路段",new String[]{"IEValue_50055","IEValue_50056"});

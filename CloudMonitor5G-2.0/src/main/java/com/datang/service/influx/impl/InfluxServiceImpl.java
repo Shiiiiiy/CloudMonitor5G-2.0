@@ -83,8 +83,8 @@ public class InfluxServiceImpl implements InfluxService {
         return commonQueryDatas(sql,startTime,endTime);
     }
 
-    private static final String evtSql="SELECT evtName,Netmode,extrainfo from {0}";
-    private static final String sigSql="select Netmode,signalName,Dir,DetailMsg from {0}";
+    private static final String evtSql="SELECT evtName,Netmode,extrainfo,MsgID from {0}";
+    private static final String sigSql="select Netmode,signalName,Dir,DetailMsg,MsgID from {0}";
     @Override
     public List<Map<String, Object>> evtDatas(long logId, String startTime, String endTime) {
         String sql=MessageFormat.format(evtSql,InfluxReportUtils.getTableName(logId,"EVT"));
@@ -143,7 +143,7 @@ public class InfluxServiceImpl implements InfluxService {
         }else if(endTime instanceof java.util.Date){
             sb.append(" AND time<'"+DateComputeUtils.localToUTC((Date)endTime)+"'");
         }
-        QueryResult query=influxDbConnection.query(sql);
+        QueryResult query=influxDbConnection.query(sb.toString());
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         result.forEach(item->{
             item.put("time", DateComputeUtils.formatMicroTime(item.get("time").toString()));

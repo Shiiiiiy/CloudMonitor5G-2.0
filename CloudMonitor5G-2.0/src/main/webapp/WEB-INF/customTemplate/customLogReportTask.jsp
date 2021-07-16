@@ -48,10 +48,10 @@
 					{field:'nam',width:80,align:'center',title:'操作',
 						formatter:function(value,row,index){
 							if(row.taskStatus == 2 || row.taskStatus == 3 || row.taskStatus == null){
-								return '<a href="#" title="查看详情" onclick="seeInfo('+row.id+');" >查看详情</a>'
-										+'&nbsp;&nbsp;<a href="#" title="报表下载" onclick="batchDownload('+row.id+');" >报表下载</a>';
+								return '<a href="#" title="报表下载" onclick="batchDownload('+row.id+');" >报表下载</a>';
 							}else{
-								return '<a style="opacity: 0.2" href="javascript:return false;" title="查看详情" onclick="return false;" >查看详情</a>';
+								return '';
+								//	return '<a style="opacity: 0.2" href="javascript:return false;" title="查看详情" onclick="return false;" >查看详情</a>';
 							}
 							//return '<a href="#" title="查看详情" onclick="seeInfo('+row.id+');" >查看详情</a>';
 						}

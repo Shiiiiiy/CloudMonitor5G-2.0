@@ -57,8 +57,14 @@
 		if(!src){
 			$("#mapIframe").attr("src", "${pageContext.request.contextPath}/map/GpsTrace.html");
 		}
-		
-		
+
+		setTimeout(function () {
+			var data = {
+				'logids':ids
+			}
+			document.getElementById('mapIframe').contentWindow.postMessage(data);
+		},2000)
+	/**
 		$.ajax({
  	             type: "GET",
  	             url: "${pageContext.request.contextPath}/unicomLogItem/mapTrail",
@@ -68,6 +74,7 @@
  					document.getElementById('mapIframe').contentWindow.postMessage(data,'*'); 		   				
                 }
    	    });
+	 **/
 
 	}
 	

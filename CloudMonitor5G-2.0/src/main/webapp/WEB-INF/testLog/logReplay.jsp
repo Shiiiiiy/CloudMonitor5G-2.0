@@ -93,7 +93,9 @@
 							if(index==data.length-1 && item){
 								MyPlayer.Data.endTime = item.time;
 							}
-							ieData[item.time] = item;
+							if(item){
+								ieData[item.time] = item;
+							}
 						});
 						Jh.Data.ieData =  ieData;
 					}
@@ -358,7 +360,10 @@
 							if(index==data.length-1 && item){
 								MyPlayer.Data.endTime = item.time;
 							}
-							ieData[item.time] = item;
+							if(item){
+								ieData[item.time] = item;
+							}
+
 						});
 						Jh.Data.ieData =  ieData;
 					}

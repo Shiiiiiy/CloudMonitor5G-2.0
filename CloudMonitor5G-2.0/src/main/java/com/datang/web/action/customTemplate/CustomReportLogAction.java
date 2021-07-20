@@ -79,9 +79,9 @@ import net.sf.json.JSONObject;
 
 /**
  * 5G统计任务Action
- * 
+ *
  * @author _YZP
- * 
+ *
  */
 @SuppressWarnings("all")
 @Controller
@@ -94,7 +94,7 @@ public class CustomReportLogAction extends PageAction implements
 	 */
 	@Autowired
 	private CustomLogReportService customLogReportService;
-	
+
 	/**
 	 * 自定义报表模板服务
 	 */
@@ -120,14 +120,14 @@ public class CustomReportLogAction extends PageAction implements
 	private Long idLong;
 
 	private String reportType;
-	
+
 	private String templateName;
-	
+
 	/**
 	 * 要导出的sheet名
 	 */
 	private String sheetName;
-	
+
 	/**
 	 * 目标界面
 	 */
@@ -139,7 +139,7 @@ public class CustomReportLogAction extends PageAction implements
 
 	/**
 	 * 跳转到 list界面
-	 * 
+	 *
 	 * @return
 	 */
 	public String listUI() {
@@ -189,12 +189,12 @@ public class CustomReportLogAction extends PageAction implements
 				if (unionTeplateSet!=null && unionTeplateSet.size()>0) {
 					for (String name : unionTeplateSet) {
 						//  '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%'
-						if(name!=null && (name.contains("指标报表_CQT模板") || name.contains("指标报表_DT模板"))){
+				//		if(name!=null && (name.contains("指标报表_CQT模板") || name.contains("指标报表_DT模板"))){
 							Map<String,Object> map = new HashMap<String,Object>();
 							map.put("valueField",name);
 							map.put("textField",name);
 							templateList.add(map);
-						}
+				//		}
 
 					}
 				}
@@ -208,10 +208,10 @@ public class CustomReportLogAction extends PageAction implements
 		}
 		return "seeReport";
 	}
-	
+
 	/**
 	 * 跳转到添加界面
-	 * 
+	 *
 	 * @return
 	 */
 	public String goAdd() {
@@ -223,7 +223,7 @@ public class CustomReportLogAction extends PageAction implements
 		return "add";
 	}
 
-	
+
 	/**
 	 * 跳转到自定义报表报表统计界面
 	 * @return
@@ -231,10 +231,10 @@ public class CustomReportLogAction extends PageAction implements
 	public String goTemplateExcel() {
 		HttpSession session = ServletActionContext.getRequest()
 				.getSession();
-			session.setAttribute("templateName", templateName);
+		session.setAttribute("templateName", templateName);
 		return "templateExcel";
 	}
-	
+
 
 	/**
 	 * 多条件查询任务
@@ -259,7 +259,7 @@ public class CustomReportLogAction extends PageAction implements
 
 	/**
 	 * 删除多个统计任务
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -282,7 +282,7 @@ public class CustomReportLogAction extends PageAction implements
 		return ReturnType.JSON;
 	}
 
-	
+
 	/**
 	 * 输出自定义模板
 	 * @author lucheng
@@ -352,13 +352,13 @@ public class CustomReportLogAction extends PageAction implements
 				exportFilePath = customTemplateService.modifyExcelValue(page);
 			}
 
-			
+
 			List<Map<String, String>> readExcelToMap = ReadExcelToHtml.readExcelToMap(exportFilePath, true);
 
 			//修改统计状态
 			task.setTaskStatus("3");
 			customLogReportService.update(task);
-			
+
 			ActionContext.getContext().getValueStack().set("dataList", readExcelToMap);
 		} catch (ApplicationException e) {
 			e.printStackTrace();
@@ -366,10 +366,10 @@ public class CustomReportLogAction extends PageAction implements
 		}
 		return ReturnType.JSON;
 	}
-	
+
 	/**
 	 * 自定义任务报表模板导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadTemplateExcelTotal() {
@@ -480,7 +480,16 @@ public class CustomReportLogAction extends PageAction implements
 					}
 				}
 			}else{
-				List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(new PageList());
+
+				String templateIds = task.getTemplateIds();
+				String[] ids = templateIds.split(",");
+				List<Long> idList = new ArrayList<>();
+				for (String id : ids) {
+					idList.add(Long.valueOf(id));
+				}
+				PageList pageList = new PageList();
+				pageList.putParam("ids",idList);
+				List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(pageList);
 				Set<String> unionTeplateSet = new HashSet<String>();
 				for (CustomReportTemplatePojo customReportTemplatePojo : queryTemplateByParam) {
 					unionTeplateSet.add(customReportTemplatePojo.getTemplateName());
@@ -489,7 +498,7 @@ public class CustomReportLogAction extends PageAction implements
 				if (unionTeplateSet!=null && unionTeplateSet.size()>0) {
 					for (String name : unionTeplateSet) {
 						//  '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%'
-						if(name!=null && (name.contains("指标报表_CQT模板") || name.contains("指标报表_DT模板"))){
+						if(name!=null && (name.contains("指标报表_CQT模板") || name.contains("指标报表_DT模板") ||  name.contains("移动")  ||  name.contains("电联") )){
 							Map<String,Object> map = new HashMap<String,Object>();
 							map.put("valueField",name);
 							map.put("textField",name);
@@ -580,7 +589,7 @@ public class CustomReportLogAction extends PageAction implements
 
 	/**
 	 * 获取终端类型
-	 * 
+	 *
 	 * 测试目标或者终端类型:0自动LTE ,1单模块商务终端 ,2LTE-FI
 	 */
 	private String getString(Integer i) {
@@ -660,7 +669,7 @@ public class CustomReportLogAction extends PageAction implements
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
 	}
-		
+
 	public String getdPage() {
 		return dPage;
 	}
@@ -668,5 +677,5 @@ public class CustomReportLogAction extends PageAction implements
 	public void setdPage(String dPage) {
 		this.dPage = dPage;
 	}
-	
+
 }

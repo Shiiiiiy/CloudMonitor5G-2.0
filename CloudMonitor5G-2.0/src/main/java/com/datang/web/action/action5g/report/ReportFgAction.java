@@ -79,9 +79,9 @@ import net.sf.json.JSONObject;
 
 /**
  * 5G统计任务Action
- * 
+ *
  * @author _YZP
- * 
+ *
  */
 @SuppressWarnings("all")
 @Controller
@@ -134,19 +134,19 @@ public class ReportFgAction extends PageAction implements
 	 */
 	@Autowired
 	private TerminalGroupService terminalGroupService;
-	
+
 	/**
 	 * 自定义报表模板服务
 	 */
 	@Autowired
 	private CustomTemplateService customTemplateService;
-	
+
 	@Value("${decode.signalling.ip}")
 	private String taskIp;
-	
+
 	@Value("${decode.signalling.port}")
 	private String taskPort;
-	
+
 	private String allLogNames;
 
 	/** 多条件查询请求参数 */
@@ -173,7 +173,7 @@ public class ReportFgAction extends PageAction implements
 	 * 要导出的sheet名
 	 */
 	private String sheetName;
-	
+
 	/**
 	 * 目标界面
 	 */
@@ -209,7 +209,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 跳转到 list界面
-	 * 
+	 *
 	 * @return
 	 */
 	public String listUI() {
@@ -218,7 +218,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 跳转到添加界面
-	 * 
+	 *
 	 * @return
 	 */
 	public String goAdd() {
@@ -254,7 +254,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 跳转到数据业务报表统计界面
-	 * 
+	 *
 	 * @return
 	 */
 //	public String goData() {
@@ -268,7 +268,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 跳转到异常事件报表统计界面
-	 * 
+	 *
 	 * @return
 	 */
 //	public String goEe() {
@@ -279,10 +279,10 @@ public class ReportFgAction extends PageAction implements
 //		}
 //		return "ee";
 //	}
-	
+
 	/**
 	 * 跳转到NSA指标报表统计界面
-	 * 
+	 *
 	 * @return
 	 */
 	public String goNsaIndex() {
@@ -293,7 +293,7 @@ public class ReportFgAction extends PageAction implements
 		}
 		return "nsaIndex";
 	}
-	
+
 	/**
 	 * 跳转到测试轨迹界面
 	 * @return
@@ -301,17 +301,17 @@ public class ReportFgAction extends PageAction implements
 	public String goTraii() {
 		return "testTrail";
 	}
-	
+
 	/**
 	 * 跳转到自定义报表报表统计界面
 	 * @return
 	 */
 	public String goTemplateExcel() {
 		if (null != typeNo) {
-				HttpSession session = ServletActionContext.getRequest()
+			HttpSession session = ServletActionContext.getRequest()
 					.getSession();
-				session.setAttribute("typeNo", typeNo);
-				session.setAttribute("templateIds", statisticeTaskRequest.getTemplateIds());
+			session.setAttribute("typeNo", typeNo);
+			session.setAttribute("templateIds", statisticeTaskRequest.getTemplateIds());
 //				Long id = (Long) ServletActionContext.getRequest().getSession().getAttribute("idLong");
 //				StatisticeTask statisticeTask = reportService.queryOneByID(id);
 //				if(statisticeTask!=null && !statisticeTask.getTaskStatus().equals("2")){
@@ -319,13 +319,13 @@ public class ReportFgAction extends PageAction implements
 //				}
 //				String templateId = statisticeTaskRequest.getTemplateIds();
 //				CustomReportTemplatePojo pojo = customTemplateService.find(Long.valueOf(templateId));
-//				
+//
 //				File file = new File(pojo.getSaveFilePath());
 //				String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_fin"
 //						+ file.getName().substring(file.getName().lastIndexOf("."));
 //				String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
 //				File exportfile = new File(newPath);
-//				
+//
 //				String exportFilePath = null;
 //				Integer typeNo = (Integer) ServletActionContext.getRequest().getSession().getAttribute("typeNo");
 //				if(exportfile==null || !exportfile.exists()){
@@ -349,7 +349,7 @@ public class ReportFgAction extends PageAction implements
 //							idsString = (String) attribute;
 //						}
 //					}
-//					
+//
 //					if(StringUtils.hasText(pojo.getKpiNameSum())){
 //						PageList page = new PageList();
 //						page.putParam("taskName", statisticeTask.getName());
@@ -364,7 +364,7 @@ public class ReportFgAction extends PageAction implements
 //					exportFilePath = newPath;
 //				}
 //				List<Map<String, String>> readExcelToMap = ReadExcelToHtml.readExcelToMap(exportFilePath, true);
-//				
+//
 //				ActionContext.getContext().getValueStack().set("dataList", readExcelToMap);
 //			} catch (ApplicationException e) {
 //				e.printStackTrace();
@@ -373,7 +373,7 @@ public class ReportFgAction extends PageAction implements
 		}
 		return "templateExcel";
 	}
-	
+
 	/**
 	 * 根据日志名查询采样点数据
 	 * @author maxuancheng
@@ -412,7 +412,7 @@ public class ReportFgAction extends PageAction implements
 //				&& StringUtils.hasText(testRanks)
 //				&&
 				null != beginDate
-				&& null != endDate) {
+						&& null != endDate) {
 			String[] splitBox = boxIds.split(",");
 			List<String> boxList = Arrays.asList(splitBox);
 			String[] splitCity = cityIds.split(",");
@@ -461,7 +461,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 获取某些boxIds相关的日志 testLogItem
-	 * 
+	 *
 	 * @return
 	 */
 	public String testLogItem() {
@@ -534,7 +534,9 @@ public class ReportFgAction extends PageAction implements
 			return ReturnType.JSON;
 		}
 
-		String sql = "SELECT  array_agg(ID) ID ,TEMPLATE_NAME FILE_NAME FROM IADS_CUSREPORT_TMEPLATE WHERE TEMPLATE_NAME IS NOT NULL  AND (TEMPLATE_NAME LIKE '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%')  GROUP BY TEMPLATE_NAME ORDER BY TEMPLATE_NAME";
+		String sql = "SELECT  array_agg(ID) ID ,TEMPLATE_NAME FILE_NAME FROM IADS_CUSREPORT_TMEPLATE WHERE TEMPLATE_NAME IS NOT NULL " +
+				" AND (TEMPLATE_NAME LIKE '%指标报表_CQT模板%' OR TEMPLATE_NAME LIKE '%指标报表_DT模板%'   OR TEMPLATE_NAME LIKE '%移动%'    OR TEMPLATE_NAME LIKE '%电联%' ) " +
+				" GROUP BY TEMPLATE_NAME ORDER BY TEMPLATE_NAME";
 		templatePojoList = jdbcTemplate.objectQueryAll(sql);
 		if (null != templatePojoList
 				&& 0 != templatePojoList.size()) {
@@ -551,7 +553,7 @@ public class ReportFgAction extends PageAction implements
 
 					map.put("fileName",(String)m.get("file_name"));
 					templateList.add(map);
-					}catch (Exception e){
+				}catch (Exception e){
 
 				}
 
@@ -559,7 +561,7 @@ public class ReportFgAction extends PageAction implements
 			}
 		}
 		ActionContext.getContext().getValueStack()
-					.set("reportTemplate", templateList);
+				.set("reportTemplate", templateList);
 		return ReturnType.JSON;
 	}
 
@@ -580,7 +582,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 获取某区域获取相关的模板 CustomReportTemplatePojo
-	 * 
+	 *
 	 * @return
 	 */
 	public String regionReportTemplate() {
@@ -590,7 +592,7 @@ public class ReportFgAction extends PageAction implements
 			PageList pageParam = new PageList();
 			pageParam.putParam("cityIds", cityIds);
 			List<CustomReportTemplatePojo> templatePojoList = customTemplateService.queryTemplateByParam(pageParam);
-			
+
 			if (null != templatePojoList
 					&& 0 != templatePojoList.size()) {
 				for (CustomReportTemplatePojo pojo : templatePojoList) {
@@ -609,7 +611,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 根据LogIDs获取日志 testLogItem
-	 * 
+	 *
 	 * @return
 	 */
 	public String getTestLogItem() {
@@ -633,10 +635,10 @@ public class ReportFgAction extends PageAction implements
 
 		return ReturnType.JSON;
 	}
-	
+
 	/**
 	 * 根据templateIds获取报告模板
-	 * 
+	 *
 	 * @return
 	 */
 	public String getReportTemplate() {
@@ -708,7 +710,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 查询单个任务信息并跳转到相关页面
-	 * 
+	 *
 	 * @return
 	 */
 	public String seeInfo() {
@@ -723,7 +725,7 @@ public class ReportFgAction extends PageAction implements
 			ActionContext.getContext().getValueStack()
 					.set("statisticeTask", queryOneByID);
 			ActionContext.getContext().getValueStack()
-			.set("dPage", dPage);
+					.set("dPage", dPage);
 		} else {
 			String readPage = (String) ServletActionContext.getRequest().getSession()
 					.getAttribute("dPage");
@@ -733,7 +735,7 @@ public class ReportFgAction extends PageAction implements
 				ActionContext.getContext().getValueStack()
 						.set("statisticeTask", reportService.queryOneByID(id));
 				ActionContext.getContext().getValueStack()
-				.set("dPage", readPage);
+						.set("dPage", readPage);
 			}
 		}
 
@@ -1123,7 +1125,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 添加或修改统计任务
-	 * 
+	 *
 	 * @return
 	 */
 	public String addReportTask() {
@@ -1343,7 +1345,7 @@ public class ReportFgAction extends PageAction implements
 			pageList.putParam("workOrderId", statisticeTask.getName());
 			List<StatisticeTask> statisticeTaskList = reportService.findStatisticeTask(pageList);
 			session.setAttribute("idLong", statisticeTaskList.get(0).getId());
-			if(statisticeTaskList!=null && statisticeTaskList.size()==1) { 
+			if(statisticeTaskList!=null && statisticeTaskList.size()==1) {
 				//下发任务到后台
 				String errotMsg = goSocket(statisticeTaskList.get(0));
 				if(StringUtils.hasText(errotMsg)){
@@ -1351,16 +1353,16 @@ public class ReportFgAction extends PageAction implements
 					List<Long> idss = new ArrayList<>();
 					idss.add(statisticeTaskList.get(0).getId());
 					reportService.delete(idss);
-					
+
 					LOGGER.info("下发自定义任务失败,无法保存任务:"+ errotMsg);
 					ActionContext.getContext().getValueStack().set("errorMsg", "下发自定义任务失败,无法保存任务："+ errotMsg);
 				}
 			}
-			
+
 		}
 		return ReturnType.JSON;
 	}
-	
+
 	/**
 	 * 任务下发
 	 * @author lucheng
@@ -1382,12 +1384,12 @@ public class ReportFgAction extends PageAction implements
 				if(StringUtils.hasText(pojo.getConmmonKpiNameSum())){
 					List<String> kpis = Arrays.asList(pojo.getConmmonKpiNameSum().split(","));
 					kpiSet.addAll(kpis);
-					
+
 				}
 			}
 			List<String> kpiList = new ArrayList(kpiSet);
 			map.put("kpiNames", kpiList);
-			
+
 			JSONObject requJson = new JSONObject();
 			requJson.put("importCustomTeplate", map);
 			String request = requJson.toString();
@@ -1415,13 +1417,13 @@ public class ReportFgAction extends PageAction implements
 							LOGGER.info("发送任务失败");
 							throw new ApplicationException("后台返回结果异常!");
 						}
-						
+
 					}else {
 						throw new ApplicationException("后台返回结果异常!");
 					}
 				}
 			} catch (Exception e) {
-				ZMQUtils.releaseSocketException(socket); 
+				ZMQUtils.releaseSocketException(socket);
 				e.printStackTrace();
 				if (e instanceof ApplicationException) {
 					LOGGER.info(e.getMessage());
@@ -1523,14 +1525,14 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 查看统计任务
-	 * 
+	 *
 	 * @return
 	 */
 	public String seeReportTask() {
 		if (null != statisticeTaskRequest) {
-			
+
 			StatisticeTask statisticeTask = reportService.queryOneByID(statisticeTaskRequest.getId());
-			
+
 			List<TestLogItem> queryTestLogItems = testLogItemService
 					.queryTestLogItems(statisticeTask.getLogIds());
 			StringBuilder allLogIDBuilder = new StringBuilder();
@@ -1593,14 +1595,14 @@ public class ReportFgAction extends PageAction implements
 			// nbiotLogIDBuilder.toString());
 			session.setAttribute("taskName", statisticeTask.getName());
 			session.setAttribute("idLong", statisticeTask.getId());
-			
+
 		}
 		return ReturnType.JSON;
 	}
 
 	/**
 	 * 删除多个统计任务
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -1854,7 +1856,7 @@ public class ReportFgAction extends PageAction implements
 		ActionContext.getContext().getValueStack().push(map);
 		return ReturnType.JSON;
 	}
-	
+
 	/**
 	 * 查询NSA指标报表信息
 	 */
@@ -1975,13 +1977,13 @@ public class ReportFgAction extends PageAction implements
 		ActionContext.getContext().getValueStack().push(map);
 		return ReturnType.JSON;
 	}
-	
+
 	/**
 	 * 查询测试轨迹报表信息
 	 */
 	public String quaryTrailKpi() {
 		Object attribute = ServletActionContext.getRequest().getSession()
-						.getAttribute("allTestLogItemIds");
+				.getAttribute("allTestLogItemIds");
 		Map<String, Object> map = new HashMap<>();
 		if (null != attribute) {
 			if (attribute instanceof String) {
@@ -2072,10 +2074,10 @@ public class ReportFgAction extends PageAction implements
 		ActionContext.getContext().getValueStack().push(map);
 		return ReturnType.JSON;
 	}
-	
+
 	/**
 	 * NSA指标报表导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadNsaTotal() {
@@ -2084,7 +2086,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * NSA指标报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -2141,7 +2143,7 @@ public class ReportFgAction extends PageAction implements
 				lteWholePreviewParam.setTestLogItemIds(idsString);
 				// '指标汇总'sheet
 				lteWholePreviewParam
-				.setStairClassify(ParamConstant.STAIR_CLASSIFY_INDEX_SUMMARY);
+						.setStairClassify(ParamConstant.STAIR_CLASSIFY_INDEX_SUMMARY);
 				AbstractPageList coverKpi = reportService
 						.queryKpi(lteWholePreviewParam);
 				map.put("summaryKpi", coverKpi);
@@ -2224,7 +2226,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * NSA指标报表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadOneSheetNsaTotal() {
@@ -2233,7 +2235,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * NSA指标报表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -2394,10 +2396,10 @@ public class ReportFgAction extends PageAction implements
 		} else
 			return null;
 	}
-	
+
 	/**
 	 * 测试轨迹指标报表导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadTestTrailTotal() {
@@ -2406,7 +2408,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * NSA指标报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -2521,7 +2523,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 测试轨迹指标报表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 *//*
 	public String downloadOneSheetTestTrail() {
@@ -2530,7 +2532,7 @@ public class ReportFgAction extends PageAction implements
 
 	*//**
 	 * 测试轨迹指标报表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -2637,7 +2639,7 @@ public class ReportFgAction extends PageAction implements
 					map.put("ftpDLRateKpi", new EasyuiPageList());
 				} else if (sheetName.equals("FTP上行速率")) {
 					map.put("ftpULRateKpi", new EasyuiPageList());
-				} 
+				}
 			}
 			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
 			try {
@@ -2656,7 +2658,7 @@ public class ReportFgAction extends PageAction implements
 			}
 			return new ByteArrayInputStream(byteOutputStream.toByteArray());
 	}*/
-	
+
 	/**
 	 * 输出自定义模板
 	 * @author lucheng
@@ -2672,12 +2674,12 @@ public class ReportFgAction extends PageAction implements
 			}
 			String templateId = statisticeTaskRequest.getTemplateIds();
 			CustomReportTemplatePojo pojo = customTemplateService.find(Long.valueOf(templateId));
-			
+
 			File file = new File(pojo.getSaveFilePath());
 			String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+statisticeTask.getId()
 					+ file.getName().substring(file.getName().lastIndexOf("."));
 			String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
-			
+
 			String exportFilePath = null;
 			Integer typeNo = (Integer) ServletActionContext.getRequest().getSession().getAttribute("typeNo");
 			Object attribute = null;
@@ -2700,7 +2702,7 @@ public class ReportFgAction extends PageAction implements
 					idsString = (String) attribute;
 				}
 			}
-			
+
 			if(StringUtils.hasText(pojo.getConmmonKpiNameSum())){
 				PageList page = new PageList();
 				page.putParam("taskName", statisticeTask.getName());
@@ -2712,7 +2714,7 @@ public class ReportFgAction extends PageAction implements
 				exportFilePath = customTemplateService.modifyExcelValue(page);
 			}
 			List<Map<String, String>> readExcelToMap = ReadExcelToHtml.readExcelToMap(exportFilePath, true);
-			
+
 			ActionContext.getContext().getValueStack().set("dataList", readExcelToMap);
 		} catch (ApplicationException e) {
 			e.printStackTrace();
@@ -2720,10 +2722,10 @@ public class ReportFgAction extends PageAction implements
 		}
 		return ReturnType.JSON;
 	}
-	
+
 	/**
 	 * 自定义任务报表模板导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadTemplateExcelTotal() {
@@ -2744,13 +2746,13 @@ public class ReportFgAction extends PageAction implements
 		}
 		String templateId = statisticeTaskRequest.getTemplateIds();
 		CustomReportTemplatePojo pojo = customTemplateService.find(Long.valueOf(templateId));
-		
+
 		File file = new File(pojo.getSaveFilePath());
 		String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+statisticeTask.getId()
 				+ file.getName().substring(file.getName().lastIndexOf("."));
 		String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
 		File exportfile = new File(newPath);
-		
+
 		if(exportfile!=null && exportfile.exists()){
 			FileInputStream inputStream = null ;
 			try {
@@ -2765,10 +2767,10 @@ public class ReportFgAction extends PageAction implements
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 5G数据详细报表导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadFgDataTotalExcel() {
@@ -2777,7 +2779,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 5G数据详细报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -2916,7 +2918,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 5G异常事件报表导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadFgEeTotalExcel() {
@@ -2925,7 +2927,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 5G异常事件报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -3053,7 +3055,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 5G数据表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadOneSheetFgDataTotalExcel() {
@@ -3062,7 +3064,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 5G数据表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -3226,7 +3228,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 5G异常事件报表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 */
 	public String downloadOneSheetFgEeTotalExcel() {
@@ -3235,7 +3237,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 5G异常事件报表单个Sheet报表导出
-	 * 
+	 *
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
@@ -3382,7 +3384,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 获取终端信息
-	 * 
+	 *
 	 * @return
 	 */
 	public String terminalTree() {
@@ -3419,7 +3421,7 @@ public class ReportFgAction extends PageAction implements
 
 	/**
 	 * 获取终端类型
-	 * 
+	 *
 	 * 测试目标或者终端类型:0自动LTE ,1单模块商务终端 ,2LTE-FI
 	 */
 	private String getString(Integer i) {
@@ -3565,5 +3567,5 @@ public class ReportFgAction extends PageAction implements
 		this.allLogNames = allLogNames;
 	}
 
-	
+
 }

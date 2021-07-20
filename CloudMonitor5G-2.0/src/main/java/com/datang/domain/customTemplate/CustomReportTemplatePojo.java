@@ -31,32 +31,36 @@ public class CustomReportTemplatePojo implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	
+
 	//模板名称
 	private String templateName;
 
-	
+
 	//导入时间
 	private Long importDate;
-	
+
 	//创建人
 	private String userName;
-	
+
 	//模板保存路径
 	private String saveFilePath;
-	
+
 	//普通IE汇总字段，以逗号隔开
 	private String conmmonKpiNameSum;
-	
+
 	//时间IE汇总字段，以逗号隔开
 	private String timeKpiNameSum;
-	
+
 	//里程IE汇总字段，以逗号隔开
 	private String mileageKpiNameSum;
+	/**
+	 * 地理栅格类型   10： 10*10   50： 50*50
+	 */
+	private String mileageKpiType;
 
 	@Column(name = "ID")
 	@Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+	@GeneratedValue(strategy= GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -103,7 +107,7 @@ public class CustomReportTemplatePojo implements Serializable{
 	public void setSaveFilePath(String saveFilePath) {
 		this.saveFilePath = saveFilePath;
 	}
-	
+
 	@Column(name = "KPINAME_SUM")
 	@JSON(serialize = false)
 	public String getConmmonKpiNameSum() {
@@ -133,8 +137,13 @@ public class CustomReportTemplatePojo implements Serializable{
 		this.mileageKpiNameSum = mileageKpiNameSum;
 	}
 
-	
-	
-	
-	
+	@Column(name = "MILEAGE_KPI_TYPE")
+	public String getMileageKpiType() {
+		return mileageKpiType;
+	}
+
+	public void setMileageKpiType(String mileageKpiType) {
+		this.mileageKpiType = mileageKpiType;
+	}
+
 }

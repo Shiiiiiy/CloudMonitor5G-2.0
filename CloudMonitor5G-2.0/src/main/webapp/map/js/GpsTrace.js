@@ -1,4 +1,4 @@
-
+messageType = "";
 var mousePositionControl = new ol.control.MousePosition({
     className: 'custom-mouse-position',
     projection: 'EPSG:4326',
@@ -115,6 +115,25 @@ var queryVector = new ol.layer.Vector({
     //     return getPntStyle('NR SS-RSRP',feature);
     // }
 });
+
+/*轨迹数据*/
+var logVector = new ol.layer.Tile({
+    name: "logLayer",
+    type: 1,
+    visible: false,
+    source: new ol.source.TileWMS({
+        url: wms_url,
+        params: {
+            'FORMAT': 'image/png',
+            'VERSION': '1.1.1',
+            tiled: true,
+            STYLES: '',
+            LAYERS: dataBaseName + ':' + logLayer
+        }
+    })
+});
+
+
 var image = new ol.style.Icon({
     anchor: [0.5, 1],
     size: 50,
@@ -213,7 +232,7 @@ if (gd_url) {
 }
 else {
     map = new ol.Map({
-        layers: [synchVector, roadVector, /* queryVector, */ measureVector],
+        layers: [synchVector, roadVector, logVector, /* queryVector, */ measureVector],
         interactions: ol.interaction.defaults({ doubleClickZoom: false })
             .extend([new ol.interaction.DragRotateAndZoom()]),
         controls: ol.control.defaults({
@@ -308,6 +327,98 @@ function saveMap() {
             window.saveAs(blob, 'map.png');
         }); */
 }
+
+function showTraceByServer(logIds, dataType) {
+    console.log(logIds);
+    if (!logIds)
+        return;
+    mapLogIds = logIds;
+
+    //显示图例
+    var legendInfo = [];
+    var legendName = dataType ? dataType : "NR SS-RSRP";
+
+    var pointStyle = 'point_rsrp';
+    if (dataType == "NR SS-RSRP") {
+        legendInfo = [
+            {
+                name: "[-Inf,-105)",
+                color: "#FF0500"
+            }, {
+                name: "[-105,-100)",
+                color: "#C9C307"
+            }, {
+                name: "[-100,-80)",
+                color: "#008C00"
+            }, {
+                name: "[-80,+Inf)",
+                color: "#0400FD"
+            }
+        ];
+    } else if (dataType == "NR SS-SINR") {
+        pointStyle = 'point_sinr';
+        legendInfo = [
+            {
+                name: "[-Inf,-3)",
+                color: "#F20400"
+            }, {
+                name: "[-3,0)",
+                color: "#C9C307"
+            }, {
+                name: "[0,15)",
+                color: "#008200"
+            }, {
+                name: "[15,+Inf)",
+                color: "#0309FB"
+            }
+        ];
+    } else if (dataType == "LTE PCC_RSRP") {
+        legendInfo = [
+            {
+                name: "[-Inf,-105)",
+                color: "#FF0500"
+            }, {
+                name: "[-105,-100)",
+                color: "#C9C307"
+            }, {
+                name: "[-100,-80)",
+                color: "#008C00"
+            }, {
+                name: "[-80,+Inf)",
+                color: "#0400FD"
+            }
+        ];
+    } else if (dataType == "LTE PCC_SINR") {
+        pointStyle = 'point_sinr';
+        legendInfo = [
+            {
+                name: "[-Inf,-3)",
+                color: "#F20400"
+            }, {
+                name: "[-3,0)",
+                color: "#C9C307"
+            }, {
+                name: "[0,15)",
+                color: "#008200"
+            }, {
+                name: "[15,+Inf)",
+                color: "#0309FB"
+            }
+        ];
+    }
+    showLegendControl(legendName, legendInfo);
+
+    //显示轨迹数据
+    logVector.filterParam = {
+        'FILTER': null,
+        'CQL_FILTER': "logcode in (" + logIds + ")",
+        'FEATUREID': null
+    };
+    logVector.setVisible(true);
+    logVector.getSource().params_.STYLES = pointStyle;
+    logVector.getSource().refresh();
+}
+
 
 var mapTraceData;
 var tracePntLayer = undefined;
@@ -463,7 +574,7 @@ function dealTraceData(curNum, logName, dataType, traceData) {
             else if (dataType == "LTE PCC_SINR" && lteSinr) {
                 featColor = getGpsColor("ltesinr", lteSinr);
             }
-
+ 
             traceFeat.setStyle(new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 3,
@@ -675,8 +786,11 @@ function getStyleBytype(type) {
 
 function changeLegend() {
     var dataType = document.getElementById("dataType").value;
-    showTrace(mapTraceData, dataType);
-    showLogTrace(mapLogIds, dataType);
+    if(messageType == "logreplay")
+        showLogTrace(mapLogIds, dataType);
+    else
+        showTraceByServer(mapLogIds, dataType);
+        //showTrace(mapTraceData, dataType);
 }
 
 function showLegendControl(legendName, legendInfo) {
@@ -996,7 +1110,7 @@ function showLogTrace(logIds, dataType) {
             }
             //地图居中显示
             view.fit(querySource.getExtent());
-
+ 
         },
         error: function (e) {
             console.log(e)
@@ -1035,8 +1149,8 @@ function SynchronizeLog(logId, timestamp) {
             synchSource.clear();
             synchSource.addFeature(synchFeat);
             var pntCoor = synchFeat.getGeometry().getCoordinates()
-            var viewExtent =  new ol.geom.Polygon.fromExtent(map.getView().calculateExtent());
-            if(!viewExtent.intersectsCoordinate(pntCoor)){
+            var viewExtent = new ol.geom.Polygon.fromExtent(map.getView().calculateExtent());
+            if (!viewExtent.intersectsCoordinate(pntCoor)) {
                 view.setCenter(pntCoor);
             }
             //view.fit(synchSource.getExtent());

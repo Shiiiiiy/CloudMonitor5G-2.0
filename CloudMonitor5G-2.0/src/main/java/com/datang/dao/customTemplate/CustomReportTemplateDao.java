@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.datang.dao.customTemplate;
 
@@ -26,13 +26,13 @@ import com.datang.common.util.StringUtils;
 import com.datang.domain.customTemplate.CustomReportTemplatePojo;
 
 /**
- * 
+ *
  * @author lucheng
  * @date 2020年12月22日 下午2:55:46
  */
 @Repository
 public class CustomReportTemplateDao extends GenericHibernateDao<CustomReportTemplatePojo, Long> {
-	
+
 	/**
 	 * 查询规划参数表信息
 	 * @param pageList
@@ -95,7 +95,7 @@ public class CustomReportTemplateDao extends GenericHibernateDao<CustomReportTem
 		easyuiPageList.setTotal(total+"");
 		return easyuiPageList;
 	}
-	
+
 	public Criteria findByparam(PageList pageList){
 		Criteria criteria = this.getHibernateSession().createCriteria(CustomReportTemplatePojo.class);
 //		Criteria createCriteria2 = criteria.createCriteria("group");
@@ -143,8 +143,12 @@ public class CustomReportTemplateDao extends GenericHibernateDao<CustomReportTem
 	 */
 	public List<CustomReportTemplatePojo> queryTemplateByParam(PageList pageList) {
 		Criteria criteria = findByparam(pageList);
-		
+
+		if(pageList.getParam("ids")!=null) {
+			criteria.add(Restrictions.in("id", (List) pageList.getParam("ids")));
+		}
 		criteria.addOrder(Order.desc("id"));
+
 		List<CustomReportTemplatePojo> list = (List<CustomReportTemplatePojo>)criteria.list();
 		return list;
 	}

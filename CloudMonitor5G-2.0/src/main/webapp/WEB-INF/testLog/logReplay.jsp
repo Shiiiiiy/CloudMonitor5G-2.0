@@ -86,11 +86,11 @@
 					success: function(data){
 						var ieData = {};
 						$.each(data,function(index,item){
-							if(index==0){
+							if(index==0 && item){
 								MyPlayer.Data.startTime = item.time;
 								MyPlayer.Data.currentTime = item.time;
 							}
-							if(index==data.length-1){
+							if(index==data.length-1 && item){
 								MyPlayer.Data.endTime = item.time;
 							}
 							ieData[item.time] = item;
@@ -351,11 +351,11 @@
 					success: function(data){
 						var ieData = {};
 						$.each(data,function(index,item){
-							if(index==0){
+							if(index==0  && item){
 								MyPlayer.Data.startTime = item.time;
 								MyPlayer.Data.currentTime = item.time;
 							}
-							if(index==data.length-1){
+							if(index==data.length-1 && item){
 								MyPlayer.Data.endTime = item.time;
 							}
 							ieData[item.time] = item;

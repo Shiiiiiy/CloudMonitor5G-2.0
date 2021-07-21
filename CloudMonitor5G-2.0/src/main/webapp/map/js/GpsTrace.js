@@ -215,7 +215,7 @@ var styles = {
 
 if (gd_url) {
     map = new ol.Map({
-        layers: [synchVector, gdVector, /* queryVector, */ measureVector],
+        layers: [synchVector, gdVector, logVector,/* queryVector, */ measureVector],
         interactions: ol.interaction.defaults({ doubleClickZoom: false })
             .extend([new ol.interaction.DragRotateAndZoom()]),
         controls: ol.control.defaults({
@@ -334,6 +334,8 @@ function showTraceByServer(logIds, dataType) {
         return;
     mapLogIds = logIds;
 
+    var reg = new RegExp(",", "g")
+    var strLogIds = "'" + logIds.replace(reg, "','") + "'";
     //显示图例
     var legendInfo = [];
     var legendName = dataType ? dataType : "NR SS-RSRP";
@@ -373,6 +375,7 @@ function showTraceByServer(logIds, dataType) {
             }
         ];
     } else if (dataType == "LTE PCC_RSRP") {
+        pointStyle = 'point_lte_rsrp';
         legendInfo = [
             {
                 name: "[-Inf,-105)",
@@ -389,7 +392,7 @@ function showTraceByServer(logIds, dataType) {
             }
         ];
     } else if (dataType == "LTE PCC_SINR") {
-        pointStyle = 'point_sinr';
+        pointStyle = 'point_lte_sinr';
         legendInfo = [
             {
                 name: "[-Inf,-3)",
@@ -408,15 +411,65 @@ function showTraceByServer(logIds, dataType) {
     }
     showLegendControl(legendName, legendInfo);
 
-    //显示轨迹数据
-    logVector.filterParam = {
+    var logIdField = "logcode";
+    var filterParam = {
         'FILTER': null,
-        'CQL_FILTER': "logcode in (" + logIds + ")",
+        'CQL_FILTER': logIdField + " in (" + logIds + ")",
         'FEATUREID': null
     };
-    logVector.setVisible(true);
+    
     logVector.getSource().params_.STYLES = pointStyle;
+    logVector.getSource().updateParams(filterParam);
     logVector.getSource().refresh();
+    logVector.setVisible(true);
+
+
+    /* querySource.clear();
+    var promiseArr = [];
+    var logArr = logIds.split(',');
+    logArr.forEach(logId => {
+        var equalFilter = new ol.format.filter.equalTo(logIdField, logId);
+        var featureRequest = new ol.format.WFS().writeGetFeature({
+            srsName: 'EPSG:900913',
+            featureTypes: [logLayer],
+            outputFormat: 'application/json',
+            filter: equalFilter
+        });
+        // then post the request
+        var tracePromise = fetch(yewu_url, {
+            method: 'POST',
+            body: new XMLSerializer().serializeToString(featureRequest)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            var features = new ol.format.GeoJSON().readFeatures(json);
+            if (features.length == 0) {
+                return;
+            } else {
+                querySource.addFeatures(features);
+            }
+        });
+        promiseArr.push(tracePromise);
+    });
+
+    Promise.all(promiseArr).then(() => {
+        // //显示轨迹数据
+        // if (tracePntLayer)
+        //     map.removeLayer(tracePntLayer);
+        // tracePntLayer = new ol.layer.WebGLPoints({
+        //     source: querySource,
+        //     style: getStyleBytype(dataType),
+        //     disableHitDetection: true,
+        // })
+        // map.addLayer(tracePntLayer);
+
+        var dataExtent  = querySource.getExtent();
+        querySource.clear();
+        map.getView().fit(dataExtent);
+    }).catch(() => {
+
+    }) */
+
 }
 
 
@@ -786,11 +839,11 @@ function getStyleBytype(type) {
 
 function changeLegend() {
     var dataType = document.getElementById("dataType").value;
-    if(messageType == "logreplay")
+    if (messageType == "logreplay")
         showLogTrace(mapLogIds, dataType);
     else
         showTraceByServer(mapLogIds, dataType);
-        //showTrace(mapTraceData, dataType);
+    //showTrace(mapTraceData, dataType);
 }
 
 function showLegendControl(legendName, legendInfo) {

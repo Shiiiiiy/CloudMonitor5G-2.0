@@ -260,10 +260,16 @@ public class DateComputeUtils {
 	static String[] utcformats=new String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","yyyy-MM-dd'T'HH:mm:ss.SS'Z'","yyyy-MM-dd'T'HH:mm:ss.S'Z'","yyyy-MM-dd'T'HH:mm:ss'Z'"};
 
 	public static synchronized String formatMicroTime(String date){
-		String z = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
-		String s = String.format("%-3s", z).replaceAll(" ", "0");
-		SimpleDateFormat sdf = new SimpleDateFormat(formats[3]);
-		date=date.replace(z,s);
+		String z;
+		SimpleDateFormat sdf;
+		if(date.contains(".")){
+			z = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
+			String s = String.format("%-3s", z).replaceAll(" ", "0");
+			sdf = new SimpleDateFormat(formats[3]);
+			date=date.replace(z,s);
+		}else{
+			sdf=new SimpleDateFormat(formats[0]);
+		}
 		String tempTime = date.replace("Z", " UTC");
 		try {
 			Date d = sdf.parse(tempTime);

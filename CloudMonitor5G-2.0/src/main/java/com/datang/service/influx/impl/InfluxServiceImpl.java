@@ -237,7 +237,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<Map<String, Object>> results=new ArrayList<>();
         List<String> sqlFreg=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
-        sb.append("SELECT evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr from EVT where ");
+        sb.append("SELECT evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr from {0} where ");
         InitialConfig.map3.forEach((key,value)->{
             String[] evtEnNames=value.split("、");
             List<String> evtNameList = Arrays.stream(evtEnNames).filter(item -> StringUtils.isNotBlank(item)).distinct().collect(Collectors.toList());
@@ -250,7 +250,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
         fileLogIds.parallelStream().forEach(file->{
-            String s=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"IE"));
+            String s=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"EVT"));
             QueryResult query=influxDbConnection.query(s);
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(file));
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);

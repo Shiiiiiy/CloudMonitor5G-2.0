@@ -132,19 +132,20 @@ public class DateComputeUtils {
 		return instance;
 	}
 	public static Calendar toUtcDate(String date){
-		for(int i=0;i<utcformats.length;i++){
-			try {
-				SimpleDateFormat sdf = new SimpleDateFormat(utcformats[i]);
-				Date d = sdf.parse(date);
-				Calendar instance = Calendar.getInstance();
-				instance.setTime(d);
-				return instance;
-			} catch (ParseException e) {
-				continue;
-			}
+		String z = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
+		String s = String.format("%-3s", z).replaceAll(" ", "0");
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat(utcformats[0]);
+			Date d = sdf.parse(date.replace(z,s));
+			Calendar instance = Calendar.getInstance();
+			instance.setTime(d);
+			return instance;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw  new RuntimeException("时间格式化异常!");
 		}
-		throw  new RuntimeException("时间格式化异常!");
 	}
+
 
 	public static List<Map<String,Object>> getPre2sDatas(List<Map<String,Object>> result, String startTime) {
 		if(startTime==null||result==null||result.isEmpty()){
@@ -259,17 +260,14 @@ public class DateComputeUtils {
 	static String[] utcformats=new String[]{ "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","yyyy-MM-dd'T'HH:mm:ss.SS'Z'","yyyy-MM-dd'T'HH:mm:ss.S'Z'","yyyy-MM-dd'T'HH:mm:ss'Z'"};
 
 	public static synchronized String formatMicroTime(String date){
-		SimpleDateFormat sdf;
-		int index=0;
-		if(date.contains(".")){
-			String substring = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
-			index=substring.length();
-		}
-		sdf = new SimpleDateFormat(formats[index]);
+		String z = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
+		String s = String.format("%-3s", z).replaceAll(" ", "0");
+		SimpleDateFormat sdf = new SimpleDateFormat(formats[3]);
+		date=date.replace(z,s);
 		String tempTime = date.replace("Z", " UTC");
 		try {
 			Date d = sdf.parse(tempTime);
-			SimpleDateFormat sdf1 = new SimpleDateFormat(formats2[index]);
+			SimpleDateFormat sdf1 = new SimpleDateFormat(formats2[3]);
 			String str= sdf1.format(d);
 			return str;
 		} catch (ParseException e) {

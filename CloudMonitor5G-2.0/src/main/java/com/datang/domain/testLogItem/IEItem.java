@@ -6,10 +6,9 @@ import java.util.Date;
 
 @Entity
 @Table(name = "iads_cucc_playbackinfo")
+@IdClass(IEItemId.class)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class IEItem {
-
-    private long id;
 
     private long logId;
     private String time;
@@ -1093,6 +1092,7 @@ public class IEItem {
     public void setIe_40242(Double ie_40242) {
         this.ie_40242 = ie_40242;
     }
+    @Id
     @Column(name = "timestamp")
     public Long getTimeCol() {
         return timeCol;
@@ -1109,16 +1109,7 @@ public class IEItem {
     public void setTime(String time) {
         this.time = time;
     }
-
     @Id
-    @Column(name = "id")
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
     @Column(name = "logcode")
     public long getLogId() {
         return logId;

@@ -1525,7 +1525,7 @@ public class InfluxServiceImpl implements InfluxService {
     String[] frColumnIndexs=new String[]{"fr01","fr02","fr03","fr04","fr05","fr06","fr07","fr08","fr09","fr10","fr11","fr12","fr13"
     };
     String[] activeRingEvt=new String[]{"Outgoing SIP Ringing","CSFB Alerting MO"};
-    String[] positiveRingEvt=new String[]{"Incoming SIP Ring","CSFB Alerting MO"};
+    String[] positiveRingEvt=new String[]{"Incoming SIP Ringing","CSFB Alerting MO"};
     String[] activeConnEvt=new String[]{"Outgoing SIP Call Connect","CSFB Connect MO","Outgoing Call Connect"};
     String[] positiveConnRingEvt=new String[]{"Incoming SIP Call Connect","CSFB Connect MT","Incoming Call Connect"};
     String[] activeCallEndEvt=new String[]{"Outgoing SIP Call End","Outgoing SIP Call Drop","Outgoing Call End","Outgoing Call Drop","CSFB Call End MO","CSFB Drop MO"};
@@ -1705,15 +1705,15 @@ public class InfluxServiceImpl implements InfluxService {
         rm.put("call09", exsistEvtTime(objs, columnList.get(4)));
         if(fallBackRecord!=null){
             String fbackWay = getFbackWay(fallBackRecord, objs);
+            String time = DateComputeUtils.formatMicroTime(fallBackRecord.get("time").toString());
             //回落方式
             rm.put(esfbColumnIndexs[0], fbackWay);
-            String time = DateComputeUtils.formatMicroTime(fallBackRecord.get("time").toString());
-            //切换回落尝试
-            rm.put(esfbColumnIndexs[1], time);
             if("切换".equalsIgnoreCase(fbackWay)){
                 String time1=getBehindExsistEvtTime(fallBackRecord, objs,"HandoverTargetRAT","EPSFallBack Success");
                 String time2=getBehindExsistEvtTime(fallBackRecord, objs,"HandoverTargetRAT","EPSFallBack Failure");
-               //切换回落成功
+                //切换回落尝试
+                rm.put(esfbColumnIndexs[1], time);
+                //切换回落成功
                 rm.put(esfbColumnIndexs[2],time1);
                 //切换回落失败
                 rm.put(esfbColumnIndexs[3],time2);
@@ -1772,8 +1772,6 @@ public class InfluxServiceImpl implements InfluxService {
      * @param rm
      */
     private void frFailBusi(List<Map<String,Object>> objs, Map<String,Object> rm,String id) {
-        List<String> dropFailEvts=new ArrayList<>();
-        dropFailEvts.add("Fast_Return_Failure");
         Map<String, Object> frs=null;
         String time1=null;
         String time2=null;

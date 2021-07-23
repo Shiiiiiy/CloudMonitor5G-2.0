@@ -6,8 +6,6 @@ import com.datang.domain.platform.projectParam.LteCell;
 import com.datang.util.GPSUtils;
 import com.googlecode.aviator.AviatorEvaluator;
 import org.apache.commons.lang.StringUtils;
-import org.influxdb.InfluxDB;
-import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
 import java.text.DecimalFormat;

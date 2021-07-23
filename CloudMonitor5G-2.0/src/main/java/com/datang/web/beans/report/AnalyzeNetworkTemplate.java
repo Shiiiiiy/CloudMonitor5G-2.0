@@ -54,7 +54,7 @@ public class AnalyzeNetworkTemplate implements AnalyzeTemplate{
                 toSqlObj6(netConfigReports,sqlObj6);
                 LOGGER.info(" influxDb " + netConfigReports.size() );
             }catch (Exception e){
-                LOGGER.error(" influxDb is error");
+                LOGGER.error("influx query :"+e.getMessage());
             }
 //        }
 

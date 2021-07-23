@@ -48,7 +48,8 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
             toSqlObj5(netConfigReports,sqlObj5);
             LOGGER.info(" influxDb " + netConfigReports.size() );
         }catch (Exception e){
-            LOGGER.error(" influxDb is error");
+            e.printStackTrace();
+            LOGGER.error("influx query :"+e.getMessage());
         }
 
         // 加 id

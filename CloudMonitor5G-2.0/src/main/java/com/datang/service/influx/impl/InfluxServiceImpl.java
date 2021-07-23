@@ -16,12 +16,9 @@ import com.datang.service.influx.bean.VoiceBusiConfig;
 import com.datang.service.testLogItem.UnicomLogItemService;
 import com.datang.util.AdjPlaneArithmetic;
 import com.datang.util.GPSUtils;
-import okhttp3.OkHttpClient;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
-import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +29,6 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
@@ -49,7 +45,7 @@ public class InfluxServiceImpl implements InfluxService {
     @Value("${nr.cucc.length}")
     private int cuccGlen;
 
-    private static String MAPTRAILSQL="SELECT last({0}) as LTE_PCC_RSRP, last({1}) as LTE_PCC_SINR, last({2}) as NR_SS_RSRP, last({3}) as NR_SS_SINR,last(Lat) as Lat,last(Long) as Long FROM {4}  where Lat!=''91.0'' and Long!=''181.0'' GROUP BY time(1s) fill(none)";
+    private static String MAPTRAILSQL="SELECT last({0}) as LTE_PCC_RSRP, last({1}) as LTE_PCC_SINR, last({2}) as NR_SS_RSRP, last({3}) as NR_SS_SINR,last(Lat) as Lat,last(Long) as Long FROM {4}  where Lat<91.0 and Long<181.0 GROUP BY time(1s) fill(none)";
     private static String[] refStrs=new String[]{"LTE PCC_RSRP","LTE PCC_SINR","NR SS-RSRP","NR SS-SINR"};
     private static String[] refStrsGrid=new String[]{"X","Y","Height","NR SS-RSRP","NR SS-RSRQ","NR SS-SINR","NR PCI","NR SSB ARFCN","NR ssb-Index[0]",
             "NR Ncell PCI[0]","NR Ncell ARFCNSSB_DL[0]","NR Ncell SS-RSRP[0]","NR Ncell SS-RSRQ[0]","NR Ncell SS-SINR[0]","NR Ncell ssb-index[0]",
@@ -1268,7 +1264,7 @@ public class InfluxServiceImpl implements InfluxService {
 
     @Override
     public List<Map<String, Object>> getAbEvtAnaList(List<String> fileLogIds) {
-        List<Map<String, Object>> results=new ArrayList<>();
+        List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(fileLogIds.stream().collect(Collectors.joining(",")));
         Assert.notEmpty(testLogItems);
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
@@ -1289,7 +1285,7 @@ public class InfluxServiceImpl implements InfluxService {
             });
             List<String> sqlFreg=new ArrayList<>();
             StringBuilder sb=new StringBuilder();
-            sb.append("SELECT evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr from {0} where ");
+            sb.append("SELECT evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,MsgID from {0} where ");
             Set<String> evts = Arrays.asList(startEvts).stream().collect(Collectors.toSet());
             Set<String> allevts = Arrays.asList(swfailureEvts).stream().collect(Collectors.toSet());
             allevts.addAll(evtCnNameMap.keySet());
@@ -1303,34 +1299,72 @@ public class InfluxServiceImpl implements InfluxService {
             QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             result.forEach(obj->{
-                if(evtCnNameMap.keySet().contains(obj.get("evtName").toString())){
-                    Map<String, Object> rm=new HashMap<>();
-                    rm.put("logName",testLogItem.getFileName());
-                    rm.put("testName",testLogItem.getTestName());
-                    rm.put("network",testLogItem.getNetworkStandard());
-                    rm.put("busiType",evtCnNameMap.get(obj.get("evtName").toString()).getType());
-                    rm.put("evtName",evtCnNameMap.get(obj.get("evtName").toString()).getEvtCnName());
-                    rm.put("time",DateComputeUtils.formatMicroTime(obj.get("time").toString()));
-                    rm.put("lon",obj.get("Lat"));
-                    rm.put("lat",obj.get("Long"));
-                    rm.put("causeBy",obj.get("evtName"));
-                    rm.put("network01",InfluxReportUtils.getNetWork(obj.get("Netmode")));
-                    rm.put("cellId",obj.get("SellID"));
-                    rm.put("gnbId",getGnbID(testLogItem.getOperatorName(),InfluxReportUtils.getNetWork(obj.get("Netmode")),obj.get("SellID")));
-                    rm.put("pci",obj.get("Pci"));
-                    rm.put("fcn",obj.get("Enfarcn"));
-                    rm.put("destTac",null);
-                    List<Map<String, Object>> startEvtDatas = result.stream().filter(item -> Arrays.asList(startEvts).contains(item.get("evtName").toString())).collect(Collectors.toList());
-                    List<Map<String, Object>> pre2sDatas = DateComputeUtils.getPre2sDatas(result, obj.get("time").toString());
-                    setEvtMsg(pre2sDatas,startEvtDatas,rm,nrPciFcn2BeanMap,ltePciFcn2BeanMap);
-                    if("lte".equalsIgnoreCase(InfluxReportUtils.getNetWork(obj.get("Netmode")))){
-                        InfluxReportUtils.setAbevtKpi(influxDbConnection,rm,InitialConfig.abevtLteKpiMap,obj.get("time").toString(),id);
+                evtCnNameMap.forEach((key,value)->{
+                    if(evtCnNameMap.keySet().contains(obj.get("evtName").toString())){
+                        String[] preCons = value.getPreCon();
+                        String[] suffCons = value.getSuffCon();
+                        String[] sigs = value.getTriggerSig();
+                        Set<String> preEvts = Arrays.stream(preCons).collect(Collectors.toSet());
+                        Set<String> suffEvts = Arrays.stream(suffCons).collect(Collectors.toSet());
+                        List<Map<String, Object>> interDatas = DateComputeUtils.getPreDatasToEndEvt(result, obj.get("time").toString(), value.getStartEvt()[0]);
+                        List<Map<String, Object>> afterDatas = DateComputeUtils.getAfterDatas(result, obj.get("time").toString());
+                        Map<Integer,Boolean> conditionMap=new HashedMap();
+                        boolean count1;
+                        boolean count2;
+                        boolean count3=false;
+                        if(preCons !=null&& preCons.length>0){
+                            count1 = interDatas.stream().filter(i -> preEvts.contains(i.get("evtName").toString())).findAny().isPresent();
+                            conditionMap.put(0,count1);
+                        }
+                        if(suffCons !=null&& suffCons.length>0){
+                            count2 = afterDatas.stream().filter(i -> suffEvts.contains(i.get("evtName").toString())).findAny().isPresent();
+                            conditionMap.put(1,count2);
+                        }
+                        if(sigs!=null&&sigs.length>0){
+                            List<Map<String, Object>> sigDatas = getRecordByMsgIDFromSign(obj, file);
+                            for (String sig : sigs) {
+                                String[] sigConfis = sig.split(";");
+                                count3=sigDatas.stream().filter(i->sigConfis[0].equals(i.get("Dir").toString())&&sigConfis[1].equals(i.get("signalName").toString())).findAny().isPresent();
+                                if(count3){
+                                    break;
+                                }
+                            }
+                            conditionMap.put(2,count3);
+                        }
+                        Boolean reduce;
+                        if(conditionMap.size()>0){
+                            reduce = conditionMap.entrySet().stream().map(item -> item.getValue()).reduce((x1, x2) -> x1 && x2).get();
+                        }else{
+                            reduce=true;
+                        }
+                        if(reduce){
+                            Map<String, Object> rm=new HashMap<>();
+                            rm.put("logName",testLogItem.getFileName());
+                            rm.put("testName",testLogItem.getTestName());
+                            rm.put("network",testLogItem.getNetworkStandard());
+                            rm.put("busiType",evtCnNameMap.get(obj.get("evtName").toString()).getType());
+                            rm.put("evtName",evtCnNameMap.get(obj.get("evtName").toString()).getEvtCnName());
+                            rm.put("time",DateComputeUtils.formatMicroTime(obj.get("time").toString()));
+                            rm.put("lon",obj.get("Lat"));
+                            rm.put("lat",obj.get("Long"));
+                            rm.put("causeBy",obj.get("evtName"));
+                            rm.put("network01",InfluxReportUtils.getNetWork(obj.get("Netmode")));
+                            rm.put("cellId",obj.get("SellID"));
+                            rm.put("gnbId",getGnbID(testLogItem.getOperatorName(),InfluxReportUtils.getNetWork(obj.get("Netmode")),obj.get("SellID")));
+                            rm.put("pci",obj.get("Pci"));
+                            rm.put("fcn",obj.get("Enfarcn"));
+                            rm.put("destTac",null);
+                            setEvtMsg(interDatas,rm,nrPciFcn2BeanMap,ltePciFcn2BeanMap);
+                            if("lte".equalsIgnoreCase(InfluxReportUtils.getNetWork(obj.get("Netmode")))){
+                                InfluxReportUtils.setAbevtKpi(influxDbConnection,rm,InitialConfig.abevtLteKpiMap,obj.get("time").toString(),id);
+                            }
+                            if("nr".equalsIgnoreCase(InfluxReportUtils.getNetWork(obj.get("Netmode")))){
+                                InfluxReportUtils.setAbevtKpi(influxDbConnection,rm,InitialConfig.abevtNrKpiMap,obj.get("time").toString(),id);
+                            }
+                            results.add(rm);
+                        }
                     }
-                    if("nr".equalsIgnoreCase(InfluxReportUtils.getNetWork(obj.get("Netmode")))){
-                        InfluxReportUtils.setAbevtKpi(influxDbConnection,rm,InitialConfig.abevtNrKpiMap,obj.get("time").toString(),id);
-                    }
-                    results.add(rm);
-                }
+                });
             });
         });
         return results;
@@ -1386,10 +1420,11 @@ public class InfluxServiceImpl implements InfluxService {
             "NR IntraFreq-Handover Failure","NR InterFreq-Handover Failure","Mobility From NR Failure"};
     static String[] startEvts=new String[]{"LTE Intrafreq Handover Start","LTE Interfreq Handover Start",
             "NR IntraFreq-Handover Start","NR InterFreq-Handover Start"};
-    private void setEvtMsg(List<Map<String, Object>> pre2sDatas, List<Map<String, Object>> startEvtDatas, Map<String, Object> rm, Map<String, List<Cell5G>> nrPciFcn2BeanMap, Map<String, List<LteCell>> ltePciFcn2BeanMap) {
-        if(pre2sDatas!=null&&!pre2sDatas.isEmpty()){
-            Set<String> evtName1 = pre2sDatas.stream().map(item -> item.get("evtName").toString()).collect(Collectors.toSet());
-            List<Map<String, Object>> swFailsDatas = pre2sDatas.stream().filter(item -> Arrays.asList(swfailureEvts).contains(item.get("evtName").toString())).collect(Collectors.toList());
+    private void setEvtMsg(List<Map<String, Object>> datas, Map<String, Object> rm, Map<String, List<Cell5G>> nrPciFcn2BeanMap, Map<String, List<LteCell>> ltePciFcn2BeanMap) {
+        if(datas!=null&&!datas.isEmpty()){
+            Set<String> evtName1 = datas.stream().map(item -> item.get("evtName").toString()).collect(Collectors.toSet());
+            List<Map<String, Object>> swFailsDatas = datas.stream().filter(item -> Arrays.asList(swfailureEvts).contains(item.get("evtName").toString())).collect(Collectors.toList());
+            List<Map<String, Object>> startSwDatas = datas.stream().filter(item -> Arrays.asList(startEvts).contains(item.get("evtName").toString())).collect(Collectors.toList());
             if(evtName1.contains("LTE TAU Failure")){
                 rm.put("exsistTauFail","是");
             }else{
@@ -1397,20 +1432,15 @@ public class InfluxServiceImpl implements InfluxService {
             }
             if(swFailsDatas!=null&&!swFailsDatas.isEmpty()){
                 rm.put("exsistSwFail","是");
-                Map<String, Object> map = swFailsDatas.get(swFailsDatas.size() - 1);
+                Map<String, Object> map = startSwDatas.get(0);
                 if(map.get("evtName").toString().contains("LTE")){
                     rm.put("swdestnetwork","4G");
-                    List<Map<String, Object>> swFailPreDatas = DateComputeUtils.getPreDatas(startEvtDatas, map.get("time").toString());
-                    if(swFailPreDatas!=null&&!swFailPreDatas.isEmpty()){
-                        fillLteColumns(rm,swFailPreDatas.get(0),ltePciFcn2BeanMap);
-                    }
+                    fillLteColumns(rm,map,ltePciFcn2BeanMap);
+
                 }else if(map.get("evtName").toString().contains("NR")){
                     rm.put("swdestnetwork","5G");
-                    List<Map<String, Object>> swFailPreDatas = DateComputeUtils.getPreDatas(startEvtDatas, map.get("time").toString());
-                    if(swFailPreDatas!=null&&!swFailPreDatas.isEmpty())
-                        fillNrColumns(rm,swFailPreDatas.get(0),nrPciFcn2BeanMap);
+                    fillNrColumns(rm,map,nrPciFcn2BeanMap);
                 }
-
             }else{
                 rm.put("exsistSwFail","否");
                 rm.put("swdestnetwork",null);
@@ -1429,8 +1459,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<Cell5G> nrPlanParamPojos = nrPciFcn2BeanMap.get(pci + "_" + fcn);
         boolean flag=setNrCellID(record,longg,lat,nrPlanParamPojos);
         if(!flag){
-            em.put("pci",pci);
-            em.put("fcn",fcn);
+            em.put("swdestcellId","PCI:"+pci+"FCN"+fcn);
         }
     }
 
@@ -1442,8 +1471,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<LteCell> nrPlanParamPojos = nrPciFcn2BeanMap.get(pci + "_" + fcn);
         boolean flag=setLteCellID(record,longg,lat,nrPlanParamPojos);
         if(!flag){
-            em.put("pci",pci);
-            em.put("fcn",fcn);
+            em.put("swdestcellId","PCI:"+pci+","+"FCN"+fcn);
         }
     }
 
@@ -1894,7 +1922,7 @@ public class InfluxServiceImpl implements InfluxService {
      */
     List<Map<String, Object>> getRecordByMsgIDFromSign(Map<String, Object> obj,String id) {
         String msgID=obj.get("MsgID").toString();
-        String sigSql="select signalName from "+InfluxReportUtils.getTableName(id,"SIG")+" where MsgID=''{0}''";
+        String sigSql="select Dir,signalName from "+InfluxReportUtils.getTableName(id,"SIG")+" where MsgID=''{0}''";
         String formatSql = MessageFormat.format(sigSql, msgID);
         QueryResult query1 = influxDbConnection.query(formatSql);
         return InfludbUtil.paraseQueryResult(query1);

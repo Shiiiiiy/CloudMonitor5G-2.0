@@ -1,22 +1,25 @@
 编号,类别,事件,前置条件,触发事件,触发信令,后置条件,对应开始事件
 1,语音,主叫EPS FB失败,Outgoing SIP Call Attempt,EPSFallBack Failure,,,EPSFallBack Start
-2,语音,主叫失败,,Outgoing SIP Call Block,,,Outgoing SIP Call  Attempt
-3,语音,主叫掉话,,Outgoing SIP Call Drop,,,Outgoing SIP Call  Attempt
+2,语音,主叫失败,,Outgoing SIP Call Block,,,Outgoing SIP Call Attempt
+3,语音,主叫掉话,,Outgoing SIP Call Drop,,,Outgoing SIP Call Attempt
 4,语音,被叫EPS FB失败,Incoming SIP Call Attempt,EPSFallBack Failure,,,EPSFallBack Start
 5,语音,被叫失败,,Incoming SIP Call Block,,,Incoming SIP Call Attempt
 6,语音,被叫掉话,,Incoming SIP Call Drop,,,Incoming SIP Call Attempt
-7,语音,FastReturn返回5G失败,Outgoing SIP Call End,Fast_Return_Failure,,,Outgoing SIP Call  Attempt/Incoming SIP Call End/Incoming SIP Call Attempt
+7,语音,FastReturn返回5G失败,Outgoing SIP Call End,Fast_Return_Failure,,,Outgoing SIP Call Attempt
+7,语音,FastReturn返回5G失败,Incoming SIP Call End,Fast_Return_Failure,,,Incoming SIP Call Attempt
 8,数据,数据接入失败,,Network Connect Failure,,,Network Connect Start
 9,数据,数据掉线,,FTP Download Drop/FTP Upload Drop/HTTP Page Drop/Video Play Drop/HTTP Download Drop/HTTP Upload Drop,,,Network Connect Start
-10,数据,PDP激活失败,Network Connect Start,NR PDU Session Establishment Failure/LTE Activate dedicated EPS bearer context Failure,,Network Connect Failure/Network Connect Success,Network Connect Start
-11,数据,PDP掉线,,NR PDP Drop/LTE PDP Drop,1、NR：下行“DEREGISTRATION REQUEST”/下行“PDU SESSION RELEASE COMMAND”2、下行“Detach request”/下行“DEACTIVATE EPS BEARER CONTEXT REQUEST”,,
+10,数据,PDP激活失败,Network Connect Start,LTE Activate dedicated EPS bearer context Failure,,Network Connect Failure/Network Connect Success,Network Connect Start
+10,数据,PDP激活失败,Network Connect Start,NR PDU Session Establishment Failure,,Network Connect Failure/Network Connect Success,Network Connect Start
+11,数据,PDP掉线,,NR PDP Drop,1;DEREGISTRATION REQUEST/1;PDU SESSION RELEASE COMMAND,,Network Connect Start
+11,数据,PDP掉线,,LTE PDP Drop,1;Detach request/1;DEACTIVATE EPS BEARER CONTEXT REQUEST,,Network Connect Start
 12,数据,DNS请求失败,,DNS Lookup Failure,,,,DNS Lookup Start
 13,互操作,5G切4G失败,,Mobility From NR Failure,,,Mobility From NR Start
 14,互操作,4G切换5G失败,,EUTRA Handover to NR Failure,,,EUTRA Handover to NR Start
 15,互操作,5G到4G重定向失败,,N2L_REDIRECT_FAIL,,,N2L_REDIRECT_BEGIN
 16,互操作,4G到5G重定向失败,,L2NR_REDIRECTED_FAIL,,,L2NR_REDIRECTED_START
-17,互操作,切换失败（4G系统内切换）,,LTE Interfreq Handover Failure/LTE Intrafreq Handover Failure,,,LTE Interfreq Handover Start/LTE Intrafreq Handover Start
-18,互操作,切换失败（4G回落3G/2G）,,Mobility From EUTRA Failure,,,Mobility From EUTRA Start
-19,互操作,切换失败（3G/2G返回4G）,,,,,
+17,互操作,切换失败（4G系统内切换）,,LTE Interfreq Handover Failure,,,LTE Interfreq Handover Start
+18,互操作,切换失败（4G系统内切换）,,LTE Intrafreq Handover Failure,,,LTE Intrafreq Handover Start
+19,互操作,切换失败（4G回落3G/2G）,,Mobility From EUTRA Failure,,,Mobility From EUTRA Start
 21,切换,同频切换失败,,NR IntraFreq-Handover Failure,,,NR IntraFreq-Handover Start
 22,切换,异频切换失败,,NR InterFreq-Handover Failure,,,NR InterFreq-Handover Start

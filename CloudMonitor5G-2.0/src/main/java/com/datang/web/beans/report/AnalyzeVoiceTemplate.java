@@ -33,7 +33,7 @@ public class AnalyzeVoiceTemplate implements AnalyzeTemplate{
                 list.addAll(abEvtAnaList);
                 LOGGER.info(" influxDb " + abEvtAnaList.size() );
             }catch (Exception e){
-                LOGGER.error(" influxDb is error");
+                LOGGER.error("influx query :"+e.getMessage());
             }
         }
         Map<String, Collection> hashMap1 = new HashMap<>();

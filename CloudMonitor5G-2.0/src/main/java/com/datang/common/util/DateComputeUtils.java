@@ -171,7 +171,7 @@ public class DateComputeUtils {
 	}
 
 	/**
-	 * 获取从开始时间往前到指定事件发生的记录之间的数据集
+	 * 获取从开始时间往前到指定事件发生的记录之间的数据集 倒序 闭区间
 	 * @param result
 	 * @param startTime
 	 * @return
@@ -184,9 +184,14 @@ public class DateComputeUtils {
 		Calendar end = toUtcDate(startTime);
 		for(int i=result.size()-1;i>=0;i--){
 			Calendar time = toUtcDate(result.get(i).get("time").toString());
-			if(time.before(end)&&evt.equalsIgnoreCase(result.get(i).get("evtName").toString())){
+            boolean b = time.getTimeInMillis() == end.getTimeInMillis();
+            if((b||time.before(end))&&!evt.equalsIgnoreCase(result.get(i).get("evtName").toString())){
 				r.add(result.get(i));
 			}
+			if(evt.equalsIgnoreCase(result.get(i).get("evtName").toString())){
+                r.add(result.get(i));
+                break;
+            }
 		}
 		return r;
 	}

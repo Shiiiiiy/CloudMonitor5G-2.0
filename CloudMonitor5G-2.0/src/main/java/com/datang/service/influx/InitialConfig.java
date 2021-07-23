@@ -45,16 +45,16 @@ public class InitialConfig {
     //语音业务配置
     public static final List<VoiceBusiConfig> voiceBusiConfigs=new ArrayList<>();
     static{
-        InputStream resourceAsStream = InfluxServiceImpl.class.getResourceAsStream("/IEConfig.xml");
-        InputStream sampcsvresourceAsStream = InfluxServiceImpl.class.getResourceAsStream("/samp_title.csv");
-        InputStream evtcsvresourceAsStream = InfluxServiceImpl.class.getResourceAsStream("/evt_define.csv");
-        InputStream evtkpicsvresourceAsStream = InfluxServiceImpl.class.getResourceAsStream("/evt_kpi_define.csv");
-        InputStream abevtStream = InfluxServiceImpl.class.getResourceAsStream("/异常事件分析.csv");
-        InputStream abevtKpiStream = InfluxServiceImpl.class.getResourceAsStream("/异常事件分析指标定义.csv");
-        InputStream netStream = InfluxServiceImpl.class.getResourceAsStream("/网络参数.csv");
-        InputStream netKpiStream = InfluxServiceImpl.class.getResourceAsStream("/网络参数IE列配置.csv");
-        InputStream netToatlStream = InfluxServiceImpl.class.getResourceAsStream("/网络参数4G5G报表配置.csv");
-        InputStream voiceStream = InfluxServiceImpl.class.getResourceAsStream("/语音业务分析主被叫配置.csv");
+        InputStream resourceAsStream = InitialConfig.class.getResourceAsStream("/IEConfig.xml");
+        InputStream sampcsvresourceAsStream = InitialConfig.class.getResourceAsStream("/samp_title.csv");
+        InputStream evtcsvresourceAsStream = InitialConfig.class.getResourceAsStream("/evt_define.csv");
+        InputStream evtkpicsvresourceAsStream = InitialConfig.class.getResourceAsStream("/evt_kpi_define.csv");
+        InputStream abevtStream = InitialConfig.class.getResourceAsStream("/异常事件分析.csv");
+        InputStream abevtKpiStream = InitialConfig.class.getResourceAsStream("/异常事件分析指标定义.csv");
+        InputStream netStream = InitialConfig.class.getResourceAsStream("/网络参数.csv");
+        InputStream netKpiStream = InitialConfig.class.getResourceAsStream("/网络参数IE列配置.csv");
+        InputStream netToatlStream = InitialConfig.class.getResourceAsStream("/网络参数4G5G报表配置.csv");
+        InputStream voiceStream = InitialConfig.class.getResourceAsStream("/语音业务分析主被叫配置.csv");
         BufferedReader fr= null;
         BufferedReader fr2= null;
         BufferedReader fr3= null;

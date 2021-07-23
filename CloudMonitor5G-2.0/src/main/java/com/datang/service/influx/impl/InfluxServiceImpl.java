@@ -45,7 +45,7 @@ public class InfluxServiceImpl implements InfluxService {
     @Value("${nr.cucc.length}")
     private int cuccGlen;
 
-    private static String MAPTRAILSQL="SELECT last({0}) as LTE_PCC_RSRP, last({1}) as LTE_PCC_SINR, last({2}) as NR_SS_RSRP, last({3}) as NR_SS_SINR,last(Lat) as Lat,last(Long) as Long FROM {4}  where Lat<91.0 and Long<181.0 GROUP BY time(1s) fill(none)";
+    private static String MAPTRAILSQL="SELECT last({0}) as LTE_PCC_RSRP, last({1}) as LTE_PCC_SINR, last({2}) as NR_SS_RSRP, last({3}) as NR_SS_SINR,last(Lat) as Lat,last(Long) as Long FROM {4}  where Lat=~/./ and Long=~/./ GROUP BY time(1s) fill(none)";
     private static String[] refStrs=new String[]{"LTE PCC_RSRP","LTE PCC_SINR","NR SS-RSRP","NR SS-SINR"};
     private static String[] refStrsGrid=new String[]{"X","Y","Height","NR SS-RSRP","NR SS-RSRQ","NR SS-SINR","NR PCI","NR SSB ARFCN","NR ssb-Index[0]",
             "NR Ncell PCI[0]","NR Ncell ARFCNSSB_DL[0]","NR Ncell SS-RSRP[0]","NR Ncell SS-RSRQ[0]","NR Ncell SS-SINR[0]","NR Ncell ssb-index[0]",
@@ -166,7 +166,7 @@ public class InfluxServiceImpl implements InfluxService {
         sbSql.append(timeWheres.stream().collect(Collectors.joining(" or ")));
         if(null!=wheres){
             for(String where:wheres){
-                sbSql.append(MessageFormat.format(" and {0}!="+ -1+"",where));
+                sbSql.append(MessageFormat.format(" and {0}>"+ -5555+"",where));
             }
         }
         QueryResult query=influxDbConnection.query(sbSql.toString());

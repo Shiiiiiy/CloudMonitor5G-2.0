@@ -908,12 +908,14 @@ public class ReportFgAction extends PageAction implements
 				if (terminalGroupNames.length() > 0) {
 					taskName.append(terminalGroupNames.toString().trim());
 				}
-				taskName.append(statisticeTaskRequest.getProv());
-				if (taskName.length() >= 1) {
+
+				if ( statisticeTaskRequest.getProv() !=null  && statisticeTaskRequest.getProv().length() >= 1) {
+					taskName.append(statisticeTaskRequest.getProv());
 					taskName.append("-");
 				}
-				taskName.append(statisticeTaskRequest.getCity());
-				if (taskName.length() >= 1) {
+
+				if (statisticeTaskRequest.getCity() !=null  && statisticeTaskRequest.getCity().length() >= 1) {
+					taskName.append(statisticeTaskRequest.getCity());
 					taskName.append("-");
 				}
 				taskName.append(DateUtil.getCurDateStr(new Date()));

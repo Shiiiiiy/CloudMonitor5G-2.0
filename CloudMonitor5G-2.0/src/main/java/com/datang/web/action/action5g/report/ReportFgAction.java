@@ -909,9 +909,13 @@ public class ReportFgAction extends PageAction implements
 					taskName.append(terminalGroupNames.toString().trim());
 				}
 				taskName.append(statisticeTaskRequest.getProv());
-				taskName.append("-");
+				if (taskName.length() >= 1) {
+					taskName.append("-");
+				}
 				taskName.append(statisticeTaskRequest.getCity());
-				taskName.append('-');
+				if (taskName.length() >= 1) {
+					taskName.append("-");
+				}
 				taskName.append(DateUtil.getCurDateStr(new Date()));
 				taskName.append('-');
 				// 分析报表 / 通用报表

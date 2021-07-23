@@ -168,7 +168,7 @@ $(function(){
 					$.messager.alert('系统提示','请输入文件名!','warning');
 					$('#saveButton').linkbutton('enable');
 					return false;
-				}else  */if(prov.trim() == ""){
+				}else  if(prov.trim() == ""){
 					$.messager.alert('系统提示','请选择省!','warning');
 					$('#saveButton').linkbutton('enable');
 					return false;
@@ -176,7 +176,7 @@ $(function(){
 					$.messager.alert('系统提示','请选择市!','warning');
 					$('#saveButton').linkbutton('enable');
 					return false;
-				}else if($('#logTab').datagrid('getRows').length==0){
+				}else   */ if($('#logTab').datagrid('getRows').length==0){
 					$.messager.alert('系统提示','请选择Log文件!','warning');
 					$('#saveButton').linkbutton('enable');
 					return false;
@@ -259,16 +259,16 @@ $(function(){
 	    }
 	    
 	    var prov = $("#prov").combobox('getValue');
-	    if(prov.trim() == ""){
+	/*    if(prov.trim() == ""){
 			$.messager.alert('系统提示','请选择省!','warning');
 			return false;
-		}
+		}*/
 	    
 		var city = $("#city").combobox('getValue');
-	    if(city.trim() == ""){
+	  /*  if(city.trim() == ""){
 			$.messager.alert('系统提示','请选择市!','warning');
 			return false;
-		}
+		} */
 	    
 		//var city=$("#atuTab").datagrid('getData');
 		/* var rows1 = $("#atuTab").datagrid('getRows');

@@ -892,7 +892,8 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 				"IADS_CUCC_LOGINFO l ON f.FILE_NAME = l.FILE_NAME AND f.TAG='first' AND l.TAG='last'  AND  f.BOX_ID = l.BOX_ID) cc\n" +
 				"\t\t\t\tWHERE\n" +
 				"\t\t\t\t1 = 1 " + ccFileWhere  + ccTimeWhere + " ) cc ON\n" +
-				"\t\t\t\tcc.FILE_NAME1 = LOG.FILE_NAME";
+				"\t\t\t\tcc.FILE_NAME1 = LOG.FILE_NAME" +
+				"\torder by cc.START_TIME,cc.END_TIME";
 		return jdbcTemplate.objectQueryAll(sql1);
 	}
 

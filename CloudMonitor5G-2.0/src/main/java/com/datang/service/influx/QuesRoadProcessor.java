@@ -29,7 +29,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     @Autowired
     private UnicomLogItemService unicomLogItemService;
     //问题路段获取基础采样点模板sql
-    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM {0} where  Lat<91.0 and Long<181.0 ";
+    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM {0} where  Lat=~/./ and Long=~/./ ";
     private static Map<String,String[]> WHERE_MAP=new HashMap<>();
     private static Map<String,String[]> EVTS_MAP=new HashMap<>();
 
@@ -144,6 +144,9 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         int m=0;
         for(int[] item:quesRaods){
             List<Map<String, Object>> maps = sampDatas.subList(item[0], item[1] + 1);
+            if(maps.size()==0){
+                System.out.println();
+            }
             Map<String,Object> obj=new HashMap<>();
             obj.put("id",m);
             obj.put("logname",testLogItem.getFileName());
@@ -420,9 +423,9 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             boolean flag1=false;//滑窗长度是否固定
             for(int i=0;i<sampDatas.size();i++){
                 Map<String, Object> point2 = sampDatas.get(i);
+                Double lon2=Double.parseDouble(point2.get("Long").toString());
+                Double lat2=Double.parseDouble(point2.get("Lat").toString());
                 if(!flag1){
-                    Double lon2=Double.parseDouble(point2.get("Long").toString());
-                    Double lat2=Double.parseDouble(point2.get("Lat").toString());
                     Double distance = AdjPlaneArithmetic.getDistance(lon, lat, lon2, lat2);
                     if(distance>=roadThresold){
                         flag1=true;
@@ -430,7 +433,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                         Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
                         if(rate*100>rateThreshold){
                             if(!flag){
-                                start=i-slideWindow.size();
+                                start=i-slideWindow.size()+1;
                             }
                             //滑窗滑到采样点最后一个满足问题路段开始条件
                             if(end==sampDatas.size()-1){
@@ -451,7 +454,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                     Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
                     if(rate*100>rateThreshold){
                         if(!flag){
-                            start=i-slideWindow.size();
+                            start=i-slideWindow.size()+1;
                         }
                         //滑窗滑到采样点最后一个满足问题路段开始条件
                         if(end==sampDatas.size()-1){
@@ -461,12 +464,13 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                         flag=true;
                     }else if(rate*100<rateThreshold-20){
                         if(flag){
-                            quesRaods.add(new int[]{start,end-1});
+                            quesRaods.add(new int[]{start,end});
                             slideWindow.clear();
+                            slideWindow.add(sampDatas.get(i));
                             start=i;
                             end=i;
-                            lon=Double.parseDouble(point2.get("Long").toString());
-                            lat=Double.parseDouble(point2.get("Lat").toString());
+                            lon=lon2;
+                            lat=lat2;
                             flag=false;
                             flag1=false;
                             continue;

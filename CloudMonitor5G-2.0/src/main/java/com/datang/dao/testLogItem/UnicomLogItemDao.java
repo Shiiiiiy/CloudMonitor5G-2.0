@@ -1002,7 +1002,7 @@ try{
 				"\tLOG.BOX_ID BOX_ID,\n" +
 				"\tLOG.FILE_NAME FILE_NAME,\n" +
 				"\tEVENTTYPE,\n" +
-				"\tCAST((CASE WHEN TIMESTAMP > 4102444800 OR TIMESTAMP < 0 THEN 0 ELSE TIMESTAMP END)/(60*60*24) AS NUMERIC) AS TIMESTAMP,\n" +
+				"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS') AS TIMESTAMP,\n" +
 				"\tLONGITUDE,\n" +
 				"\tLATITUDE\n" +
 				"FROM\n" +
@@ -1022,7 +1022,7 @@ try{
 				"\tLOG.BOX_ID BOX_ID,\n" +
 				"\tLOG.FILE_NAME FILE_NAME,\n" +
 				"\tEVENTTYPE,\n" +
-				"\tCAST((CASE WHEN TIMESTAMP > 4102444800 OR TIMESTAMP < 0 THEN 0 ELSE TIMESTAMP END)/(60*60*24) AS NUMERIC) AS TIMESTAMP,\n" +
+				"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS')   AS TIMESTAMP,\n" +
 				"\tLONGITUDE,\n" +
 				"\tLATITUDE\n" +
 				"FROM\n" +

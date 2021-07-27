@@ -73,7 +73,7 @@
 		MyPlayer.Data.playList = logs;
 
 
-
+		var initPage = false;
 
 		var config;
 
@@ -85,6 +85,12 @@
 					dataType: "json",
 					success: function(data){
 						var ieData = {};
+
+						data =  data.sort(function(a,b){
+							return new Date(a['time']).getTime() - new Date(b['time']).getTime();
+						});
+
+
 						$.each(data,function(index,item){
 							if(index==0 && item){
 								MyPlayer.Data.startTime = item.time;
@@ -126,14 +132,7 @@
 					data: {'logId': MyPlayer.Data.logId},
 					dataType: "json",
 					success: function(data){
-
-
 						MyChart.Data.all = data;
-						if(data[0]){
-							MyChart.Data.initTime =  data[0].time;
-						}
-
-
 					}
 				}),
 
@@ -179,6 +178,7 @@
 					loadNewLog();
 				}
 			});
+			initPage = true;
 			$('#logs').combobox('setValue',MyPlayer.Data.logId);
 
 		});
@@ -340,6 +340,10 @@
 
 	function loadNewLog() {
 
+		if(initPage){
+			initPage = false;
+			return;
+		}
 		MyPlayer.fn.stop();
 
 		initMap();
@@ -352,6 +356,11 @@
 					dataType: "json",
 					success: function(data){
 						var ieData = {};
+
+						data =  data.sort(function(a,b){
+							return new Date(a['time']).getTime() - new Date(b['time']).getTime();
+						});
+
 						$.each(data,function(index,item){
 							if(index==0  && item){
 								MyPlayer.Data.startTime = item.time;
@@ -395,12 +404,6 @@
 					dataType: "json",
 					success: function(data){
 						MyChart.Data.all = data;
-
-						if(data.length>0){
-							MyPlayer.Data.startTime = new Date(data[0].time).Format("yyyy-MM-dd hh:mm:ss");
-							MyPlayer.Data.currentTime = MyPlayer.Data.startTime;
-							MyPlayer.Data.endTime = new Date(data[data.length-1].time).Format("yyyy-MM-dd hh:mm:ss");
-						}
 					}
 				}),
 

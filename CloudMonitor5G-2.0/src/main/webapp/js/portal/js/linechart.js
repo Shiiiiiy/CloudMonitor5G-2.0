@@ -6,6 +6,8 @@ var MyChart = {
 	},
 	Data : {
 		all:[],
+		seriesIndex:0,
+		defaultDate:'',
 		currentIndex:0,
 		title:['LTE测量','NR测量','LTE速率','NR速率切换'],
 		col:[
@@ -13,8 +15,7 @@ var MyChart = {
 			[ 'SS_RSRP', 'SS_SINR'],
 			[ 'LTE PDCP Thrput DL(Mbps)', 'LTE PDCP Thrput UL(Mbps)'],
 			[ 'NR PHY Thrput UL(Mbps)', 'NR PHY Thrput DL(Mbps)']
-		],
-		seriesIndex:0
+		]
 	}
 };
 
@@ -31,9 +32,11 @@ MyChart.fn = function (a) {
 	function calcIndex(){
 
 		var target;
-		var timeArray = MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(c=>c.time);
+		var timeArray = MyChart.Data.all.filter( a => ( a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ) &&   ( new Date(a['time']).getTime() -   new Date(MyPlayer.Data.endTime).getTime() <  1000 * 10  )   ).map(c=>c.time);
 		timeArray.push(MyPlayer.Data.currentTime);
-		timeArray.sort();
+		timeArray.sort(function(a,b){
+			return new Date(a).getTime()-new Date(b).getTime();
+		});
 		var position =  timeArray.indexOf(MyPlayer.Data.currentTime);
 
 		if(position == 0){
@@ -41,9 +44,13 @@ MyChart.fn = function (a) {
 		}else if(position == timeArray.length - 1){
 			target = timeArray.length -2;
 		}else{
-			//	var before = timeArray[position-1];
-			//	var after = timeArray[position+1];
+			var before = timeArray[position-1];
+			var after = timeArray[position+1];
 			target = position;
+
+			if ((new Date(after).getTime() - new Date(MyPlayer.Data.currentTime).getTime()) - (new Date(MyPlayer.Data.currentTime).getTime() - new Date(before).getTime()) >0 ) {
+				target = position-1;
+			}
 		}
 
 		//判断当前位置有没有值，如果两个指标都没值的话，折线图里的tooltip不变而且axisPointer会消失
@@ -51,11 +58,11 @@ MyChart.fn = function (a) {
 		while( flag &&  target< timeArray.length -2  ){
 			if(
 
-				MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] )[target][MyChart.Data.col[MyChart.Data.currentIndex][0]]
-			||  MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] )[target][MyChart.Data.col[MyChart.Data.currentIndex][1]] ){
+				MyChart.Data.all.filter( a => ( a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]]  )  &&  ( new Date(a['time']).getTime() -   new Date(MyPlayer.Data.endTime).getTime() <  1000 * 10  ) )[target][MyChart.Data.col[MyChart.Data.currentIndex][0]]
+				||  MyChart.Data.all.filter( a => ( a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]]  ) &&   ( new Date(a['time']).getTime() -   new Date(MyPlayer.Data.endTime).getTime() <  1000 * 10  ) )[target][MyChart.Data.col[MyChart.Data.currentIndex][1]]){
 				flag = false;
 
-				if(MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] )[target][MyChart.Data.col[MyChart.Data.currentIndex][0]]){
+				if(MyChart.Data.all.filter( a => ( a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ) &&   ( new Date(a['time']).getTime() -   new Date(MyPlayer.Data.endTime).getTime() <  1000 * 10  )  )[target][MyChart.Data.col[MyChart.Data.currentIndex][0]]){
 					MyChart.Data.seriesIndex = 0;
 				}else{
 					MyChart.Data.seriesIndex = 1;
@@ -85,11 +92,11 @@ MyChart.fn = function (a) {
 				alwaysShowContent:  MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a.time).length > 0 ? true : false,
 				snap:true,
 				formatter:function(params){
-					var res =  params[0].name.slice(11 ,params[0].name.length);
+					var res =  params[0].data[0];
 					//	var res = new Date(params[0].name).Format("hh:mm:ss") ;
 					for(var i=0;i<params.length;i++){
-						if(params[i].data){
-							res+= "<br>"+params[i].marker+params[i].seriesName+":"+params[i].data;
+						if(params[i].data[1]){
+							res+= "<br>"+params[i].marker+params[i].seriesName+":"+params[i].data[1];
 						}
 					}
 					return res;
@@ -98,7 +105,7 @@ MyChart.fn = function (a) {
 				position: function(pt,b) {
 					var newPosition = pt[0] -68;
 					if(syncOther && newPosition != lastPosition ){
-						var time = b[0].axisValue;
+						var time = b[0].data[0];
 						MyPlayer.Data.currentTime = time;
 						MyPlayer.fn.sync(MyChart.Config.syncSourceId);
 					}
@@ -117,9 +124,13 @@ MyChart.fn = function (a) {
 			},
 
 			xAxis: {
-				type: "category",
-				data: MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a.time),
-
+				type: "time",
+				//	data: MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a.time),
+				axisLabel:{
+					formatter:function(value,index){
+						return new Date(value).Format("hh:mm:ss");
+					}
+				},
 				axisPointer: {
 					value: MyPlayer.Data.startTime,
 					animation:true,
@@ -164,15 +175,25 @@ MyChart.fn = function (a) {
 				{
 					name: MyChart.Data.col[MyChart.Data.currentIndex][0],
 					type: 'line',
-					data: MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][0]]),
-					connectNulls:true
+					data: MyChart.Data.all.filter( a => ( a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ) && new Date(a['time']).getTime() -   new Date(MyPlayer.Data.endTime).getTime() <   1000 * 10  ).map(a=> [  a['time'],a[MyChart.Data.col[MyChart.Data.currentIndex][0]] ]).sort(function(a,b){
+
+						return new Date(a[0]).getTime() - new Date(b[0]).getTime()
+
+					}),
+					connectNulls:true,
+					symbol:'none'
 				},
 				{
 					name: MyChart.Data.col[MyChart.Data.currentIndex][1],
 					type: 'line',
 					yAxisIndex: 1,
-					data: MyChart.Data.all.filter( a => a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] ).map(a=>a[MyChart.Data.col[MyChart.Data.currentIndex][1]]),
-					connectNulls:true
+					data: MyChart.Data.all.filter( a => (a[MyChart.Data.col[MyChart.Data.currentIndex][0]] || a[MyChart.Data.col[MyChart.Data.currentIndex][1]] )  && new Date(a['time']).getTime() -   new Date(MyPlayer.Data.endTime).getTime() <  1000 * 10  ).map(a=> [ a['time'], a[MyChart.Data.col[MyChart.Data.currentIndex][1]]]).sort(function(a,b){
+
+						return new Date(a[0]).getTime() - new Date(b[0]).getTime()
+
+					}),
+					connectNulls:true,
+					symbol:'none'
 				}
 			]
 		}
@@ -244,7 +265,7 @@ MyChart.fn = function (a) {
 				syncOther = false;
 				chartObject.dispatchAction({
 					type: 'showTip',
-					seriesIndex: MyChart.Data.seriesIndex,
+					seriesIndex:MyChart.Data.seriesIndex,
 					dataIndex: frameIndex
 				});
 			}

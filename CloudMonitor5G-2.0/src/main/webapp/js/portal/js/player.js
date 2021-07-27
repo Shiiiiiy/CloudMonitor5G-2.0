@@ -73,14 +73,14 @@ MyPlayer.fn = function (a) {
 				MyPlayer.Data.task = setInterval(function(){
 					calcNextFrameTime();
 					$this.playOnce();
-					if(MyPlayer.Data.currentTime >= MyPlayer.Data.endTime){
+					if(MyPlayer.Data.currentTime >= MyPlayer.Data.endTime && MyPlayer.Data.speed >0){
 						MyPlayer.Data.currentTime = MyPlayer.Data.endTime;
 						$this.pause();
 						$("#tplay").show();
 						$("#tpause").hide();
 						return;
 					}
-					if(MyPlayer.Data.currentTime<=MyPlayer.Data.startTime){
+					if(MyPlayer.Data.currentTime<=MyPlayer.Data.startTime && MyPlayer.Data.speed < 0){
 						MyPlayer.Data.currentTime = MyPlayer.Data.startTime;
 						$this.pause();
 						$("#tplay").show();

@@ -129,8 +129,23 @@
 			$(this).children('ul').toggle();
 			$(this).children('a').children('div').removeClass('hover');
 		});
+		initIfeeldashbord();
 		checkLastPostTime();
 	});
+
+	function initIfeeldashbord(){
+		let data = {
+			userName: ifeelUserName,
+			password: ifeelPassword
+		};
+
+		let iframe = document.getElementById("ifeelIframe")
+		iframe.src = ipAddress + initRouter;
+		iframe.onload = function(){
+			//把当前页面的路径当做参数传给子页面的iframe
+			iframe.contentWindow.postMessage(JSON.stringify(data),"*");
+		}
+	}
 
 	/* 存储移除的menu */
 	var noteArray = new Array();
@@ -242,6 +257,7 @@
 	}
 </script>
 <script type="text/javascript" src="js/common.js" ></script>
+<script type="text/javascript" src="js/ifeelProjectParam.js" ></script>
 
 </head>
 <body class="easyui-layout">
@@ -597,6 +613,16 @@
 						</ul>
 					</li>
 				</shiroextend:hasAnyPermissions>
+				<shiroextend:hasAnyPermissions name="appTestInfoMonitor:show">
+					<li class="first">
+						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/images/realtimeMontitoring.png" style="border:none;padding-bottom: 5px;" width="40px" height="40px" /><br />ifell</a>
+						<ul>
+							<shiroextend:hasAnyPermissions name="appTestInfoMonitor:show">
+								<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="ifeelRealMonitor/listUI.action">实时监控</a></li>
+							</shiroextend:hasAnyPermissions>
+						</ul>
+					</li>
+				</shiroextend:hasAnyPermissions>
 			</ul>
 			
 		</div>
@@ -668,6 +694,10 @@
 	</div>
 	<div id="checkLastPostTimeDialogTool">
 		<a href="#" style="width:30px;text-decoration:underline;line-height:16px;font-size:12px;" onclick="logout();" >注销</a>
+	</div>
+
+	<div style="display: none">
+		<iframe src=""  id="ifeelIframe"></iframe>
 	</div>
 </body>
 </html>

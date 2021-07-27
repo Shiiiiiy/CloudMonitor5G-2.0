@@ -102,4 +102,5 @@
     <include file="stationFileUpload.xml"/>
     <include file="taskOrderManage.xml"/>
     <include file="mos.xml"/>
+    <include file="ifeelProject.xml" />
 </struts>

@@ -930,10 +930,22 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 		// 时间
 		// 规避处理，选了Id  取消时间限制
 		String logTimeWhere ="";
-		if(beginDate!=null
-				&& endDate!=null
-				&& (idWhere==null || (!StringUtils.hasText(idWhere)))){
-			logTimeWhere = " AND LOG.START_DATE > " + beginDate.getTime() + " AND　" + "LOG.END_DATE <= " + endDate.getTime() +" ";
+		if(idWhere==null || (!StringUtils.hasText(idWhere))){
+			if(beginDate!=null){
+				logTimeWhere = " AND timestamp > " + beginDate.getTime()*1000 + " ";
+			}
+			if(endDate!=null){
+				logTimeWhere =  logTimeWhere + " AND timestamp <= " + endDate.getTime()*1000 +" ";
+			}
+		}
+		String trafficTimeWhere="";
+		if(idWhere==null || (!StringUtils.hasText(idWhere))){
+			if(beginDate!=null){
+				trafficTimeWhere = " AND timestamp > " + beginDate.getTime()*1000 + " ";
+			}
+			if(endDate!=null){
+				trafficTimeWhere =  trafficTimeWhere + " AND timestamp <= " + endDate.getTime()*1000 +" ";
+			}
 		}
 
 
@@ -952,7 +964,10 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 
 
 try{
-	List<Map<String, Object>> mockdata = bizCheckNew(logFileWhere, logTimeWhere);
+	boolean logFileWhereFlag = StringUtils.hasText(idWhere);
+	List<Map<String, Object>> mockdata = bizCheckNew(logFileWhere,logFileWhereFlag, logTimeWhere,trafficTimeWhere);
+
+
 
 
 	return mockdata;
@@ -997,46 +1012,100 @@ try{
 	/**
 	 * 业务事件校验 新
 	 * */
-	private List<Map<String,Object>> bizCheckNew(String logFileWhere,String logTimeWhere){
-		String sql2_cucc = "SELECT\n" +
-				"\tLOG.BOX_ID BOX_ID,\n" +
-				"\tLOG.FILE_NAME FILE_NAME,\n" +
-				"\tEVENTTYPE,\n" +
-				"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS') AS TIMESTAMP,\n" +
-				"\tLONGITUDE,\n" +
-				"\tLATITUDE\n" +
-				"FROM\n" +
-				"\tIADS_CUCC_TRAFFICINFO CC\n" +
-				"RIGHT JOIN (\n" +
-				"\tSELECT\n" +
-				"\t\tBOX_ID,\n" +
-				"\t\tFILE_NAME\n" +
-				"\tFROM\n" +
-				"\t\tIADS_TESTLOG_ITEM LOG\n" +
-				"\tWHERE\n" +
-				"\t\t1 = 1 " + logFileWhere +  logTimeWhere + ") LOG ON\n" +
-				"\tCC.BOX_ID = LOG.BOX_ID\n" +
-				"\tAND CC.FILE_NAME=LOG.FILE_NAME ORDER BY TIMESTAMP";
+	private List<Map<String,Object>> bizCheckNew(String logFileWhere,boolean logFileWhereFlag,String logTimeWhere,String trafficimeWhere){
 
-		String sql2_testlog = "SELECT\n" +
-				"\tLOG.BOX_ID BOX_ID,\n" +
-				"\tLOG.FILE_NAME FILE_NAME,\n" +
-				"\tEVENTTYPE,\n" +
-				"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS')   AS TIMESTAMP,\n" +
-				"\tLONGITUDE,\n" +
-				"\tLATITUDE\n" +
-				"FROM\n" +
-				"\tIADS_TESTLOG_TRAFFICINFO CC\n" +
-				"RIGHT JOIN (\n" +
-				"\tSELECT\n" +
-				"\t\tBOX_ID,\n" +
-				"\t\tFILE_NAME\n" +
-				"\tFROM\n" +
-				"\t\tIADS_TESTLOG_ITEM LOG\n" +
-				"\tWHERE\n" +
-				"\t\t1 = 1" + logFileWhere +  logTimeWhere + " ) LOG ON\n" +
-				"\tCC.BOX_ID = LOG.BOX_ID\n" +
-				"\tAND CC.FILE_NAME = LOG.FILE_NAME ORDER BY TIMESTAMP";
+		String sql2_cucc = "";
+		if(logFileWhereFlag) {
+			sql2_cucc = "SELECT\n" +
+					"\tLOG.BOX_ID BOX_ID,\n" +
+					"\tLOG.FILE_NAME FILE_NAME,\n" +
+					"\tEVENTTYPE,\n" +
+					"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS') AS TIMESTAMP,\n" +
+					"\tLONGITUDE,\n" +
+					"\tLATITUDE\n" +
+					"FROM\n" +
+					"\tIADS_CUCC_TRAFFICINFO CC\n" +
+					"RIGHT JOIN (\n" +
+					"\tSELECT\n" +
+					"\t\tBOX_ID,\n" +
+					"\t\tFILE_NAME\n" +
+					"\tFROM\n" +
+					"\t\tIADS_TESTLOG_ITEM LOG\n" +
+					"\tWHERE\n" +
+					"\t\t1 = 1 " + logFileWhere + logTimeWhere + ") LOG ON\n" +
+					"\tCC.BOX_ID = LOG.BOX_ID\n" +
+					"\tAND CC.FILE_NAME=LOG.FILE_NAME ORDER BY TIMESTAMP";
+
+		}else{
+			sql2_cucc = "select\n" +
+					"\tBOX_ID,\n" +
+					"\tFILE_NAME,\n" +
+					"\tEVENTTYPE,\n" +
+					"\tTIMESTAMP,\n" +
+					"\tLONGITUDE,\n" +
+					"\tLATITUDE\n" +
+					"from\n" +
+					"\t(\n" +
+					"\tselect\n" +
+					"\t\tBOX_ID,\n" +
+					"\t\tFILE_NAME,\n" +
+					"\t\tEVENTTYPE,\n" +
+					"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS') AS TIMESTAMP,\n" +
+					"\t\tLONGITUDE,\n" +
+					"\t\tLATITUDE\n" +
+					"\tfrom\n" +
+					"\t\tIADS_CUCC_TRAFFICINFO CC ) cc\n" +
+					"where 1=1 \n" +  trafficimeWhere + "\t\n" +
+					"order by\n" +
+					"\tTIMESTAMP";
+		}
+
+		String sql2_testlog = "";
+		if(logFileWhereFlag) {
+
+
+			sql2_testlog = "SELECT\n" +
+					"\tLOG.BOX_ID BOX_ID,\n" +
+					"\tLOG.FILE_NAME FILE_NAME,\n" +
+					"\tEVENTTYPE,\n" +
+					"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS')   AS TIMESTAMP,\n" +
+					"\tLONGITUDE,\n" +
+					"\tLATITUDE\n" +
+					"FROM\n" +
+					"\tIADS_TESTLOG_TRAFFICINFO CC\n" +
+					"RIGHT JOIN (\n" +
+					"\tSELECT\n" +
+					"\t\tBOX_ID,\n" +
+					"\t\tFILE_NAME\n" +
+					"\tFROM\n" +
+					"\t\tIADS_TESTLOG_ITEM LOG\n" +
+					"\tWHERE\n" +
+					"\t\t1 = 1" + logFileWhere + logTimeWhere + " ) LOG ON\n" +
+					"\tCC.BOX_ID = LOG.BOX_ID\n" +
+					"\tAND CC.FILE_NAME = LOG.FILE_NAME ORDER BY TIMESTAMP";
+		}else{
+			sql2_testlog = "select\n" +
+					"\tBOX_ID,\n" +
+					"\tFILE_NAME,\n" +
+					"\tEVENTTYPE,\n" +
+					"\tTIMESTAMP,\n" +
+					"\tLONGITUDE,\n" +
+					"\tLATITUDE\n" +
+					"from\n" +
+					"\t(\n" +
+					"\tselect\n" +
+					"\t\tBOX_ID,\n" +
+					"\t\tFILE_NAME,\n" +
+					"\t\tEVENTTYPE,\n" +
+					"\tto_char(to_timestamp(TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.MS')   AS TIMESTAMP,\n" +
+					"\t\tLONGITUDE,\n" +
+					"\t\tLATITUDE\n" +
+					"\tfrom\n" +
+					"\t\tIADS_TESTLOG_TRAFFICINFO CC ) cc\n" +
+					"where 1=1 \n" +  trafficimeWhere + "\t\n" +
+					"order by\n" +
+					"\tTIMESTAMP";
+		}
 
 		List<Map<String, Object>> cucc = jdbcTemplate.objectQueryAll(sql2_cucc);
 		List<Map<String, Object>> testlog = jdbcTemplate.objectQueryAll(sql2_testlog);

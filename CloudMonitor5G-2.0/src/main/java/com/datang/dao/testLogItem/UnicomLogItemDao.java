@@ -1169,6 +1169,59 @@ try{
 
 		}
 
+		// 陈泉拍板：从原来 排序 文件名+事件+boxid(imei) 改为 文件名
+		mockdataOrderBy.sort((k1,k2)->{
+
+			String fileName1 = (String)k1.get("FILE_NAME3");
+			String fileName2 = (String)k2.get("FILE_NAME3");
+
+
+
+
+			if(fileName1==null && fileName2!=null){
+				return 1;
+			}
+			if(fileName2==null && fileName1!=null){
+				return -1;
+			}
+
+			if(fileName1!=null && fileName2!=null){
+				int fileCompare = fileName1.compareTo(fileName2);
+
+				if(fileCompare!=0){
+					return fileCompare;
+				}
+			}
+
+
+
+
+			String timestamp1 = (String)k1.get("TIMESTAMP3");
+			String timestamp2 = (String)k2.get("TIMESTAMP3");
+
+			Date date1 = null;
+			Date date2 = null;
+
+			try{
+				if(timestamp1==null && timestamp2!=null){
+					return 1;
+				}
+				//date1 = DateUtils.parseDate(timestamp1, "yyyy-MM-dd HH:mm:ss");
+			}catch (Exception e){
+				return 1;
+			}
+
+			try{
+				if(timestamp2==null && timestamp1!=null){
+					return -1;
+				}
+				//date2 = DateUtils.parseDate(timestamp2, "yyyy-MM-dd HH:mm:ss");
+			}catch (Exception e){
+				return -1;
+			}
+
+			return timestamp1.compareTo(timestamp2);
+		});
 		return mockdataOrderBy;
 	}
 
@@ -1606,6 +1659,7 @@ try{
 
 
 			int fileNameCompare = fileName.compareTo(oFileName);
+// 陈泉拍板：从原来 排序 文件名+事件+boxid(imei) 改为 文件名
 			if(fileNameCompare == 0){
 				int eventTypeCompare = eventType.compareTo(oEventType);
 				if(eventTypeCompare == 0){

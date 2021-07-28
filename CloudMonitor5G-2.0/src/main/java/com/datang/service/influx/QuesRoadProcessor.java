@@ -144,9 +144,6 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         int m=0;
         for(int[] item:quesRaods){
             List<Map<String, Object>> maps = sampDatas.subList(item[0], item[1] + 1);
-            if(maps.size()==0){
-                System.out.println();
-            }
             Map<String,Object> obj=new HashMap<>();
             obj.put("id",m);
             obj.put("logname",testLogItem.getFileName());

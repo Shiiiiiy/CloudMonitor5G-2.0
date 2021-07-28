@@ -131,12 +131,19 @@ public class DateComputeUtils {
 		instance.add(Calendar.SECOND,-2);
 		return instance;
 	}
+
 	public static Calendar toUtcDate(String date){
-		String z = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
-		String s = String.format("%-3s", z).replaceAll(" ", "0");
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat(utcformats[0]);
-			Date d = sdf.parse(date.replace(z,s));
+			SimpleDateFormat sdf;
+			if(date.contains(".")){
+				String z = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
+				String s = String.format("%-3s", z).replaceAll(" ", "0");
+				sdf = new SimpleDateFormat(utcformats[0]);
+				date=date.replace(z,s);
+			}else{
+				sdf=new SimpleDateFormat(utcformats[3]);
+			}
+			Date d = sdf.parse(date);
 			Calendar instance = Calendar.getInstance();
 			instance.setTime(d);
 			return instance;

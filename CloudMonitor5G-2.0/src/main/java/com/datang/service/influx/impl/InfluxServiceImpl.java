@@ -2184,17 +2184,8 @@ public class InfluxServiceImpl implements InfluxService {
                 if(mixReportsMap.containsKey(sheet)){
                     List<Map<String, Object>> maps = mixReportsMap.get(sheet);
                     partFofSheet.addAll(maps);
-                    List<String> keyList=new ArrayList<>();
-                    maps.forEach(record->{
-                        keyList.add(record.get("prov").toString());
-                        keyList.add(record.get("city").toString());
-                        keyList.add(record.get("pci").toString());
-                        keyList.add(record.get("fcn").toString());
-                        keyList.add(record.get("cellId").toString());
-                        keyList.add(record.get("builder").toString());
-                        keyList.add(record.get("contractor").toString());
-                        keys.add(keyList.stream().collect(Collectors.joining("_")));
-                    });
+                    keys.addAll(maps.stream().collect(Collectors.groupingBy(item->item.get("prov").toString()+"_"+item.get("city").toString()+"_"+item.get("pci").toString()+"_"+item.get("fcn").toString()
+                            +"_"+item.get("cellId").toString()+"_"+item.get("builder").toString()+"_"+item.get("contractor").toString())).keySet());
                 }
             });
             Map<String, List<Map<String, Object>>> collect = partFofSheet.stream().collect(Collectors.groupingBy(item -> item.get("prov") + "_" + item.get("city") + "_" +
@@ -2276,7 +2267,7 @@ public class InfluxServiceImpl implements InfluxService {
                         }
                     }else{
                         if(pre2sDatas!=null&&!pre2sDatas.isEmpty()) {
-                            flag = pre2sDatas.stream().anyMatch(a -> !Arrays.asList(preCons).contains(a.get("evtName")));
+                            flag = pre2sDatas.stream().anyMatch(a -> Arrays.asList(preCons).contains(a.get("evtName")));
                         }else{
                             flag=false;
                         }

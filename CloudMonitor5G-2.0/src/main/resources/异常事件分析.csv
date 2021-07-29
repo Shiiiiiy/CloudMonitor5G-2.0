@@ -13,7 +13,7 @@
 10,数据,PDP激活失败,Network Connect Start,NR PDU Session Establishment Failure,,Network Connect Failure/Network Connect Success,Network Connect Start
 11,数据,PDP掉线,,NR PDP Drop,1;DEREGISTRATION REQUEST/1;PDU SESSION RELEASE COMMAND,,Network Connect Start
 11,数据,PDP掉线,,LTE PDP Drop,1;Detach request/1;DEACTIVATE EPS BEARER CONTEXT REQUEST,,Network Connect Start
-12,数据,DNS请求失败,,DNS Lookup Failure,,,,DNS Lookup Start
+12,数据,DNS请求失败,,DNS Lookup Failure,,,DNS Lookup Start
 13,互操作,5G切4G失败,,Mobility From NR Failure,,,Mobility From NR Start
 14,互操作,4G切换5G失败,,EUTRA Handover to NR Failure,,,EUTRA Handover to NR Start
 15,互操作,5G到4G重定向失败,,N2L_REDIRECT_FAIL,,,N2L_REDIRECT_BEGIN

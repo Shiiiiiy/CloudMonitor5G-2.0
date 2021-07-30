@@ -368,16 +368,14 @@ public class UnicomLogItemAction extends PageAction implements
 
 		List<Map<String, Object>> sqlObj1 = new ArrayList<>();
 
-			for(String id:idList){
-				List<String> idTemp = new ArrayList<>();
-				idTemp.add(id);
-				try{
-					List<Map<String, Object>> maps = unicomLogItemService.middleGrid(idTemp);
-					sqlObj1.addAll(maps);
-				}catch (Exception e){
-					LOGGER.error("influxdb service [" + idTemp + "]" ,e);
-				}
-			}
+
+		try{
+			List<Map<String, Object>> maps = unicomLogItemService.middleGrid(idList);
+			sqlObj1.addAll(maps);
+		}catch (Exception e){
+			LOGGER.error("influxdb service [" + idList + "]" ,e);
+		}
+
 		TestLogItemUtils.formatNumber(sqlObj1);
 		hashMap1.put("sqlObj1", sqlObj1);
 

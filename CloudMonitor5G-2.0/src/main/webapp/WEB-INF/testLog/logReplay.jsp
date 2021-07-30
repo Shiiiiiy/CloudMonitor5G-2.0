@@ -42,7 +42,7 @@
 </head>
 <script>
 
-
+	var initPage = false;
 
 
 	$(function(){
@@ -50,7 +50,6 @@
 		$("#outDiv").css('margin-top',$("#innerDiv").height());
 
 		initMap();
-
 
 		var s = '${logIds}';
 		var n = '${logNames}';
@@ -71,9 +70,6 @@
 		}
 
 		MyPlayer.Data.playList = logs;
-
-
-		var initPage = false;
 
 		var config;
 
@@ -525,9 +521,8 @@
 
 		<div id="signDetailDiv" class="easyui-dialog" style="overflow:auto;width:550px;height:400px;padding:10px" data-options="title:'信令明细',resizable:true,border:false,closable:true,closed:true,modal:false">
 			<div style="white-space:pre-line" id="signDetail">
-			<div>
+			</div>
 		</div>
-
 
 </body>
 </html>

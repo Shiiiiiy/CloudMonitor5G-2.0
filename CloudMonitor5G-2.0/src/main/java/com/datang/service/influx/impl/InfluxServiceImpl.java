@@ -268,7 +268,7 @@ public class InfluxServiceImpl implements InfluxService {
         //改造去除group by
         String sql="SELECT Lat,X,Y,evtName from {1} where {0}";
         sb.append(cols.stream().collect(Collectors.joining(" or ")));
-        String execSql=MessageFormat.format(sql,sb.toString(),InfluxReportUtils.getTableName(file,"IE"));
+        String execSql=MessageFormat.format(sql,sb.toString(),InfluxReportUtils.getTableName(file,"EVT"));
         QueryResult query=influxDbConnection.query(execSql);
         List<Map<String, Object>> temp = InfludbUtil.paraseQueryResult(query);
         Map<String, List<Map<String, Object>>> collect = temp.stream().collect(Collectors.groupingBy(item -> item.get("X") + "-" + item.get("Y") + "-" + item.get("evtName")));
@@ -307,7 +307,7 @@ public class InfluxServiceImpl implements InfluxService {
     private static String samplon ="120.523456";
     @Override
     public List<Map.Entry<String, List<Map<String, Object>>>>   getGridDatasByLogFiles(List<String> fileLogIds) {
-        List<Map<String, Object>> results=new ArrayList<>();
+        List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         List<String> sqlFreg=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
         sb.append("select ");
@@ -320,6 +320,7 @@ public class InfluxServiceImpl implements InfluxService {
         });
         sqlFreg.add("Long as Lon");
         sqlFreg.add("Lat");
+        sqlFreg.add("Height");
         String collect = sqlFreg.stream().collect(Collectors.joining(","));
         sb.append(collect).append(" from {0} where X!=-1 AND Y!=-1");
 
@@ -330,7 +331,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<Map<String, Object>> eventKpis=Collections.synchronizedList(new ArrayList<>());
         fileLogIds.parallelStream().forEach(file->{
             TestLogItem testLogItem= id2LogBeanMap.get(Long.parseLong(file));
-            sb.append(" AND time>=''"+ DateComputeUtils.localToUTC(testLogItem.getStartDate())+"'' AND time<=''"+DateComputeUtils.localToUTC(testLogItem.getEndDate())+"''");
+            //sb.append(" AND time>=''"+ DateComputeUtils.localToUTC(testLogItem.getStartDate())+"'' AND time<=''"+DateComputeUtils.localToUTC(testLogItem.getEndDate())+"''");
             String sql=sb.toString();
             Map<String,Object> opratorMap=new HashMap<>();
             String execSql=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"IE"));
@@ -368,7 +369,6 @@ public class InfluxServiceImpl implements InfluxService {
             Map<String, List<Map<String, Object>>> xyGroupby = sampResult.stream().filter(item->!item.get("X").toString().equals("0")&&!item.get("Y").toString().equals("0")).collect(Collectors.groupingBy(item -> item.get("X") + "_" + item.get("Y")+"_"+item.get("Height")));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(city);
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            Map<String, Object> gridrm = new HashMap<>();
             xyGroupby.forEach((key, items) -> {
                 Map<String, Object> rm = new HashMap<>();
                 //对栅格指标进行赋值
@@ -397,19 +397,16 @@ public class InfluxServiceImpl implements InfluxService {
                     }
                 }
 
-
                 //TOP2服务小区设值
                 if(pciFcn2avgRsrpListSorted.size()>1){
                     Map.Entry<String, Double> secondRsrp = pciFcn2avgRsrpListSorted.get(1);
                     fillServCellColumns(nrPciFcn2BeanMap, rm, pciFcnGroupby, secondRsrp,doubles[1], doubles[0], top2ServCellColumns);
                     fillNcellColumnsByServCell(nrPciFcn2BeanMap, rm, pciFcnGroupby, secondRsrp,doubles[1], doubles[0], top2ncellServsColumns);
                 }
-
-                rm.putAll(gridrm);
                 results.add(rm);
             });
         });
-        return results.stream().filter(item->item.get("lon")!=null&&item.get("lat")!=null).collect(Collectors.groupingBy(item -> item.get("lon") +"_"+ item.get("lat") +"_"+ item.get("height"))).entrySet().stream().sorted(Comparator.comparing(MapCompare::comparingByLon).reversed().thenComparing(MapCompare::comparingByLat).reversed()).collect(Collectors.toList());
+        return results.stream().filter(item->item.get("lon")!=null&&item.get("lat")!=null).collect(Collectors.groupingBy(item -> item.get("lon") +"_"+ item.get("lat") +"_"+ item.get("heiht"))).entrySet().stream().sorted(Comparator.comparing(MapCompare::comparingByLon).reversed().thenComparing(MapCompare::comparingByLat).reversed()).collect(Collectors.toList());
     }
 
 

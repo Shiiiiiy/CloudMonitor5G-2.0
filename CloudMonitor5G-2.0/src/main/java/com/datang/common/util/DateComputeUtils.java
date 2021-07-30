@@ -276,8 +276,8 @@ public class DateComputeUtils {
 		String z;
 		SimpleDateFormat sdf;
 		if(date.contains(".")){
-			z = date.substring(date.indexOf(".")+1, date.indexOf("Z"));
-			String s = String.format("%-3s", z).replaceAll(" ", "0");
+			z = date.substring(date.indexOf("."), date.indexOf("Z"));
+			String s = String.format("%-4s", z).replaceAll(" ", "0");
 			sdf = new SimpleDateFormat(formats[3]);
 			date=date.replace(z,s);
 		}else{

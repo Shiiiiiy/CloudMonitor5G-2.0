@@ -303,6 +303,7 @@ public class InfluxReportUtils {
         QueryResult query = connect.query(sql);
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         if(result!=null&&!result.isEmpty()){
+            result.get(0).remove("time");
             return result.get(0);
         }
         return Collections.emptyMap();

@@ -151,7 +151,7 @@ public class InfluxServiceImpl implements InfluxService {
         List<String> timeWheres=new ArrayList<>();
         StringBuilder sbSql=new StringBuilder(sql);
         timeLists.forEach(item->{
-            StringBuilder sb=new StringBuilder("(");
+            StringBuilder sb=new StringBuilder("AND (");
             String startTime=item.get("startTime");
             String endTime=item.get("endTime");
             if(StringUtils.isNotBlank(startTime)){
@@ -366,10 +366,13 @@ public class InfluxServiceImpl implements InfluxService {
             Map<String, Map<String, Object>> evtRecords = evtKpitranferCol(evtxyGroupby);
 
             //按栅格经纬度group by
-            Map<String, List<Map<String, Object>>> xyGroupby = sampResult.stream().filter(item->!item.get("X").toString().equals("0")&&!item.get("Y").toString().equals("0")).collect(Collectors.groupingBy(item -> item.get("X") + "_" + item.get("Y")+"_"+item.get("Height")));
+            Map<String, List<Map<String, Object>>> xyGroupby = sampResult.stream().filter(item->!item.get("X").toString().equals("0")&&!item.get("Y").toString().equals("0")).collect(Collectors.groupingBy(item -> item.get("X") + "_" + item.get("Y")));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(city);
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            xyGroupby.forEach((key, items) -> {
+            xyGroupby.entrySet().parallelStream().forEach(en -> {
+                List<Map<String, Object>> items = en.getValue();
+                Double heiht=items.stream().filter(item->null!=item.get("Height")).mapToDouble(item->Double.parseDouble(item.get("Height").toString())).average().getAsDouble();
+                String key = en.getKey();
                 Map<String, Object> rm = new HashMap<>();
                 //对栅格指标进行赋值
                 fillGridKpiColumns(rm,items,allColumns);
@@ -387,7 +390,6 @@ public class InfluxServiceImpl implements InfluxService {
                     String lat = key.split("_")[1];
                     String longg = key.split("_")[0];
                     doubles = GPSUtils.xy2Lonlat(new BigDecimal(longg),new BigDecimal(lat),Double.parseDouble(samplon),Double.parseDouble(samplat));
-                    String heiht=key.split("_")[2];
                     fillServCellColumns(nrPciFcn2BeanMap, rm, pciFcnGroupby,firstRsrp,doubles[1], doubles[0], top1ServCellColumns);
                     fillNcellColumnsByServCell(nrPciFcn2BeanMap, rm, pciFcnGroupby, firstRsrp, doubles[1], doubles[0], top1ncellServsColumns);
                     rm.put("lon",doubles[0]);rm.put("lat",doubles[1]);rm.put("heiht",heiht);
@@ -1927,8 +1929,7 @@ public class InfluxServiceImpl implements InfluxService {
         String formatSql = MessageFormat.format(sigSql, ueID,timeStamp.toPlainString());
         QueryResult query1 = influxDbConnection.query(formatSql);
         List<Map<String, Object>> list = InfludbUtil.paraseQueryResult(query1);
-        list.stream().filter(item->Integer.parseInt(item.get("MsgID").toString())<msgID).sorted(Comparator.comparingInt((Map<String, Object> item)->Integer.parseInt(item.get("MsgID").toString())).reversed()).collect(Collectors.toList());
-        return list;
+        return list.stream().filter(item->Integer.parseInt(item.get("MsgID").toString())<msgID).sorted(Comparator.comparingInt((Map<String, Object> item)->Integer.parseInt(item.get("MsgID").toString())).reversed()).collect(Collectors.toList());
     }
 
     /**

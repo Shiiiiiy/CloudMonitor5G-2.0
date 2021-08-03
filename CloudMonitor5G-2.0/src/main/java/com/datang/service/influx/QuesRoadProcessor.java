@@ -32,6 +32,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM {0} where  Lat=~/./ and Long=~/./ ";
     private static Map<String,String[]> WHERE_MAP=new HashMap<>();
     private static Map<String,String[]> EVTS_MAP=new HashMap<>();
+    private static Map<String,String[]> START_EVTS_MAP=new HashMap<>();
 
     static {
         WHERE_MAP.put("上行质差路段",new String[]{"IEValue_50097","IEValue_54333"});
@@ -39,8 +40,10 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         WHERE_MAP.put("弱覆盖路段",new String[]{"IEValue_50055"});
         WHERE_MAP.put("上行低速率路段",new String[]{"IEValue_54231"});
         WHERE_MAP.put("下行低速率路段",new String[]{"IEValue_53483"});
-        EVTS_MAP.put("上行低速率路段",new String[]{"Ftp Upload Attempt","Ftp Upload Success","FTP UpLoad Drop"});
-        EVTS_MAP.put("下行低速率路段",new String[]{"Ftp Upload Attempt","Ftp Upload Success","FTP UpLoad Drop"});
+        EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Send STOR","FTP Upload Last Data","FTP UpLoad Drop","FTP Upload Attempt","FTP Upload Success","FTP UpLoad Drop"});
+        EVTS_MAP.put("下行低速率路段",new String[]{"FTP DownLoad Drop","FTP Download Send RETR","FTP Download Last Data","FTP Download Attempt","FTP Download Success","FTP Download Drop"});
+        START_EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Attempt","FTP Upload Send STOR"});
+        START_EVTS_MAP.put("下行低速率路段",new String[]{"FTP Download Attempt","FTP Download Send RETR"});
     }
     @Autowired
     private GisAndListShowServie gisAndListShowServie;
@@ -61,18 +64,18 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            WHERE_MAP.entrySet().parallelStream().forEach(entry->{
-            //WHERE_MAP.entrySet().stream().forEach(entry->{
+            //WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+            WHERE_MAP.entrySet().stream().forEach(entry->{
                 String key=entry.getKey();
                 String[] values=entry.getValue();
                 List<Map<String, Object>> sampDatas;
                 //有事件条件的处理
                 if(EVTS_MAP.containsKey(key)){
                     List<Map<String, Object>> evtResults = evtPointTimes(Long.parseLong(id), EVTS_MAP.get(key));
-                    if(existEvt(evtResults,"Ftp Upload Attempt")){
-                        List<Map<String,String>> times=getTimeIntervals(evtResults);
+                    if(existEvt(evtResults,START_EVTS_MAP.get(key))){
+                        List<Map<String,String>> times=getTimeIntervals(evtResults,START_EVTS_MAP.get(key));
                         for(Map<String,String> time:times){
-                            sampDatas = queryRoadSampDatas(sql, Arrays.asList(time),null);
+                            sampDatas = queryRoadSampDatas(sql, Arrays.asList(time),values);
                             Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                             if(!tempR.isEmpty()){
                                 if(result.containsKey(key)){
@@ -327,22 +330,24 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     }
 
     /**
-     * 按照“Ftp Upload Attempt” 切分时间段
+     * 按照开始事件 切分时间段
      * @param evtResults
+     * @param startEvts
      * @return
      */
-    private List<Map<String,String>> getTimeIntervals(List<Map<String,Object>> evtResults) {
+    private List<Map<String,String>> getTimeIntervals(List<Map<String, Object>> evtResults, String[] startEvts) {
         List<Map<String,String>> r=new ArrayList<>();
         String startTime;
         String endTime;
+        List<String> evts = Arrays.asList(startEvts);
         for(int i=0;i<evtResults.size();i++){
-            if("Ftp Upload Attempt".equalsIgnoreCase(evtResults.get(i).get("evtName").toString())){
+            if(evts.contains(evtResults.get(i).get("evtName").toString())){
                 Map<String,String> item=new HashMap<>();
                 startTime=evtResults.get(i).get("time").toString();
                 item.put("startTime",startTime);
                 if(evtResults.size()>i+1){
                     Map<String, Object> map1 = evtResults.get(i + 1);
-                    if("Ftp Upload Attempt".equalsIgnoreCase(map1.get("evtName").toString())){
+                    if(evts.contains(map1.get("evtName").toString())){
                         continue;
                     }else{
                         endTime=map1.get("time").toString();
@@ -388,9 +393,9 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
      * @param evtName
      * @return
      */
-    private boolean existEvt(List<Map<String, Object>> evtResults,String evtName){
+    private boolean existEvt(List<Map<String, Object>> evtResults,String[] evtNames){
         for(Map<String, Object> item:evtResults){
-            if(evtName.equalsIgnoreCase(item.get("evtName").toString())){
+            if(Arrays.asList(evtNames).contains(item.get("evtName").toString())){
                 return true;
             }
         }
@@ -414,7 +419,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             Map<String, Object> point = sampDatas.get(0);
             Double lon=Double.parseDouble(point.get("Long").toString());
             Double lat=Double.parseDouble(point.get("Lat").toString());
-            List<Map<String, Object>> slideWindow=new ArrayList<>();
+            List<Map<String, Object>> slideWindow=new LinkedList<>();
             int start=0,end=0;//问题路段的起点和终点index
             boolean flag=false;//控制问题路段是否开始
             boolean flag1=false;//滑窗长度是否固定
@@ -423,10 +428,22 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                 Double lon2=Double.parseDouble(point2.get("Long").toString());
                 Double lat2=Double.parseDouble(point2.get("Lat").toString());
                 if(!flag1){
+                    slideWindow.add(sampDatas.get(i));
+                    boolean f=isIntervalOver(slideWindow);
+                    if(f){
+                        slideWindow.clear();
+                        slideWindow.add(sampDatas.get(i));
+                        start=i;
+                        end=i;
+                        lon=lon2;
+                        lat=lat2;
+                        flag=false;
+                        flag1=false;
+                        continue;
+                    }
                     Double distance = AdjPlaneArithmetic.getDistance(lon, lat, lon2, lat2);
                     if(distance>=roadThresold){
                         flag1=true;
-                        slideWindow.add(sampDatas.get(i));
                         Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
                         if(rate*100>rateThreshold){
                             if(!flag){
@@ -440,10 +457,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                             flag=true;
                         }
                     }else{
-                        if(!flag1){
-                            slideWindow.add(sampDatas.get(i));
-                            end++;
-                        }
+                        end++;
                     }
                 }else{
                     slideWindow.remove(0);
@@ -457,7 +471,6 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                         if(end==sampDatas.size()-1){
                             quesRaods.add(new int[]{start,end});
                         }
-                        end++;
                         flag=true;
                     }else if(rate*100<rateThreshold-20){
                         if(flag){
@@ -472,20 +485,53 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                             flag1=false;
                             continue;
                         }
-                        if(!flag){
-                            start++;
-                        }
-                        end++;
-                    }else{
-                        if(!flag){
-                            start++;
-                        }
-                        end++;
                     }
-
+                    if(!flag){
+                        boolean f=isIntervalOver(slideWindow);
+                        if(f){
+                            slideWindow.clear();
+                            slideWindow.add(sampDatas.get(i));
+                            start=i;
+                            end=i;
+                            lon=lon2;
+                            lat=lat2;
+                            flag=false;
+                            flag1=false;
+                            continue;
+                        }
+                        start++;
+                    }else{
+                        boolean f=isIntervalOver(slideWindow);
+                        if(f){
+                            slideWindow.clear();
+                            slideWindow.add(sampDatas.get(i));
+                            quesRaods.add(new int[]{start,end});
+                            start=i;
+                            end=i;
+                            flag=false;
+                            flag1=false;
+                            lon=lon2;
+                            lat=lat2;
+                            continue;
+                        }
+                    }
+                    end++;
                 }
             }
             return quesRaods;
         }
+
+        private boolean isIntervalOver(List<Map<String,Object>> slideWindow) {
+            if(slideWindow.size()<=1){
+                return false;
+            }
+            String time1=slideWindow.get(slideWindow.size()-1).get("time").toString();
+            String time2=slideWindow.get(slideWindow.size()-2).get("time").toString();
+            if(DateComputeUtils.toUtcDate(time1).getTimeInMillis()-5000>DateComputeUtils.toUtcDate(time2).getTimeInMillis()){
+                return true;
+            }
+            return false;
+        }
+
     }
 }

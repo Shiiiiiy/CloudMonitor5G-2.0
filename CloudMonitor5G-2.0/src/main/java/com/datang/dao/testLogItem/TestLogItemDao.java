@@ -386,10 +386,10 @@ public class TestLogItemDao extends GenericHibernateDao<TestLogItem, Long> {
 		// 筛选日志为CQT日志
 		criteria.add(Restrictions.eq("logSource", 1));
 		// 筛选参数测试级别
-		if (null != testRankList && 0 != testRankList.size()) {
+	/*	if (null != testRankList && 0 != testRankList.size()) {
 			criteria.add(Restrictions.in("testLevel", testRankList));
 		}
-
+*/
 		testLogItems = criteria.list();
 		return testLogItems;
 	}

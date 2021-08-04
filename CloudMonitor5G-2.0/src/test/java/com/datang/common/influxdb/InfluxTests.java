@@ -37,11 +37,12 @@ public class InfluxTests {
     private QuesRoadProcessor quesRoadProcessor;
     @Test
     public void getLogPlayDatas(){
-        List<IEItem> recrods= logIEService.getRecrodsByLogId(572l);
-        List<Map<String, Object>> maps = logIEService.evtWindowData(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
-        List<Map<String, Object>> maps2 = logIEService.sigleWindowData(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
-        List<Map<String, Object>> maps3 = logIEService.lineChartDatas(575l, "2021-05-15 08:58:21", "2021-05-15 09:58:21");
-        List<Map<String, Object>> maps4 = logIEService.synOper(575l, "2021-05-15 09:12:35.644");
+        List<IEItem> recrods= logIEService.getRecrodsByLogId(41075l);
+        System.out.println(recrods.size());
+        List<Map<String, Object>> maps = logIEService.evtWindowData(41075l, null, null);
+        List<Map<String, Object>> maps2 = logIEService.sigleWindowData(41075l, null, null);
+        List<Map<String, Object>> maps3 = logIEService.lineChartDatas(41075l, "2021-06-05 08:13:35.644", "2021-06-05 09:13:35.644");
+        List<Map<String, Object>> maps4 = logIEService.synOper(41075l, "2021-06-05 08:13:35.644");
         System.out.println(recrods.size());
         System.out.println(maps2.size());
         System.out.println(maps3.size());
@@ -50,7 +51,7 @@ public class InfluxTests {
     }
     @Test
     public void testQuesroad(){
-        Map<String, List<Map<String, Object>>> analysize = quesRoadProcessor.analysize(Arrays.asList("42703","42707","42708","42704","42706","42705","42710","42709","42870","42790","42791"
+        Map<String, List<Map<String, Object>>> analysize = quesRoadProcessor.analysize(Arrays.asList("41320"
 
         ));
         System.out.println(analysize.size());
@@ -84,29 +85,30 @@ public class InfluxTests {
     @Test
     public void test4(){
         List<String> fileNames=new ArrayList<>();
-        //fileNames.addAll(Arrays.asList("42703","42707","42708","42704","42706","42705","42710","42709","42870","42790","42791"
-        fileNames.addAll(Arrays.asList("42705"
+        //fileNames.addAll(Arrays.asList("40543","41228","40476"
+        fileNames.addAll(Arrays.asList("41360"
         ));
-      /*  List<Map<String, Object>> abEvtAnaList = influxService.getAbEvtAnaList(fileNames);
-        System.out.println(abEvtAnaList);*/
-       /* List<Map<String, Object>> eventByLogFiles = influxService.getEventByLogFiles(fileNames);
+        /*List<Map<String, Object>> eventByLogFiles = influxService.getEventByLogFiles(fileNames);
         System.out.println(eventByLogFiles.size());*/
-        /*List<Map<String, Object>> mapTrailByLogFiles = influxService.getMapTrailByLogFiles(fileNames);
+        /*List<Map<String, Object>> abEvtAnaList = influxService.getAbEvtAnaList(fileNames);
+        System.out.println(abEvtAnaList);*/
+
+       /* List<Map<String, Object>> mapTrailByLogFiles = influxService.getMapTrailByLogFiles(fileNames);
         System.out.println(mapTrailByLogFiles.size());*/
-       /* List<Map<String, Object>> sampPointByLogFiles = influxService.getSampPointByLogFiles(fileNames);
+        /*List<Map<String, Object>> sampPointByLogFiles = influxService.getSampPointByLogFiles(fileNames);
         System.out.println(sampPointByLogFiles.size());*/
-       /* List<Map.Entry<String, List<Map<String, Object>>>> gridDatasByLogFiles = influxService.getGridDatasByLogFiles(fileNames);
+        List<Map.Entry<String, List<Map<String, Object>>>> gridDatasByLogFiles = influxService.getGridDatasByLogFiles(fileNames);
         System.out.println(gridDatasByLogFiles.size());
 
-        Map<String, List<Map<String, Object>>> netConfigReports = influxService.getNetConfigReports(fileNames);
-        System.out.println(netConfigReports);*/
+        /*Map<String, List<Map<String, Object>>> netConfigReports = influxService.getNetConfigReports(fileNames);
+        System.out.println(netConfigReports);
 
-       /* List<Map<String, Object>> reportCellKpi = influxService.getReportCellKpi(fileNames);
+        List<Map<String, Object>> reportCellKpi = influxService.getVoiceBusiReports(fileNames);
         System.out.println(reportCellKpi.size());*/
 
-         List<Map<String, Object>> reportCellKpi = influxService.getVoiceBusiReports(fileNames);
-        System.out.println(reportCellKpi.size());
-
+       /* List<Map<String, Object>> reportCellKpi1 = influxService.getReportCellKpi(fileNames);
+        System.out.println(reportCellKpi1.size());*/
     }
+
 
 }

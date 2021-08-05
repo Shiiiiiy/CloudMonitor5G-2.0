@@ -610,7 +610,10 @@
 					ids = ids + ',';
 				}
 			}
-			
+
+			window.open("${pageContext.request.contextPath}/unicomLogItem/downloadMiddleOriginal.action?testLogItemIds="+ids);
+
+			/**
 			var params = {
   	            'testLogItemIds': ids
   	        }
@@ -638,8 +641,8 @@
    	             	MaskUtil.unmask();
    	             }
      	    }); 
-			
-			//window.location="${pageContext.request.contextPath}/unicomLogItem/downloadMiddleOriginal.action?testLogItemIds="+ids 
+			**/
+
 		}
 		
 		function downloadMiddleGrid(){
@@ -656,10 +659,13 @@
 				}
 			}
 			
-			var params = {
+	/*		var params = {
   	            'testLogItemIds': ids
   	        }
-			
+*/
+
+			window.open("${pageContext.request.contextPath}/unicomLogItem/downloadMiddleGrid.action?testLogItemIds="+ids);
+		/**
 			MaskUtil.mask();
 			
 			var url = "${pageContext.request.contextPath}/unicomLogItem/downloadMiddleGrid.action";
@@ -684,8 +690,8 @@
    	             }
      	    });
 			
-			
-			//window.location="${pageContext.request.contextPath}/unicomLogItem/downloadMiddleGrid.action?testLogItemIds="+ids 
+			**/
+
 		}
 	
 		

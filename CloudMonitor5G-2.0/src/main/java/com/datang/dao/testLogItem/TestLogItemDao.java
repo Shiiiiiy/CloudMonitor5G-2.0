@@ -320,7 +320,17 @@ public class TestLogItemDao extends GenericHibernateDao<TestLogItem, Long> {
 		// 筛选参数boxid确认权限范围的数据
 
 		if (null != boxIds && 0 != boxIds.size()) {
-			criteria.add(Restrictions.in("boxId", boxIds));
+
+			Criterion boxId = Restrictions.in("boxId", boxIds);
+			List<Criterion> list= new ArrayList<>();
+			list.add(boxId);
+
+			for (String id : boxIds) {
+				list.add(Restrictions.like("fileName", id+"%"));
+			}
+			Criterion[] criterions = new Criterion[list.size()];
+			list.toArray(criterions);
+			criteria.add(Restrictions.or(criterions));
 		}
 		criteria.add(Restrictions.isNotNull("startDateLong"));
 		criteria.add(Restrictions.isNotNull("endDateLong"));

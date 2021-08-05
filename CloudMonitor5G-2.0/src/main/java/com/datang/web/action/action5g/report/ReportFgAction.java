@@ -595,11 +595,15 @@ public class ReportFgAction extends PageAction implements
 
 			if (null != templatePojoList
 					&& 0 != templatePojoList.size()) {
+				Set<String> set = new HashSet<>();
 				for (CustomReportTemplatePojo pojo : templatePojoList) {
-					Map<String,Object> map = new HashMap<String,Object>();
-					map.put("id",pojo.getId());
-					map.put("fileName",pojo.getTemplateName());
-					teplateList.add(map);
+
+					if(set.add(pojo.getTemplateName())){
+						Map<String,Object> map = new HashMap<String,Object>();
+						map.put("id",pojo.getId());
+						map.put("fileName",pojo.getTemplateName());
+						teplateList.add(map);
+					}
 				}
 			}
 			ActionContext.getContext().getValueStack()

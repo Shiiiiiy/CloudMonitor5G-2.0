@@ -1,5 +1,7 @@
 package com.datang.service.influx;
 
+import com.datang.common.influxdb.InfluxDbConnection;
+
 import java.util.List;
 import java.util.Map;
 
@@ -120,11 +122,13 @@ public interface InfluxService {
 
     /**
      * 查询问题路段相关采样点
+     *
+     * @param influxDbConnection
      * @param sql
      * @param timeLists
      * @return
      */
-    List<Map<String, Object>> queryRoadSampDatas(String sql,List<Map<String,String>> timeLists,String[] wheres);
+    List<Map<String, Object>> queryRoadSampDatas(InfluxDbConnection influxDbConnection, String sql, List<Map<String, String>> timeLists, String[] wheres);
 
 
 

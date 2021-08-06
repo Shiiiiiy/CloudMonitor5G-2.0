@@ -208,9 +208,25 @@ public class TestLogItem implements Serializable, Comparable<TestLogItem> {
 
 	private Integer volteStatus;
 
-	
+	private String url;
+	private String dbName;
 
+	@Column(name = "urlname")
+	public String getUrl() {
+		return url;
+	}
 
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	@Column(name = "influxtbname")
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
 
 	/**
 	 * @return the id

@@ -33,7 +33,11 @@ public class InfluxDbConnection {
     private BatchOptions batchOptions;
     private OkHttpClient.Builder client;
 
-    public InfluxDbConnection(String userName, String password, String url, String database, String retentionPolicy, String retentionPolicyTime, BatchOptions batchOptions,OkHttpClient.Builder client) {
+
+    public InfluxDbConnection() {
+    }
+
+    public InfluxDbConnection(String userName, String password, String url, String database, String retentionPolicy, String retentionPolicyTime, BatchOptions batchOptions, OkHttpClient.Builder client) {
         this.userName = userName;
         this.password = password;
         this.url = url;
@@ -103,7 +107,7 @@ public class InfluxDbConnection {
      * @return
      */
     public QueryResult query(String command) {
-        return influxdb.query(new Query(command, database));
+        return influxdb.query(new Query(command));
     }
 
     /**
@@ -174,5 +178,77 @@ public class InfluxDbConnection {
             e.printStackTrace();
         }
         return isConnected;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public OkHttpClient.Builder getClient() {
+        return client;
+    }
+
+    public void setClient(OkHttpClient.Builder client) {
+        this.client = client;
+    }
+
+    public InfluxDB getInfluxdb() {
+        return influxdb;
+    }
+
+    public void setInfluxdb(InfluxDB influxdb) {
+        this.influxdb = influxdb;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public String getRetentionPolicy() {
+        return retentionPolicy;
+    }
+
+    public void setRetentionPolicy(String retentionPolicy) {
+        this.retentionPolicy = retentionPolicy;
+    }
+
+    public String getRetentionPolicyTime() {
+        return retentionPolicyTime;
+    }
+
+    public void setRetentionPolicyTime(String retentionPolicyTime) {
+        this.retentionPolicyTime = retentionPolicyTime;
+    }
+
+    public BatchOptions getBatchOptions() {
+        return batchOptions;
+    }
+
+    public void setBatchOptions(BatchOptions batchOptions) {
+        this.batchOptions = batchOptions;
     }
 }

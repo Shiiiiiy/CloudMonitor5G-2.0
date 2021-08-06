@@ -1,6 +1,7 @@
 package com.datang.service.influx.impl;
 
 import com.datang.common.influxdb.InfludbUtil;
+import com.datang.common.influxdb.InfluxDBMutiConntion;
 import com.datang.common.influxdb.InfluxDbConnection;
 import com.datang.common.util.DateComputeUtils;
 import com.datang.domain.platform.projectParam.Cell5G;
@@ -70,13 +71,21 @@ public class InfluxServiceImpl implements InfluxService {
     @Override
     public List<Map<String, Object>> lineChartDatas(long logId, String startTime, String endTime) {
         String sql=MessageFormat.format(lineChartSql,InfluxReportUtils.getTableName(logId,"IE"));
-        return commonQueryDatas(sql,startTime,endTime);
+        List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(logId+"");
+        Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
+        TestLogItem testLogItem = id2LogBeanMap.get(logId);
+        InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
+        return commonQueryDatas(influxDbConnection,sql,startTime,endTime);
     }
 
     @Override
     public List<Map<String, Object>> sigleDatas(long logId, String startTime, String endTime) {
         String sql=MessageFormat.format(sigSql,InfluxReportUtils.getTableName(logId,"SIG"));
-        return commonQueryDatas(sql,startTime,endTime);
+        List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(logId+"");
+        Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
+        TestLogItem testLogItem = id2LogBeanMap.get(logId);
+        InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
+        return commonQueryDatas(influxDbConnection, sql,startTime,endTime);
     }
 
     private static final String evtSql="SELECT evtName,Netmode,extrainfo,MsgID from {0}";
@@ -84,7 +93,11 @@ public class InfluxServiceImpl implements InfluxService {
     @Override
     public List<Map<String, Object>> evtDatas(long logId, String startTime, String endTime) {
         String sql=MessageFormat.format(evtSql,InfluxReportUtils.getTableName(logId,"EVT"));
-        return commonQueryDatas(sql,startTime,endTime);
+        List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(logId+"");
+        Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
+        TestLogItem testLogItem = id2LogBeanMap.get(logId);
+        InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
+        return commonQueryDatas(influxDbConnection, sql,startTime,endTime);
     }
 
    /* public static void main(String[] args) {
@@ -106,28 +119,35 @@ public class InfluxServiceImpl implements InfluxService {
         Date date = DateComputeUtils.formatDate(time);
         Date startDate = DateUtils.truncate(date, Calendar.SECOND);
         String sql=MessageFormat.format(synSql,InfluxReportUtils.getTableName(logId,"IE"));
-        return commonQueryDatas(sql,startDate,time);
+        List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(logId+"");
+        Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
+        TestLogItem testLogItem = id2LogBeanMap.get(logId);
+        InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
+        return commonQueryDatas(influxDbConnection, sql,startDate,time);
     }
     @Autowired
-    private InfluxDbConnection influxDbConnection;
+    private InfluxDBMutiConntion influxDBMutiConntion;
 
     private static final String evtPointSql="SELECT evtName from {0} WHERE ";
     @Override
     public List<Map<String, Object>> evtPointTimes(Long logId,String[] evts) {
-
         StringBuilder sb=new StringBuilder(evtPointSql);
         Set<String> cols=new HashSet<>();
         for(String evt:evts){
             cols.add("evtName=''"+evt+"''");
         };
         sb.append(cols.stream().collect(Collectors.joining(" or ")));
+        List<TestLogItem> testLogItems = unicomLogItemService.queryTestLogItems(logId.toString());
+        Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
+        TestLogItem testLogItem = id2LogBeanMap.get(logId);
+        InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
         QueryResult query=influxDbConnection.query(MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(logId,"EVT")));
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         return result;
     }
 
 
-    private List<Map<String, Object>> commonQueryDatas(String sql, Object startTime, Object endTime) {
+    private List<Map<String, Object>> commonQueryDatas(InfluxDbConnection influxDbConnection, String sql, Object startTime, Object endTime) {
         StringBuilder sb=new StringBuilder(sql);
         if(startTime instanceof String){
             sb.append(" where time>='"+ DateComputeUtils.localToUTC(DateComputeUtils.formatDate(startTime.toString()))+"'");
@@ -147,7 +167,7 @@ public class InfluxServiceImpl implements InfluxService {
         return result;
     }
     @Override
-    public List<Map<String, Object>> queryRoadSampDatas(String sql, List<Map<String,String>> timeLists,String[] wheres) {
+    public List<Map<String, Object>> queryRoadSampDatas(InfluxDbConnection influxDbConnection, String sql, List<Map<String, String>> timeLists, String[] wheres) {
         List<String> timeWheres=new ArrayList<>();
         StringBuilder sbSql=new StringBuilder(sql);
         timeLists.forEach(item->{
@@ -186,10 +206,12 @@ public class InfluxServiceImpl implements InfluxService {
         List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         fileLogIds.parallelStream().forEach(id->{
             Map<String,Object> resultMap=new HashMap<>();
+            TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
             String s=MessageFormat.format(MAPTRAILSQL, objects[0],objects[1],objects[2],objects[3],InfluxReportUtils.getTableName(id,"IE"));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             QueryResult query=influxDbConnection.query(s);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
-            resultMap.put("logName",id2LogBeanMap.get(Long.parseLong(id)).getFileName());
+            resultMap.put("logName", testLogItem.getFileName());
             resultMap.put("gpsData",result);
             results.add(resultMap);
         });
@@ -220,6 +242,8 @@ public class InfluxServiceImpl implements InfluxService {
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
         ids.parallelStream().forEach(id->{
             String s=MessageFormat.format(sql,InfluxReportUtils.getTableName(id,"IE"));
+            TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             QueryResult query=influxDbConnection.query(s);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             results.addAll(fillColumns(id,result,id2LogBeanMap));
@@ -247,8 +271,9 @@ public class InfluxServiceImpl implements InfluxService {
         Map<Long, TestLogItem> id2LogBeanMap = testLogItems.stream().collect(Collectors.toMap(TestLogItem::getRecSeqNo, Function.identity()));
         fileLogIds.parallelStream().forEach(file->{
             String s=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"EVT"));
-            QueryResult query=influxDbConnection.query(s);
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(file));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
+            QueryResult query=influxDbConnection.query(s);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             results.addAll(fillColumns(result,testLogItem));
         });
@@ -256,7 +281,7 @@ public class InfluxServiceImpl implements InfluxService {
     }
 
 
-    private List<Map<String, Object>> getEventKpisByLogFiles(String file) {
+    private List<Map<String, Object>> getEventKpisByLogFiles(InfluxDbConnection influxDbConnection, String file) {
         StringBuilder sb=new StringBuilder();
         Collection<String> map = InitialConfig.kpiMap.values();
         Set<String> cols=new HashSet<>();
@@ -335,12 +360,13 @@ public class InfluxServiceImpl implements InfluxService {
             String sql=sb.toString();
             Map<String,Object> opratorMap=new HashMap<>();
             String execSql=MessageFormat.format(sql,InfluxReportUtils.getTableName(file,"IE"));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             opratorMap.put("operator",testLogItem.getOperatorName());
             opratorMap.put("city",testLogItem.getCity());
             opratorMap.put("list",result);
-            List<Map<String, Object>> eventKpisByLogFiles = getEventKpisByLogFiles(file);
+            List<Map<String, Object>> eventKpisByLogFiles = getEventKpisByLogFiles(influxDbConnection,file);
             opratorMap.put("evtList",eventKpisByLogFiles);
             eventKpis.addAll(eventKpisByLogFiles);
             opratorMaps.add(opratorMap);
@@ -1282,6 +1308,7 @@ public class InfluxServiceImpl implements InfluxService {
                     }
                 });
             });
+
             List<String> sqlFreg=new ArrayList<>();
             StringBuilder sb=new StringBuilder();
             sb.append("SELECT evtName,Lat,Long,Height,Netmode,Pci,Enfarcn,SellID,Rsrp,Sinr,MsgID,UEID,TimeStamp from {0} where ");
@@ -1295,6 +1322,7 @@ public class InfluxServiceImpl implements InfluxService {
             });
             sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
             String execSql=MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(file,"EVT"));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             result.forEach(obj->{
@@ -1321,7 +1349,7 @@ public class InfluxServiceImpl implements InfluxService {
                         conditionMap.put(1,count2);
                     }
                     if(sigs!=null&&sigs.length>0){
-                        List<Map<String, Object>> sigDatas = getRecordByMsgIDFromSign(obj, file);
+                        List<Map<String, Object>> sigDatas = getRecordByMsgIDFromSign(influxDbConnection,obj, file);
                         for (String sig : sigs) {
                             String[] sigConfis = sig.split(";");
                             count3=sigDatas.stream().filter(i->sigConfis[0].equals(i.get("Dir").toString())&&sigConfis[1].equals(i.get("signalName").toString())).findAny().isPresent();
@@ -1394,6 +1422,7 @@ public class InfluxServiceImpl implements InfluxService {
             });
             sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
             String execSql=MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(file,"EVT"));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             result.forEach(map->{
@@ -1516,6 +1545,7 @@ public class InfluxServiceImpl implements InfluxService {
                 sb.append("SELECT evtName,Pci,Enfarcn,SellID from {0} where ");
                 sb.append(getNetWhereCondition(item));
                 String execSql=MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(file,"EVT"));
+                InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
                 QueryResult query=influxDbConnection.query(execSql);
                 List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
                 if(!result.isEmpty()){
@@ -1526,10 +1556,10 @@ public class InfluxServiceImpl implements InfluxService {
                             Arrays.asList(item.getTriggerEvt()).contains(entry.getKey())
                     ).collect(Collectors.toList());
                     if(item.getType().equalsIgnoreCase("lte")){
-                        evtNetConfigBusiProcess(testLogItem, item, result, triggerEvtDatas,InitialConfig.netLteKpiMap,sheetDatas,file);
+                        evtNetConfigBusiProcess(influxDbConnection,testLogItem, item, result, triggerEvtDatas,InitialConfig.netLteKpiMap,sheetDatas,file);
                     }
                     if(item.getType().equalsIgnoreCase("nr")){
-                        evtNetConfigBusiProcess(testLogItem, item, result, triggerEvtDatas,InitialConfig.netNrKpiMap,sheetDatas,file);
+                        evtNetConfigBusiProcess(influxDbConnection,testLogItem, item, result, triggerEvtDatas,InitialConfig.netNrKpiMap,sheetDatas,file);
                     }
                     if(mixReportsMap.containsKey(item.getDetailSheet())){
                         List<Map<String, Object>> maps = mixReportsMap.get(item.getDetailSheet());
@@ -1658,6 +1688,7 @@ public class InfluxServiceImpl implements InfluxService {
             sqlFreg.add("evtName =''"+i+"''");
         });
         sb.append(sqlFreg.stream().collect(Collectors.joining(" or ")));
+        InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
         QueryResult query = influxDbConnection.query(MessageFormat.format(sb.toString(),InfluxReportUtils.getTableName(id,"EVT")));
         List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
         List<List<Map<String, Object>>> datasBySplitEvt = DateComputeUtils.getDatasBySplitEvt(result, collect);
@@ -1674,17 +1705,17 @@ public class InfluxServiceImpl implements InfluxService {
                 rm.put(esfbColumnIndexs[15], evtRecords.stream().collect(Collectors.joining(",")));
                 rm.put(esfbColumnIndexs[16],epsFallBack_failure.get("Long"));
                 rm.put(esfbColumnIndexs[17],epsFallBack_failure.get("Lat"));
-                setNrVoiceIEKpi(nrVoiceMap,testLogItem, rm, epsFallBack_failure,"lte",id);
-                setLteVoiceIEKpi(lteVoiceMap,testLogItem, rm, epsFallBack_failure,"NR",id);
+                setNrVoiceIEKpi(influxDbConnection,nrVoiceMap,testLogItem, rm, epsFallBack_failure,"lte",id);
+                setLteVoiceIEKpi(influxDbConnection,lteVoiceMap,testLogItem, rm, epsFallBack_failure,"NR",id);
             }else{
                 for(int i=13;i<34;i++){
                     rm.put(esfbColumnIndexs[i],null);
                 }
             }
             //掉话业务
-            dropBusi(nrCells, lteCells, objs, rm,id);
+            dropBusi(influxDbConnection,nrCells, lteCells, objs, rm,id);
             //fr失败
-            frFailBusi( objs, rm,id);
+            frFailBusi(influxDbConnection, objs, rm,id);
             results.add(rm);
         }
     }
@@ -1797,10 +1828,11 @@ public class InfluxServiceImpl implements InfluxService {
 
     /**
      * fr 失败业务
+     * @param influxDbConnection
      * @param objs
      * @param rm
      */
-    private void frFailBusi(List<Map<String,Object>> objs, Map<String,Object> rm,String id) {
+    private void frFailBusi(InfluxDbConnection influxDbConnection, List<Map<String, Object>> objs, Map<String, Object> rm, String id) {
         Map<String, Object> frs=null;
         String time1=null;
         String time2=null;
@@ -1812,7 +1844,7 @@ public class InfluxServiceImpl implements InfluxService {
             //是否存在事件“Fast_Return_Failure”
             if("Fast_Return_Failure".equalsIgnoreCase(obj.get("evtName").toString())){
                 rm.put(frColumnIndexs[3],"是");
-                List<Map<String, Object>> result1 = getRecordByMsgIDFromSign(obj,id);
+                List<Map<String, Object>> result1 = getRecordByMsgIDFromSign(influxDbConnection, obj,id);
                 if(result1!=null&&!result1.isEmpty()){
                     rm.put(frColumnIndexs[4],result1.get(0).get("signalName"));
                 }
@@ -1840,17 +1872,18 @@ public class InfluxServiceImpl implements InfluxService {
             }
         }
         if(time1!=null&&time2!=null){
-            rm.putAll(exsistByContentFromSign(time2,time1,id));
+            rm.putAll(exsistByContentFromSign(influxDbConnection,time2,time1,id));
         }
     }
     /**
      * 掉话业务
+     * @param influxDbConnection
      * @param nrCells
      * @param lteCells
      * @param objs
      * @param rm
      */
-    void dropBusi(List<Cell5G> nrCells, List<LteCell> lteCells,List<Map<String, Object>> objs, Map<String, Object> rm,String id) {
+    void dropBusi(InfluxDbConnection influxDbConnection, List<Cell5G> nrCells, List<LteCell> lteCells, List<Map<String, Object>> objs, Map<String, Object> rm, String id) {
         List<String> dropFailEvts=new ArrayList<>();
         dropFailEvts.addAll(Arrays.asList(activeDropFailEvt));
         dropFailEvts.addAll(Arrays.asList(positiveDropFailEvt));
@@ -1868,7 +1901,7 @@ public class InfluxServiceImpl implements InfluxService {
                 Map<String, List<LteCell>> ltePciFcn2BeanMap = lteCells.stream().collect(Collectors.groupingBy(item1 -> item1.getPci() + "_" + item1.getFrequency1()));
                 List<Cell5G> nrPlanParamPojos = nrPciFcn2BeanMap.get(pci + "_" + fcn);
                 List<LteCell> ltePlanParamPojos = ltePciFcn2BeanMap.get(pci + "_" + fcn);
-                List<Map<String, Object>> result1 = getRecordByMsgIDFromSign( obj,id);
+                List<Map<String, Object>> result1 = getRecordByMsgIDFromSign(influxDbConnection, obj,id);
                 if(result1!=null&&!result1.isEmpty()){
                     rm.put(dropColumnIndexs[0],result1.get(0).get("signalName"));
                 }
@@ -1917,11 +1950,13 @@ public class InfluxServiceImpl implements InfluxService {
 
     /**
      * 根据msgid从信令表中获取记录
+     *
+     * @param influxDbConnection
      * @param obj
      * @param id
      * @return
      */
-    List<Map<String, Object>> getRecordByMsgIDFromSign(Map<String, Object> obj,String id) {
+    List<Map<String, Object>> getRecordByMsgIDFromSign(InfluxDbConnection influxDbConnection, Map<String, Object> obj, String id) {
         int msgID=Integer.parseInt(obj.get("MsgID").toString());
         String ueID=obj.get("UEID").toString();
         BigDecimal timeStamp=new BigDecimal(obj.get("TimeStamp").toString());
@@ -1934,11 +1969,13 @@ public class InfluxServiceImpl implements InfluxService {
 
     /**
      * 在时间段内是否存在信令内容
+     *
+     * @param influxDbConnection
      * @param start
      * @param end
      * @return
      */
-    private Map<String,String> exsistByContentFromSign(String start,String end,String id) {
+    private Map<String,String> exsistByContentFromSign(InfluxDbConnection influxDbConnection, String start, String end, String id) {
         Map<String,String> conMap=new HashMap<>();
         conMap.put(frColumnIndexs[8],"mib");
         conMap.put(frColumnIndexs[9],"systemInformationBlockType1");
@@ -1992,7 +2029,9 @@ public class InfluxServiceImpl implements InfluxService {
         List<Map<String, Object>> results=Collections.synchronizedList(new ArrayList<>());
         List<Map<String, Object>> results1=new ArrayList<>();
         fileLogIds.parallelStream().forEach(id->{
+            TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id.trim()));
             String execSql=MessageFormat.format(sql,InfluxReportUtils.getTableName(id,"IE"));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             QueryResult query=influxDbConnection.query(execSql);
             List<Map<String, Object>> result = InfludbUtil.paraseQueryResult(query);
             result.forEach(item->{
@@ -2036,7 +2075,7 @@ public class InfluxServiceImpl implements InfluxService {
         lteVoiceMap.put("epsfb33","LAST(40056)");
         lteVoiceMap.put("epsfb34","LAST(43368)");
     }
-    private void setNrVoiceIEKpi(Map<String, String> columnMap, TestLogItem testLogItem, Map<String, Object> rm, Map<String, Object> epsFallBack_failure,String destnetwork,String id) {
+    private void setNrVoiceIEKpi(InfluxDbConnection influxDbConnection, Map<String, String> columnMap, TestLogItem testLogItem, Map<String, Object> rm, Map<String, Object> epsFallBack_failure, String destnetwork, String id) {
         Map<String, Object> map = InfluxReportUtils.setVoiceIEKpi(influxDbConnection, columnMap, epsFallBack_failure.get("time").toString(),id);
         if(rm.get(esfbColumnIndexs[13]).toString().equalsIgnoreCase(destnetwork)){
             rm.putAll(map);
@@ -2052,7 +2091,7 @@ public class InfluxServiceImpl implements InfluxService {
         }
     }
 
-    private void setLteVoiceIEKpi(Map<String, String> columnMap, TestLogItem testLogItem, Map<String, Object> rm, Map<String, Object> epsFallBack_failure, String destnetwork,String id) {
+    private void setLteVoiceIEKpi(InfluxDbConnection influxDbConnection, Map<String, String> columnMap, TestLogItem testLogItem, Map<String, Object> rm, Map<String, Object> epsFallBack_failure, String destnetwork, String id) {
         Map<String, Object> map = InfluxReportUtils.setVoiceIEKpi(influxDbConnection, columnMap, epsFallBack_failure.get("time").toString(),id);
         if(rm.get(esfbColumnIndexs[13]).toString().equalsIgnoreCase(destnetwork)){
             rm.putAll(map);
@@ -2255,7 +2294,7 @@ public class InfluxServiceImpl implements InfluxService {
         return dataCellFirstRecordMap;
     }
 
-    private void evtNetConfigBusiProcess(TestLogItem testLogItem, AbEventConfig item, List<Map<String, Object>> result, List<Map.Entry<String, List<Map<String, Object>>>> triggerEvtDatas, Map<String, String> netKpiMap, List<Map<String, Object>> sheetDatas,String id) {
+    private void evtNetConfigBusiProcess(InfluxDbConnection influxDbConnection, TestLogItem testLogItem, AbEventConfig item, List<Map<String, Object>> result, List<Map.Entry<String, List<Map<String, Object>>>> triggerEvtDatas, Map<String, String> netKpiMap, List<Map<String, Object>> sheetDatas, String id) {
         triggerEvtDatas.forEach(entry->{
             List<Map<String, Object>> value = entry.getValue();
             value.forEach(record->{
@@ -2287,17 +2326,17 @@ public class InfluxServiceImpl implements InfluxService {
                     }
                     //判断前置条件是否成立
                     if(flag){
-                        addNetConfigItem(testLogItem, item, result, netKpiMap, sheetDatas, id, r, triggerTime, cellId, fcn, pci);
+                        addNetConfigItem(influxDbConnection,testLogItem, item, result, netKpiMap, sheetDatas, id, r, triggerTime, cellId, fcn, pci);
                     }
                 }else{
                     //无前置条件
-                    addNetConfigItem(testLogItem, item, result, netKpiMap, sheetDatas, id, r, triggerTime, cellId, fcn, pci);
+                    addNetConfigItem(influxDbConnection,testLogItem, item, result, netKpiMap, sheetDatas, id, r, triggerTime, cellId, fcn, pci);
                 }
             });
         });
     }
 
-    private void addNetConfigItem(TestLogItem testLogItem, AbEventConfig item, List<Map<String, Object>> result, Map<String, String> netKpiMap, List<Map<String, Object>> sheetDatas, String id, Map<String, Object> r, String triggerTime, Object cellId, Object fcn, Object pci) {
+    private void addNetConfigItem(InfluxDbConnection influxDbConnection, TestLogItem testLogItem, AbEventConfig item, List<Map<String, Object>> result, Map<String, String> netKpiMap, List<Map<String, Object>> sheetDatas, String id, Map<String, Object> r, String triggerTime, Object cellId, Object fcn, Object pci) {
         if(item.getType().equalsIgnoreCase("lte")){
             r.put("enbID",getGnbID(testLogItem.getOperatorName(),"lte",cellId));
         }else if(item.getType().equalsIgnoreCase("nr")){

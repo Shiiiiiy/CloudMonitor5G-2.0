@@ -1,5 +1,7 @@
 package com.datang.service.influx;
 
+import com.datang.common.influxdb.InfluxDBMutiConntion;
+import com.datang.common.influxdb.InfluxDbConnection;
 import com.datang.common.util.DateComputeUtils;
 import com.datang.dao.quesroad.QuesRoadDao;
 import com.datang.domain.platform.projectParam.Cell5G;
@@ -48,6 +50,9 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
     @Autowired
     private GisAndListShowServie gisAndListShowServie;
 
+    @Autowired
+    private InfluxDBMutiConntion influxDBMutiConntion;
+
     /**
      * 问题路段分析入口
      * @param fileLogIds
@@ -62,10 +67,11 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         fileLogIds.stream().forEach(id->{
             String sql=MessageFormat.format(BASE_ROAD_SAMP_SQL,InfluxReportUtils.getTableName(Long.parseLong(id),"IE"));
             TestLogItem testLogItem = id2LogBeanMap.get(Long.parseLong(id));
+            InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            //WHERE_MAP.entrySet().parallelStream().forEach(entry->{
-            WHERE_MAP.entrySet().stream().forEach(entry->{
+            WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+            //WHERE_MAP.entrySet().stream().forEach(entry->{
                 String key=entry.getKey();
                 String[] values=entry.getValue();
                 List<Map<String, Object>> sampDatas;
@@ -75,7 +81,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                     if(existEvt(evtResults,START_EVTS_MAP.get(key))){
                         List<Map<String,String>> times=getTimeIntervals(evtResults,START_EVTS_MAP.get(key));
                         for(Map<String,String> time:times){
-                            sampDatas = queryRoadSampDatas(sql, Arrays.asList(time),values);
+                            sampDatas = queryRoadSampDatas(influxDbConnection,sql, Arrays.asList(time),values);
                             Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                             if(!tempR.isEmpty()){
                                 if(result.containsKey(key)){
@@ -87,7 +93,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                         }
                     }
                 }else{
-                    sampDatas=queryRoadSampDatas(sql, Collections.emptyList(),values);
+                    sampDatas=queryRoadSampDatas(influxDbConnection,sql, Collections.emptyList(),values);
                     //问题路段算法
                     Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
                     if(!tempR.isEmpty()){

@@ -867,9 +867,16 @@ Jh.fn = function (a) {
                     var firstobj = $("."+view+"_0")[0];
                     //				var obj = $("."+ view +"_"+Jh.Util.dateSlice(MyPlayer.Data.currentTime)+":first")[0];
                     if(obj){
-                        $("#"+view+"_tbody").animate({
-                            scrollTop:obj.offsetTop-firstobj.offsetTop
-                        });
+                        var scrollTo = obj.offsetTop-firstobj.offsetTop;
+                        var currentScroll = $("#"+view+"_tbody").scrollTop();
+                        var bodyHeight = $("#"+view+"_tbody").height();
+                        var objHeight = $("."+view+"_"+target).height();
+                        if( bodyHeight - objHeight >= scrollTo - currentScroll &&   scrollTo >=  currentScroll  ){
+                        }else{
+                            $("#"+view+"_tbody").animate({
+                                scrollTop:obj.offsetTop-firstobj.offsetTop
+                            });
+                        }
                         $("#"+view+" .datagrid-row-selected").removeClass("datagrid-row-selected")
                         $(obj).addClass("datagrid-row-selected");
                     }else{

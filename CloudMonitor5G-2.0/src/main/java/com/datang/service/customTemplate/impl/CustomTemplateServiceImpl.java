@@ -1206,7 +1206,7 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 	private void clearSummary(Workbook workbook,CustomTemplateUtils templateUtils){
 		Sheet sheet = workbook.getSheetAt(1);
 		if(sheet==null){return;}
-		if(sheet.getSheetName() !=null && sheet.getSheetName().contains("汇总表")){
+		if(sheet.getSheetName() !=null &&  ( sheet.getSheetName().contains("汇总表")  || sheet.getSheetName().contains("数据校验简表") ) ){
 
 			int rowStart = 4;
 			int rowEnd =13;

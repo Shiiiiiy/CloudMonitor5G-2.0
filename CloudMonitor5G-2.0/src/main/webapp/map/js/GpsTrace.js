@@ -417,12 +417,11 @@ function showTraceByServer(logIds, dataType) {
         'CQL_FILTER': logIdField + " in (" + logIds + ")",
         'FEATUREID': null
     };
-    
+
     logVector.getSource().params_.STYLES = pointStyle;
     logVector.getSource().updateParams(filterParam);
     logVector.getSource().refresh();
     logVector.setVisible(true);
-
 
     /* querySource.clear();
     var promiseArr = [];
@@ -1198,7 +1197,20 @@ function SynchronizeLog(logId, timestamp) {
         if (features.length == 0) {
             return;
         } else {
-            var synchFeat = features[0];
+            var timeIndex = 0;
+            var dateTime=new Date();
+            dateTime=dateTime.setDate(dateTime.getDate()+1);
+            dateTime=new Date(dateTime);
+            var minTimeStamp =dateTime.getTime();
+            for (var i = 0; i < features.length; i++) {
+                var timeStamp = features[i].values_["timestamp"];
+                if(timeStamp<=minTimeStamp){
+                    minTimeStamp=timeStamp;
+                    timeIndex = i;
+                }  
+            }
+
+            var synchFeat = features[timeIndex];
             synchSource.clear();
             synchSource.addFeature(synchFeat);
             var pntCoor = synchFeat.getGeometry().getCoordinates()

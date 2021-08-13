@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.datang.service.testLogItem.impl;
 
@@ -129,6 +129,11 @@ public class UnicomLogItemServiceImpl implements UnicomLogItemService {
 	@Override
 	public UnicomLogItem queryTestLogByLogName2(String filename){
 		return unicomLogItemDao.queryTestLogByLogName2(filename);
+	}
+
+	@Override
+	public String queryTaskNameByLogName(String fileName) {
+		return unicomLogItemDao.queryTaskNameByLogName(fileName);
 	}
 
 	@Override

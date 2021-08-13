@@ -6,16 +6,12 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import ch.qos.logback.core.util.ExecutorServiceUtil;
@@ -982,7 +978,8 @@ public class ReportFgAction extends PageAction implements
 				customLogReportTask.setTaskStatus("1");
 			}
 			else {
-				customLogReportTask.setTaskStatus("2");
+				customLogReportTask.setTaskStatus("1");
+				//customLogReportTask.setTaskStatus("2");
 			}
 			customLogReportTask.setTaskType("1");
 			if (null != statisticeTaskRequest.getId()) {
@@ -1073,7 +1070,93 @@ public class ReportFgAction extends PageAction implements
 						return ReturnType.JSON;
 					}
 				}
+
+				List<Long> idList = new ArrayList<>();
+				for(TestLogItem u:queryTestLogItems) {
+					Long recSeqNo = u.getRecSeqNo();
+					idList.add(recSeqNo);
+				}
+
+				Session hibernateSession = analyFileReportDao.getSessionFactory().openSession();
+
+				analyzeTaskExecutor.submit(new Thread(new Runnable() {
+					@Override
+					public void run() {
+
+						String[] ids = customLogReportTask.getTemplateIds().split(",");
+						List<Long> idList = new ArrayList<>();
+						for (String id : ids) {
+							idList.add(Long.valueOf(id));
+						}
+						PageList pageList = new PageList();
+						pageList.putParam("ids",idList);
+						List<CustomReportTemplatePojo> queryTemplateByParam = customTemplateService.queryTemplateByParam(pageList);
+						Set<String> unionTeplateSet = new HashSet<String>();
+						for (CustomReportTemplatePojo customReportTemplatePojo : queryTemplateByParam) {
+							unionTeplateSet.add(customReportTemplatePojo.getTemplateName());
+						}
+
+						boolean flag =true;
+
+							for (String templateName : unionTeplateSet) {
+
+
+								try{
+
+									LOGGER.info(templateName + " 开始： " + System.currentTimeMillis() );
+
+									//查询模板
+									PageList selectConditions = new PageList();
+									selectConditions.putParam("templateName", templateName);
+									List<CustomReportTemplatePojo> templateList = customTemplateService.queryTemplateByParam(selectConditions);
+
+									File file = new File(templateList.get(0).getSaveFilePath());
+									if (file == null || !file.exists() || file.isDirectory()) {
+										throw new ApplicationException("模板文件不存在");
+									}
+									String newExcelname = file.getName().substring(0, file.getName().lastIndexOf(".")) + "_"+customLogReportTask.getId()
+											+ file.getName().substring(file.getName().lastIndexOf("."));
+									String newPath = file.getParentFile().getAbsolutePath() + "/" + newExcelname;
+
+
+									Map<String, Object> map = new HashMap<>();
+									String idsString = customLogReportTask.getLogIds();
+
+									PageList page = new PageList();
+									page.putParam("taskName", customLogReportTask.getName());
+									page.putParam("logids", idsString);
+									page.putParam("templateName", templateName);
+									page.putParam("excelPath",templateList.get(0).getSaveFilePath());
+									page.putParam("exportFilePath", newPath);
+									//根据指标公式修改获取值保存到excel
+
+									LOGGER.info(templateName + " 生成文件： " + System.currentTimeMillis() );
+
+									customTemplateService.modifyExcelValue(page);
+
+
+									LOGGER.info(templateName + " 结束： " + System.currentTimeMillis() );
+
+
+								}catch(Exception e){
+									flag = false;
+									LOGGER.info("====统计失败:"+templateName);
+									LOGGER.info(e.getMessage(),e);
+								}
+
+							}
+							if(flag){
+								customLogReportTask.setTaskStatus("3");
+							}else{
+								customLogReportTask.setTaskStatus("-1");
+							}
+							hibernateSession.merge(customLogReportTask);
+							hibernateSession.flush();
+							hibernateSession.close();
+					}
+				}));
 				return ReturnType.JSON;
+
 			}
 
 			//下发任务到后台

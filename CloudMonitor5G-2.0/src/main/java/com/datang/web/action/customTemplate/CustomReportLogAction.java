@@ -293,10 +293,10 @@ public class CustomReportLogAction extends PageAction implements
 		try {
 			Long id = (Long) ServletActionContext.getRequest().getSession().getAttribute("idLong");
 			CustomLogReportTask task = customLogReportService.queryOneByID(id);
-			if(task!=null && !task.getTaskStatus().equals("2") && !task.getTaskStatus().equals("3")){
+			/*if(task!=null && !task.getTaskStatus().equals("2") && !task.getTaskStatus().equals("3")){
 				throw new ApplicationException("任务未解析，请等待解析完成");
 			}
-
+*/
 			String exportFilePath = null;
 			// 分析报表
 			if(CustomLogReportTask.typeIsAnylyFileReport(task)){

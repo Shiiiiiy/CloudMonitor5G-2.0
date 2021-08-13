@@ -98,7 +98,7 @@ public class CustomTemplateUtils {
 			if(setLogNameRlt){
 				WriteTemplateInfo();
 			}else{
-				throw new ApplicationException("日志为空或日志名格式不正确");
+		//		throw new ApplicationException("日志为空或日志名格式不正确");
 			}
 		}else{
 			writeNormalTemplateInfo();
@@ -1077,10 +1077,13 @@ public class CustomTemplateUtils {
 	}
 
 	public void clearCellValue(Row targetRow,int targetColumn){
-		Cell cell = targetRow.getCell(targetColumn);
-		if(cell!=null){
-			cell.setCellValue("");
+		if(targetRow!=null){
+			Cell cell = targetRow.getCell(targetColumn);
+			if(cell!=null){
+				cell.setCellValue("");
+			}
 		}
+
 	}
 
 

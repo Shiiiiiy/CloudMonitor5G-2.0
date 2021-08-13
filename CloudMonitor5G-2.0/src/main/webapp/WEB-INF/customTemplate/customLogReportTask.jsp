@@ -47,7 +47,7 @@
 					{field:'creatDate',width:80,align:'center',title:'创建时间',formatter:showTooltip},
 					{field:'nam',width:80,align:'center',title:'操作',
 						formatter:function(value,row,index){
-							if(row.taskStatus == 2 || row.taskStatus == 3 || row.taskStatus == null){
+							if(row.taskStatus == 2 || row.taskStatus == 3 || row.taskStatus == null || row.taskStatus == -1 ){
 								return '<a href="#" title="报表下载" onclick="batchDownload('+row.id+');" >报表下载</a>';
 							}else{
 								return '';

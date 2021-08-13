@@ -71,6 +71,13 @@ public interface UnicomLogItemService {
 	public UnicomLogItem queryTestLogByLogName2(String filename);
 
 	/**
+	 * 根据日志名查找任务名
+	 * @param fileName
+	 * @return
+	 */
+	String queryTaskNameByLogName(String fileName);
+
+	/**
 	 * 根据BoxId查询
 	 *
 	 * @param boxIds

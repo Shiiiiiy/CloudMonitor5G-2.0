@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import com.datang.domain.testLogItem.UnicomLogItem;
 import com.datang.service.influx.InfluxService;
 import com.datang.service.testLogItem.UnicomLogItemService;
+import com.datang.web.action.customTemplate.CustomReportLogAction;
 import com.datang.web.beans.testLogItem.UnicomLogItemPageQueryRequestBean;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +43,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -79,6 +82,9 @@ import com.googlecode.aviator.exception.ExpressionRuntimeException;
  */
 @Service
 public class CustomTemplateServiceImpl implements CustomTemplateService {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(CustomReportLogAction.class);
+
 	// -->
 	private final String influxDbKpiStr = "nr_xiaoqu_count,nr_xiaoqu_count_liantong,nr_xiaoqu_count_dianxin,sa_nr_xiaoqu_count,sa_nr_xiaoqu_count_liantong,sa_nr_xiaoqu_count_dianxin,nsa_nr_xiaoqu_count,nsa_nr_xiaoqu_count_liantong,nsa_nr_xiaoqu_count_dianxin";
 	// --<
@@ -775,14 +781,11 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 						Map<String, BigDecimal> influxKpiValue = new HashMap<String, BigDecimal>();
 						for (TestLogInfo testLogInfo : logList) {
 							String fileCondition = testLogInfo.getFull_log_name();
+							String singleTaskName = unicomLogItemService.queryTaskNameByLogName(fileCondition);
 							Map<String, Object> logKpiValue = new HashMap<String, Object>();
 							for (Map.Entry<String, List<String>> map : commonTableMap.entrySet()) {
 								Map<String, Object> rltTemp = new HashMap<String, Object>();
-								UnicomLogItem unicomLogItem = unicomLogItemService.queryTestLogByLogName2(fileCondition);
-								String singleTaskName = "";
-								if(unicomLogItem!=null){
-									singleTaskName = unicomLogItem.getTaskName();
-								}
+
 								String sql = getSqlByParam(map.getKey(), map.getValue(), singleTaskName, fileCondition);
 								rltTemp = jdbc.objectQueryNoPage(sql);
 //								if(rltTemp == null || rltTemp.isEmpty()){
@@ -816,11 +819,6 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							logKpiValue.clear();
 							for (Map.Entry<String, List<String>> map : timeTableMap.entrySet()) {
 								Map<String, Object> rltTemp = new HashMap<String, Object>();
-								UnicomLogItem unicomLogItem = unicomLogItemService.queryTestLogByLogName2(fileCondition);
-								String singleTaskName = "";
-								if(unicomLogItem!=null){
-									singleTaskName = unicomLogItem.getTaskName();
-								}
 								String sql = getSqlByParam(map.getKey(), map.getValue(), singleTaskName, fileCondition);
 								rltTemp = jdbc.objectQueryNoPage(sql);
 //								if(rltTemp == null || rltTemp.isEmpty()){
@@ -854,11 +852,6 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							logKpiValue.clear();
 							for (Map.Entry<String, List<String>> map : mileTableMap.entrySet()) {
 								Map<String, Object> rltTemp = new HashMap<String, Object>();
-								UnicomLogItem unicomLogItem = unicomLogItemService.queryTestLogByLogName2(fileCondition);
-								String singleTaskName = "";
-								if(unicomLogItem!=null){
-									singleTaskName = unicomLogItem.getTaskName();
-								}
 								String sql = getSqlByParam(map.getKey(), map.getValue(), singleTaskName+"_10", fileCondition);
 								rltTemp = jdbc.objectQueryNoPage(sql);
 //								if(rltTemp == null || rltTemp.isEmpty()){
@@ -892,11 +885,6 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							logKpiValue.clear();
 							for (Map.Entry<String, List<String>> map : mile50TableMap.entrySet()) {
 								Map<String, Object> rltTemp = new HashMap<String, Object>();
-								UnicomLogItem unicomLogItem = unicomLogItemService.queryTestLogByLogName2(fileCondition);
-								String singleTaskName = "";
-								if(unicomLogItem!=null){
-									singleTaskName = unicomLogItem.getTaskName();
-								}
 								String sql = getSqlByParam(map.getKey(), map.getValue(), singleTaskName+"_50", fileCondition);
 								rltTemp = jdbc.objectQueryNoPage(sql);
 //								if(rltTemp == null || rltTemp.isEmpty()){
@@ -929,8 +917,10 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 							}
 						}
 
-						influxKpiValue =  getInfluxDbKpi(logList.stream().map(it->it.getFull_log_name()).collect(Collectors.toList()));
-						// 增加一行
+						if(!templateUtil.isNormal()){
+							influxKpiValue =  getInfluxDbKpi(logList.stream().map(it->it.getFull_log_name()).collect(Collectors.toList()));
+							// 增加一行
+						}
 
 						Row creRow = sheetAt.createRow(templateInfo.getRow_index());
 
@@ -1064,40 +1054,6 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 						} else {
 							throw new ApplicationException("IE指标公式异常");
 						}
-						//汇总表
-						if(templateUtil.getIs_dt()){
-							if (sheetName.contains("表一")){
-								templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_1,tableTag,CustomReportConstant.DT_SUMMARY_TABLE1);
-							}else if(sheetName.contains("表二")){
-								templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_2,tableTag,CustomReportConstant.DT_SUMMARY_TABLE2);
-							}else if(sheetName.contains("表三")){
-								templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_3,tableTag,CustomReportConstant.DT_SUMMARY_TABLE3);
-							}else if(sheetName.contains("表四")){
-								templateUtil.cqtSummary2(workbook,CustomReportConstant.DT_ALL_USE_CASE_4,tableTag,CustomReportConstant.DT_SUMMARY_TABLE4);
-							}else if(sheetName.contains("表五")){
-								templateUtil.cqtSummary2(workbook,CustomReportConstant.DT_ALL_USE_CASE_5,tableTag,CustomReportConstant.DT_SUMMARY_TABLE5);
-							}else if(sheetName.contains("表六")){
-								templateUtil.cqtSummary2(workbook,CustomReportConstant.DT_ALL_USE_CASE_6,tableTag,CustomReportConstant.DT_SUMMARY_TABLE6);
-							}else if(sheetName.contains("表七")){
-								templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_7,tableTag,CustomReportConstant.DT_SUMMARY_TABLE7);
-							}
-						}else{
-							if (sheetName.contains("表一")){
-								templateUtil.cqtSummary(workbook,CustomReportConstant.CQT_ALL_USE_CASE_1,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE1);
-							}else if(sheetName.contains("表二")){
-								templateUtil.cqtSummary(workbook,CustomReportConstant.CQT_ALL_USE_CASE_2,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE2);
-							}else if(sheetName.contains("表三")){
-								templateUtil.cqtSummary(workbook,CustomReportConstant.CQT_ALL_USE_CASE_3,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE3);
-							}else if(sheetName.contains("表四")){
-								//	templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_4,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE4);
-							}else if(sheetName.contains("表五")){
-								templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_5,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE5);
-							}else if(sheetName.contains("表六")){
-								templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_6,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE6);
-							}else if(sheetName.contains("表七")){
-								templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_7,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE7);
-							}
-						}
 
 
 						/**
@@ -1141,6 +1097,43 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 
 						 **/
 					}
+
+					//汇总表
+					if(templateUtil.getIs_dt()){
+						if (sheetName.contains("表一")){
+							templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_1,tableTag,CustomReportConstant.DT_SUMMARY_TABLE1);
+						}else if(sheetName.contains("表二")){
+							templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_2,tableTag,CustomReportConstant.DT_SUMMARY_TABLE2);
+						}else if(sheetName.contains("表三")){
+							templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_3,tableTag,CustomReportConstant.DT_SUMMARY_TABLE3);
+						}else if(sheetName.contains("表四")){
+							templateUtil.cqtSummary2(workbook,CustomReportConstant.DT_ALL_USE_CASE_4,tableTag,CustomReportConstant.DT_SUMMARY_TABLE4);
+						}else if(sheetName.contains("表五")){
+							templateUtil.cqtSummary2(workbook,CustomReportConstant.DT_ALL_USE_CASE_5,tableTag,CustomReportConstant.DT_SUMMARY_TABLE5);
+						}else if(sheetName.contains("表六")){
+							templateUtil.cqtSummary2(workbook,CustomReportConstant.DT_ALL_USE_CASE_6,tableTag,CustomReportConstant.DT_SUMMARY_TABLE6);
+						}else if(sheetName.contains("表七")){
+							templateUtil.dtSummary(workbook,CustomReportConstant.DT_ALL_USE_CASE_7,tableTag,CustomReportConstant.DT_SUMMARY_TABLE7);
+						}
+					}else{
+						if (sheetName.contains("表一")){
+							templateUtil.cqtSummary(workbook,CustomReportConstant.CQT_ALL_USE_CASE_1,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE1);
+						}else if(sheetName.contains("表二")){
+							templateUtil.cqtSummary(workbook,CustomReportConstant.CQT_ALL_USE_CASE_2,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE2);
+						}else if(sheetName.contains("表三")){
+							templateUtil.cqtSummary(workbook,CustomReportConstant.CQT_ALL_USE_CASE_3,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE3);
+						}else if(sheetName.contains("表四")){
+							//	templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_4,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE4);
+						}else if(sheetName.contains("表五")){
+							templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_5,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE5);
+						}else if(sheetName.contains("表六")){
+							templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_6,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE6);
+						}else if(sheetName.contains("表七")){
+							templateUtil.cqtSummary2(workbook,CustomReportConstant.CQT_ALL_USE_CASE_7,tableTag,CustomReportConstant.CQT_SUMMARY_TABLE7);
+						}
+
+					}
+
 					// 将行号为i+1一直到行号为lastRowNum的单元格全部上移一行，以便删除i行
 					sheetAt.shiftRows(formulaIndex, sheetAt.getLastRowNum(), -1);// 删除精度行
 					sheetAt.shiftRows(formulaIndex, sheetAt.getLastRowNum(), -1);// 删除公式行
@@ -1339,8 +1332,9 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 	private String getCellValue(Cell cell) {
 		String value = new String();
 
-		if (null == cell)
+		if (null == cell) {
 			return value;
+		}
 
 		// 简单的查检列类型
 		switch (cell.getCellType()) {
@@ -1429,8 +1423,6 @@ public class CustomTemplateServiceImpl implements CustomTemplateService {
 	 * 构造sql
 	 * @author lucheng
 	 * @date 2020年12月30日 下午6:07:48
-	 * @param key
-	 * @param value
 	 * @param taskName
 	 * @param fileName
 	 * @return

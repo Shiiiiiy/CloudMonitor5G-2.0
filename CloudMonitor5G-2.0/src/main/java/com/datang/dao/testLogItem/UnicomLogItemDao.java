@@ -415,6 +415,18 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 		return testLogItems;
 	}
 
+	public String queryTaskNameByLogName(String fileName) {
+		String sql = "SELECT  TASK_NAME FROM IADS_TESTLOG_ITEM WHERE FILE_NAME = ?     ";
+		List<Object[]> list = jdbcTemplate.query(sql , new Object[]{ fileName} );
+
+		if(list != null && list.size()>0 ){
+			if (list.get(0)[0] != null) {
+				return list.get(0)[0].toString();
+			}
+		}
+		return "";
+	}
+
 	/**
 	 * 根据日志文件名查询日志
 	 * @param filename

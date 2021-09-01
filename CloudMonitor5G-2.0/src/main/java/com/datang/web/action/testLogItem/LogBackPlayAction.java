@@ -1,6 +1,7 @@
 package com.datang.web.action.testLogItem;
 
 import com.datang.domain.testLogItem.IEItem;
+import com.datang.domain.testLogItem.PcapData;
 import com.datang.service.service5g.logbackplay.LogIEService;
 import com.datang.web.action.ReturnType;
 import com.opensymphony.xwork2.ActionContext;
@@ -89,6 +90,20 @@ public class LogBackPlayAction {
                 .push(ieItems);
         return ReturnType.JSON;
     }
+
+    /**
+     * pcap窗口数据
+     * @return
+     */
+    public String pcapData() {
+        List<PcapData> ieItems = logIEService.pcapDatas(logId);
+        ActionContext
+                .getContext()
+                .getValueStack()
+                .push(ieItems);
+        return ReturnType.JSON;
+    }
+
 
     public String getStartTime() {
         return startTime;

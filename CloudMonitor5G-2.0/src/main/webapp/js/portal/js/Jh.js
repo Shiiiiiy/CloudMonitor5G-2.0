@@ -8,13 +8,15 @@ var Jh = {
         'view5':'信令窗口',
         'view6':'事件窗口',
         'view7':'linechart窗口',
+        'view8':'pcap窗口',
     },
 
     Data:{
 
         ieData:{},
         signData:[],
-        eventData:[]
+        eventData:[],
+        pcapData:[]
     },
 
     Config: {
@@ -37,7 +39,7 @@ var Jh = {
         _groupWrapperClass: "groupWrapper",
         _groupItemClass: "groupItem",
         _allIe:[],
-        _listView:['view5','view6']
+        _listView:['view5','view6','view8']
     },
     ViewColumns:{
         'view1':[[
@@ -242,7 +244,13 @@ var Jh = {
             {field:'Netmode',title:'\u5236\u5f0f',width:'33%',format:'Jh.Util.getNetCodeName'},//制式
             {field:'evtName',title:'\u4e8b\u4ef6',width:'33%'}//事件
         ]],
-
+        'view8':[[
+            {field:'time',title:'\u65f6\u95f4',width:'30%'},//时间
+            {field:'sourceip',title:'\u6e90\u0069\u0070',width:'18%'},//源ip
+            {field:'destip',title:'\u76ee\u6807\u0069\u0070',width:'18%'},//目标ip
+            {field:'protocol',title:'\u534f\u8bae',width:'14%'},//协议
+            {field:'rawdata',title:'\u4fe1\u4ee4',width:'20%'},//信令
+        ]],
 
 
 
@@ -690,10 +698,12 @@ Jh.fn = function (a) {
                 if(Jh.Config._listView.includes(b)){
 
                     _prefix = '';
-                    if('view5' == b){
+                    if('view5' === b){
                         _data = Jh.Data.signData;
-                    }else{
+                    }else if('view6' === b){
                         _data = Jh.Data.eventData;
+                    }else if('view8' === b){
+                        _data = Jh.Data.pcapData;
                     }
 
                 }else{
@@ -729,6 +739,12 @@ Jh.fn = function (a) {
                         if(it.width){
                             td.css('width',it.width);
                         }
+                        if('view8' === b){
+                            td.css('overflow','hidden');
+                            td.css('text-overflow','ellipsis');
+                            td.css('white-space','nowrap');
+                        }
+
 
                         tr.append(td);
                     });
@@ -782,6 +798,20 @@ Jh.fn = function (a) {
                     }
                 });
             }
+            //pacap窗口
+            if(b=="view8"){
+                r.dblclick(function () {
+                    if(!MyPlayer.Data.playingStatus){
+
+                        $("#signDetailDiv").dialog('open');
+                        $("#signDetailDiv").window('center');
+                        $("#signDetail").html();
+                        $("#signDetail").html(Jh.Data.pcapData[r.attr('ref')].rawdata);
+                    }
+                });
+            }
+
+
         },playOneFrame:function(){
             this._refresh();
         }
@@ -843,13 +873,14 @@ Jh.fn = function (a) {
 
                     if( view==='view5' ){
                         dataArray = Jh.Data.signData.map(c=>c.time);
-                    }else{
+                    }else if(view==='view6'){
                         dataArray = Jh.Data.eventData.map(c=>c.time);
+                    }else if(view==='view8'){
+                        dataArray = Jh.Data.pcapData.map(c=>c.time);
                     }
                     dataArray.push(MyPlayer.Data.currentTime);
                     dataArray.sort();
                     var position =  dataArray.indexOf(MyPlayer.Data.currentTime);
-
                     if(position == 0){
                         target = 0;
                     }else if(position == dataArray.length - 1){
@@ -894,7 +925,7 @@ Jh.fn = function (a) {
             if(!data){
                 existData = false;
             }
- /**           if(Jh.Config._allIe.length>0){
+            /**           if(Jh.Config._allIe.length>0){
                 $.each(Jh.Config._allIe,function(iii,item){
 
                     if(existData){
@@ -906,30 +937,30 @@ Jh.fn = function (a) {
                 });
             }else{   **/
 
-                $.each(Jh.ViewColumns,function(i,columns){
-                    if(!Jh.Config._listView.includes(i)){
-                        $.each(columns,function(ii,column){
-                            $.each(column,function(iii,item){
-                       //         Jh.Config._allIe.push(item.field);
-                                if(existData){
+            $.each(Jh.ViewColumns,function(i,columns){
+                if(!Jh.Config._listView.includes(i)){
+                    $.each(columns,function(ii,column){
+                        $.each(column,function(iii,item){
+                            //         Jh.Config._allIe.push(item.field);
+                            if(existData){
 
-                                    var val = data["ie_"+item.field];
-                                    if(item.format && ( val || val == '0' ) ){
-                                        val = eval( item.format+"('"+val+"');");
-                                    }
-                                    $("#ie_"+item.field).html(val);
-
-                                }else{
-                                    $("#ie_"+item.field).html('');
+                                var val = data["ie_"+item.field];
+                                if(item.format && ( val || val == '0' ) ){
+                                    val = eval( item.format+"('"+val+"');");
                                 }
-                            });
-                        })
-                    }
+                                $("#ie_"+item.field).html(val);
 
-                });
+                            }else{
+                                $("#ie_"+item.field).html('');
+                            }
+                        });
+                    })
+                }
+
+            });
 
 
-      //}
+            //}
 
 
 

@@ -1,6 +1,7 @@
 package com.datang.service.service5g.logbackplay;
 
 import com.datang.domain.testLogItem.IEItem;
+import com.datang.domain.testLogItem.PcapData;
 
 import java.util.List;
 import java.util.Map;
@@ -18,4 +19,6 @@ public interface LogIEService {
     List<Map<String,Object>> evtWindowData(long logId, String startTime, String endTime);
 
     List<Map<String,Object>> synOper(long logId, String time);
+
+    List<PcapData> pcapDatas(long logId);
 }

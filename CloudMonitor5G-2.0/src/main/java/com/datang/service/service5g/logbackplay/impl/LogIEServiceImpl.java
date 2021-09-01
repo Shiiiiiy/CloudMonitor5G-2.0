@@ -3,6 +3,7 @@ package com.datang.service.service5g.logbackplay.impl;
 import com.datang.common.util.DateComputeUtils;
 import com.datang.dao.dao5g.logbackplay.LogBackPlayDao;
 import com.datang.domain.testLogItem.IEItem;
+import com.datang.domain.testLogItem.PcapData;
 import com.datang.service.influx.InfluxService;
 import com.datang.service.service5g.logbackplay.LogIEService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +58,14 @@ public class LogIEServiceImpl implements LogIEService {
     @Override
     public List<Map<String, Object>> synOper(long logId, String time) {
         return influxService.syncIEWindow(logId,time);
+    }
+
+
+
+    @Override
+    public List<PcapData> pcapDatas(long logId) {
+
+        return logBackPlayDao.pcapDatas(logId);
+
     }
 }

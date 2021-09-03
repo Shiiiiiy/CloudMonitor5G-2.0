@@ -245,11 +245,11 @@ var Jh = {
             {field:'evtName',title:'\u4e8b\u4ef6',width:'33%'}//事件
         ]],
         'view8':[[
-            {field:'time',title:'\u65f6\u95f4',width:'30%'},//时间
-            {field:'sourceip',title:'\u6e90\u0069\u0070',width:'20%'},//源ip
-            {field:'destip',title:'\u76ee\u6807\u0069\u0070',width:'20%'},//目标ip
+            {field:'time',title:'\u65f6\u95f4',width:'16%'},//时间
+            {field:'sourceip',title:'\u6e90\u0069\u0070',width:'25%'},//源ip
+            {field:'destip',title:'\u76ee\u6807\u0069\u0070',width:'25%'},//目标ip
             {field:'protocol',title:'\u534f\u8bae',width:'12%'},//协议
-            {field:'rawdata',title:'\u4fe1\u4ee4',width:'18%',ellipsis:true},//信令
+            {field:'rawdata',title:'\u4fe1\u4ee4',width:'22%',ellipsis:true},//信令
         ]],
 
 

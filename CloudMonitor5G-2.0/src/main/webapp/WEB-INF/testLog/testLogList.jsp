@@ -103,9 +103,14 @@
             dateString = nowDate.Format("yyyy-MM-dd hh:mm:ss");
             $("#beginDate").datetimebox('setValue',dateString);
 
-            initTable();
+            initTable({
+				beginDate:$("#beginDate").datetimebox('getValue'),
+				endDate:$("#endDate").datetimebox('getValue'),
+				fileName:$("#fileName").textbox('getValue'),
+				testFileStatus:$("#testFileStatus").combobox('getValue')
+			});
         });
-        function initTable(){
+        function initTable(params){
             $("#testLogInfoTable").datagrid({
                 // 表头
                 columns:testLogInfoColumns,
@@ -123,6 +128,7 @@
                 pageSize:20,
                 pageList:[10,20,50,100,200,500,1000],
                 scrollbarSize:0,
+				queryParams:params,
                 onLoadSuccess: function(data){//加载完毕后获取所有的checkbox遍历
                     if (data.rows.length > 0) {
                         var checkAllDisable = false;

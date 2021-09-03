@@ -246,10 +246,10 @@ var Jh = {
         ]],
         'view8':[[
             {field:'time',title:'\u65f6\u95f4',width:'30%'},//时间
-            {field:'sourceip',title:'\u6e90\u0069\u0070',width:'18%'},//源ip
-            {field:'destip',title:'\u76ee\u6807\u0069\u0070',width:'18%'},//目标ip
-            {field:'protocol',title:'\u534f\u8bae',width:'14%'},//协议
-            {field:'rawdata',title:'\u4fe1\u4ee4',width:'20%'},//信令
+            {field:'sourceip',title:'\u6e90\u0069\u0070',width:'20%'},//源ip
+            {field:'destip',title:'\u76ee\u6807\u0069\u0070',width:'20%'},//目标ip
+            {field:'protocol',title:'\u534f\u8bae',width:'12%'},//协议
+            {field:'rawdata',title:'\u4fe1\u4ee4',width:'18%',ellipsis:true},//信令
         ]],
 
 
@@ -739,7 +739,7 @@ Jh.fn = function (a) {
                         if(it.width){
                             td.css('width',it.width);
                         }
-                        if('view8' === b){
+                        if(it.ellipsis){
                             td.css('overflow','hidden');
                             td.css('text-overflow','ellipsis');
                             td.css('white-space','nowrap');

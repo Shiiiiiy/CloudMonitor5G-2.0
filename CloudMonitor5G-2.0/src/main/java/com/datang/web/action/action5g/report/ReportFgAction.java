@@ -3,6 +3,7 @@ package com.datang.web.action.action5g.report;
 import java.io.*;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -1197,6 +1198,41 @@ public class ReportFgAction extends PageAction implements
 			hashMap1 = analyzeTemplate.getData(quesRoadService, unicomLogItemIdList);
 		}else{
 			hashMap1 = analyzeTemplate.getData(influxService, unicomLogItemIdList);
+			List<Map<String,Object>> list = (List<Map<String,Object>>)hashMap1.get("sqlObj1");
+			List<Map<String,Object>> list2 = new ArrayList<>();
+			LOGGER.info(" createAnalyFile after getData list.size():  " + list.size());
+			if(list.size() > 0)
+			{
+				Long timestamp = 0L;
+				String logName = "";
+				for (Map<String, Object> map : list)
+				{
+					timestamp = 0L;
+					logName = "";
+					for (String key : map.keySet()) {
+						String val = map.get(key).toString();
+						if(key.equals("logName") && (val.length() > 0)){
+							logName = val;
+							LOGGER.info(" createAnalyFile logName:  " + logName);
+						}
+						if(key.equals("time") && (val.length() > 0)){
+							try {
+								SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+								Date date = format.parse(val);
+								timestamp = date.getTime();
+								LOGGER.info(" createAnalyFile time:  " + val + "  " + timestamp);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					if((timestamp > 0) && (logName.length() > 0)) {
+						map.putAll(getPcapData(logName, timestamp));
+						list2.add(map);
+					}
+				}
+				hashMap1.put("sqlObj1", list2);
+			}
 		}
 		AnalyFileReport report = new AnalyFileReport();
 
@@ -1224,6 +1260,333 @@ public class ReportFgAction extends PageAction implements
 		return false;
 	}
 
+	public Map<String, Object> getPcapData(String log, Long timestamp) {
+/*
+		String sqlTrue1 =
+				"select \n" +
+						"m.nbruserplanednssucc, m.nbruserplanednsreq, \n" +
+						"m.nbrtcpconnupsucc, m.nbrtcpconnupreq, m.nbrtcpconndownsucc, m.nbrtcpconndownreq, \n" +
+						"m.alltcpuppackages,  m.retrtcpuppackages,  m.alltcpdownpackages,  m.retrtcpdownpackages, \n" +
+						"m.nbrtexthttpacksucc, m.nbrtexthttpackfail, m.nbrpichttpacksucc,  m.nbrpichttpackfail,  m.nbrvidhttpacksucc,  m.nbrvidhttpackfail,  m.nbraudhttpacksucc,  m.nbraudhttpackfail \n" +
+						"from \n" +
+						" ( \n" +
+						" select file_name \n" +
+						" from iads_testlog_item  where recseqno = " + log +  "\n" +
+						") t join iads_knowfeeling_traffic m on m.logname = t.file_name;";
+*/
+		String sqlTrue1 =
+				"select \n" +
+						"m.nbruserplanednssucc, m.nbruserplanednsreq, \n" +
+						"m.nbrtcpconnupsucc, m.nbrtcpconnupreq, m.nbrtcpconndownsucc, m.nbrtcpconndownreq, \n" +
+						"m.alltcpuppackages,  m.retrtcpuppackages,  m.alltcpdownpackages,  m.retrtcpdownpackages, \n" +
+						"m.nbrtexthttpacksucc, m.nbrtexthttpackfail, m.nbrpichttpacksucc,  m.nbrpichttpackfail,  m.nbrvidhttpacksucc,  m.nbrvidhttpackfail,  m.nbraudhttpacksucc,  m.nbraudhttpackfail \n" +
+						" from iads_knowfeeling_traffic m where m.logname = '" + log +"';";
+		////
+		long nbruserplanednssucc = 0;	// DNS解析成功率  相加
+		long nbruserplanednsreq = 0;	// 相加
+
+		long nbrtcpconnupsucc = 0;		// TCP建链成功率 相加
+		long nbrtcpconnupreq = 0;		// 相加
+		long nbrtcpconndownsucc = 0;	// 相加
+		long nbrtcpconndownreq = 0;		// 相加
+
+		long alltcpuppackages = 0;		// TCP重传率 相加
+		long retrtcpuppackages = 0;		// 相加
+		long alltcpdownpackages = 0;	// 相加
+		long retrtcpdownpackages = 0;	// 相加
+
+		long nbrtexthttpacksucc = 0;	// HTTP响应成功率 相加
+		long nbrtexthttpackfail = 0;	// 相加
+		long nbrpichttpacksucc = 0;		// 相加
+		long nbrpichttpackfail = 0;		// 相加
+		long nbrvidhttpacksucc = 0;		// 相加
+		long nbrvidhttpackfail = 0;		// 相加
+		long nbraudhttpacksucc = 0;		// 相加
+		long nbraudhttpackfail = 0;		// 相加
+/*
+		String sqlTrue2 =
+				"select \n" +
+						"m.alluserplanednsdelay, m.nbruserplanednssucc, \n" +
+						"m.alltcpconnupdelay, m.alltcpconndowndelay, m.nbrtcpconnupsucc, m.nbrtcpconndownsucc, \n" +
+						"m.nbrtexthttpacksucc, m.nbrtexthttpackfail, m.nbrpichttpacksucc, m.nbrpichttpackfail, \n" +
+						"m.nbrvidhttpacksucc, m.nbrvidhttpackfail, m.nbraudhttpacksucc, m.nbraudhttpackfail, \n" +
+						"m.alltexthttpsuccackdelay, m.allpichttpsuccackdelay, m.allvidhttpsuccackdelay, m.allaudhttpsuccackdelay, \n" +
+						"m.nbrtexthttpdlsucc, m.alltexthttpsuccdldelay, \n" +
+						"m.nbrpichttpdlsucc, m.allpichttpsuccdldelay, \n" +
+						"m.nbrvidhttpdlsucc, m.allvidhttpsuccdldelay, \n" +
+						"m.nbraudhttpdlsucc, m.allaudhttpsuccdldelay \n" +
+						"from ( \n" +
+						"        select file_name \n" +
+						"        from iads_testlog_item  where recseqno = " + log + "\n" +
+						") t join iads_knowfeeling_traffic m on m.logname = t.file_name \n" +
+						"and m.starttime <= " + timestamp + "and m.endtime >= " + timestamp + " ;";
+*/
+		String sqlTrue2 =
+				"select \n" +
+				"m.alluserplanednsdelay, m.nbruserplanednssucc, \n" +
+				"m.alltcpconnupdelay, m.alltcpconndowndelay, m.nbrtcpconnupsucc, m.nbrtcpconndownsucc, \n" +
+				"m.nbrtexthttpacksucc, m.nbrtexthttpackfail, m.nbrpichttpacksucc, m.nbrpichttpackfail, \n" +
+				"m.nbrvidhttpacksucc, m.nbrvidhttpackfail, m.nbraudhttpacksucc, m.nbraudhttpackfail, \n" +
+				"m.alltexthttpsuccackdelay, m.allpichttpsuccackdelay, m.allvidhttpsuccackdelay, m.allaudhttpsuccackdelay, \n" +
+				"m.nbrtexthttpdlsucc, m.alltexthttpsuccdldelay, \n" +
+				"m.nbrpichttpdlsucc, m.allpichttpsuccdldelay, \n" +
+				"m.nbrvidhttpdlsucc, m.allvidhttpsuccdldelay, \n" +
+				"m.nbraudhttpdlsucc, m.allaudhttpsuccdldelay \n" +
+				"from \n" +
+				"iads_knowfeeling_traffic m where m.logname = '" + log +
+				"' and m.starttime <= " + timestamp +  " and m.endtime >= " + timestamp + " ;";
+		////
+		long alluserplanednsdelay2 = 0;
+		long nbruserplanednssucc2 = 0;
+		long alltcpconnupdelay2 = 0;
+		long alltcpconndowndelay2 = 0;
+		long nbrtcpconnupsucc2 = 0;
+		long nbrtcpconndownsucc2 = 0;
+		long nbrtexthttpacksucc2 = 0;
+		long nbrtexthttpackfail2 = 0;
+		long nbrpichttpacksucc2 = 0;
+		long nbrpichttpackfail2 = 0;
+		long nbrvidhttpacksucc2 = 0;
+		long nbrvidhttpackfail2 = 0;
+		long nbraudhttpacksucc2 = 0;
+		long nbraudhttpackfail2 = 0;
+		long alltexthttpsuccackdelay2 = 0;
+		long allpichttpsuccackdelay2 = 0;
+		long allvidhttpsuccackdelay2 = 0;
+		long allaudhttpsuccackdelay2 = 0;
+		long nbrtexthttpdlsucc2 = 0;
+		long alltexthttpsuccdldelay2 = 0;
+		long nbrpichttpdlsucc2 = 0;
+		long allpichttpsuccdldelay2 = 0;
+		long nbrvidhttpdlsucc2 = 0;
+		long allvidhttpsuccdldelay2 = 0;
+		long nbraudhttpdlsucc2 = 0;
+		long allaudhttpsuccdldelay2 = 0;
+
+		Map<String, Object> rm=new HashMap<>();
+		List<Map<String, Object>> objectQueryAll = jdbcTemplate.objectQueryAll(sqlTrue1);
+		if(objectQueryAll.size() > 0)       // 多条记录
+		{
+			for (Map<String, Object> map : objectQueryAll) {
+				if (map.get("nbruserplanednssucc") != null) {
+					nbruserplanednssucc += Float.valueOf(map.get("nbruserplanednssucc").toString()).longValue();
+				}
+				if (map.get("nbruserplanednsreq") != null) {
+					nbruserplanednsreq += Float.valueOf(map.get("nbruserplanednsreq").toString()).longValue();
+				}
+				if (map.get("nbrtcpconnupsucc") != null) {
+					nbrtcpconnupsucc += Float.valueOf(map.get("nbrtcpconnupsucc").toString()).longValue();
+				}
+				if (map.get("nbrtcpconnupreq") != null) {
+					nbrtcpconnupreq += Float.valueOf(map.get("nbrtcpconnupreq").toString()).longValue();
+				}
+				if (map.get("nbrtcpconndownsucc") != null) {
+					nbrtcpconndownsucc += Float.valueOf(map.get("nbrtcpconndownsucc").toString()).longValue();
+				}
+				if (map.get("nbrtcpconndownreq") != null) {
+					nbrtcpconndownreq += Float.valueOf(map.get("nbrtcpconndownreq").toString()).longValue();
+				}
+				if (map.get("alltcpuppackages") != null) {
+					alltcpuppackages += Float.valueOf(map.get("alltcpuppackages").toString()).longValue();
+				}
+				if (map.get("retrtcpuppackages") != null) {
+					retrtcpuppackages += Float.valueOf(map.get("retrtcpuppackages").toString()).longValue();
+				}
+				if (map.get("alltcpdownpackages") != null) {
+					alltcpdownpackages += Float.valueOf(map.get("alltcpdownpackages").toString()).longValue();
+				}
+				if (map.get("retrtcpdownpackages") != null) {
+					retrtcpdownpackages += Float.valueOf(map.get("retrtcpdownpackages").toString()).longValue();
+				}
+				if (map.get("nbrtexthttpacksucc") != null) {
+					nbrtexthttpacksucc += Float.valueOf(map.get("nbrtexthttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbrtexthttpackfail") != null) {
+					nbrtexthttpackfail += Float.valueOf(map.get("nbrtexthttpackfail").toString()).longValue();
+				}
+				if (map.get("nbrpichttpacksucc") != null) {
+					nbrpichttpacksucc += Float.valueOf(map.get("nbrpichttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbrpichttpackfail") != null) {
+					nbrpichttpackfail += Float.valueOf(map.get("nbrpichttpackfail").toString()).longValue();
+				}
+				if (map.get("nbrvidhttpacksucc") != null) {
+					nbrvidhttpacksucc += Float.valueOf(map.get("nbrvidhttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbrvidhttpackfail") != null) {
+					nbrvidhttpackfail += Float.valueOf(map.get("nbrvidhttpackfail").toString()).longValue();
+				}
+				if (map.get("nbraudhttpacksucc") != null) {
+					nbraudhttpacksucc += Float.valueOf(map.get("nbraudhttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbraudhttpackfail") != null) {
+					nbraudhttpackfail += Float.valueOf(map.get("nbraudhttpackfail").toString()).longValue();
+				}
+			}
+			double dnssuccratio = 0.0;
+			double tcpconnratio = 0.0;
+			double tcpretrratio = 0.0;
+			double httpacksuccratio = 0.0;
+
+			if(nbruserplanednsreq > 0) {
+				dnssuccratio = (double)nbruserplanednssucc / (double)nbruserplanednsreq;
+			}
+			long tcpconnreq = nbrtcpconnupreq + nbrtcpconndownreq;
+			if(tcpconnreq > 0){
+				tcpconnratio = (double)(nbrtcpconnupsucc + nbrtcpconndownsucc) / (double)tcpconnreq;
+			}
+			long retrtcp = retrtcpuppackages + retrtcpdownpackages;
+			if(tcpconnreq > 0){
+				tcpretrratio = (double)(retrtcp) / (double)(alltcpuppackages + alltcpdownpackages);
+			}
+			long httpack = nbrtexthttpacksucc + nbrtexthttpackfail +
+					nbrpichttpacksucc + nbrpichttpackfail +
+					nbrvidhttpacksucc + nbrvidhttpackfail +
+					nbraudhttpacksucc + nbraudhttpackfail;
+			long httpacksucc = nbrtexthttpacksucc + nbrpichttpacksucc + nbrvidhttpacksucc + nbraudhttpacksucc;
+			if(httpack > 0){
+				httpacksuccratio = (double)httpacksucc / (double)httpack;
+			}
+			// DNS解析成功率、 TCP建链成功率、 TCP重传率、 HTTP响应成功率
+			rm.put("dnssuccratio",dnssuccratio);
+			rm.put("tcpconnratio",tcpconnratio);
+			rm.put("tcpretrratio",tcpretrratio);
+			rm.put("httpacksuccratio",httpacksuccratio);
+		}
+		List<Map<String, Object>> objectQueryAll2 = jdbcTemplate.objectQueryAll(sqlTrue2);
+		if(objectQueryAll2.size() == 1) {
+			for (Map<String, Object> map : objectQueryAll2) {
+				if (map.get("alluserplanednsdelay") != null) {
+					alluserplanednsdelay2 = Float.valueOf(map.get("alluserplanednsdelay").toString()).longValue();
+				}
+				if (map.get("nbruserplanednssucc") != null) {
+					nbruserplanednssucc2 += Float.valueOf(map.get("nbruserplanednssucc").toString()).longValue();
+				}
+				if (map.get("alltcpconnupdelay") != null) {
+					alltcpconnupdelay2 += Float.valueOf(map.get("alltcpconnupdelay").toString()).longValue();
+				}
+				if (map.get("alltcpconndowndelay") != null) {
+					alltcpconndowndelay2 += Float.valueOf(map.get("alltcpconndowndelay").toString()).longValue();
+				}
+				if (map.get("nbrtcpconnupsucc") != null) {
+					nbrtcpconnupsucc2 += Float.valueOf(map.get("nbrtcpconnupsucc").toString()).longValue();
+				}
+				if (map.get("nbrtcpconndownsucc") != null) {
+					nbrtcpconndownsucc2 += Float.valueOf(map.get("nbrtcpconndownsucc").toString()).longValue();
+				}
+				if (map.get("nbrtexthttpacksucc") != null) {
+					nbrtexthttpacksucc2 += Float.valueOf(map.get("nbrtexthttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbrtexthttpackfail") != null) {
+					nbrtexthttpackfail2 += Float.valueOf(map.get("nbrtexthttpackfail").toString()).longValue();
+				}
+				if (map.get("nbrpichttpacksucc") != null) {
+					nbrpichttpacksucc2 += Float.valueOf(map.get("nbrpichttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbrpichttpackfail") != null) {
+					nbrpichttpackfail2 += Float.valueOf(map.get("nbrpichttpackfail").toString()).longValue();
+				}
+				if (map.get("nbrvidhttpacksucc") != null) {
+					nbrvidhttpacksucc2 += Float.valueOf(map.get("nbrvidhttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbrvidhttpackfail") != null) {
+					nbrvidhttpackfail2 += Float.valueOf(map.get("nbrvidhttpackfail").toString()).longValue();
+				}
+				if (map.get("nbraudhttpacksucc") != null) {
+					nbraudhttpacksucc2 += Float.valueOf(map.get("nbraudhttpacksucc").toString()).longValue();
+				}
+				if (map.get("nbraudhttpackfail") != null) {
+					nbraudhttpackfail2 += Float.valueOf(map.get("nbraudhttpackfail").toString()).longValue();
+				}
+				if (map.get("alltexthttpsuccackdelay") != null) {
+					alltexthttpsuccackdelay2 += Float.valueOf(map.get("alltexthttpsuccackdelay").toString()).longValue();
+				}
+				if (map.get("allpichttpsuccackdelay") != null) {
+					allpichttpsuccackdelay2 += Float.valueOf(map.get("allpichttpsuccackdelay").toString()).longValue();
+				}
+				if (map.get("allvidhttpsuccackdelay") != null) {
+					allvidhttpsuccackdelay2 += Float.valueOf(map.get("allvidhttpsuccackdelay").toString()).longValue();
+				}
+				if (map.get("allaudhttpsuccackdelay") != null) {
+					allaudhttpsuccackdelay2 += Float.valueOf(map.get("allaudhttpsuccackdelay").toString()).longValue();
+				}
+				if (map.get("nbrtexthttpdlsucc") != null) {
+					nbrtexthttpdlsucc2 += Float.valueOf(map.get("nbrtexthttpdlsucc").toString()).longValue();
+				}
+				if (map.get("alltexthttpsuccdldelay") != null) {
+					alltexthttpsuccdldelay2 += Float.valueOf(map.get("alltexthttpsuccdldelay").toString()).longValue();
+				}
+				if (map.get("nbrpichttpdlsucc") != null) {
+					nbrpichttpdlsucc2 += Float.valueOf(map.get("nbrpichttpdlsucc").toString()).longValue();
+				}
+				if (map.get("allpichttpsuccdldelay") != null) {
+					allpichttpsuccdldelay2 += Float.valueOf(map.get("allpichttpsuccdldelay").toString()).longValue();
+				}
+				if (map.get("nbrvidhttpdlsucc") != null) {
+					nbrvidhttpdlsucc2 += Float.valueOf(map.get("nbrvidhttpdlsucc").toString()).longValue();
+				}
+				if (map.get("allvidhttpsuccdldelay") != null) {
+					allvidhttpsuccdldelay2 += Float.valueOf(map.get("allvidhttpsuccdldelay").toString()).longValue();
+				}
+				if (map.get("nbraudhttpdlsucc") != null) {
+					nbraudhttpdlsucc2 += Float.valueOf(map.get("nbraudhttpdlsucc").toString()).longValue();
+				}
+				if (map.get("allaudhttpsuccdldelay") != null) {
+					allaudhttpsuccdldelay2 += Float.valueOf(map.get("allaudhttpsuccdldelay").toString()).longValue();
+				}
+			}
+            /*
+                事件发生时段DNS解析平均时延	alluserplanednsdelay2 / nbruserplanednssucc2
+                事件发生时段TCP建链平均时延	( alltcpconnupdelay2 + alltcpconndowndelay2 ) / ( nbrtcpconnupsucc2 + nbrtcpconndownsucc2 )
+                事件发生时段HTTP响应平均时延	( alltexthttpsuccackdelay 2+ allpichttpsuccackdelay2 + allvidhttpsuccackdelay2 + allaudhttpsuccackdelay2 ) /
+                                        ( nbrtexthttpacksucc2 + nbrtexthttpackfail2 + nbrpichttpacksucc2 + nbrpichttpackfail2 +
+                                          nbrvidhttpacksucc2 + nbrvidhttpackfail2  + nbraudhttpacksucc2 + nbraudhttpackfail2 );
+                事件发生时段文本加载平均时延	alltexthttpsuccdldelay2 / nbrtexthttpdlsucc2
+                事件发生时段图片加载平均时延	allpichttpsuccdldelay2 / nbrpichttpdlsucc2
+                事件发生时段视频加载平均时延	allvidhttpsuccdldelay2 / nbrvidhttpdlsucc2
+                事件发生时段音频加载平均时延	allaudhttpsuccdldelay2 / nbraudhttpdlsucc2
+             */
+			long avgdnsdelay = 0;
+			long avgtcpconndelay = 0;
+			long avghttpackdelay = 0;
+			long avgtexthttpdldelay = 0;
+			long avgpichttpdldelay = 0;
+			long avgvidhttpdldelay = 0;
+			long avgaudhttpdldelay = 0;
+
+			if(nbruserplanednssucc > 0){
+				avgdnsdelay = alluserplanednsdelay2 / nbruserplanednssucc2;
+			}
+			if((nbrtcpconnupsucc2 + nbrtcpconndownsucc2) > 0){
+				avgtcpconndelay = ( alltcpconnupdelay2 + alltcpconndowndelay2 ) / ( nbrtcpconnupsucc2 + nbrtcpconndownsucc2 );
+			}
+			long allhttpack = nbrtexthttpacksucc2 + nbrtexthttpackfail2 + nbrpichttpacksucc2 + nbrpichttpackfail2 +
+					nbrvidhttpacksucc2  + nbrvidhttpackfail2  + nbraudhttpacksucc2 + nbraudhttpackfail2;
+			if(allhttpack > 0){
+				avghttpackdelay = ( alltexthttpsuccackdelay2 + allpichttpsuccackdelay2 + allvidhttpsuccackdelay2 + allaudhttpsuccackdelay2 ) / allhttpack;
+			}
+			if(nbrtexthttpdlsucc2 > 0){
+				avgtexthttpdldelay = alltexthttpsuccdldelay2 / nbrtexthttpdlsucc2;
+			}
+			if(nbrpichttpdlsucc2 > 0){
+				avgpichttpdldelay = allpichttpsuccdldelay2 / nbrpichttpdlsucc2;
+			}
+			if(nbrvidhttpdlsucc2 > 0){
+				avgvidhttpdldelay = allvidhttpsuccdldelay2 / nbrvidhttpdlsucc2;
+			}
+			if(nbraudhttpdlsucc2 > 0){
+				avgaudhttpdldelay = allaudhttpsuccdldelay2 / nbraudhttpdlsucc2;
+			}
+			rm.put("avgdnsdelay",avgdnsdelay);
+			rm.put("avgtcpconndelay",avgtcpconndelay);
+			rm.put("avghttpackdelay",avghttpackdelay);
+			rm.put("avgtexthttpdldelay",avgtexthttpdldelay);
+			rm.put("avgpichttpdldelay",avgpichttpdldelay);
+			rm.put("avgvidhttpdldelay",avgvidhttpdldelay);
+			rm.put("avgaudhttpdldelay",avgaudhttpdldelay);
+		}
+		return rm;
+	}
 
 
 	/**

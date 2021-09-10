@@ -62,6 +62,31 @@ public class AnalyzeEventTemplate implements AnalyzeTemplate {
             endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("切换目标小区ID","swdestcellId"));
             endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("切换目标基站ID","swdestgnbId"));
 
+            // wuchch
+            /*
+                   事件发生时段DNS解析平均时延          avgdnsdelay
+                   DNS解析成功率                 		dnssuccratio
+                   事件发生时段TCP建链平均时延          avgtcpconndelay
+                   TCP建链成功率                 		tcpconnratio
+                   TCP重传率                    		tcpretrratio
+                   事件发生时段HTTP响应平均时延         avghttpackdelay
+                   HTTP响应成功率                		httpacksuccratio
+                   事件发生时段文本加载平均时延         avgtexthttpdldelay
+                   事件发生时段图片加载平均时延         avgpichttpdldelay
+                   事件发生时段视频加载平均时延         avgvidhttpdldelay
+                   事件发生时段音频加载平均时延         avgaudhttpdldelay
+            */
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("事件发生时段DNS解析平均时延","avgdnsdelay"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("DNS解析成功率","dnssuccratio"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("事件发生时段TCP建链平均时延","avgtcpconndelay"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("TCP建链成功率","tcpconnratio"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("TCP重传率","tcpretrratio"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("事件发生时段HTTP响应平均时延","avghttpackdelay"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("HTTP响应成功率","httpacksuccratio"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("事件发生时段文本加载平均时延","avgtexthttpdldelay"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("事件发生时段图片加载平均时延","avgpichttpdldelay"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("事件发生时段视频加载平均时延","avgvidhttpdldelay"));
+            endCellTitleList.add(new AnalyzeEventTemplate.EasyCell("事件发生时段音频加载平均时延","avgaudhttpdldelay"));
 
             XSSFWorkbook workbook = null;
 

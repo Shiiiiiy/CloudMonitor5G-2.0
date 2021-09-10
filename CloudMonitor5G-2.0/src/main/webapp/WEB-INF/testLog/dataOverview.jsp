@@ -154,6 +154,7 @@
 						<th colspan="6">数据业务体验(FTP)</th>
 						<th colspan="4">数据业务体验(部分路段百度云下载)</th>
 						<th colspan="3">语音业务体验</th>
+						<th colspan="11">感知</th>
 					</tr>
 					<tr>
 						<th field='kk01' width="100px" style="text-align:center">5G 网络覆盖率</th>
@@ -178,7 +179,19 @@
 						<th field='kk20' width="180px" style="text-align:center">下行高速占比（高于800Mbps）</th>
 						<th field='kk21' width="160px" style="text-align:center">VoLTE主叫EPS FB接通率</th>	
 						<th field='kk22' width="120px" style="text-align:center">VoLTE主叫掉线率</th>
-						<th field='kk23' width="70px" style="text-align:center">FR成功率</th>
+						<th field='kk23' width="90px" style="text-align:center">FR成功率</th>
+						<th field='kf11' width="100px" style="text-align:center">DNS 解析时延</th>
+						<th field='kf12' width="100px" style="text-align:center">DNS 解析成功率</th>
+						<th field='kf13' width="100px" style="text-align:center">TCP 建链时延</th>
+						<th field='kf14' width="100px" style="text-align:center">TCP 建链成功率</th>
+						<th field='kf15' width="100px" style="text-align:center">TCP 重传率</th>
+						<th field='kf16' width="120px" style="text-align:center">HTTP 响应时延</th>
+						<th field='kf17' width="120px" style="text-align:center">HTTP 响应成功率</th>
+						<th field='kf21' width="80px" style="text-align:center">文本加载时延</th>
+						<th field='kf22' width="80px" style="text-align:center">图片加载时延</th>
+						<th field='kf23' width="80px" style="text-align:center">视频加载时延</th>
+						<th field='kf24' width="80px" style="text-align:center">音频加载时延</th>
+
 					</tr>
 				</thead>
 			</table>

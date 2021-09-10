@@ -32,6 +32,8 @@ public class ReportRequertBean {
 
 	private String taskType;
 
+	private String cityIds;
+
 	/**
 	 * @return the beginDate
 	 */
@@ -116,4 +118,11 @@ public class ReportRequertBean {
 				+ "]";
 	}
 
+	public String getCityIds() {
+		return cityIds;
+	}
+
+	public void setCityIds(String cityIds) {
+		this.cityIds = cityIds;
+	}
 }

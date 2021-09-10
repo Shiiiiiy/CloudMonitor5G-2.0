@@ -9,6 +9,7 @@ import com.datang.common.dao.GenericHibernateDao;
 import com.datang.common.dao.jdbc.JdbcTemplate;
 import com.datang.common.util.MapUtil;
 import com.datang.common.util.StringUtils;
+import com.datang.dao.knowfeeling.KnowFeelingDao;
 import com.datang.domain.stationTest.StationSAMTralPojo;
 import com.datang.domain.testLogItem.TestLogItem;
 import com.datang.domain.testLogItem.UnicomLogItem;
@@ -24,6 +25,7 @@ import org.hibernate.criterion.*;
 import org.omg.CORBA.TIMEOUT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -56,6 +58,9 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 
 	@Resource
 	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	private KnowFeelingDao knowFeelingDao;
 
 	public long getPageTestLogItemCount(PageList pageList) {
 		Criteria criteria = this.getHibernateSession().createCriteria(
@@ -700,7 +705,23 @@ public class UnicomLogItemDao extends GenericHibernateDao<UnicomLogItem, Long> {
 						")fff " + groupby +") tt\n"
 				;
 
-		return jdbcTemplate.objectQueryAll(sqlTrue);
+		List<Map<String, Object>> kpiData = jdbcTemplate.objectQueryAll(sqlTrue);
+
+		//数据概览新增感知指标
+		List<Map<String, Object>> kfData = knowFeelingDao.getKnowFeelingData(idStr,collect);
+
+		Map<String,Map<String,Object>> kpiDataMap = new HashMap();
+
+		for (Map<String, Object> kpi : kpiData) {
+			kpiDataMap.put((String) kpi.get("log_name"),kpi);
+		}
+
+		for (Map<String, Object> kf : kfData) {
+			if(  kpiDataMap.get(kf.get("log_name")) != null ){
+				kf.putAll( kpiDataMap.get(kf.get("log_name")));
+			}
+		}
+		return kfData;
 	}
 
 

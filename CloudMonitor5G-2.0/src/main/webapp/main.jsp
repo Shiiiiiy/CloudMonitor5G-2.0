@@ -507,6 +507,7 @@
 						<!-- <li class="second"><a href="javascript:void(0);" url="compareAnalysis5g/goToCompareAnalysis5gListUI.action"  onclick="addTab(this);">5G对比分析</a></li> -->
 						<li class="second"><a href="javascript:void(0);" url="report5g/listUI.action"  onclick="addTab(this);">5G基础统计</a></li>
 						<li class="second"><a href="javascript:void(0);" url="customeLogReport/listUI.action"  onclick="addTab(this);">自定义报表统计</a></li>
+						<li class="second"><a href="javascript:void(0);" url="knowFeeling/listUI.action"  onclick="addTab(this);">业务感知详单</a></li>
 					</ul>
 				</li>
 			</shiroextend:hasAnyPermissions>

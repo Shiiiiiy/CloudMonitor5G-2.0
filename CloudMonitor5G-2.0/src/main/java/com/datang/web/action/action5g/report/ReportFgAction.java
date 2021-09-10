@@ -466,15 +466,23 @@ public class ReportFgAction extends PageAction implements
 		String boxIds = statisticeTaskRequest.getBoxIds();
 		String cityIds = statisticeTaskRequest.getCityIds();
 		String testRanks = statisticeTaskRequest.getTestRank();
-		if (StringUtils.hasText(boxIds) && StringUtils.hasText(cityIds)
-				&& StringUtils.hasText(testRanks) && null != beginDate
-				&& null != endDate) {
+
+		List<String> boxList = new ArrayList<>();
+		if (StringUtils.hasText(boxIds)) {
 			String[] splitBox = boxIds.split(",");
-			List<String> boxList = Arrays.asList(splitBox);
+			boxList = Arrays.asList(splitBox);
+		}
+
+		List<String> cityList = new ArrayList<>();
+		if (StringUtils.hasText(cityIds)) {
 			String[] splitCity = cityIds.split(",");
-			List<String> cityList = Arrays.asList(splitCity);
+			cityList = Arrays.asList(splitCity);
+		}
+		List<String> testRankList = new ArrayList<>();
+		if (StringUtils.hasText(testRanks)) {
 			String[] splitTestRank = testRanks.split(",");
-			List<String> testRankList = new ArrayList<>();
+			testRankList = new ArrayList<>();
+
 			for (String string : splitTestRank) {
 				if (string.trim().equals("1")) {
 					testRankList.add("organizationCheck");
@@ -484,24 +492,26 @@ public class ReportFgAction extends PageAction implements
 					testRankList.add("deviceDebug");
 				}
 			}
-			SimpleDateFormat dateFormat = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss.SSS");
-			List<TestLogItem> testLogItemsByBoxIds = testLogItemService
-					.queryTestLogItemsByOther(boxList, cityList, testRankList,
-							beginDate, endDate);
-			List<TestInfoRequestBean> responseBeans = new ArrayList<>();
-			if (null != testLogItemsByBoxIds
-					&& 0 != testLogItemsByBoxIds.size()) {
-				for (TestLogItem testLogItem : testLogItemsByBoxIds) {
-					TestInfoRequestBean responseBean = new TestInfoRequestBean();
-					responseBean.setFileName(testLogItem.getFileName());
-					responseBean.setId(testLogItem.getRecSeqNo());
-					responseBeans.add(responseBean);
-				}
-			}
-			ActionContext.getContext().getValueStack()
-					.set("testLog", responseBeans);
 		}
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm:ss.SSS");
+		List<TestLogItem> testLogItemsByBoxIds = testLogItemService
+				.queryTestLogItemsByOther(boxList, cityList, testRankList,
+						beginDate, endDate);
+		List<TestInfoRequestBean> responseBeans = new ArrayList<>();
+		if (null != testLogItemsByBoxIds
+				&& 0 != testLogItemsByBoxIds.size()) {
+			for (TestLogItem testLogItem : testLogItemsByBoxIds) {
+				TestInfoRequestBean responseBean = new TestInfoRequestBean();
+				responseBean.setFileName(testLogItem.getFileName());
+				responseBean.setId(testLogItem.getRecSeqNo());
+				responseBeans.add(responseBean);
+			}
+		}
+		ActionContext.getContext().getValueStack()
+				.set("testLog", responseBeans);
+
 
 		return ReturnType.JSON;
 	}

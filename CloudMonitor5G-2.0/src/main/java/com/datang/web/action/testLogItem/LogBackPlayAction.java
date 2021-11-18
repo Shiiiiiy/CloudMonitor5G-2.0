@@ -105,6 +105,17 @@ public class LogBackPlayAction {
     }
 
 
+    /**
+     * pcap窗口数据
+     * @return
+     */
+    public String syncPcapData() {
+        List<PcapData> data = logIEService.syncPcapDatas(logId,time);
+        ActionContext.getContext().getValueStack().push(data);
+        return ReturnType.JSON;
+    }
+
+
     public String getStartTime() {
         return startTime;
     }

@@ -11,10 +11,10 @@ var MyChart = {
 		currentIndex:0,
 		title:['LTE测量','NR测量','LTE速率','NR速率切换'],
 		col:[
-			[ 'RSRP', 'SINR'],
-			[ 'SS_RSRP', 'SS_SINR'],
-			[ 'LTE PDCP Thrput DL(Mbps)', 'LTE PDCP Thrput UL(Mbps)'],
-			[ 'NR PHY Thrput UL(Mbps)', 'NR PHY Thrput DL(Mbps)']
+			[ 'RSRP', 'SINR','RSRP','SINR'],
+			[ 'SS_RSRP', 'SS_SINR', 'SS_RSRP', 'SS_SINR' ],
+			[ 'LTE PDCP Thrput DL(Mbps)', 'LTE PDCP Thrput UL(Mbps)','DL','UL'],
+			[ 'NR PHY Thrput UL(Mbps)', 'NR PHY Thrput DL(Mbps)','DL','UL']
 		]
 	}
 };
@@ -85,7 +85,9 @@ MyChart.fn = function (a) {
 				text: MyChart.Data.title[MyChart.Data.currentIndex],
 				left:'center'
 			},
-
+			grid:{
+				y2:35
+			},
 			tooltip: {
 				triggerOn: MyPlayer.Data.playingStatus ? "none" :  "click",
 				trigger:'axis',
@@ -152,7 +154,7 @@ MyChart.fn = function (a) {
 			},
 			yAxis: [{
 				type: 'value',
-				name: MyChart.Data.col[MyChart.Data.currentIndex][0],
+				name: MyChart.Data.col[MyChart.Data.currentIndex][2],
 				axisLabel: {
 					formatter: '{value}'
 				},
@@ -162,7 +164,7 @@ MyChart.fn = function (a) {
 			},
 				{
 					type: 'value',
-					name: MyChart.Data.col[MyChart.Data.currentIndex][1],
+					name: MyChart.Data.col[MyChart.Data.currentIndex][3],
 					axisLabel: {
 						formatter: '{value}'
 					},

@@ -43,7 +43,7 @@
 <script>
 
 	var initPage = false;
-
+	var initLayout = false;
 
 	$(function(){
 
@@ -230,7 +230,7 @@
 
 				}
 			});
-
+			initLayout = true;
 			$('#layoutSelect').combobox('setValue',MyPlayer.Data.layoutId);
 		})
 
@@ -316,7 +316,11 @@
 	}
 
 	function toNewLayout(config){
-
+		if(initLayout){
+			initLayout =false;
+			return;
+		}
+		$("#portal").empty();
 		$("#portal").remove();
 		config =  eval("("+config+")");
 		config.resize = function(){
@@ -337,6 +341,66 @@
 			dataType: "json",
 			success: function(data){
 				Jh.fn._refresh(data[0],id);
+			}
+		});
+	}
+
+	function syncPacpData(){
+		$.ajax({
+			type: "POST",
+			url: "${pageContext.request.contextPath}/logback/syncPcapData.action",
+			data: {'logId': MyPlayer.Data.logId,'time':MyPlayer.Data.currentTime},
+	//		async:false,
+			dataType: "json",
+			success: function(data){
+				data =  data.sort(function(a,b){
+					return new Date(a['time']).getTime() - new Date(b['time']).getTime();
+				});
+				Jh.Data.pcapData =  data;
+
+				Jh.fn._refreshTable('view8');
+
+				var view = 'view8';
+				var target;
+				var dataArray;
+
+				dataArray = Jh.Data.pcapData.map(c=>c.time);
+
+				dataArray.push(MyPlayer.Data.currentTime);
+				dataArray.sort();
+				var position =  dataArray.indexOf(MyPlayer.Data.currentTime);
+				if(position == 0){
+					target = 0;
+				}else if(position == dataArray.length - 1){
+					target = dataArray.length -2;
+				}else{
+					var before = new Date(MyPlayer.Data.currentTime).getTime()  - new Date(dataArray[position-1]).getTime();
+					var after =  new Date(dataArray[position+1]).getTime() - new Date(MyPlayer.Data.currentTime).getTime();
+					if(before <after){
+						target = position -1;
+					}else{
+						target = position;
+					}
+				}
+				var obj = $("."+view+"_"+target)[0];
+				var firstobj = $("."+view+"_0")[0];
+				//				var obj = $("."+ view +"_"+Jh.Util.dateSlice(MyPlayer.Data.currentTime)+":first")[0];
+				if(obj){
+					var scrollTo = obj.offsetTop-firstobj.offsetTop;
+					var currentScroll = $("#"+view+"_tbody").scrollTop();
+					var bodyHeight = $("#"+view+"_tbody").height();
+					var objHeight = $("."+view+"_"+target).height();
+					if( bodyHeight - objHeight >= scrollTo - currentScroll &&   scrollTo >=  currentScroll  ){
+					}else{
+						$("#"+view+"_tbody").animate({
+							scrollTop:obj.offsetTop-firstobj.offsetTop
+						});
+					}
+					$("#"+view+" .datagrid-row-selected").removeClass("datagrid-row-selected")
+					$(obj).addClass("datagrid-row-selected");
+				}else{
+					//console.log("."+ view +"_"+  Jh.Util.dateSlice(MyPlayer.Data.currentTime) +":first");
+				}
 			}
 		});
 	}

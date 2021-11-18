@@ -864,9 +864,13 @@ Jh.fn = function (a) {
             a._eventMin()
         },_refresh:function(data,id){
 
+            if(id!=='view8'){
+                syncPacpData();
+            }
+
             //同步信令、事件窗口
             $.each(Jh.Config._listView,function(i,view){
-                if(id === view){
+                if(id === view ||  view==='view8'){
                 }else{
                     var target;
                     var dataArray;
@@ -981,9 +985,10 @@ Jh.fn = function (a) {
                     d.append(a._createPortalOne(b, c));
                     a._createViewTable(b,Jh.ViewColumns[b]);
                 }
-
-
             }
+        },_refreshTable:function(b){
+            $("#"+b+"Table").empty();
+            a._createViewTable(b,Jh.ViewColumns[b]);
         }
     }
 }();

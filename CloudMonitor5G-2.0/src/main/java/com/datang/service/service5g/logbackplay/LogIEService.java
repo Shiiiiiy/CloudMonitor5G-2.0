@@ -21,4 +21,6 @@ public interface LogIEService {
     List<Map<String,Object>> synOper(long logId, String time);
 
     List<PcapData> pcapDatas(long logId);
+
+    List<PcapData> syncPcapDatas(long logId,String time);
 }

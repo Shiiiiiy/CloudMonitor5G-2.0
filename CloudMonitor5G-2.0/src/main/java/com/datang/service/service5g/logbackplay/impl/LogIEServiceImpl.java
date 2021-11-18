@@ -9,6 +9,8 @@ import com.datang.service.service5g.logbackplay.LogIEService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -67,5 +69,14 @@ public class LogIEServiceImpl implements LogIEService {
 
         return logBackPlayDao.pcapDatas(logId);
 
+    }
+
+    @Override
+    public List<PcapData> syncPcapDatas(long logId, String time) {
+        try {
+            return logBackPlayDao.syncPcapDatas(logId,time);
+        } catch (ParseException e) {
+            return new ArrayList<>();
+        }
     }
 }

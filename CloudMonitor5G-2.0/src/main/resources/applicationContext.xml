@@ -163,6 +163,7 @@
 	
 	<!-- <import resource="server.xml"/>-->
 	<import resource="security.xml"/> 
-	<import resource="server.xml"/> 
+	<import resource="server.xml"/>
+	<import resource="applicationContext-quartz.xml"/>
 	
 </beans>

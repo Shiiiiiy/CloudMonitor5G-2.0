@@ -355,6 +355,19 @@
 						<shiroextend:hasAnyPermissions name="stationParam:show">
 							<li class="second"><a href="javascript:void(0);" onclick="addTab(this);" url="customrReportTemplate/listUI.action">自定义报表模板</a></li>
 						</shiroextend:hasAnyPermissions>
+
+						<shiroextend:hasAnyPermissions name="railwayLine:show,subwayLine:show">
+							<li class="second"><a href="javascript:void(0);"  >高铁地铁线路<div ></div></a>
+								<ul>
+									<shiroextend:hasAnyPermissions name="railwayLine:show">
+										<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="railwayLine/gotoRailwayLineListUI">高铁线路</a></li>
+										</shiroextend:hasAnyPermissions>
+									<shiroextend:hasAnyPermissions name="subwayLine:show">
+										<li class="third"><a href="javascript:void(0);" onclick="addTab(this);" url="subwayLine/gotoSubwayLineListUI">地铁线路</a></li>
+										</shiroextend:hasAnyPermissions>
+								</ul>
+							</li>
+						</shiroextend:hasAnyPermissions>
 					</ul>
 				</li>
 			</shiroextend:hasAnyPermissions>

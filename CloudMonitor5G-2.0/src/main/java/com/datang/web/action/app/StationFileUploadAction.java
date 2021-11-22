@@ -140,8 +140,8 @@ public class StationFileUploadAction implements ModelDriven<StationProspectParam
 	
 	/**
 	 * 工具类替换值
-	 * @param class1
-	 * @param class2
+	 * @param class1Obj
+	 * @param class2Exit
 	 * @throws Exception
 	 */
 	public static void replaceClass(Object class1Obj,Object class2Exit) throws Exception{

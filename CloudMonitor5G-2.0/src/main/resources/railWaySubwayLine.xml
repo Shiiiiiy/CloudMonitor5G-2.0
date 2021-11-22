@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	<!--工参管理 -->
+	<package name="railwayLine" namespace="/railwayLine" extends="json-default">
+		<action name="*" class="railwayLineAction" method="{1}">
+			<result name="listUI">/WEB-INF/railwaySubwayLine/railwayLine.jsp</result>
+			<result name="import">/WEB-INF/railwaySubwayLine/importRailwayTrail.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadTemp" type="stream">
+				<param name="contentType">application/octet-stream</param>
+               	<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+               	<param name="inputName">downloadTemp</param>
+               	<param name="bufferSize">10240</param>
+            </result>
+		</action>
+	</package>
+
+	<package name="subwayLine" namespace="/subwayLine" extends="json-default">
+		<action name="*" class="subwayLineAction" method="{1}">
+			<result name="listUI">/WEB-INF/railwaySubwayLine/subwayLine.jsp</result>
+			<result name="import">/WEB-INF/railwaySubwayLine/importSubwayTrail.jsp</result>
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadTemp" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">downloadTemp</param>
+				<param name="bufferSize">10240</param>
+			</result>
+		</action>
+	</package>
+
+	<package name="appRailwaySubwayQuery" namespace="/appRailwaySubwayQuery" extends="json-default">
+		<action name="*" class="appRailwaySubwayLine" method="{1}">
+			<result name="json" type="json">
+				<param name="contentType">text/html</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+			<result name="downloadTemp" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="inputName">downloadTemp</param>
+			</result>
+		</action>
+	</package>
+
+</struts>

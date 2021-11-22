@@ -172,232 +172,128 @@ INSERT INTO "public"."iads_menu" VALUES ('TERMINAL_MENU', '2', 'images/menu/fold
 INSERT INTO "public"."iads_menu" VALUES ('TERMINAL_MENU', '4', 'images/menu/page.gif', null, '徐汇区', '2', 'terminalAction.do?method=pagelist&cityId=3', '3', 'City', '6');
 
 
---0级功能
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (1, '功能权限', null, null);
---一级功能  平台管理
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (2, '平台管理', null, 1);
---二级功能   权限管理
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (3, '权限管理', null, 2);
---三级功能   分析账号组管理
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (4, '分析账号组管理', null, 3);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (5, '分析账号组管理页面显示', 'user:show', 4);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (6, '新增分析账号组', 'user:add', 4);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (7, '编辑分析账号组', 'user:mod', 4);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (8, '删除分析账号组', 'user:del', 4);
---三级功能  分析账号管理
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (9, '分析账号管理', null, 3);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (10, '分析账号管理页面显示', 'usergroup:show', 9);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (11, '新增账号', 'usergroup:add', 9);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (12, '修改账号', 'usergroup:mod', 9);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (13, '删除账号', 'usergroup:del', 9);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (14, '重置密码', 'usergroup:changepassword', 9);
---二级功能  工程参数
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (15, '工程参数', null, 2);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (16, '工程参数页面显示', 'projectparam:show', 15);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (17, '导入', 'projectparam:import', 15);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (18, '工参下载', 'projectparam:export', 15);
---二级功能  分析门限
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (19, '分析门限', null, 2);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (20, '分析门限页面显示', 'volteanalysisthreshold:show', 19);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (21, '保存修改', 'volteanalysisthreshold:save', 19);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (22, '重置初始值', 'volteanalysisthreshold:init', 19);
-
---一级功能  测试管理
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (23, '测试管理', null, 1);
---二级功能  终端管理
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (24, '终端管理', null, 23);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (25, '终端管理页面显示', 'terminalmanage:show', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (26, '添加域', 'terminalgroup:add', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (27, '删除域', 'terminalgroup:del', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (28, '编辑域', 'terminalgroup:mod', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (29, '新增终端', 'terminal:add', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (30, '修改终端', 'terminal:mod', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (31, '删除终端', 'terminal:del', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (32, '导入终端', 'terminal:import', 24);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (52, '导入终端', 'terminal:enable', 24);
-
---二级功能  测试计划
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (33, '测试计划', null, 23);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (34, '测试计划页面显示', 'testtask:show', 33);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (35, '增加任务', 'testtask:add', 33);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (37, '编辑任务', 'testtask:mod', 33);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (38, '删除任务', 'testtask:del', 33);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (39, '下发任务', 'testtask:sending', 33);
-
---二级功能  监控管理
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (40, '监控管理', null, 23);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (41, '监控管理页面显示', 'controlmanage:show', 40);
-
---一级功能  测试日志
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (42, '测试日志', null, 1);
---二级功能  日志界面显示
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (43, '测试日志界面显示', 'testlogitem:show', 42);
---二级功能  日志重新统计分析
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (44, '测试日志分析', 'testlogitem:analysis', 42);
-
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (45, '统计任务', null, 1);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (46, '统计任务管理', 'basereport:manage', 45);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (47, '统计任务页面显示', 'basereport:show', 45);
---一级功能  地图分析
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (48, '地图分析', null, 1);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (49, '地图分析页面显示', 'map:show', 48);
-
---一级功能  专题分析
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (50, '专题分析', null, 1);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (51, '专题分析页面显示', 'voltevoicebadroad:show', 50);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (53, '活跃度查看', NULL, 1);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (54, '活跃度查看页面显示', 'activation:show', 53);
-
---二级功能 单站参数设置
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (55, '单站参数设置', null, 2);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (56, '单站参数设置确认按钮', 'stationparam:add', 55);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (57, '单站参数设置展示页面', 'stationparam:show', 55);
-
---二级功能 单站日志验证
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (58, '单站验证日志', null, 42);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (59, '单站验证日志展示页面', 'stationveri:show', 58);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (60, '单站验证日志查询按钮', 'stationveri:query', 58);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (61, '单站验证日志下载按钮', 'stationveri:upload', 58);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (62, '单站验证日志删除按钮', 'stationveri:del', 58);
-
---一级功能  单站查看
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (63, '单站查看', null, 1);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (64, '单站查看页面显示', 'station:show', 63);
-
---二级功能 单验报告生成
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (65, '单验报告生成', null, 63);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (66, '单验报告生成展示页面', 'stationcreate:show', 65);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (67, '单验报告生成生成报告按钮', 'stationcreate:create', 65);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (68, '单验报告生成查询按钮', 'stationcreate:query', 65);
-
---二级功能 单验报告查看
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (69, '单验报告查看', null, 63);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (70, '单验报告查看展示页面', 'stationshow:show', 69);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (71, '单验报告查看查找按钮', 'stationshow:query', 69);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (72, '单验报告查看地图轨迹按钮', 'stationshow:map', 69);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (73, '单验报告查看报告下载按钮', 'stationshow:download', 69);
-
---二级功能 单验进度查看
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (74, '单验进度查看', null, 63);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (75, '单验进度查看展示页面', 'stationcompletion:show', 74);
-
---一级功能 反开3d查看
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (76, '反开3d查看', null, 1);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (77, '反开3d查看页面显示', 'opposite:show', 76);
-
---二级功能 反开3d报告生成
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (78, '反开3d报告生成', null, 76);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (79, '反开3d报告生成展示页面', 'oppositecreate:show', 78);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (80, '反开3d报告生成生成报告按钮', 'oppositecreate:create', 78);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (81, '反开3d报告生成查询按钮', 'oppositecreate:query', 78);
-
---二级功能 反开3d报告查看
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (82, '反开3d报告查看', null, 76);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (83, '反开3d报告查看展示页面', 'oppositeshow:show', 82);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (84, '反开3d报告查看查找按钮', 'oppositeshow:query', 82);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (85, '反开3d报告查看地图轨迹按钮', 'oppositeshow:map', 82);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (86, '反开3d报告查看报告下载按钮', 'oppositeshow:download', 82);
-
---二级功能 反开3d进度查看
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (87, '反开3d进度查看', null, 76);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (88, '反开3d进度查看展示页面', 'oppositecompletion:show', 87);
-
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (89, '工单查看', NULL, 1);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (90, '定点测试任务', NULL, 89);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (91, '定点测试任务查看', 'CQTTask:show', 90);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (92, '定点测试任务新增', 'CQTTask:add', 90);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (93, '定点测试任务删除', 'CQTTask:delete', 90);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (94, '定点测试任务闭环', 'CQTTask:close', 90);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (95, '单验任务', NULL, 89);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (96, '单验任务查看', 'stationTask:show', 95);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (97, '单验任务删除', 'stationTask:delete', 95);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (98, '单验任务闭环', 'stationTask:close', 95);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (99, '单验任务下载', 'stationTask:download', 95);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (100, '单验任务地图轨迹', 'stationTask:map', 95);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (101, '单验任务新增', 'stationTask:add', 95);
---一级功能 实时监控
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (102, '实时监控', null, 1);
-
---二级功能 app测试信息监控
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (103, 'app测试信息监控', null, 102);
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (104, 'app测试信息监控查看', 'apptestinfomonitor:show', 103);
-
---一级功能  测试日志
---二级功能  上传日志
-insert into "iads_permission" ("id", "name", "wildcard_permission", "pid") values (105, '上传日志', 'testlogitem:upload', 42);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (1, '功能权限', NULL, NULL);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (2, '平台管理', NULL, 1);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (3, '权限管理', NULL, 2);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (4, '分析账号组管理', NULL, 3);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (5, '分析账号组管理页面显示', 'user:show', 4);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (6, '新增分析账号组', 'user:add', 4);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (7, '编辑分析账号组', 'user:mod', 4);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (8, '删除分析账号组', 'user:del', 4);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (9, '分析账号管理', NULL, 3);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (10, '分析账号管理页面显示', 'usergroup:show', 9);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (11, '新增账号', 'usergroup:add', 9);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (12, '修改账号', 'usergroup:mod', 9);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (13, '删除账号', 'usergroup:del', 9);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (14, '重置密码', 'usergroup:changepassword', 9);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (15, '工程参数', NULL, 2);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (16, '工程参数页面显示', 'projectparam:show', 15);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (17, '导入', 'projectparam:import', 15);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (18, '工参下载', 'projectparam:export', 15);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (19, '分析门限', NULL, 2);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (20, '分析门限页面显示', 'volteanalysisthreshold:show', 19);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (21, '保存修改', 'volteanalysisthreshold:save', 19);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (22, '重置初始值', 'volteanalysisthreshold:init', 19);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (23, '测试管理', NULL, 1);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (24, '终端管理', NULL, 23);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (25, '终端管理页面显示', 'terminalmanage:show', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (26, '添加域', 'terminalgroup:add', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (27, '删除域', 'terminalgroup:del', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (28, '编辑域', 'terminalgroup:mod', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (29, '新增终端', 'terminal:add', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (30, '修改终端', 'terminal:mod', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (31, '删除终端', 'terminal:del', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (32, '导入终端', 'terminal:import', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (33, '测试计划', 'terminalmanage:show', 23);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (40, '监控管理', 'terminalmanage:show', 23);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (42, '测试日志', NULL, 1);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (43, '联通日志', '', 42);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (44, '已完成日志', '', 42);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (45, '统计分析', 'basereport:show', 1);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (50, '专题分析', 'voltevoicebadroad:show', 1);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (52, '导入终端', 'terminal:enable', 24);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (55, '单站参数设置', 'stationParam:show', 2);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (58, '单站验证日志', 'stationVeri:show', 42);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (102, '实时监控', NULL, 1);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (103, 'app测试信息监控', NULL, 102);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (104, 'app测试信息监控查看', 'apptestinfomonitor:show', 103);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (105, '上传日志', 'testlogitem:upload', 42);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (106, '页面显示', 'testlogitemUnicom:show', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (107, '下载', 'testlogitemUnicom:download', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (108, '删除', 'testlogitemUnicom:delete', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (109, '校验详单', 'testlogitemUnicom:cheakDetail', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (110, '数据概览', 'testlogitemUnicom:seeInfo', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (111, '轨迹详情', 'testlogitemUnicom:showMap', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (112, '问题索引', 'testlogitemUnicom:seeQuestion', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (113, '导出中间表', 'testlogitemUnicom:exportTable', 43);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (114, '页面显示', 'testlogitem:analysis', 44);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (115, '下载', 'testlogitem:download', 44);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (116, '删除', 'testlogitem:delete', 44);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (117, '回放', 'testlogitem:reviewLog', 44);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (118, '高铁线路', NULL, 2);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (119, '地铁线路', NULL, 2);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (120, '高铁线路展示', 'railwayLine:show', 118);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (121, '高铁线路删除', 'railwayLine:delete', 118);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (122, '高铁线路导入', 'railwayLine:import', 118);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (123, '手动抓取车次', 'railwayLine:addTrain', 118);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (124, '地铁线路展示', 'subwayLine:show', 119);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (125, '地铁线路删除', 'subwayLine:delete', 119);
+INSERT INTO "public"."iads_permission"("id", "name", "wildcard_permission", "pid") VALUES (126, '地铁线路导入', 'subwayLine:import', 119);
 
 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (5, 1);                                                    
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (6, 1);                           
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (7, 1);                           
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (8, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (10, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (11, 1);                                                                                
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (12, 1);                                                    
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (13, 1);                                                      
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (14, 1);   
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (16, 1);                                                      
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (17, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (18, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (20, 1);                                                      
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (21, 1);                                                      
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (22, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (25, 1);                           
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (26, 1);    
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (27, 1);    
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (28, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (29, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (30, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (31, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (32, 1);  
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (34, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (35, 1);  
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (37, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (38, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (39, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (41, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (43, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (44, 1);  
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (46, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (47, 1); 
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (49, 1);         
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (51, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (52, 1);     
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (54, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (56, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (57, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (59, 1);     
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (60, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (61, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (62, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (64, 1);     
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (66, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (67, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (68, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (70, 1);     
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (71, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (72, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (73, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (75, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (77, 1);     
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (79, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (80, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (81, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (83, 1);     
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (84, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (85, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (86, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (88, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (91, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (92, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (93, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (94, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (96, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (97, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (98, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (99, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (100, 1);
-insert into iads_usergroup_permission(permission_id,usergroup_id) values (101, 1);
+
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 5);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 6);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 7);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 8);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 10);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 11);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 12);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 13);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 14);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 16);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 17);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 18);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 20);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 21);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 22);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 25);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 26);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 27);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 28);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 29);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 30);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 31);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 32);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 33);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 40);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 45);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 50);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 52);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 55);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 58);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 104);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 105);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 106);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 107);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 108);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 109);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 110);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 111);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 112);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 113);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 114);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 115);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 116);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 117);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 120);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 121);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 122);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 123);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 124);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 125);
+INSERT INTO "public"."iads_usergroup_permission"("usergroup_id", "permission_id") VALUES (1, 126);
+
 
 --二维配置
 insert into "iads_two_dimensional"("id", "x_axis", "y_axis", "chart_type") VALUES ('1', '[0,3)@[3,5)@[5,7)@[7,20)@[20,30)@[30,40)@[40,60)@[60,80)@[80,100]', '(∞,-115)@[-115,-105)@[-105,-95)@[-95,-85)@[-85,∞)', 'RtpPacketLostRatioRsrp');

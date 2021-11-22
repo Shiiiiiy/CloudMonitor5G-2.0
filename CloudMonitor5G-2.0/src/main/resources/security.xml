@@ -85,6 +85,7 @@
                 /appCQTTaskAdd/** =  anon 
                 /appStationTaskAdd/** =  anon 
                 /mos/** = anon
+                /appRailwaySubwayQuery/** = anon
                 /** = authc
             </value>
         </property>

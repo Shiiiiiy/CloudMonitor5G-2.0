@@ -136,9 +136,9 @@ public class StationParamPojo implements Serializable{
 	 */
 	private String contrastOpen3DMOdelSelect;
 
-	
+
 	private Menu menu;
-	
+
 	private Long menuId;
 
 	@Id

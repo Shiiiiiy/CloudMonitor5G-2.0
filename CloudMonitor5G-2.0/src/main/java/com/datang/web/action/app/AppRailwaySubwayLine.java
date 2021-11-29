@@ -10,6 +10,7 @@ import com.datang.domain.railway.SubwayXmlTablePojo;
 import com.datang.domain.railway.TrainXmlTablePojo;
 import com.datang.domain.report.StatisticeTask;
 import com.datang.domain.taskOrderManage.FixedPointTaskOrderPojo;
+import com.datang.domain.testLogItem.TestLogItem;
 import com.datang.exception.ApplicationException;
 import com.datang.service.RailWayStation.SubwayLineService;
 import com.datang.service.RailWayStation.TrainLineService;
@@ -17,12 +18,14 @@ import com.datang.util.ZipMultiFile;
 import com.datang.util.ZipUtils;
 import com.datang.web.action.ReturnType;
 import com.opensymphony.xwork2.ActionContext;
+import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import javax.servlet.ServletOutputStream;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -70,12 +73,39 @@ public class AppRailwaySubwayLine {
             ActionContext.getContext().getValueStack().push(list);
         } catch (Exception e) {
             e.printStackTrace();
-            ActionContext.getContext().getValueStack().set("errorMsg", "查询过程中发生异常:"+e);
+            Map<String,String> errorMap = new HashMap<>();
+            errorMap.put("errorMsg","查询过程中发生异常:"+e);
+            ActionContext.getContext().getValueStack().push(errorMap);
         }
         return ReturnType.JSON;
     }
 
-    public InputStream downloadTrainXml(){
+    public String downloadTrainXml() {
+        ServletOutputStream outputStream = null;
+        try {
+            PageList pageList = new PageList();
+            if(trainCode!=null) {
+                pageList.putParam("trainCode", trainCode);
+                if (queryDateTime != null) {
+                    Date dateTime = simpleDateFormat.parse(queryDateTime);
+                    pageList.putParam("startTime", dateTime.getTime());
+                }
+                List<TrainXmlTablePojo> xmlList = trainLineService.findTrainXml(pageList);
+                if (xmlList == null || xmlList.size() == 0) {
+                    throw new ApplicationException("找不到车次" + trainCode + "对应的xml");
+                }
+            }
+            return "downloadTrain";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Map<String,String> errorMap = new HashMap<>();
+            errorMap.put("errorMsg","查询过程中发生异常:"+ex);
+            ActionContext.getContext().getValueStack().push(errorMap);
+        }
+        return ReturnType.JSON;
+    }
+
+    public InputStream getDownloadTrain(){
         try {
             PageList pageList = new PageList();
             if(trainCode!=null){
@@ -119,7 +149,28 @@ public class AppRailwaySubwayLine {
         return null;
     }
 
-    public InputStream downloadSubwayXml(){
+    public String downloadSubwayXml() {
+        try {
+            PageList pageList = new PageList();
+            if(city!=null && trainCode!=null) {
+                pageList.putParam("lineNo", trainCode);
+                pageList.putParam("city", city);
+                List<SubwayXmlTablePojo> xmlList = subwayLineService.findSubwayXml(pageList);
+                if (xmlList == null || xmlList.size() == 0) {
+                    throw new ApplicationException("找不到" + trainCode + "对应的xml");
+                }
+            }
+            return "downloadSubway";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Map<String,String> errorMap = new HashMap<>();
+            errorMap.put("errorMsg","查询过程中发生异常:"+ex);
+            ActionContext.getContext().getValueStack().push(errorMap);
+        }
+        return ReturnType.JSON;
+    }
+
+    public InputStream getDownloadSubway(){
         try {
             PageList pageList = new PageList();
             if(city!=null && trainCode!=null){
@@ -134,9 +185,6 @@ public class AppRailwaySubwayLine {
                     file1.mkdirs();
                 }
 
-                deleteFile(file1);
-                File zipFile = new File(railwaySubwayLineFileUrl + "/subwayZipFile/" +city+"-"+trainCode+ ".zip");
-
                 List<File> fileList = new ArrayList<File>();
                 for (SubwayXmlTablePojo pojo : xmlList) {
                     if (null != pojo && StringUtils.hasText(pojo.getXmlFilePath())) {
@@ -147,6 +195,9 @@ public class AppRailwaySubwayLine {
                         }
                     }
                 }
+                deleteFile(file1);
+                File zipFile = new File(railwaySubwayLineFileUrl + "/subwayZipFile/" +city+"-"+trainCode+ ".zip");
+
                 ActionContext.getContext().put("fileName",new String(zipFile.getName().getBytes(),"ISO8859-1"));
                 ZipMultiFile.zipFiles(fileList, zipFile);
                 FileInputStream zipIn = new FileInputStream(zipFile);

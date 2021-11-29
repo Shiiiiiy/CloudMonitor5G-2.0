@@ -82,6 +82,10 @@ public class RailwayLineAction extends PageAction implements ModelDriven<TrainXm
 		return "import";
 	}
 
+	public String goAddRailwayXmlPage(){
+		return "manualAddRailwayXml";
+	}
+
 	@Override
 	public AbstractPageList doPageQuery(PageList pageList) {
 

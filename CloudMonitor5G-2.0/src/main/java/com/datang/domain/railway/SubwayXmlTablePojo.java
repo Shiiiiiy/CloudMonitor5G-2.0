@@ -24,7 +24,7 @@ public class SubwayXmlTablePojo {
     private Long id; //编码
 
     @Column(name = "CITY")
-    private String city; //车次',
+    private String city;
 
     @Column(name = "LINENO")
     private String lineNo;

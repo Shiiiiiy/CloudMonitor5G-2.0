@@ -183,6 +183,7 @@ var gisToolBars={
 		showCEDEGpsTrack:false,//是否界面初始化呼叫建立时延异常
 		showCompareGrid:false,//是否界面初始化对比日志栅格渲染
 		showDrawRectangleFrame:false, //是否显示画矩形框工具
+		showSelectGpsPoint:false, //是否显示选取经纬度点工具
 		moduleType:''//模块类型
 	},
 	distrub5g:{
@@ -1522,6 +1523,14 @@ function initToolbar(toolbarType){
 			gisToolBars.stationReport.layerManager2=true;
 			gisToolBars.stationReport.drawKpi=drawKpis;
 			return gisToolBars.stationReport;
+		}else if('106'==toolbarType){
+			var drawKpis=[];
+			gisToolBars.ShowPointLonAndLat.showCell=false;
+			gisToolBars.ShowPointLonAndLat.showEmbbRoadPoints=false;
+			gisToolBars.ShowPointLonAndLat.showDrawRectangleFrame=false;
+			gisToolBars.ShowPointLonAndLat.showSelectGpsPoint=true;
+			gisToolBars.ShowPointLonAndLat.drawKpi=drawKpis;
+			return gisToolBars.ShowPointLonAndLat;
 		}
 		else {
 			return gisToolBars.none;	

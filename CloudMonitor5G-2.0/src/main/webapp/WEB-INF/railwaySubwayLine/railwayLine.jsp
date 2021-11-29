@@ -171,8 +171,12 @@
 			goToPage('${pageContext.request.contextPath}/railwayLine/goImport.action');
 		}
 
+		function addXml(){
+			goToPage('${pageContext.request.contextPath}/railwayLine/goAddRailwayXmlPage.action');
+		}
+
 		function doAnalysis(){
-			$.messager.confirm("系统提示", "此次操为后台自动抓取,耗时性能较长，确认继续操作吗?", function(r) {
+			$.messager.confirm("系统提示", "此操作为后台自动抓取,耗时性能较长，确认继续操作吗?", function(r) {
 				if(r){
 					// 以ajax方式，发送到服务器，完成操作
 					$.post("${pageContext.request.contextPath}/railwayLine/anasisTrainFahrplan",
@@ -243,6 +247,9 @@
 						<shiroextend:hasAnyPermissions name="railwayLine:import">
 							<a class="easyui-linkbutton" onclick="importLineFile();" style="width: 80px;margin-right: 5px;">导入</a>
 						</shiroextend:hasAnyPermissions>
+<%--                        <shiroextend:hasAnyPermissions name="railwayLine:import">--%>
+<%--                            <a class="easyui-linkbutton" onclick="addXml();" style="width: 80px;margin-right: 5px;">新增</a>--%>
+<%--                        </shiroextend:hasAnyPermissions>--%>
 					</td>
 				</tr>
 			</table>
@@ -250,7 +257,7 @@
 	</div>
 	<div id="tt3">
 		<shiroextend:hasAnyPermissions name="railwayLine:addTrain">
-			<a href="#" style="width:80px;text-decoration:underline;"  onclick="testQueryTrainList();" title="车次文件">手动抓取车次</a>
+			<a href="#" style="width:80px;text-decoration:underline;"  onclick="doAnalysis();" title="车次文件">手动抓取车次</a>
 		</shiroextend:hasAnyPermissions>
 	</div>
 </div>

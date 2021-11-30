@@ -4,6 +4,7 @@ import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageList;
 import com.datang.domain.knowfeeling.KnowFeelingReportTask;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,4 +49,45 @@ public interface KnowFeelingService {
      * @param ids id
      */
     void delete(List<Long> ids);
+
+    /**
+     * 根据地区和时间统计
+     * @param prov
+     * @param city
+     * @param begin
+     * @param end
+     * @return
+     */
+    Map<String,Object> queryKnowFeelingStaticsByAreaAndTime(String prov, String city, Date begin, Date end);
+
+    /**
+     * 查询详细信息
+     * @param prov
+     * @param city
+     * @param begin
+     * @param end
+     * @return
+     */
+    List<Map<String,Object>>  queryKnowFeelingDetailInfo(String prov, String city, Date begin, Date end);
+
+    /**
+     * 查询详细信息
+     * @param prov
+     * @param city
+     * @param begin
+     * @param end
+     * @return
+     */
+    List<Map<String,Object>>  queryKnowFeelingByTraffic(String prov, String city, Date begin, Date end);
+
+    /**
+     * 查询详细信息
+     * @param prov
+     * @param city
+     * @param begin
+     * @param end
+     * @return
+     */
+    List<Map<String,Object>>  queryKnowFeelingByApp(String prov, String city, Date begin, Date end);
+
 }

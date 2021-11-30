@@ -1,5 +1,7 @@
 package com.datang.common.influxdb;
 
+import com.datang.dao.knowfeeling.KnowFeelingDao;
+import com.datang.dao.testLogItem.UnicomLogItemDao;
 import com.datang.domain.planParam.PlanParamPojo;
 import com.datang.domain.testLogItem.IEItem;
 import com.datang.service.influx.InfluxService;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +38,33 @@ public class InfluxTests {
     private LogIEService logIEService;
     @Autowired
     private QuesRoadProcessor quesRoadProcessor;
+    @Autowired
+    private UnicomLogItemDao unicomLogItemDao;
+
+    @Autowired
+    private KnowFeelingDao knowFeelingDao;
+
+    @Test
+    public void myTest(){
+
+        List<String> a = new ArrayList<>();
+
+
+        String[] a1 = new String[]{};
+
+
+        final List list = knowFeelingDao.queryKnowFeelingStatics("海南省_海口市_1.1联通卡5G网络DT室外下行业务测试_电信_华为_大唐_华为P40_杨玉杰_20210518084108_1.CU");
+
+
+        System.out.printf("1");
+    }
+
+
+    public void test(String... a){
+
+    }
+
+
     @Test
     public void getLogPlayDatas(){
         List<IEItem> recrods= logIEService.getRecrodsByLogId(41075l);

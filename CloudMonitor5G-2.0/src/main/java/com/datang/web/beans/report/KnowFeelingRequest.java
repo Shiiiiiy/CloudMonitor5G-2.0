@@ -17,6 +17,7 @@ public class KnowFeelingRequest implements Serializable {
     private String logIds;
     private String cityIds;
 
-
+    private String city;
+    private String prov;
 
 }

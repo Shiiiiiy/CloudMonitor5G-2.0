@@ -8,6 +8,7 @@ import com.datang.service.knowfeeling.KnowFeelingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,30 @@ public class KnowFeelingServiceImpl implements KnowFeelingService {
         knowFeelingDao.deleteList(ids);
 
 
+    }
+
+    @Override
+    public Map<String, Object> queryKnowFeelingStaticsByAreaAndTime(String prov, String city, Date begin, Date end) {
+        return knowFeelingDao.queryKnowFeelingStaticsByAreaAndTime(prov,city,begin,end);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryKnowFeelingDetailInfo(String prov, String city, Date begin, Date end) {
+        return knowFeelingDao.queryKnowFeelingDetailInfo(prov,city,begin,end);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryKnowFeelingByTraffic(String prov, String city, Date begin, Date end) {
+         List<Map<String, Object>> traffic = knowFeelingDao.queryKnowFeelingByTraffic(prov, city, begin, end, true);
+
+         traffic.addAll(knowFeelingDao.queryKnowFeelingByTraffic(prov, city, begin, end, false));
+
+         return traffic;
+    }
+
+    @Override
+    public List<Map<String, Object>> queryKnowFeelingByApp(String prov, String city, Date begin, Date end) {
+        return knowFeelingDao.queryKnowFeelingByApp(prov,city,begin,end);
     }
 
 

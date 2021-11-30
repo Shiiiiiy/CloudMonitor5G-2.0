@@ -150,6 +150,27 @@ insert into "iads_volte_analysis_threshold"("id", "current_threshold", "name_ch"
 insert into "iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "threshold1", "threshold2", "threshold3", "threshold_type", "subject_type") VALUES ('146', '#ff0000,#ffc000,#ffff00,#8fa7c9,#709efe,#99c175,#00b050', 'beam数量', 'beamColor', NULL, NULL, NULL, 'MapParam', 'fg');
 insert into "iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "threshold1", "threshold2", "threshold3", "threshold_type", "subject_type") VALUES ('147', '20', 'LTE质差采样点门限', 'lteQualityBadSamplingPoint', NULL, NULL, NULL, 'LTE', 'EmbbQualityBadAnasis');
 insert into "iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "threshold1", "threshold2", "threshold3", "threshold_type", "subject_type") VALUES ('148', '20', 'NR质差采样点门限', 'nrQualityBadSamplingPoint', NULL,NULL, NULL, 'NR', 'EmbbQualityBadAnasis');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1655, '500', '视频加载时延', 'videoDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF24');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1641, '95', 'LTE RRC连接成功率', 'lterrcSuccess', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF06');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1642, '95', 'NR RRC连接成功率', 'nrrrcSuccess', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF07');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1643, '95', 'LTE切换成功率', 'lteChange', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF08');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1639, '90', 'LTE覆盖率', 'lteCoverage', 'knowFeelingMonitor', NULL, NULL, NULL, '物理层');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1640, '90', 'NR覆盖率', 'nrCoverage', 'knowFeelingMonitor', NULL, NULL, NULL, '物理层');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1644, '95', 'NR切换成功率', 'nrChange', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF09');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1645, '100', 'DNS解析时延', 'dnsDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF11');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1646, '95', 'DNS解析成功率', 'dnsSuccess', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF12');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1647, '50', 'TCP建链时延', 'tcpDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF13');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1648, '95', 'TCP建链成功率', 'tcpSuccess', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF14');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1649, '10', 'TCP重传率', 'tcpRetry', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF15');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1650, '100', 'HTTP响应时延', 'httpDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF16');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1651, '95', 'HTTP响应成功率', 'httpSuccess', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF17');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1652, '200', '文本加载时延', 'textDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF21');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1654, '500', '音频加载时延', 'musicDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF23');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1653, '500', '图片加载时延', 'picDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF22');
+
+
+
+
 
 insert into iads_users(id,user_name,password,salt,power_user) values (1, 'admin', '756e6c26fca5e2c983ddaee9f13ee074', '5f411fdeea7f39fb339b273cba8947f4',true);
 insert into iads_usergroup(id,name,power_group,has_delete) values (1, '超级管理员',true,false);
@@ -689,3 +710,36 @@ INSERT INTO "public"."t_quesroad_threshold" VALUES (14,'上行低速率路段', 
 INSERT INTO "public"."t_quesroad_threshold" VALUES (15,'下行低速率路段', '下行低速率RLC门限', 'downlowerspeedrlc', 100, 'Mbps');
 INSERT INTO "public"."t_quesroad_threshold" VALUES (16,'下行低速率路段', '下行低速率采样点占比门限', 'downlowerspeedsamprate', 50, '%');
 INSERT INTO "public"."t_quesroad_threshold" VALUES (17,'下行低速率路段', '下行低速率路段长度', 'downlowerspeedroadlen', 30, 'm');
+
+
+INSERT INTO IADS_TRAFFIC_CLASSIFY(traffic,traffic_name,traffic_icon,app,app_name,app_icon)  VALUES ('Message','即时通信','message','com.tencent.mm','微信','wechat');
+INSERT INTO IADS_TRAFFIC_CLASSIFY(traffic,traffic_name,traffic_icon,app,app_name,app_icon) VALUES ('Message','即时通信','message','com.tencent.mobileqq','QQ','qq');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Video','视频','video','com.qiyi.video','爱奇艺','qiyi');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Video','视频','video','com.smile.gifmaker','快手','kuaishou');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Video','视频','video','Com.ss.android.ugc.aweme','抖音','tiktok');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Video','视频','video','com.tencent.qqlive','腾讯视频','qqlive');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Video','视频','video','com.youku.phone','优酷','youku');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Video','视频','video','air.tv.douyu.android','斗鱼','douyu');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Pay','支付','pay','com.eg.android.AlipayGphone','支付宝','alipay');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Game','游戏','game','com.tencent.tmgp.sgame','王者荣耀','wzry');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','ctrip.android.view','携程、','ctrip');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.ss.android.article.news','今日头条','toutiao');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.netease.newsreader.activity','网易新闻','wyxw');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.sina.weibo','新浪微博','sina');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.tencent.news','腾讯新闻','txxw');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.taobao.taobao','淘宝','taobao');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.jingdong.app.mall','京东','jingdong');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.Qunar','去哪儿','qunar');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.hexin.plat.android','同花顺','ths');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.tencent.weread','微信读书','weread');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Web Browsing','浏览','browse','com.xingin.xhs','小红书','xhs');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Navigation','导航','navigation','com.autonavi.minimap','高德地图','gdmap');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Navigation','导航','navigation','com.baidu.Baidumap','百度地图','baidumap');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Mail','邮箱','mail','cn.cj.pe','139邮箱','mail139');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Mail','邮箱','mail','Com.netease.mobilemail','网易邮箱','wymail');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Mail','邮箱','mail','com.tencent.androidqqmail','QQ邮箱','qqmail');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Download','下载','download','com.tencent.qqmusic','QQ音乐','qqmusic');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Download','下载','download','com.netease.cloudmusic','网易云音乐','wyymusic');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Download','下载','download','com.baidu.netdisk','百度网盘','bdnetdisk');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Download','下载','download','com.tencent.android.qqdownloader','应用宝','qqdownloader');
+INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'SpeedTest','测速','speedtest','Cn.nokia.speedtest5g','speedtest','speedtest');

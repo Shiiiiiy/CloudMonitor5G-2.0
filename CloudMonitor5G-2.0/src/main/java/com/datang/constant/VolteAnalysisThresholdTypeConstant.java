@@ -238,5 +238,10 @@ public interface VolteAnalysisThresholdTypeConstant {
 	 * 地图图例pci样式
 	 */
 	public static String PCI_MAP_COLOR = "pciMapColor";
+
+	/**
+	 * 感知监控门限
+	 */
+	public static String KNOW_FEELING_MONITOR = "knowFeelingMonitor";
 	
 }

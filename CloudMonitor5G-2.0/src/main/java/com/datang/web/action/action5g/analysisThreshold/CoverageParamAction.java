@@ -204,7 +204,38 @@ public class CoverageParamAction extends ActionSupport {
 		}
 		return ReturnType.JSON;
 	}
-	
+
+
+	/**
+	 * 进入感知监控参数设置页面
+	 *
+	 * @return
+	 */
+	public String knowFeelingMonitorParamListUI() {
+		ValueStack valueStack = ActionContext.getContext().getValueStack();
+
+		List<VolteAnalysisThreshold> all = analysisThresholdService
+				.queryBySubjectType(VolteAnalysisThresholdTypeConstant.KNOW_FEELING_MONITOR);
+
+		Map<String,String> weakCoveragParamMap = new HashMap<String,String>();
+		for (VolteAnalysisThreshold volteAnalysisThreshold : all) {
+			weakCoveragParamMap.put(volteAnalysisThreshold.getNameEn(), volteAnalysisThreshold.getCurrentThreshold());
+		}
+		valueStack.set("entity",
+				weakCoveragParamMap);
+
+		return "knowFeelinglistUI";
+	}
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * @return the thresholdMapthresholdMap

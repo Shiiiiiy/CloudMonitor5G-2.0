@@ -165,6 +165,10 @@
 			goToPage('${pageContext.request.contextPath}/subwayLine/goImport.action');
 		}
 
+		function addXml(){
+			goToPage('${pageContext.request.contextPath}/subwayLine/goAddSubwayXmlPage.action');
+		}
+
 
 
 
@@ -211,6 +215,9 @@
 						</shiroextend:hasAnyPermissions>
 						<shiroextend:hasAnyPermissions name="subwayLine:import">
 							<a class="easyui-linkbutton" onclick="importLineFile();" style="width: 80px;margin-right: 5px;">导入</a>
+						</shiroextend:hasAnyPermissions>
+						<shiroextend:hasAnyPermissions name="subwayLine:import">
+							<a class="easyui-linkbutton" onclick="addXml();" style="width: 80px;margin-right: 5px;">新增</a>
 						</shiroextend:hasAnyPermissions>
 					</td>
 				</tr>

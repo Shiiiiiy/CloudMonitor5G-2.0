@@ -89,7 +89,15 @@ function initTools(bl) {
 		}
 		if (!s.showSelectGpsPoint) {
 			hideDivByDivId('selectGPSPoint');
-
+		}
+		if (!s.showFrameSelect) {
+			hideDivByDivId('FrameSelect');
+		}
+		if (!s.showSelectLinePoint) {
+			hideDivByDivId('selectLinePoint');
+		}
+		if (!s.showDelLayer) {
+			hideDivByDivId('delLayer');
 		}
 		if (s.showCell) { // 显示小区渲染工具
 			var res = parent.getCellRequestParam();
@@ -3764,257 +3772,269 @@ function setCallTypeVal(callTypeIndex) {
 // 设置工具栏显示与否
 function navEvent(id) {
 	switch (id) {
-	case 'Pan': { // 漫游
-		map.enablePan();
-		navToolbar.activate(esri.toolbars.Navigation.PAN);
-		map.setMapCursor("default");
-		break;
-	}
-	case 'PrevExtent': { // 前一视图
-		navToolbar.zoomToPrevExtent();
-		break;
-	}
-	case 'NextExtent': { // 后一视图
-		navToolbar.zoomToNextExtent();
-		break;
-	}
-	case 'FullExtent':
-		// navToolbar.zoomToFullExtent();
-		//map.extent = layer_diTu.fullExtent;
-		var inPoint = new esri.geometry.Point(109.1540317, 33.735199607, wgs);
-		map.centerAndZoom(inPoint, 5);
-		break;
-	case 'zoom_in': { // 放大
-		navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
-		break;
-	}
-	case 'zoom_out': { // 缩小
-		navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
-		break;
-	}
-	case 'ToolsLegend': {
-		break;
-	}
-	case 'clear':
-		mapClear();
-		break;
-	case 'deactivate':
-		navToolbar.deactivate();
-		break;
-	case 'DistanceMeasure':
-		DistanceByTwopoints();
-		break;
-	case 'DrawRectangleFrame':
-		drawRectangleFrame();
-		break;
-	case 'AddPoints':
-		AddpointSymbol();
-		break;
-	case 'Cluster':
-		ProjectPoints();
-		break;
-	case 'MapChange': { // 图源切换
-		var $a1 = $("#MapResource");
-		if ($a1.is(":hidden")) {
-			$a1.css("display", "block");
-		} else {
-			$a1.css("display", "none");
+		case 'Pan': { // 漫游
+			map.enablePan();
+			navToolbar.activate(esri.toolbars.Navigation.PAN);
+			map.setMapCursor("default");
+			break;
 		}
-		break;
-	}
-	case 'layerControl': { // 图层控制
-		var $a = $("#mapLayerControl");
-		if ($a.is(":hidden")) {
-			$a.css("display", "block");
-		} else {
-			$a.css("display", "none");
+		case 'PrevExtent': { // 前一视图
+			navToolbar.zoomToPrevExtent();
+			break;
 		}
-		break;
-	}
-	case 'timeSlider': {
-		var $b = $("#slider");
-		if ($b.is(":hidden")) {
-			$b.css("display", "block");
-			SetOpacity();
-		} else {
-			$b.css("display", "none");
+		case 'NextExtent': { // 后一视图
+			navToolbar.zoomToNextExtent();
+			break;
 		}
-		break;
-	}
-	case 'GPS': { // GPS轨迹
-		break;
-	}
-	case 'Cell': { // 小区绘制
-		GetCell();
-		break;
-	}
-	case 'TargetSelect': { // 读取指标
-		var $ab = $("#dropDownButtonContainer");
-		if ($ab.is(":hidden")) {
-			$ab.css("display", "block");
-			var myDialog = new dijit.TooltipDialog(
-				{
-					content : '<label for="select_index">选择指标:</label>'
-						+ '<select   data-dojo-type="dijit/form/Select"  id="select_index" name="name">'
-						+ '<option value="MOS值">MOS值</option><option value="LTE网络RSRP" selected="selected">LTE网络RSRP</option></select><br>'
-						+ '<button data-dojo-type="dijit/form/Button" type="submit">刷新</button>'
-						+ '<button data-dojo-type="dijit/form/Button" type="button">清除</button>'
+		case 'FullExtent':
+			// navToolbar.zoomToFullExtent();
+			//map.extent = layer_diTu.fullExtent;
+			var inPoint = new esri.geometry.Point(109.1540317, 33.735199607, wgs);
+			map.centerAndZoom(inPoint, 5);
+			break;
+		case 'zoom_in': { // 放大
+			navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
+			break;
+		}
+		case 'zoom_out': { // 缩小
+			navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
+			break;
+		}
+		case 'ToolsLegend': {
+			break;
+		}
+		case 'clear':
+			mapClear();
+			break;
+		case 'deactivate':
+			navToolbar.deactivate();
+			break;
+		case 'DistanceMeasure':
+			DistanceByTwopoints();
+			break;
+		case 'DrawRectangleFrame':
+			drawRectangleFrame();
+			break;
+		case 'AddPoints':
+			AddpointSymbol();
+			break;
+		case 'Cluster':
+			ProjectPoints();
+			break;
+		case 'MapChange': { // 图源切换
+			var $a1 = $("#MapResource");
+			if ($a1.is(":hidden")) {
+				$a1.css("display", "block");
+			} else {
+				$a1.css("display", "none");
+			}
+			break;
+		}
+		case 'layerControl': { // 图层控制
+			var $a = $("#mapLayerControl");
+			if ($a.is(":hidden")) {
+				$a.css("display", "block");
+			} else {
+				$a.css("display", "none");
+			}
+			break;
+		}
+		case 'timeSlider': {
+			var $b = $("#slider");
+			if ($b.is(":hidden")) {
+				$b.css("display", "block");
+				SetOpacity();
+			} else {
+				$b.css("display", "none");
+			}
+			break;
+		}
+		case 'GPS': { // GPS轨迹
+			break;
+		}
+		case 'Cell': { // 小区绘制
+			GetCell();
+			break;
+		}
+		case 'TargetSelect': { // 读取指标
+			var $ab = $("#dropDownButtonContainer");
+			if ($ab.is(":hidden")) {
+				$ab.css("display", "block");
+				var myDialog = new dijit.TooltipDialog(
+					{
+						content : '<label for="select_index">选择指标:</label>'
+							+ '<select   data-dojo-type="dijit/form/Select"  id="select_index" name="name">'
+							+ '<option value="MOS值">MOS值</option><option value="LTE网络RSRP" selected="selected">LTE网络RSRP</option></select><br>'
+							+ '<button data-dojo-type="dijit/form/Button" type="submit">刷新</button>'
+							+ '<button data-dojo-type="dijit/form/Button" type="button">清除</button>'
+					});
+				var myButton = new dijit.form.DropDownButton({
+					label : "地图显示指标",
+					dropDown : myDialog
 				});
-			var myButton = new dijit.form.DropDownButton({
-				label : "地图显示指标",
-				dropDown : myDialog
-			});
-			dojo.byId("dropDownButtonContainer").remove();
-			var myDiv = document.createElement('div');
-			myDiv.setAttribute("id", "dropDownButtonContainer");
-			dojo.byId("MapTool").appendChild(myDiv);
-			dojo.byId("dropDownButtonContainer").appendChild(myButton.domNode);
-			myButton.startup();
-		} else {
-			$ab.css("display", "none");
+				dojo.byId("dropDownButtonContainer").remove();
+				var myDiv = document.createElement('div');
+				myDiv.setAttribute("id", "dropDownButtonContainer");
+				dojo.byId("MapTool").appendChild(myDiv);
+				dojo.byId("dropDownButtonContainer").appendChild(myButton.domNode);
+				myButton.startup();
+			} else {
+				$ab.css("display", "none");
+			}
+			break;
 		}
-		break;
-	}
-	case "GPSSearch": { // 经纬度搜索
-		myFormDialog.show();
-		break;
-	}
-	//yzp 2019-03-28
-	case 'DisplayCelL_Points': {
-		var ima = document.getElementById('DisplayCelL_Points');
-		if (ima.title == "隐藏小区与采样点连线") {
-			ima.src = "images/DisplayCleLPoint_dis.png";
-			ima.title = "显示小区与采样点连线";
-			ima.alt = "显示小区与采样点连线";
-			DisplayCellPoint(false);
-		} else {
-			ima.src = "images/DisplayCleLPoint_hide.png";
-			ima.title = "隐藏小区与采样点连线";
-			ima.alt = "隐藏小区与采样点连线";
-			DisplayCellPoint(true);
+		case "GPSSearch": { // 经纬度搜索
+			myFormDialog.show();
+			break;
 		}
-		break;
-	}
-	//
-	case 'DisplayCleLPoint': { // 显示小区点连线
-		var ima = document.getElementById('DisplayCleLPoint');
-		if (ima.title == "显示小区点连线") {
-			DisplayCleLPoint(true);
-			ima.src = "images/DisplayCleLPoint_hide.png";
-			ima.title = "隐藏小区点连线";
-			ima.alt = "隐藏小区点连线";
-		} else {
-			DisplayCleLPoint(false);
-			ima.src = "images/DisplayCleLPoint_dis.png";
-			ima.title = "显示小区点连线";
-			ima.alt = "显示小区点连线";
+		//yzp 2019-03-28
+		case 'DisplayCelL_Points': {
+			var ima = document.getElementById('DisplayCelL_Points');
+			if (ima.title == "隐藏小区与采样点连线") {
+				ima.src = "images/DisplayCleLPoint_dis.png";
+				ima.title = "显示小区与采样点连线";
+				ima.alt = "显示小区与采样点连线";
+				DisplayCellPoint(false);
+			} else {
+				ima.src = "images/DisplayCleLPoint_hide.png";
+				ima.title = "隐藏小区与采样点连线";
+				ima.alt = "隐藏小区与采样点连线";
+				DisplayCellPoint(true);
+			}
+			break;
 		}
-		break;
-	}
-	case 'DisplayCleLEvent': { // 显示小区事件连线
-		var ima3 = document.getElementById('DisplayCleLEvent');
-		if (ima3.title == "显示小区事件连线") {
-			DisplayCleLEvent(true);
-			ima3.src = "images/DisplayCleLEvent_hide.png";
-			ima3.title = "隐藏小区事件连线";
-			ima3.alt = "隐藏小区事件连线";
-		} else {
-			DisplayCleLEvent(false);
-			ima3.src = "images/DisplayCleLEvent_dis.png";
-			ima3.title = "显示小区事件连线";
-			ima3.alt = "显示小区事件连线";
+		//
+		case 'DisplayCleLPoint': { // 显示小区点连线
+			var ima = document.getElementById('DisplayCleLPoint');
+			if (ima.title == "显示小区点连线") {
+				DisplayCleLPoint(true);
+				ima.src = "images/DisplayCleLPoint_hide.png";
+				ima.title = "隐藏小区点连线";
+				ima.alt = "隐藏小区点连线";
+			} else {
+				DisplayCleLPoint(false);
+				ima.src = "images/DisplayCleLPoint_dis.png";
+				ima.title = "显示小区点连线";
+				ima.alt = "显示小区点连线";
+			}
+			break;
 		}
-		break;
-	}
-	case 'DisplayCleLArea': { // 显示邻区连线
-		var ima1 = document.getElementById('DisplayCleLArea');
-		if (ima1.title == "显示邻区连线") {
-			ima1.src = "images/DisplayCleLArea_hide.png";
-			ima1.title = "隐藏邻区连线";
-			ima1.alt = "隐藏邻区连线";
-			DisplayCleLArea(true);
-		} else {
-			ima1.src = "images/DisplayCleLArea_dis.png";
-			ima1.title = "显示邻区连线";
-			ima1.alt = "显示邻区连线";
-			DisplayCleLArea(false);
+		case 'DisplayCleLEvent': { // 显示小区事件连线
+			var ima3 = document.getElementById('DisplayCleLEvent');
+			if (ima3.title == "显示小区事件连线") {
+				DisplayCleLEvent(true);
+				ima3.src = "images/DisplayCleLEvent_hide.png";
+				ima3.title = "隐藏小区事件连线";
+				ima3.alt = "隐藏小区事件连线";
+			} else {
+				DisplayCleLEvent(false);
+				ima3.src = "images/DisplayCleLEvent_dis.png";
+				ima3.title = "显示小区事件连线";
+				ima3.alt = "显示小区事件连线";
+			}
+			break;
 		}
-		break;
-	}
-	case 'DisplayPCI': { // 显示模3核查
-		var ima11 = document.getElementById('DisplayPCI');
-		if (ima11.title == "显示模3核查") {
-			ima11.src = "images/DisplayPCI_hide.png";
-			ima11.title = "隐藏模3核查";
-			ima11.alt = "隐藏模3核查";
-			DisplayPCI(true);
-		} else {
-			ima11.src = "images/DisplayPCI_dis.png";
-			ima11.title = "显示模3核查";
-			ima11.alt = "显示模3核查";
-			DisplayPCI(false);
+		case 'DisplayCleLArea': { // 显示邻区连线
+			var ima1 = document.getElementById('DisplayCleLArea');
+			if (ima1.title == "显示邻区连线") {
+				ima1.src = "images/DisplayCleLArea_hide.png";
+				ima1.title = "隐藏邻区连线";
+				ima1.alt = "隐藏邻区连线";
+				DisplayCleLArea(true);
+			} else {
+				ima1.src = "images/DisplayCleLArea_dis.png";
+				ima1.title = "显示邻区连线";
+				ima1.alt = "显示邻区连线";
+				DisplayCleLArea(false);
+			}
+			break;
 		}
-		break;
-	}
-	case 'DisplayTAC': { // 显示TAC
-		var ima12 = document.getElementById('DisplayTAC');
-		if (ima12.title == "显示TAC分布") {
-			ima12.src = "images/DisplayTAC_hide.png";
-			ima12.title = "隐藏TAC分布";
-			ima12.alt = "隐藏TAC分布";
-			DisplayTAC(true);
-		} else {
-			ima12.src = "images/DisplayTAC_dis.png";
-			ima12.title = "显示TAC分布";
-			ima12.alt = "显示TAC分布";
-			DisplayTAC(false);
+		case 'DisplayPCI': { // 显示模3核查
+			var ima11 = document.getElementById('DisplayPCI');
+			if (ima11.title == "显示模3核查") {
+				ima11.src = "images/DisplayPCI_hide.png";
+				ima11.title = "隐藏模3核查";
+				ima11.alt = "隐藏模3核查";
+				DisplayPCI(true);
+			} else {
+				ima11.src = "images/DisplayPCI_dis.png";
+				ima11.title = "显示模3核查";
+				ima11.alt = "显示模3核查";
+				DisplayPCI(false);
+			}
+			break;
 		}
-		break;
-	}
-	case 'Azimuth': { // 显示行驶方向
-		var ima2 = document.getElementById('Azimuth');
-		if (ima2.title == "显示行驶方向") {
-			Azimuth(true);
-			ima2.src = "images/Azimuth_hide.png";
-			ima2.title = "隐藏行驶方向";
-			ima2.alt = "隐藏行驶方向";
-		} else {
-			Azimuth(false);
-			ima2.src = "images/Azimuth_dis.png";
-			ima2.title = "显示行驶方向";
-			ima2.alt = "显示行驶方向";
+		case 'DisplayTAC': { // 显示TAC
+			var ima12 = document.getElementById('DisplayTAC');
+			if (ima12.title == "显示TAC分布") {
+				ima12.src = "images/DisplayTAC_hide.png";
+				ima12.title = "隐藏TAC分布";
+				ima12.alt = "隐藏TAC分布";
+				DisplayTAC(true);
+			} else {
+				ima12.src = "images/DisplayTAC_dis.png";
+				ima12.title = "显示TAC分布";
+				ima12.alt = "显示TAC分布";
+				DisplayTAC(false);
+			}
+			break;
 		}
-		break;
-	}
-	case 'TrackOffset': { // 对比日志轨迹偏移
-		var ima21 = document.getElementById('TrackOffset');
-		if (ima21.title == "对比日志轨迹偏移") {
-			TrackOffset(CompareTrack, true);
-			ima21.title = "对比日志轨迹还原";
-			ima21.alt = "对比日志轨迹还原";
-		} else {
-			TrackOffset(CompareTrack, false);
-			ima21.title = "对比日志轨迹偏移";
-			ima21.alt = "对比日志轨迹偏移";
+		case 'Azimuth': { // 显示行驶方向
+			var ima2 = document.getElementById('Azimuth');
+			if (ima2.title == "显示行驶方向") {
+				Azimuth(true);
+				ima2.src = "images/Azimuth_hide.png";
+				ima2.title = "隐藏行驶方向";
+				ima2.alt = "隐藏行驶方向";
+			} else {
+				Azimuth(false);
+				ima2.src = "images/Azimuth_dis.png";
+				ima2.title = "显示行驶方向";
+				ima2.alt = "显示行驶方向";
+			}
+			break;
 		}
-		break;
-	}
-	case 'MapDataCenter': {
-		if (null == mapDataExtent) {
-			alert('数据范围为空');
-		} else {
-			map.setExtent(mapDataExtent);
+		case 'TrackOffset': { // 对比日志轨迹偏移
+			var ima21 = document.getElementById('TrackOffset');
+			if (ima21.title == "对比日志轨迹偏移") {
+				TrackOffset(CompareTrack, true);
+				ima21.title = "对比日志轨迹还原";
+				ima21.alt = "对比日志轨迹还原";
+			} else {
+				TrackOffset(CompareTrack, false);
+				ima21.title = "对比日志轨迹偏移";
+				ima21.alt = "对比日志轨迹偏移";
+			}
+			break;
 		}
-		break;
-	}
-	case 'SearchCell': { // 查找小区
-		showDivByDivId('DivQueryCell');
-		break;
-	}
-	case 'selectGPSPoint': { // 查找小区
-		getPointSymbol();
-		break;
-	}
+		case 'MapDataCenter': {
+			if (null == mapDataExtent) {
+				alert('数据范围为空');
+			} else {
+				map.setExtent(mapDataExtent);
+			}
+			break;
+		}
+		case 'SearchCell': { // 查找小区
+			showDivByDivId('DivQueryCell');
+			break;
+		}
+		case 'selectGPSPoint': { // 测试点经纬度选择
+			getPointSymbol();
+			break;
+		}
+		case 'selectLinePoint': { // 线路点选择
+			selectLinePointSymbol();
+			break;
+		}
+		case 'FrameSelect': { // 框选
+			frameSelect();
+			break;
+		}
+		case 'delLayer': { // 框选
+			delLayer();
+			break;
+		}
 	}
 }
 

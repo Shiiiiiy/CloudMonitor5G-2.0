@@ -496,7 +496,6 @@ function addGraphic(geometry) {
 
 //根据左上角和右下角经纬度画矩形框区域
 function showRectAngle() {
-	console.info(rectAngleLeftLon);
 	if(rectAngleLeftLon!=null && rectAngleLeftLon!=undefined && rectAngleLeftLon!=""){
 		var symbol = new esri.symbol.SimpleFillSymbol().setColor(null).setOutline(
 				new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new esri.Color("blue"), 2));
@@ -556,7 +555,380 @@ function mapDlClickSelectLoction(evt) {
 	graphicLayerPointSymbol = new esri.Graphic(evt.mapPoint, markerSymbol);
 	map.graphics.add(graphicLayerPointText);
 	map.graphics.add(graphicLayerPointSymbol);
-	
+
 	//把坐标输入到input框中
 	parent.inputSelctLocation(evt.mapPoint.x.toFixed(6),evt.mapPoint.y.toFixed(6));
+}
+
+//选择线路点
+var isConnected = 0;
+var sid = null;
+var stationName = null;
+var graphicClick1;
+var graphicClick2;
+function selectLinePointSymbol(){
+	var lineLoctionTye = parent.getLineLoctionTye();
+	if(lineLoctionTye==null){
+		return;
+	}
+	if(graphicClick1!=undefined &&  graphicClick1!=null){
+		dojo.disconnect(graphicClick1);
+	}
+	if(graphicClick2!=undefined &&  graphicClick2!=null){
+		dojo.disconnect(graphicClick2);
+	}
+	if(isConnected==0){
+		map.setMapCursor("pointer");
+		if(lineLoctionTye == 0){
+			graphicClick1 = dojo.connect(map, "onClick", mapDlClickSelectStationPoint);
+		}if(lineLoctionTye == 1){
+			graphicClick2 = dojo.connect(map, "onClick", mapDlClickAddLinePoint);
+		}
+		isConnected = 1;
+	}else if(isConnected==1){
+		isConnected = 0;
+	}
+}
+
+function mapDlClickSelectStationPoint(evt) {
+	var stationInfoMap = parent.getStationInfo();
+	sid = stationInfoMap["sid"];
+	stationName = stationInfoMap["stationName"];
+
+	if (undefined == stationGraphicsLayer
+		|| null == stationGraphicsLayer) {
+		stationGraphicsLayer = new esri.layers.GraphicsLayer();
+		map.addLayer(stationGraphicsLayer);
+	} else {
+		var stationGraphicArry =[];//用于承接点的graphic对象
+		dojo.forEach(stationGraphicsLayer.graphics, function (feature) {//再遍历循环每一个点graphic对象
+			var pointTag = feature.attributes.sid;//point对象
+			if (sid == pointTag) {
+				stationGraphicArry.push(feature);
+			}
+		})
+		for (let j = 0; j <stationGraphicArry.length; j++) {
+			stationGraphicsLayer.remove(stationGraphicArry[j]);
+		}
+	}
+	if (undefined == stationLabelLayer
+		|| null == stationLabelLayer) {
+		stationLabelLayer = new esri.layers.GraphicsLayer();
+		map.addLayer(stationLabelLayer);
+	} else {
+		var stationGraphicArry =[];//用于承接点的graphic对象
+		dojo.forEach(stationLabelLayer.graphics, function (feature) {//再遍历循环每一个点graphic对象
+			var pointTag = feature.attributes.sid;//point对象
+			if (sid == pointTag) {
+				stationGraphicArry.push(feature);
+			}
+		})
+		for (let j = 0; j <stationGraphicArry.length; j++) {
+			stationLabelLayer.remove(stationGraphicArry[j]);
+		}
+	}
+
+	var font = new esri.symbol.Font("13px", esri.symbol.Font.STYLE_NORMAL,
+		esri.symbol.Font.VARIANT_NORMAL, esri.symbol.Font.WEIGHT_BOLDER);
+	var markerSymbol = new esri.symbol.SimpleMarkerSymbol(
+		esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 6,
+		new esri.symbol.SimpleLineSymbol(
+			esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([
+				204, 102, 51 ]), 1), new dojo.Color([ 158, 184, 71,
+			0.65 ]));
+	map.setMapCursor("default");
+	var inPoint = new esri.geometry.Point(evt.mapPoint.x, evt.mapPoint.y,
+		map.spatialReference);
+
+	var text = stationName;
+	var textSymbol = new esri.symbol.TextSymbol(text, font, new dojo.Color([
+		255, 0, 0 ]));
+	textSymbol.yoffset = 10;
+	textSymbol.xoffset = 20;
+
+	graphicLayerPointText = new esri.Graphic(evt.mapPoint, textSymbol, {
+		"sid" : sid,
+		"stationName" : stationName,
+		'lon' :evt.mapPoint.x,
+		'lat' :evt.mapPoint.y,
+	}, null);
+	graphicLayerPointSymbol = new esri.Graphic(evt.mapPoint, markerSymbol, {
+		"sid" : sid,
+		"stationName" : stationName,
+		'lon' :evt.mapPoint.x.toFixed(6),
+		'lat' :evt.mapPoint.y.toFixed(6),
+	}, null);
+	stationGraphicsLayer.add(graphicLayerPointSymbol);
+	stationLabelLayer.add(graphicLayerPointText);
+
+	var infoTemplate = new esri.InfoTemplate("详情", "<table class='t2'> " +
+		"<tr class='tr1'> " +
+		"<td style='text-align:left;'>序号:</td> " +
+		"<td style='text-align:left;'>${sid}</td> " +
+		"<td style='text-align:left;'>站点名称:</td> " +
+		"<td style='text-align:left;'>${stationName}</td> " +
+		"</tr> " +
+		"<tr class='tr2'> " +
+		"<td style='text-align:left;'>经度:</td><td style='text-align:left;'>${lon}</td> " +
+		"<td style='text-align:left;'>纬度:</td><td style='text-align:left;'>${lat}</td> " +
+		"</tr> " +
+		"</table>");
+	stationGraphicsLayer.setInfoTemplate(infoTemplate);
+
+	//把坐标输入到input框中
+	parent.inputSelctLocation(evt.mapPoint.x.toFixed(6),evt.mapPoint.y.toFixed(6));
+}
+
+var stationGraphicsLayer;
+var stationLabelLayer;
+function stationLocationDisplay(stops){
+	dojo.disconnect(graphicClick1);
+	if (undefined == stationGraphicsLayer
+		|| null == stationGraphicsLayer) {
+		stationGraphicsLayer = new esri.layers.GraphicsLayer();
+		map.addLayer(stationGraphicsLayer);
+	} else {
+		stationGraphicsLayer.clear();
+	}
+	if (undefined == stationLabelLayer
+		|| null == stationLabelLayer) {
+		stationLabelLayer = new esri.layers.GraphicsLayer();
+		map.addLayer(stationLabelLayer);
+	} else {
+		stationLabelLayer.clear();
+	}
+	var multipoint = new esri.geometry.Multipoint(new esri.SpatialReference({wkid:4326}));
+	for (let i = 0; i < stops.length; i++) {
+		var font = new esri.symbol.Font("13px", esri.symbol.Font.STYLE_NORMAL,
+			esri.symbol.Font.VARIANT_NORMAL, esri.symbol.Font.WEIGHT_BOLDER);
+		var markerSymbol = new esri.symbol.SimpleMarkerSymbol(
+			esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 6,
+			new esri.symbol.SimpleLineSymbol(
+				esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([
+					204, 102, 51 ]), 1), new dojo.Color([ 158, 184, 71,
+				0.65 ]));
+		map.setMapCursor("default");
+		var inPoint = new esri.geometry.Point(stops[i].lon, stops[i].lat,
+			map.spatialReference);
+
+		var text = stops[i].name;
+		var textSymbol = new esri.symbol.TextSymbol(text, font, new dojo.Color([
+			255, 0, 0 ]));
+		textSymbol.yoffset = 10;
+		textSymbol.xoffset = 20;
+
+		graphicLayerPointText = new esri.Graphic(inPoint, textSymbol, {
+			"sid" : i,
+			"stationName" : text,
+			'lon' :stops[i].lon,
+			'lat' :stops[i].lat,
+		}, null);
+		graphicLayerPointSymbol = new esri.Graphic(inPoint, markerSymbol, {
+			"sid" : i,
+			"stationName" : text,
+			'lon' :stops[i].lon,
+			'lat' :stops[i].lat,
+		}, null);
+		stationGraphicsLayer.add(graphicLayerPointSymbol);
+		stationLabelLayer.add(graphicLayerPointText);
+
+		var infoTemplate = new esri.InfoTemplate("详情", "<table class='t2'> " +
+			"<tr class='tr1'> " +
+			"<td style='text-align:left;'>序号:</td> " +
+			"<td style='text-align:left;'>${sid}</td> " +
+			"<td style='text-align:left;'>站点名称:</td> " +
+			"<td style='text-align:left;'>${stationName}</td> " +
+			"</tr> " +
+			"<tr class='tr2'> " +
+			"<td style='text-align:left;'>经度:</td><td style='text-align:left;'>${lon}</td> " +
+			"<td style='text-align:left;'>纬度:</td><td style='text-align:left;'>${lat}</td> " +
+			"</tr> " +
+			"</table>");
+		stationGraphicsLayer.setInfoTemplate(infoTemplate);
+
+		multipoint.addPoint(inPoint);
+		mapDataExtent = multipoint.getExtent();
+		map.setExtent(mapDataExtent);
+	}
+}
+
+var pointGraphicsLayer;
+function mapDlClickAddLinePoint(evt) {
+	if (undefined == pointGraphicsLayer
+		|| null == pointGraphicsLayer) {
+		pointGraphicsLayer = new esri.layers.GraphicsLayer();
+		map.addLayer(pointGraphicsLayer);
+	}
+	var stationInfoMap = parent.getStationInfo();
+	sid = stationInfoMap["sid"];
+	stationName = stationInfoMap["stationName"];
+	var markerSymbol = new esri.symbol.SimpleMarkerSymbol(
+		esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 6,
+		new esri.symbol.SimpleLineSymbol(
+			esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([
+				0,0,0 ]), 1), new dojo.Color([ 	0,0,0,
+			0.65 ]));
+	map.setMapCursor("default");
+
+	let graphicLayerSymbol1 = new esri.Graphic(evt.mapPoint, markerSymbol, {
+		"sid" : sid,
+		"stationName" : stationName,
+		'lon' :evt.mapPoint.x.toFixed(6),
+		'lat' :evt.mapPoint.y.toFixed(6),
+	}, null);
+	pointGraphicsLayer.add(graphicLayerSymbol1);
+
+	var infoTemplate = new esri.InfoTemplate("详情", "<table class='t2'> " +
+		"<tr class='tr1'> " +
+		"<td style='text-align:left;'>序号:</td> " +
+		"<td style='text-align:left;'>${sid}</td> " +
+		"<td style='text-align:left;'>站点名称:</td> " +
+		"<td style='text-align:left;'>${stationName}</td> " +
+		"</tr> " +
+		"<tr class='tr2'> " +
+		"<td style='text-align:left;'>经度:</td><td style='text-align:left;'>${lon}</td> " +
+		"<td style='text-align:left;'>纬度:</td><td style='text-align:left;'>${lat}</td> " +
+		"</tr> " +
+		"</table>");
+	pointGraphicsLayer.setInfoTemplate(infoTemplate);
+
+	//把坐标输入到input框中
+	// parent.inputSelctLocation(evt.mapPoint.x.toFixed(6),evt.mapPoint.y.toFixed(6));
+	// dojo.disconnect(handle);
+}
+
+
+//框选区域
+function frameSelect(){
+	if (undefined == graphicLayerRectangle
+		|| null == graphicLayerRectangle) {
+		require(["esri/toolbars/draw"], function (Draw) {
+			//var toolbar = new Draw();
+			//使用toolbar上的绘图工具
+			tb = new Draw(map);
+			graphicLayerRectangle = new esri.layers.GraphicsLayer();
+			map.addLayer(graphicLayerRectangle);
+			dojo.connect(tb, "onDrawEnd", addGraphic);
+
+			tb.activate(esri.toolbars.Draw.EXTENT);
+		})
+	} else {
+		map.removeLayer(graphicLayerRectangle);
+		graphicLayerRectangle = null;
+		if (undefined != tb
+			&& null != tb) {
+			tb.deactivate();
+		}
+	}
+}
+
+function addGraphic(geometry) {
+	// console.log(geometry);
+	// rectAngleLeftLon = geometry.xmin;
+	// rectAngleLeftLat = geometry.ymax;
+	// rectAngleRightLon = geometry.xmax;
+	// rectAngleRightLat = geometry.ymin;
+	graphicLayerRectangle.clear();
+	symbol = tb.fillSymbol;
+	graphicLayerRectangle.add(new esri.Graphic(geometry, symbol));
+}
+
+function delLayer() {
+	var graphicArry =[];//用于承接点的graphic对象
+	dojo.forEach(graphicLayerRectangle.graphics, function (graphic) {//循环遍历每一个多边形graphic对象
+		var polygon = graphic.geometry;//polygon为geometry对象，用来提取出graphic对象中的geometry对象
+		dojo.forEach(pointGraphicsLayer.graphics, function (feature) {//再遍历循环每一个点graphic对象
+			var point = feature.geometry;//point对象
+			if (polygon.contains(point)) {//判断点是否在多边形内，返回值为Boolean
+				graphicArry.push(feature);
+			}
+		})
+	});
+	for (let j = 0; j <graphicArry.length; j++) {
+		pointGraphicsLayer.remove(graphicArry[j]);
+	}
+	navToolbar.deactivate();
+	if (undefined != graphicLayerRectangle
+		&& null != graphicLayerRectangle) {
+		map.removeLayer(graphicLayerRectangle);
+		graphicLayerRectangle = null;
+		if (undefined != tb
+			&& null != tb) {
+			tb.deactivate();
+		}
+	}
+}
+
+function delStation(index) {
+	if (undefined != stationGraphicsLayer
+		&& null != stationGraphicsLayer) {
+		var stationGraphicArry =[];//用于承接点的graphic对象
+		dojo.forEach(stationGraphicsLayer.graphics, function (feature) {//再遍历循环每一个点graphic对象
+			var sid = feature.attributes.sid;//point对象
+			if (sid == index) {
+				stationGraphicArry.push(feature);
+			}
+		})
+		for (let j = 0; j <stationGraphicArry.length; j++) {
+			stationGraphicsLayer.remove(stationGraphicArry[j]);
+		}
+	}
+	if (undefined != stationLabelLayer
+		&& null != stationLabelLayer) {
+		var labelGraphicArry =[];//用于承接点的graphic对象
+		dojo.forEach(stationLabelLayer.graphics, function (feature) {//再遍历循环每一个点graphic对象
+			var sid = feature.attributes.sid;//point对象
+			if (sid == index) {
+				labelGraphicArry.push(feature);
+			}
+		})
+		for (let j = 0; j <labelGraphicArry.length; j++) {
+			stationLabelLayer.remove(labelGraphicArry[j]);
+		}
+	}
+	if (undefined != pointGraphicsLayer
+		&& null != pointGraphicsLayer) {
+		var pointGraphicArry =[];//用于承接点的graphic对象
+		dojo.forEach(pointGraphicsLayer.graphics, function (feature) {//再遍历循环每一个点graphic对象
+			var sid = feature.attributes.sid;//point对象
+			if (sid == index) {
+				pointGraphicArry.push(feature);
+			}
+		})
+		for (let j = 0; j <pointGraphicArry.length; j++) {
+			pointGraphicsLayer.remove(pointGraphicArry[j]);
+		}
+	}
+}
+
+function disconnect(){
+	dojo.disconnect(graphicClick1);
+	dojo.disconnect(graphicClick2);
+	navToolbar.deactivate();
+	if (undefined != graphicLayerRectangle
+		&& null != graphicLayerRectangle) {
+		map.removeLayer(graphicLayerRectangle);
+		graphicLayerRectangle = null;
+		if (undefined != tb
+			&& null != tb) {
+			tb.deactivate();
+		}
+	}
+}
+
+function getTrainPoint(index){
+	var pointGraphicArry =[];
+	if (undefined != pointGraphicsLayer
+		&& null != pointGraphicsLayer) {4
+		dojo.forEach(pointGraphicsLayer.graphics, function (feature) {//再遍历循环每一个点graphic对象
+			var sid = feature.attributes.sid;//point对象
+			if (sid == index) {
+				var map = {};
+				map["lon"] = feature.geometry.x.toString();
+				map["lat"] = feature.geometry.y.toString();
+				pointGraphicArry.push(map);
+			}
+		})
+	}
+	return pointGraphicArry;
 }

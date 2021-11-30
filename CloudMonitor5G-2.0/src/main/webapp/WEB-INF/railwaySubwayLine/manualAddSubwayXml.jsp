@@ -8,7 +8,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 %>
 <html>
 <head>
-    <title>手动新增高铁xml页面</title>
+    <title>手动新增地铁xml页面</title>
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="expires" content="0">
@@ -124,7 +124,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 $("#trainCodeInfo").css('display','block');
                 $("#stationInfo").css('display','none');
                 $('#beforeButton').linkbutton('disable');
-                $("#trainCode").textbox('enable');
             }if(processIndex==3){
                 processIndex--;
                 sidArr = [];
@@ -151,14 +150,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 if(isValid){
                     processIndex++;
                     selectLocationType = 0;
-                    xmlParam.name = $("#trainCode").textbox('getValue');
-                    xmlParam.startStation = $("#startStation").textbox('getValue');
-                    xmlParam.destStation = $("#endStation").textbox('getValue');
-                    xmlParam.startTime = $("#metroLineStartTime").timespinner('getValue');
-                    xmlParam.arriveTime = $("#metroLineEndTime").timespinner('getValue');
+                    xmlParam.city = $("#city").textbox('getValue');
+                    xmlParam.lineName = $("#lineName").textbox('getValue');
                     $("#trainCodeInfo").css('display','none');
                     $("#stationInfo").css('display','block');
-                    $("#trainCode").textbox('disable');
                     $('#beforeButton').linkbutton('enable');
                 }
             }else if(processIndex==2){
@@ -179,17 +174,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         $(this).attr('checked',null);
                         let index = $(this).parent().parent().children("#tdSid")[0].innerHTML;
                         let name = $("#stationName"+index).textbox('getValue');
-                        let start = $("#stationStartTime"+index).timespinner('getValue');
-                        let arrive = $("#stationEndTime"+index).timespinner('getValue');
                         let lon = $("#Longitude"+index).timespinner('getValue');
                         let lat = $("#Latitude"+index).timespinner('getValue');
                         if(xmlParam.stops[index]==null){
-                            let stop = {"name":name,"start":start,"arrive":arrive,"lon":lon,"lat":lat};
+                            let stop = {"name":name,"lon":lon,"lat":lat};
                             xmlParam.stops[index] = stop;
                         }else{
                             xmlParam.stops[index].name = name;
-                            xmlParam.stops[index].start = start;
-                            xmlParam.stops[index].arrive = arrive;
                             xmlParam.stops[index].lon = lon;
                             xmlParam.stops[index].lat = lat;
                         }
@@ -215,25 +206,22 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             });
             let xmlParamJson = JSON.parse(JSON.stringify(xmlParam));
             let data = {};
-            data["line.name"] = xmlParamJson["name"];
-            data["line.startStation"] = xmlParamJson["startStation"];
-            data["line.startTime"] = xmlParamJson["startTime"];
-            data["line.destStation"] = xmlParamJson["destStation"];
-            data["line.arriveTime"] = xmlParamJson["arriveTime"];
+            data["subway.city"] = xmlParamJson["city"];
+            data["subway.lineName"] = xmlParamJson["lineName"];
             for (let i = 0; i < xmlParamJson["stops"].length; i++) {
-                data["line.stops["+i+"].name"] = xmlParamJson["stops"][i].name;
-                data["line.stops["+i+"].arrive"] = xmlParamJson["stops"][i].arrive;
-                data["line.stops["+i+"].start"] = xmlParamJson["stops"][i].start;
-                data["line.stops["+i+"].lon"] = xmlParamJson["stops"][i].lon;
-                data["line.stops["+i+"].lat"] = xmlParamJson["stops"][i].lat;
+                data["subway.stops["+i+"].name"] = xmlParamJson["stops"][i].name;
+                data["subway.stops["+i+"].arrive"] = xmlParamJson["stops"][i].arrive;
+                data["subway.stops["+i+"].start"] = xmlParamJson["stops"][i].start;
+                data["subway.stops["+i+"].lon"] = xmlParamJson["stops"][i].lon;
+                data["subway.stops["+i+"].lat"] = xmlParamJson["stops"][i].lat;
                 for (let j = 0; j < xmlParamJson["stops"][i].ponitList.length; j++) {
-                    data["line.stops["+i+"].points["+j+"].lon"] = xmlParamJson["stops"][i].ponitList[j].lon;
-                    data["line.stops["+i+"].points["+j+"].lat"] = xmlParamJson["stops"][i].ponitList[j].lat;
+                    data["subway.stops["+i+"].points["+j+"].lon"] = xmlParamJson["stops"][i].ponitList[j].lon;
+                    data["subway.stops["+i+"].points["+j+"].lat"] = xmlParamJson["stops"][i].ponitList[j].lat;
                 }
             }
             $.ajax({
                 type : "GET",
-                url : "${pageContext.request.contextPath}/railwayLine/manualAddTrainXml",
+                url : "${pageContext.request.contextPath}/subwayLine/manualAddSubwayXml",
                 data : data,
                 dataType : "json", //服务器响应的数据类型
                 success : function(data) {
@@ -255,21 +243,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 '<td><input class=\'iconfont\' type="checkbox" /></td>' +
                 '<td id="tdSid">'+sid+'</td>' +
                 '<td><input id="stationName'+sid+'" name="stationName" class="easyui-textbox stationInput stationNameClass" data-options="required:true"/></td>' +
-                '<td><input name="stationEndTime" id="stationEndTime'+sid+'" class="easyui-timespinner stationInput stationEndTimeClass" data-options="required:true,showSeconds:false"></td>'+
-                '<td><input name="stationStartTime" id="stationStartTime'+sid+'" class="easyui-timespinner stationInput stationStartTimeClass" data-options="required:true,showSeconds:false"></td>' +
-                ' <td><input id="Longitude'+sid+'" name="Longitude" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/></td>' +
+               ' <td><input id="Longitude'+sid+'" name="Longitude" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/></td>' +
                 '<td><input id="Latitude'+sid+'" name="Latitude" class="easyui-numberbox stationInput latitudeClass" data-options="required:true,min:-90,max:90,precision:6"/></td>' +
                 '<tr>';
             $(trElement).after(inHtml);
             $('.easyui-textbox').textbox();
-            $('.easyui-timespinner').timespinner();
             $('.easyui-numberbox').numberbox();
             let i = 0;
             $('#stationInfo td .iconfont').each(function(){
                 $(this).parent().parent().find("#tdSid")[0].innerHTML = i;
                 $(this).parent().parent().find(".stationNameClass").attr('id','stationName'+i);
-                $(this).parent().parent().find(".stationStartTimeClass").attr('id','stationStartTime'+i);
-                $(this).parent().parent().find(".stationEndTimeClass").attr('id','stationEndTime'+i);
                 $(this).parent().parent().find(".longitudeClass").attr('id','Longitude'+i);
                 $(this).parent().parent().find(".latitudeClass").attr('id','Latitude'+i);
                 i++;
@@ -298,8 +281,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     $('#stationInfo td .iconfont').each(function(){
                         $(this).parent().parent().find("#tdSid")[0].innerHTML = i;
                         $(this).parent().parent().find(".stationNameClass").attr('id','stationName'+i);
-                        $(this).parent().parent().find(".stationStartTimeClass").attr('id','stationStartTime'+i);
-                        $(this).parent().parent().find(".stationEndTimeClass").attr('id','stationEndTime'+i);
                         $(this).parent().parent().find(".longitudeClass").attr('id','Longitude'+i);
                         $(this).parent().parent().find(".latitudeClass").attr('id','Latitude'+i);
                         i++;
@@ -343,16 +324,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         style="width:100%;height:100%;border:2px;"></iframe>
     </div>
 
-    <div data-options="region:'east',title:'高铁线路设置',split:false,tools:'#tt3'" style="width:30%;height:100%;overflow: auto;">
+    <div data-options="region:'east',title:'地铁线路设置',split:false,tools:'#tt3'" style="width:30%;height:100%;overflow: auto;">
 
         <form id="trainff" method="post">
-            <div class="inputDivShow" >
-                <input id="trainCode" name="trainCode" class="easyui-textbox" data-options="required:true,prompt:'请输入高铁车次号'" />
-            </div>
             <div id="trainCodeInfo" style="display: block">
-                <div style="height:2%;background-color:#e8f1ff;padding:5px;border:1px solid #95b8e7;">
-                    <div class="panel-title">添加车次信息</div>
-                </div>
                 <div style="width:100%;height:87%;overflow-y:auto;" class="tableClass">
                     <table style="width:100%;">
                         <thead>
@@ -369,27 +344,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                             </td>
                         </tr>
                         <tr>
-                            <td>始发站</td>
+                            <td>城市</td>
                             <td>
-                                <input id="startStation" name="startStation" class="easyui-textbox" data-options="required:true"/>
+                                <input id="city" name="city" class="easyui-textbox" data-options="required:true"/>
                             </td>
                         </tr>
                         <tr>
-                            <td>终点站</td>
+                            <td>线路名称</td>
                             <td>
-                                <input id="endStation" name="endStation" class="easyui-textbox" data-options="required:true"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>开始时间(StartTime)</td>
-                            <td>
-                                <input name="metroLineStartTime" id="metroLineStartTime" class="easyui-timespinner" data-options="required:true,showSeconds:false">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>终点时间(EndTime)</td>
-                            <td>
-                                <input name="metroLineEndTime" id="metroLineEndTime" class="easyui-timespinner" data-options="required:true,showSeconds:false">
+                                <input id="lineName" name="lineName" class="easyui-textbox" data-options="required:true"/>
                             </td>
                         </tr>
                         </tbody>
@@ -400,9 +363,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
         <form id="stationff" method="post">
             <div id="stationInfo" style="display: none">
-                <div style="height:2%;background-color:#e8f1ff;padding:5px;border:1px solid #95b8e7;">
-                    <div class="panel-title" data-options="title:'tools:'#tt3'">添加各站点经纬度信息</div>
-                </div>
                 <div id="stationButton" style="display: block">
                     <a id="addStation" data-options="iconCls:'icon-add'" class="easyui-linkbutton" onclick="addStation();" >添加站点信息</a>
                     <a id="deleteStation" data-options="iconCls:'icon-remove'" class="easyui-linkbutton" onclick="deleteStation();" >删除站点信息</a>
@@ -417,8 +377,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                             <th></th>
                             <th>序号</th>
                             <th>站点名称</th>
-                            <th>到达时间(ArriveTime)</th>
-                            <th>开始时间(StartTime)</th>
                             <th>经度(Longitude)</th>
                             <th>纬度(Latitude)</th>
                         </tr>
@@ -431,12 +389,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                             <td id="tdSid">0</td>
                             <td>
                                 <input id="stationName0" name="stationName" class="easyui-textbox stationInput stationNameClass" data-options="required:true"/>
-                            </td>
-                            <td>
-                                <input name="stationEndTime" id="stationEndTime0" class="easyui-timespinner stationInput stationEndTimeClass" data-options="required:true,showSeconds:false">
-                            </td>
-                            <td>
-                                <input name="stationStartTime" id="stationStartTime0" class="easyui-timespinner stationInput stationStartTimeClass" data-options="required:true,showSeconds:false">
                             </td>
                             <td>
                                 <input id="Longitude0" name="Longitude" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/>

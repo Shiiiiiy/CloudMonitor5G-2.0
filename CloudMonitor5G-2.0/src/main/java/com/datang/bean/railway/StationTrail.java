@@ -14,13 +14,13 @@ import java.util.List;
  * @Version 1.0
  **/
 public class StationTrail {
-    private String stationName;
+    String stationName;
 
-    private String lon;
+    String lon;
 
-    private String lat;
+    String lat;
 
-    private List<Point> ponitList = new ArrayList<>();
+    ArrayList<Point> ponitList = new ArrayList<>();
 
     public StationTrail() {
     }
@@ -59,7 +59,7 @@ public class StationTrail {
         return ponitList;
     }
 
-    public void setPonitList(List<Point> ponitList) {
+    public void setPonitList(ArrayList<Point> ponitList) {
         this.ponitList = ponitList;
     }
 }

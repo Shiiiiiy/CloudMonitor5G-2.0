@@ -743,3 +743,10 @@ INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_n
 INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Download','下载','download','com.baidu.netdisk','百度网盘','bdnetdisk');
 INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'Download','下载','download','com.tencent.android.qqdownloader','应用宝','qqdownloader');
 INSERT INTO IADS_TRAFFIC_CLASSIFY  ( traffic,traffic_name,traffic_icon,app,app_name,app_icon ) VALUES( 'SpeedTest','测速','speedtest','Cn.nokia.speedtest5g','speedtest','speedtest');
+
+
+INSERT INTO "iads_train_time_interface"("id", "qurey_interface") VALUES (1, 'query');
+INSERT INTO "iads_train_time_interface"("id", "qurey_interface") VALUES (2, 'queryA');
+INSERT INTO "iads_train_time_interface"("id", "qurey_interface") VALUES (3, 'queryX');
+INSERT INTO "iads_train_time_interface"("id", "qurey_interface") VALUES (4, 'queryY');
+INSERT INTO "iads_train_time_interface"("id", "qurey_interface") VALUES (5, 'queryZ');

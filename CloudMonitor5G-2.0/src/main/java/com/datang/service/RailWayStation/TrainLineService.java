@@ -1,5 +1,6 @@
 package com.datang.service.RailWayStation;
 
+import com.datang.bean.railway.Line;
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageList;
 import com.datang.domain.railway.TrainXmlTablePojo;
@@ -22,4 +23,6 @@ public interface TrainLineService {
     public List<Map<String, String>> queryTrainList(String startStationName, String endStationName, String queryDateTime) throws Exception;
 
     List<TrainXmlTablePojo> findTrainXml(PageList pageList);
+
+    void manualAddTrainXml(Line line);
 }

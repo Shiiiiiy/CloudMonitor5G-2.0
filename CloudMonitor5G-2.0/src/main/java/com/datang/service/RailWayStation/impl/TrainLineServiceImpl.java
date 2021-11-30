@@ -350,6 +350,109 @@ public class TrainLineServiceImpl implements TrainLineService {
         return trainXmlTableDao.findTrainXmlTable(pageList);
     }
 
+    @Override
+    public void manualAddTrainXml(Line line) {
+        CsvReader csvReader = null;
+        XmlDecoder decoder = null;
+        Long xmlNum = 0L;
+        try {
+            //csv的站点经纬度集合 正序
+            List<StationTrail> newTrailList = new ArrayList<StationTrail>();
+            ArrayList<Stop> stops = line.getStops();
+            stops.stream().forEach(stop->{
+                StationTrail trail = new StationTrail();
+                trail.setStationName(stop.getName());
+                trail.setLon(stop.getLon());
+                trail.setLat(stop.getLat());
+                trail.getPonitList().addAll(stop.getPoints());
+                newTrailList.add(trail);
+            });
+
+            String trainCode = line.getName();
+
+            //生成xml
+            String xmlFileName = trainCode+"-"+ DateFormatUtils.format(new Date(), "yyyy-MM-dd")+".xml";
+            File xmlfile= new File(railwaySubwayLineFileUrl+File.separator+"railwayLine"+File.separator+trainCode+File.separator+xmlFileName);
+            //如果文件夹不存在则创建
+            if(!xmlfile.getParentFile().exists()  && !xmlfile.isDirectory()){
+                xmlfile.getParentFile().mkdirs();
+            }
+            if(xmlfile.exists()) {
+                xmlfile.delete();
+            }
+            xmlfile.createNewFile();
+            decoder = new XmlDecoder(xmlfile);
+            decoder.writeHead();
+            decoder.writeCity(line.getStartStation());
+            decoder.writeLine(line.getName(),line.getStartTime(),line.getArriveTime());
+
+            ArrayList<Point> points = new ArrayList<>();
+            int index = 0;
+            boolean isBegin = false;
+            for(Stop stop:line.getStops()){
+                for(int i=index;i<newTrailList.size();i++){
+                    StationTrail stationTrail = newTrailList.get(i);
+                    if(stationTrail.getStationName().equals(stop.getName())){
+                        isBegin = true;
+                        if(points.size()>0){
+                            decoder.writeItems(points);
+                            points.clear();
+                        }
+                        decoder.writeStation(stop,stationTrail.getLon(),stationTrail.getLat());
+                        points.addAll(stationTrail.getPonitList());
+                        index = i+1;
+                        break;
+                    }else{
+                        if(isBegin){
+                            points.add(new Point(stationTrail.getLon(),stationTrail.getLat()));
+                            points.addAll(stationTrail.getPonitList());
+                        }
+                    }
+                }
+            }
+            decoder.endWriteLine();
+            decoder.endWriteCity();
+            decoder.writeTail();
+
+            //保存数据库
+            TrainXmlTablePojo trainXmlTablePojo = new TrainXmlTablePojo();
+            trainXmlTablePojo.setTrainCode(line.getName());
+            trainXmlTablePojo.setStartStation(line.getStartStation());
+            trainXmlTablePojo.setStartTime(line.getStartTime());
+            trainXmlTablePojo.setDestStation(line.getDestStation());
+            trainXmlTablePojo.setArriveTime(line.getArriveTime());
+            trainXmlTablePojo.setLineXml(xmlFileName);
+            trainXmlTablePojo.setXmlFilePath(xmlfile.getPath());
+            trainXmlTablePojo.setUpdateTimeLong(new Date().getTime());
+
+            PageList pagelist = new PageList();
+            pagelist.putParam("lineXml",trainXmlTablePojo.getLineXml());
+            List<TrainXmlTablePojo> trainXmlTableList = trainXmlTableDao.findTrainXmlTable(pagelist);
+            if(trainXmlTableList==null || trainXmlTableList.size()==0){
+                trainXmlTableDao.create(trainXmlTablePojo);
+            }else{
+                trainXmlTablePojo.setId(trainXmlTableList.get(0).getId());
+                trainXmlTableDao.update(trainXmlTablePojo);
+            }
+            xmlNum++;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApplicationException(
+                    e.getMessage());
+        } finally {
+            try{
+                if(csvReader!=null){
+                    csvReader.close();
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+                throw new ApplicationException(
+                        e.getMessage());
+            }
+        }
+    }
+
     /**
      * 通过递归的方式罗列出所有的排列结果
      * @param a：初始数组

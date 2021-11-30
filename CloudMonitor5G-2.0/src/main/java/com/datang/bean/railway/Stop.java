@@ -14,7 +14,9 @@ public class Stop {
   String name;
   String arrive;
   String start;
-  List<Point> ponitList = new ArrayList<>();
+  String lon;
+  String lat;
+  List<Point> points = new ArrayList<>();
 
   /* ADD YOUR CODE HERE */
   public Stop(){
@@ -28,7 +30,7 @@ public class Stop {
 
   public void addPoint(Point point) {
     if(StringUtils.hasText(point.getLon()) && StringUtils.hasText(point.getLat())) {
-      this.ponitList.add(point);
+      this.points.add(point);
     }
   }
 }

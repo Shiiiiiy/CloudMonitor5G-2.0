@@ -184,6 +184,9 @@ var gisToolBars={
 		showCompareGrid:false,//是否界面初始化对比日志栅格渲染
 		showDrawRectangleFrame:false, //是否显示画矩形框工具
 		showSelectGpsPoint:false, //是否显示选取经纬度点工具
+		showFrameSelect:false, //是否显示选框
+		showDelLayer: false, //显示删除图层按钮
+		showSelectLinePoint:false, //是否显示线路点选取工具
 		moduleType:''//模块类型
 	},
 	distrub5g:{
@@ -1527,8 +1530,9 @@ function initToolbar(toolbarType){
 			var drawKpis=[];
 			gisToolBars.ShowPointLonAndLat.showCell=false;
 			gisToolBars.ShowPointLonAndLat.showEmbbRoadPoints=false;
-			gisToolBars.ShowPointLonAndLat.showDrawRectangleFrame=false;
-			gisToolBars.ShowPointLonAndLat.showSelectGpsPoint=true;
+			gisToolBars.ShowPointLonAndLat.showFrameSelect=true;
+			gisToolBars.ShowPointLonAndLat.showSelectLinePoint=true;
+			gisToolBars.ShowPointLonAndLat.showDelLayer=true;
 			gisToolBars.ShowPointLonAndLat.drawKpi=drawKpis;
 			return gisToolBars.ShowPointLonAndLat;
 		}

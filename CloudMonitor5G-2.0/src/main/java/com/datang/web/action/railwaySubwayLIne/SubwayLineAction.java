@@ -1,5 +1,6 @@
 package com.datang.web.action.railwaySubwayLIne;
 
+import com.datang.bean.railway.Subway;
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageAction;
 import com.datang.common.action.page.PageList;
@@ -39,6 +40,8 @@ public class SubwayLineAction extends PageAction implements ModelDriven<SubwayXm
 	
 	private SubwayXmlTablePojo subwayXmlTablePojo = new SubwayXmlTablePojo();
 
+	private Subway subway = new Subway();
+
 	@Value("${railwaySubwayLineFileUrl}")
 	private String railwaySubwayLineFileUrl;
 
@@ -67,6 +70,10 @@ public class SubwayLineAction extends PageAction implements ModelDriven<SubwayXm
 	 */
 	public String goImport() {
 		return "import";
+	}
+
+	public String goAddSubwayXmlPage() {
+		return "manualAddSubwayXml";
 	}
 
 	@Override
@@ -123,6 +130,18 @@ public class SubwayLineAction extends PageAction implements ModelDriven<SubwayXm
 		}catch (Exception e) {
 			e.printStackTrace();
 			valueStack.set("errorMsg", e.getMessage());
+		}
+		return ReturnType.JSON;
+	}
+
+	public String manualAddSubwayXml() {
+		ValueStack valueStack = ActionContext.getContext().getValueStack();
+		try {
+			if(subway.getStops().size()>0){
+				subwayLineService.manualAddTrainXml(subway);
+			}
+		} catch (ApplicationException appEx) {
+			valueStack.set("errorMsg", appEx.getMessage());
 		}
 		return ReturnType.JSON;
 	}
@@ -205,6 +224,14 @@ public class SubwayLineAction extends PageAction implements ModelDriven<SubwayXm
 
 	public void setSubwayXmlTablePojo(SubwayXmlTablePojo subwayXmlTablePojo) {
 		this.subwayXmlTablePojo = subwayXmlTablePojo;
+	}
+
+	public Subway getSubway() {
+		return subway;
+	}
+
+	public void setSubway(Subway subway) {
+		this.subway = subway;
 	}
 
 	/**

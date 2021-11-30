@@ -162,6 +162,93 @@ public class SubwayLineServiceImpl implements SubwayLineService {
         return subwayXmlTableDao.findSubwayXmlTable(pageList);
     }
 
+    @Override
+    public void manualAddTrainXml(Subway subway) {
+        SubwayXmlDecoder decoder = null;
+        try {
+            String city = subway.getCity();
+            String name = subway.getLineName();
+
+            //csv的站点经纬度集合 正序
+            List<StationTrail> newTrailList = new ArrayList<StationTrail>();
+            ArrayList<Stop> stops = subway.getStops();
+            stops.stream().forEach(stop->{
+                StationTrail trail = new StationTrail();
+                trail.setStationName(stop.getName());
+                trail.setLon(stop.getLon());
+                trail.setLat(stop.getLat());
+                trail.getPonitList().addAll(stop.getPoints());
+                newTrailList.add(trail);
+            });
+
+            //生成xml
+            String xmlFileName = city+"-"+name+"-"+DateFormatUtils.format(new Date(), "yyyy-MM-dd")+".xml";
+            File xmlfile= new File(railwaySubwayLineFileUrl+File.separator+"subwayLine"+File.separator+city+File.separator+xmlFileName);
+            //如果文件夹不存在则创建
+            if(!xmlfile.getParentFile().exists()  && !xmlfile.isDirectory()){
+                xmlfile.getParentFile().mkdirs();
+            }
+            if(xmlfile.exists()) {
+                xmlfile.delete();
+            }
+            xmlfile.createNewFile();
+            decoder = new SubwayXmlDecoder(xmlfile);
+            decoder.writeHead();
+            decoder.writeCity(city);
+            decoder.writeLine(name,"0","0","","");
+
+            ArrayList<Point> points = new ArrayList<Point>();
+            List<String> stationList = new ArrayList<>();
+
+            int index = 0;
+            boolean isBegin = false;
+            for(Stop stop:subway.getStops()){
+                for(int i=index;i<newTrailList.size();i++){
+                    StationTrail stationTrail = newTrailList.get(i);
+                    if(stationTrail.getStationName().equals(stop.getName())){
+                        isBegin = true;
+                        if(points.size()>0){
+                            decoder.writeItems(points);
+                            points.clear();
+                        }
+                        stationList.add(stationTrail.getStationName());
+                        decoder.writeStation(stationTrail.getStationName(),stationTrail.getLon(),stationTrail.getLat());
+                        points.addAll(stationTrail.getPonitList());
+                        index = i+1;
+                        break;
+                    }
+                }
+            }
+
+            decoder.endWriteLine();
+            decoder.endWriteCity();
+            decoder.writeTail();
+
+            //保存数据库
+            SubwayXmlTablePojo subwayXmlTablePojo = new SubwayXmlTablePojo();
+            subwayXmlTablePojo.setCity(city);
+            subwayXmlTablePojo.setLineNo(name);
+            subwayXmlTablePojo.setStations(JSONObject.toJSONString(stationList));
+            subwayXmlTablePojo.setLineXml(xmlFileName);
+            subwayXmlTablePojo.setXmlFilePath(xmlfile.getPath());
+            subwayXmlTablePojo.setUpdateTimeLong(new Date().getTime());
+
+            PageList pagelist = new PageList();
+            pagelist.putParam("lineXml",subwayXmlTablePojo.getLineXml());
+            List<SubwayXmlTablePojo> subwayXmlTableList = subwayXmlTableDao.findSubwayXmlTable(pagelist);
+            if(subwayXmlTableList==null || subwayXmlTableList.size()==0){
+                subwayXmlTableDao.create(subwayXmlTablePojo);
+            }else{
+                subwayXmlTablePojo.setId(subwayXmlTableList.get(0).getId());
+                subwayXmlTableDao.update(subwayXmlTablePojo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApplicationException(
+                    e.getMessage());
+        }
+    }
+
     /**
      * 通过递归的方式罗列出所有的排列结果
      * @param a：初始数组

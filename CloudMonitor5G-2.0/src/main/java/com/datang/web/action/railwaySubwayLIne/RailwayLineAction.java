@@ -1,5 +1,7 @@
 package com.datang.web.action.railwaySubwayLIne;
 
+import com.datang.bean.railway.Line;
+import com.datang.bean.railway.StationTrail;
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageAction;
 import com.datang.common.action.page.PageList;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import javax.servlet.ServletOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -59,6 +62,8 @@ public class RailwayLineAction extends PageAction implements ModelDriven<TrainXm
 
 	@Autowired
 	private TrainUpdateSchduleService trainUpdateSchduleService;
+
+	private Line line = new Line();
 
 	/**
 	 * 上传文件
@@ -141,6 +146,16 @@ public class RailwayLineAction extends PageAction implements ModelDriven<TrainXm
 		}catch (Exception e) {
 			e.printStackTrace();
 			valueStack.set("errorMsg", e.getMessage());
+		}
+		return ReturnType.JSON;
+	}
+
+	public String manualAddTrainXml() {
+		ValueStack valueStack = ActionContext.getContext().getValueStack();
+		try {
+			trainLineService.manualAddTrainXml(line);
+		} catch (ApplicationException appEx) {
+			valueStack.set("errorMsg", appEx.getMessage());
 		}
 		return ReturnType.JSON;
 	}
@@ -248,6 +263,14 @@ public class RailwayLineAction extends PageAction implements ModelDriven<TrainXm
 
 	public void setTraintXmlTablePojo(TrainXmlTablePojo traintXmlTablePojo) {
 		this.traintXmlTablePojo = traintXmlTablePojo;
+	}
+
+	public Line getLine() {
+		return line;
+	}
+
+	public void setLine(Line line) {
+		this.line = line;
 	}
 
 	/**

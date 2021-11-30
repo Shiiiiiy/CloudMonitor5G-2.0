@@ -75,7 +75,7 @@
 				fit:true,
 				//奇偶变色
 				striped:true,
-				tools:'#tt3',
+				// tools:'#tt3',
 				// 行号
 				rownumbers:true,
 				pagination:true,
@@ -188,14 +188,6 @@
 			});
 		}
 
-		function testQueryTrainList(){
-			$.post("${pageContext.request.contextPath}/appRailwaySubwayQuery/queryTrainList",{"startStationName":"上海","endStationName":"北京","queryDateTime":"2021-11-25"},
-					function(result){
-						console.info(result);
-					}
-					,"json");
-		}
-
 
 
 
@@ -247,9 +239,9 @@
 						<shiroextend:hasAnyPermissions name="railwayLine:import">
 							<a class="easyui-linkbutton" onclick="importLineFile();" style="width: 80px;margin-right: 5px;">导入</a>
 						</shiroextend:hasAnyPermissions>
-<%--                        <shiroextend:hasAnyPermissions name="railwayLine:import">--%>
-<%--                            <a class="easyui-linkbutton" onclick="addXml();" style="width: 80px;margin-right: 5px;">新增</a>--%>
-<%--                        </shiroextend:hasAnyPermissions>--%>
+                        <shiroextend:hasAnyPermissions name="railwayLine:import">
+						<a class="easyui-linkbutton" onclick="addXml();" style="width: 80px;margin-right: 5px;">新增</a>
+						</shiroextend:hasAnyPermissions>
 					</td>
 				</tr>
 			</table>

@@ -1,5 +1,6 @@
 package com.datang.service.RailWayStation;
 
+import com.datang.bean.railway.Subway;
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageList;
 import com.datang.domain.railway.SubwayXmlTablePojo;
@@ -19,4 +20,6 @@ public interface SubwayLineService {
     void deleteSubwayXml(Long id);
 
     List<SubwayXmlTablePojo> findSubwayXml(PageList pageList);
+
+    void manualAddTrainXml(Subway subway);
 }

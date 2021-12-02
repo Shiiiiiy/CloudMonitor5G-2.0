@@ -1020,7 +1020,7 @@
 			</div>
 			<div class="box">
 				<div class="icon"></div>
-				<div class="text">NR RRC链接成功率</div>
+				<div class="text">NR RRC连接成功率</div>
 				<div id="KF07" class="value"></div>
 			</div>
 			<div class="box">

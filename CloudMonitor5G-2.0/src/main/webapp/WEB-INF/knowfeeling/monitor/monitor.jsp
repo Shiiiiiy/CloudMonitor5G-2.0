@@ -189,7 +189,7 @@
 		}
 
 		.mail139{
-			background-image: url("../images/kfmonitor/mail139.jpg");
+			background-image: url("../images/kfmonitor/139mail.jpg");
 		}
 
 		.alipay{
@@ -232,7 +232,7 @@
 			background-image: url("../images/kfmonitor/qq.jpg");
 		}
 
-		.qqdownload{
+		.qqdownloader{
 			background-image: url("../images/kfmonitor/qqdownload.jpg");
 		}
 
@@ -705,6 +705,7 @@
 						$("#box1 ul").width($("#box1 ul").parent().width()/3 * num );
 
 						var width = $("#box1 ul").width()/num -10;
+						$("#box1 ul").width((width + 10) * num );
 
 						$.each(data.traffic,function(i,item){
 
@@ -747,9 +748,10 @@
 					$("#box2 ul").animate({left:0});
 					$("#box2 ul").attr('slide',0);
 					if(data.app){
-						var num = data.app.length > 3 ? data.traffic.app : 3;
+						var num = data.app.length > 3 ? data.app.length : 3;
 						$("#box2 ul").width($("#box2 ul").parent().width()/3 * num );
-						var width = $("#box2 ul").width()/num -10;
+						var width = Math.round($("#box2 ul").width()/num -10);
+						$("#box2 ul").width((width + 10) * num );
 
 						var all = 0;
 						$.each(data.app,function(i,item){

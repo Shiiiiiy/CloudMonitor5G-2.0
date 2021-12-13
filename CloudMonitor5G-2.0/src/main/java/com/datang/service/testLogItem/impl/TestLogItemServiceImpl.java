@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.datang.dao.knowfeeling.KnowFeelingDao;
+import com.datang.domain.testLogItem.UnicomLogItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,9 @@ import com.datang.service.testLogItem.ITestLogItemService;
 public class TestLogItemServiceImpl implements ITestLogItemService {
 	@Autowired
 	private TestLogItemDao testLogItemDao;
+
+	@Autowired
+	private KnowFeelingDao knowFeelingDao;
 
 	/*
 	 * (non-Javadoc)
@@ -147,8 +152,14 @@ public class TestLogItemServiceImpl implements ITestLogItemService {
 		if(idsArry.length>0){
 			for (String recseqno : idsArry) {
 				TestLogItem testLogItem = testLogItemDao.find(Long.valueOf(recseqno));
+				//20211213 直接物理删除
+				/**
 				testLogItem.setDeleteTag(1);
 				testLogItemDao.update(testLogItem);
+			 	**/
+				testLogItemDao.delete(testLogItem);
+				//删除关联感知数据
+				knowFeelingDao.deleteKnowFeeling(testLogItem.getFileName());
 			}
 		}
 	}

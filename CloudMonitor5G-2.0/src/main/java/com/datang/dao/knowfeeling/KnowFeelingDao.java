@@ -18,6 +18,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -524,4 +526,17 @@ public class KnowFeelingDao extends GenericHibernateDao<KnowFeelingReportTask, L
 
 
 
+    public void deleteKnowFeeling(String logName) {
+
+        StringBuilder sb  = new StringBuilder(" delete  from iads_knowfeeling_cellid where logname =:logname   ");
+        Query createQuery = this.getHibernateSession().createSQLQuery(sb.toString());
+        createQuery.setParameter("logname", logName);
+        createQuery.executeUpdate();
+
+        sb  = new StringBuilder(" delete  from iads_knowfeeling_traffic where logname =:logname   ");
+        createQuery = this.getHibernateSession().createSQLQuery(sb.toString());
+        createQuery.setParameter("logname", logName);
+        createQuery.executeUpdate();
+
+    }
 }

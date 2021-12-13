@@ -6,6 +6,7 @@ package com.datang.service.testLogItem.impl;
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageList;
 import com.datang.common.util.StringUtils;
+import com.datang.dao.knowfeeling.KnowFeelingDao;
 import com.datang.dao.testLogItem.UnicomLogItemDao;
 import com.datang.domain.stationTest.StationSAMTralPojo;
 import com.datang.domain.testLogItem.TestLogItem;
@@ -51,6 +52,8 @@ public class UnicomLogItemServiceImpl implements UnicomLogItemService {
 	@Autowired
 	private InfluxService influxService;
 
+	@Autowired
+	private KnowFeelingDao knowFeelingDao;
 
 	/*
 	 * (non-Javadoc)
@@ -175,8 +178,14 @@ public class UnicomLogItemServiceImpl implements UnicomLogItemService {
 		if(idsArry.length>0){
 			for (String recseqno : idsArry) {
 				UnicomLogItem testLogItem = unicomLogItemDao.find(Long.valueOf(recseqno));
+				//20211213 直接物理删除
+				/**
 				testLogItem.setDeleteTag(1);
 				unicomLogItemDao.update(testLogItem);
+				**/
+				unicomLogItemDao.delete(testLogItem);
+				//删除关联感知数据
+				knowFeelingDao.deleteKnowFeeling(testLogItem.getFileName());
 			}
 		}
 	}

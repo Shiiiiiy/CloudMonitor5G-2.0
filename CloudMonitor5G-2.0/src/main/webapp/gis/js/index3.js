@@ -31,7 +31,7 @@ require([  "dojo/parser", "dojo/ready", "dojo/_base/array","esri/map","esri/tool
 //				esri.config.defaults.io.alwaysUseProxy=false;
 				var labels = [ "市", "县", "簇", "ENB" ], OnlineLabels = [ "国",
 						"省", "市", "县", "镇", "街" ];
-				gs = new esri.tasks.GeometryService(geometry_url);
+				// gs = new esri.tasks.GeometryService(geometry_url);
 				wgs = new esri.SpatialReference({
 					"wkid" : 4326
 				});

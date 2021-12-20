@@ -710,7 +710,12 @@ INSERT INTO "public"."t_quesroad_threshold" VALUES (14,'上行低速率路段', 
 INSERT INTO "public"."t_quesroad_threshold" VALUES (15,'下行低速率路段', '下行低速率RLC门限', 'downlowerspeedrlc', 100, 'Mbps');
 INSERT INTO "public"."t_quesroad_threshold" VALUES (16,'下行低速率路段', '下行低速率采样点占比门限', 'downlowerspeedsamprate', 50, '%');
 INSERT INTO "public"."t_quesroad_threshold" VALUES (17,'下行低速率路段', '下行低速率路段长度', 'downlowerspeedroadlen', 30, 'm');
-
+INSERT INTO "public"."t_quesroad_threshold" VALUES (18,'下行低速率路段判定', '下行速率种类', 'downspeedtype', 3, '');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (19,'上行低速率路段判定', '上行速率种类', 'upspeedtype', 3, '');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (20,'弱覆盖路段分析门限', '重叠覆盖采样点占比-路段-NR', 'overlapcoversamprate', 30, '%');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (21,'弱覆盖路段分析门限', '重叠覆盖路段持续距离-NR', 'overlapcoverroadlen', 30, 'm');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (22,'弱覆盖路段分析门限', 'NR辅小区重叠覆盖RSRP门限', 'overlapcoverrsrp', 30, 'dBm');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (23,'弱覆盖路段分析门限', 'NR小区beam覆盖带差值', 'beamcoverdvalue', 30, 'dB');
 
 INSERT INTO IADS_TRAFFIC_CLASSIFY(traffic,traffic_name,traffic_icon,app,app_name,app_icon)  VALUES ('Message','即时通信','message','com.tencent.mm','微信','wechat');
 INSERT INTO IADS_TRAFFIC_CLASSIFY(traffic,traffic_name,traffic_icon,app,app_name,app_icon) VALUES ('Message','即时通信','message','com.tencent.mobileqq','QQ','qq');

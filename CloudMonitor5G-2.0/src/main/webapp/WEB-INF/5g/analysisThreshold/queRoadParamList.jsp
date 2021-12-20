@@ -42,6 +42,10 @@
 		});
 		/* 保存修改 */
 		function submitForm(){
+			if(!$('#paramForm').form('validate')){
+				return;
+			}
+			
 		    var fieldNameEn = "";
 		    var fieldValue = "";
 
@@ -93,13 +97,34 @@
 
 			var uplowerspeedrlc  = $("#uplowerspeedrlc").textbox('getValue');
 			fieldNameEn = fieldNameEn + 'uplowerspeedrlc' +',';
-			fieldValue = fieldValue + uplowerspeedrlc +','
+			fieldValue = fieldValue + uplowerspeedrlc +',';
 			var uplowerspeedsamprate  = $("#uplowerspeedsamprate").textbox('getValue');
 			fieldNameEn = fieldNameEn + 'uplowerspeedsamprate' +',';
-			fieldValue = fieldValue + uplowerspeedsamprate +','
+			fieldValue = fieldValue + uplowerspeedsamprate +',';
 			var uplowerspeedroadlen  = $("#uplowerspeedroadlen").textbox('getValue');
-			fieldNameEn = fieldNameEn + 'uplowerspeedroadlen';
-			fieldValue = fieldValue + uplowerspeedroadlen;
+			fieldNameEn = fieldNameEn + 'uplowerspeedroadlen'+',';
+			fieldValue = fieldValue + uplowerspeedroadlen+',';
+
+
+			var downspeedtype  = $("input[name='downspeedtype']:checked").val();
+			fieldNameEn = fieldNameEn + 'downspeedtype'+',';
+			fieldValue = fieldValue + downspeedtype+',';
+			var upspeedtype  = $("input[name='upspeedtype']:checked").val();
+			fieldNameEn = fieldNameEn + 'upspeedtype'+',';
+			fieldValue = fieldValue + upspeedtype+',';
+
+			var overlapcoversamprate  = $("#overlapcoversamprate").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'overlapcoversamprate'+',';
+			fieldValue = fieldValue + overlapcoversamprate+',';
+			var overlapcoverroadlen  = $("#overlapcoverroadlen").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'overlapcoverroadlen'+',';
+			fieldValue = fieldValue + overlapcoverroadlen+',';
+			var overlapcoverrsrp  = $("#overlapcoverrsrp").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'overlapcoverrsrp'+',';
+			fieldValue = fieldValue + overlapcoverrsrp+',';
+			var beamcoverdvalue  = $("#beamcoverdvalue").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'beamcoverdvalue';
+			fieldValue = fieldValue + beamcoverdvalue;
 
 
 			$.ajax({
@@ -147,100 +172,136 @@
 	</script>
   </head>
   <body class="easyui-layout" style="width:100%;height: 100%;margin: 0 auto;list-style:none;overflow:hidden;">
-  	<div style="width:49%;height:90%;float:left; margin-right: 10px;border:1px solid #95b8e7;">
-	  	<div data-options="region:'west',border:false,split:true">
-	  		<div style="width:100%;height:33%;">
-				<div style="height:16px;background-color:#e8f1ff;padding:5px;border-bottom:1px solid #95b8e7;">
-					<div class="panel-heading">
-						<div class="panel-title">弱覆盖路段判定</div>
+  	<div id="paramForm">
+		<div style="width:49%;height:90%;float:left; margin-right: 10px;border:1px solid #95b8e7;">
+			<div data-options="region:'west',border:false,split:true">
+				<div style="width:100%;height:33%;">
+					<div style="height:16px;background-color:#e8f1ff;padding:5px;border-bottom:1px solid #95b8e7;">
+						<div class="panel-heading">
+							<div class="panel-title">弱覆盖路段判定</div>
+						</div>
 					</div>
-				</div>
-	   			<div class="inputDivShow">弱覆盖采样点定义:NR覆盖电平<=
-		    		<input id="weakcoverrsrp" name="weakcoverrsrp" style="width:120px;" value="${questionRoadParam.weakcoverrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]' " />
-		    		dBm
-		    	</div>
-		    	<div class="inputDivShow">弱覆盖路段定义:弱覆盖采样点占比>=
-		    		<input id="weakcoversamprate" name="weakcoversamprate" style="width:120px;" value="${questionRoadParam.weakcoversamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100 " />
-		    		%
-		    	</div>
-				<div class="inputDivShow">弱覆盖路段长度>=
-					<input id="weakcoverroadlen" name="weakcoverroadlen" style="width:120px;" value="${questionRoadParam.weakcoverroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-					m
-				</div>
-		    </div>
-	    	<div style="width:100%;height:33%;">
-			    <div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">下行质差路段判定</div></div>
-	    			<div class="inputDivShow">下行质差采样点定义:NR SS-RSRP<=
-			    		<input id="downqualitydiffrsrp" name="downqualitydiffrsrp" style="width:120px;"  value="${questionRoadParam.downqualitydiffrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'"  />
-						dBm 且NR SS-SINR<=
-						<input id="downqualitydiffsinr" name="downqualitydiffsinr" style="width:120px;"  value="${questionRoadParam.downqualitydiffsinr}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-			    		dB
-			    	</div>
-					<div class="inputDivShow">下行质差路段定义:质差采样点占比>=
-						<input id="downqualitydiffsamprate" name="downqualitydiffsamprate" style="width:120px;"  value="${questionRoadParam.downqualitydiffsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
+					<div class="inputDivShow">弱覆盖采样点定义:NR覆盖电平<=
+						<input id="weakcoverrsrp" name="weakcoverrsrp" style="width:120px;" value="${questionRoadParam.weakcoverrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]' " />
+						dBm
+					</div>
+					<div class="inputDivShow">弱覆盖路段定义:弱覆盖采样点占比>=
+						<input id="weakcoversamprate" name="weakcoversamprate" style="width:120px;" value="${questionRoadParam.weakcoversamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100 " />
 						%
 					</div>
-					<div class="inputDivShow">下行质差路段长度>=
-						<input id="downqualitydiffroadlen" name="downqualitydiffroadlen" style="width:120px;"  value="${questionRoadParam.downqualitydiffroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+					<div class="inputDivShow">弱覆盖路段长度>=
+						<input id="weakcoverroadlen" name="weakcoverroadlen" style="width:120px;" value="${questionRoadParam.weakcoverroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
 						m
 					</div>
-			    </div>
-			 </div>
-			<div style="width:100%;height:33%;">
-				<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">上行质差路段定义</div></div>
-					<div class="inputDivShow">上行质差采样点定义:TxPower>=
-						<input id="upqualitydifftxpower" name="upqualitydifftxpower" style="width:120px;"  value="${questionRoadParam.upqualitydifftxpower}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-						dBm 且 上行BLER>=
-						<input id="upqualitydiffbler" name="upqualitydiffbler" style="width:120px;"  value="${questionRoadParam.upqualitydiffbler}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'"  />
-						%
+				</div>
+				<div style="width:100%;height:33%;">
+					<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">下行质差路段判定</div>
+						<div class="inputDivShow">下行质差采样点定义:NR SS-RSRP<=
+							<input id="downqualitydiffrsrp" name="downqualitydiffrsrp" style="width:120px;"  value="${questionRoadParam.downqualitydiffrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'"  />
+							dBm 且NR SS-SINR<=
+							<input id="downqualitydiffsinr" name="downqualitydiffsinr" style="width:120px;"  value="${questionRoadParam.downqualitydiffsinr}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							dB
+						</div>
+						<div class="inputDivShow">下行质差路段定义:质差采样点占比>=
+							<input id="downqualitydiffsamprate" name="downqualitydiffsamprate" style="width:120px;"  value="${questionRoadParam.downqualitydiffsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
+							%
+						</div>
+						<div class="inputDivShow">下行质差路段长度>=
+							<input id="downqualitydiffroadlen" name="downqualitydiffroadlen" style="width:120px;"  value="${questionRoadParam.downqualitydiffroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							m
+						</div>
 					</div>
-					<div class="inputDivShow">上行质差路段定义:质差采样点占比>=
-						<input id="upqualitydiffsamprate" name="upqualitydiffsamprate" style="width:120px;"  value="${questionRoadParam.upqualitydiffsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
-						%
-					</div>
-					<div class="inputDivShow">上行质差路段长度>=
-						<input id="upqualitydiffroadlen" name="upqualitydiffroadlen" style="width:120px;"  value="${questionRoadParam.upqualitydiffroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-						m
+				 </div>
+				<div style="width:100%;height:33%;">
+					<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">上行质差路段定义</div>
+						<div class="inputDivShow">上行质差采样点定义:TxPower>=
+							<input id="upqualitydifftxpower" name="upqualitydifftxpower" style="width:120px;"  value="${questionRoadParam.upqualitydifftxpower}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							dBm 且 上行BLER>=
+							<input id="upqualitydiffbler" name="upqualitydiffbler" style="width:120px;"  value="${questionRoadParam.upqualitydiffbler}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'"  />
+							%
+						</div>
+						<div class="inputDivShow">上行质差路段定义:质差采样点占比>=
+							<input id="upqualitydiffsamprate" name="upqualitydiffsamprate" style="width:120px;"  value="${questionRoadParam.upqualitydiffsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
+							%
+						</div>
+						<div class="inputDivShow">上行质差路段长度>=
+							<input id="upqualitydiffroadlen" name="upqualitydiffroadlen" style="width:120px;"  value="${questionRoadParam.upqualitydiffroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							m
+						</div>
 					</div>
 				</div>
 			</div>
-
 		</div>
-	</div>
-	<div style="width:50%;height:90%;float:left;border:1px solid #95b8e7;">
-	  	<div data-options="region:'east',border:false,split:true">
-	  		<div style="width:100%;height:33%;">
-				<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">下行低速率路段判定</div></div>
-					<div class="inputDivShow">下行低速率采样点定义:下行RLC层速率<=
-						<input id="downlowerspeedrlc" name="downlowerspeedrlc" style="width:120px;"  value="${questionRoadParam.downlowerspeedrlc}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-						Mbps
-					</div>
-					<div class="inputDivShow">下行低速率路段定义:下行低速率采样点占比>=
-						<input id="downlowerspeedsamprate" name="downlowerspeedsamprate" style="width:120px;"  value="${questionRoadParam.downlowerspeedsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
-						%
-					</div>
-					<div class="inputDivShow">下行低速率路段长度>=
-						<input id="downlowerspeedroadlen" name="downlowerspeedroadlen" style="width:120px;"  value="${questionRoadParam.downlowerspeedroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-						m
-					</div>
-				</div>
-		    </div>
-	    	<div style="width:100%;height:66%;">
-				<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">上行低速率路段判定</div></div>
-					<div class="inputDivShow">上行低速率采样点定义:上行RLC层速率<=
-						<input id="uplowerspeedrlc" name="uplowerspeedrlc" style="width:120px;"  value="${questionRoadParam.uplowerspeedrlc}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-						Mbps
-					</div>
-					<div class="inputDivShow">上行低速率路段定义:上行低速率采样点占比>=
-						<input id="uplowerspeedsamprate" name="uplowerspeedsamprate" style="width:120px;"  value="${questionRoadParam.uplowerspeedsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
-						%
-					</div>
-					<div class="inputDivShow">上行低速率路段长度>=
-						<input id="uplowerspeedroadlen" name="uplowerspeedroadlen" style="width:120px;"  value="${questionRoadParam.uplowerspeedroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
-						m
+		<div style="width:50%;height:90%;float:left;border:1px solid #95b8e7;">
+			<div data-options="region:'east',border:false,split:true">
+				<div style="width:100%;height:33%;">
+					<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">下行低速率路段判定</div>
+						<div class="inputDivShow">下行低速率采样点定义:下行速率<=
+							<input id="downlowerspeedrlc" name="downlowerspeedrlc" style="width:120px;"  value="${questionRoadParam.downlowerspeedrlc}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							Mbps
+						</div>
+						<div class="inputDivShow">下行低速率路段定义:下行低速率采样点占比>=
+							<input id="downlowerspeedsamprate" name="downlowerspeedsamprate" style="width:120px;"  value="${questionRoadParam.downlowerspeedsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
+							%
+						</div>
+						<div class="inputDivShow">下行低速率路段长度>=
+							<input id="downlowerspeedroadlen" name="downlowerspeedroadlen" style="width:120px;"  value="${questionRoadParam.downlowerspeedroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							m
+						</div>
+						<div class="inputDivShow">下行速率种类选择
+							<input type="radio" style="width:10px"  name="downspeedtype" <c:if test="${questionRoadParam.downspeedtype == '1'}">checked="checked"</c:if> value="1" />PHY
+							<input type="radio" style="width:10px"  name="downspeedtype" <c:if test="${questionRoadParam.downspeedtype == '2'}">checked="checked"</c:if> value="2" />MAC
+							<input type="radio" style="width:10px"  name="downspeedtype" <c:if test="${questionRoadParam.downspeedtype == '3'}">checked="checked"</c:if> value="3" />RLC
+							<input type="radio" style="width:10px"  name="downspeedtype" <c:if test="${questionRoadParam.downspeedtype == '4'}">checked="checked"</c:if> value="4" />PDCP
+							<input type="radio" style="width:10px"  name="downspeedtype" <c:if test="${questionRoadParam.downspeedtype == '5'}">checked="checked"</c:if> value="5" />SDAP
+						</div>
 					</div>
 				</div>
-			 </div>
+				<div style="width:100%;height:33%;">
+					<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">上行低速率路段判定</div>
+						<div class="inputDivShow">上行低速率采样点定义:上行速率<=
+							<input id="uplowerspeedrlc" name="uplowerspeedrlc" style="width:120px;"  value="${questionRoadParam.uplowerspeedrlc}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							Mbps
+						</div>
+						<div class="inputDivShow">上行低速率路段定义:上行低速率采样点占比>=
+							<input id="uplowerspeedsamprate" name="uplowerspeedsamprate" style="width:120px;"  value="${questionRoadParam.uplowerspeedsamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:30,max:100" />
+							%
+						</div>
+						<div class="inputDivShow">上行低速率路段长度>=
+							<input id="uplowerspeedroadlen" name="uplowerspeedroadlen" style="width:120px;"  value="${questionRoadParam.uplowerspeedroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+							m
+						</div>
+						<div class="inputDivShow">上行速率种类选择
+							<input type="radio" style="width:10px"  name="upspeedtype" <c:if test="${questionRoadParam.upspeedtype == '1'}">checked="checked"</c:if> value="1" />PHY
+							<input type="radio" style="width:10px"  name="upspeedtype" <c:if test="${questionRoadParam.upspeedtype == '2'}">checked="checked"</c:if> value="2" />MAC
+							<input type="radio" style="width:10px"  name="upspeedtype" <c:if test="${questionRoadParam.upspeedtype == '3'}">checked="checked"</c:if> value="3" />RLC
+							<input type="radio" style="width:10px"  name="upspeedtype" <c:if test="${questionRoadParam.upspeedtype == '4'}">checked="checked"</c:if> value="4" />PDCP
+							<input type="radio" style="width:10px"  name="upspeedtype" <c:if test="${questionRoadParam.upspeedtype == '5'}">checked="checked"</c:if> value="5" />SDAP
+						</div>
+
+					</div>
+				</div>
+				<div style="width:100%;height:33%;">
+					<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">弱覆盖路段分析门限</div>
+					<div class="inputDivShow">重叠覆盖采样点占比-路段-NR>=
+						<input id="overlapcoversamprate" name="overlapcoversamprate" style="width:120px;"  value="${questionRoadParam.overlapcoversamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:0,max:100" />
+						%
+					</div>
+					<div class="inputDivShow">重叠覆盖路段持续距离-NR>=
+						<input id="overlapcoverroadlen" name="overlapcoverroadlen" style="width:120px;"  value="${questionRoadParam.overlapcoverroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+						m
+					</div>
+					<div class="inputDivShow">NR辅小区重叠覆盖RSRP门限>=
+						<input id="overlapcoverrsrp" name="overlapcoverrsrp" style="width:120px;"  value="${questionRoadParam.overlapcoverrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+						dBm
+					</div>
+					<div class="inputDivShow">NR小区beam覆盖带差值<=
+						<input id="beamcoverdvalue" name="beamcoverdvalue" style="width:120px;"  value="${questionRoadParam.beamcoverdvalue}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+						dB
+					</div>
+				</div>
+				</div>
+			</div>
 		</div>
 	</div>
   	<div data-options="region:'south',border:false" style="height:10%;">

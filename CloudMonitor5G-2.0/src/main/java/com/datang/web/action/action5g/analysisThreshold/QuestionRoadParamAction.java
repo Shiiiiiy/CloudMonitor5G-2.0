@@ -46,7 +46,7 @@ public class QuestionRoadParamAction extends ActionSupport {
 
         Map<String,String> weakCoveragParamMap = new HashMap<String,String>();
         for (QuesRoadThreshold threshold : all) {
-            weakCoveragParamMap.put(threshold.getName(), threshold.getValue().toString());
+            weakCoveragParamMap.put(threshold.getName(),String.valueOf(threshold.getValue().intValue()));
         }
 
         valueStack.set("questionRoadParam",

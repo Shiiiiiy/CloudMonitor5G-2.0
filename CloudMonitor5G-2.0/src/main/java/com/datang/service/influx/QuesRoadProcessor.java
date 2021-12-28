@@ -11,6 +11,7 @@ import com.datang.service.influx.bean.QuesRoadThreshold;
 import com.datang.service.influx.impl.InfluxServiceImpl;
 import com.datang.service.testLogItem.UnicomLogItemService;
 import com.datang.util.AdjPlaneArithmetic;
+import com.datang.web.beans.gisSql.TestLogItemIndexGpsPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +20,22 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * 问题路段处理类
  */
 @Service(value = "quesRoadService")
 public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadService {
+    private static Logger LOGGER = LoggerFactory.getLogger(QuesRoadProcessor.class);
+
     @Autowired
     private QuesRoadDao quesRoadDao;
 
     @Autowired
     private UnicomLogItemService unicomLogItemService;
     //问题路段获取基础采样点模板sql
-    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000 FROM {0} where  Lat=~/./ and Long=~/./ ";
+    private static String BASE_ROAD_SAMP_SQL="SELECT Long,Lat,IEValue_51192,IEValue_51193,IEValue_53432,IEValue_53431,IEValue_50087,IEValue_53434,IEValue_53433,IEValue_50007,IEValue_71053,IEValue_71054,IEValue_71051,IEValue_53419,IEValue_71052,IEValue_54572,IEValue_53483,IEValue_54231,IEValue_50097,IEValue_50055,IEValue_50990,IEValue_53456,IEValue_53601,IEValue_50056,IEValue_50991,IEValue_50014,IEValue_53457,IEValue_74214,IEValue_53682,IEValue_71000,IEValue_73001,IEValue_73100,IEValue_73000,IEValue_50864,IEValue_50865,IEValue_50866,IEValue_50867,IEValue_50868,IEValue_50869,IEValue_50870,IEValue_50871 FROM {0} where  Lat=~/./ and Long=~/./ ";
     private static Map<String,String[]> WHERE_MAP=new HashMap<>();
     private static Map<String,String[]> EVTS_MAP=new HashMap<>();
     private static Map<String,String[]> START_EVTS_MAP=new HashMap<>();
@@ -42,6 +46,7 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         WHERE_MAP.put("弱覆盖路段",new String[]{"IEValue_50055"});
         WHERE_MAP.put("上行低速率路段",new String[]{"IEValue_54231"});
         WHERE_MAP.put("下行低速率路段",new String[]{"IEValue_53483"});
+        WHERE_MAP.put("重叠覆盖路段",new String[]{"IEValue_50055"});
         EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Send STOR","FTP Upload Last Data","FTP UpLoad Drop","FTP Upload Attempt","FTP Upload Success","FTP UpLoad Drop"});
         EVTS_MAP.put("下行低速率路段",new String[]{"FTP DownLoad Drop","FTP Download Send RETR","FTP Download Last Data","FTP Download Attempt","FTP Download Success","FTP Download Drop"});
         START_EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Attempt","FTP Upload Send STOR"});
@@ -70,43 +75,46 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             InfluxDbConnection influxDbConnection = influxDBMutiConntion.getConn(testLogItem.getCity(), testLogItem.getUrl(), testLogItem.getDbName());
             List<Cell5G> nrCells = gisAndListShowServie.getCellsByRegion(testLogItem.getCity());
             Map<String, List<Cell5G>> nrPciFcn2BeanMap = nrCells.stream().collect(Collectors.groupingBy(item -> item.getPci() + "_" + item.getFrequency1()));
-            WHERE_MAP.entrySet().parallelStream().forEach(entry->{
-            //WHERE_MAP.entrySet().stream().forEach(entry->{
-                String key=entry.getKey();
-                String[] values=entry.getValue();
+
+            for (Map.Entry<String,String[]> entry: WHERE_MAP.entrySet()) {
+                //WHERE_MAP.entrySet().forEach(entry->{
+                //WHERE_MAP.entrySet().parallelStream().forEach(entry->{
+                ////WHERE_MAP.entrySet().stream().forEach(entry->{
+                String key = entry.getKey();
+                String[] values = entry.getValue();
                 List<Map<String, Object>> sampDatas;
                 //有事件条件的处理
-                if(EVTS_MAP.containsKey(key)){
+                if (EVTS_MAP.containsKey(key)) {
                     List<Map<String, Object>> evtResults = evtPointTimes(Long.parseLong(id), EVTS_MAP.get(key));
-                    if(existEvt(evtResults,START_EVTS_MAP.get(key))){
-                        List<Map<String,String>> times=getTimeIntervals(evtResults,START_EVTS_MAP.get(key));
-                        for(Map<String,String> time:times){
-                            sampDatas = queryRoadSampDatas(influxDbConnection,sql, Arrays.asList(time),values);
-                            Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
-                            if(!tempR.isEmpty()){
-                                if(result.containsKey(key)){
+                    if (existEvt(evtResults, START_EVTS_MAP.get(key))) {
+                        List<Map<String, String>> times = getTimeIntervals(evtResults, START_EVTS_MAP.get(key));
+                        for (Map<String, String> time : times) {
+                            sampDatas = queryRoadSampDatas(influxDbConnection, sql, Arrays.asList(time), values);
+                            Map<String, List<Map<String, Object>>> tempR = quesRoadAlgorithm(key, sampDatas, thresholdMap, testLogItem, nrPciFcn2BeanMap);
+                            if (!tempR.isEmpty()) {
+                                if (result.containsKey(key)) {
                                     result.get(key).addAll(tempR.get(key));
-                                }else{
+                                } else {
                                     result.putAll(tempR);
                                 }
                             }
                         }
                     }
-                }else{
-                    sampDatas=queryRoadSampDatas(influxDbConnection,sql, Collections.emptyList(),values);
+                } else {
+                    sampDatas = queryRoadSampDatas(influxDbConnection, sql, Collections.emptyList(), values);
                     //问题路段算法
-                    Map<String, List<Map<String, Object>>> tempR=quesRoadAlgorithm(key,sampDatas,thresholdMap,testLogItem,nrPciFcn2BeanMap);
-                    if(!tempR.isEmpty()){
-                        if(result.containsKey(key)){
+                    Map<String, List<Map<String, Object>>> tempR = quesRoadAlgorithm(key, sampDatas, thresholdMap, testLogItem, nrPciFcn2BeanMap);
+                    if (!tempR.isEmpty()) {
+                        if (result.containsKey(key)) {
                             result.get(key).addAll(tempR.get(key));
-                        }else{
+                        } else {
                             result.putAll(tempR);
                         }
                     }
 
                 }
-
-            });
+            //});
+            }
 
         });
         return result;
@@ -146,6 +154,13 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             Double tlen=thresholdMap.get("downlowerspeedroadlen");
             Double weakcoversamprate=thresholdMap.get("downlowerspeedsamprate");
             quesRaods=new SlideWindowAlg(getMapPredicate2(thresholdMap, "IEValue_53483", "downlowerspeedrlc"),sampDatas,tlen,weakcoversamprate).invoke();
+        }
+
+        else if("重叠覆盖路段".equalsIgnoreCase(key)){
+            Double tlen=thresholdMap.get("overlaycoverroadlen");
+            Double weakcoversamprate=thresholdMap.get("overlaycoversamprate");
+
+            quesRaods=new SlideWindowAlg(getMapPredicate3(thresholdMap, "IEValue_50055","IEValue_50864","IEValue_50865","IEValue_50866","IEValue_50867","IEValue_50868","IEValue_50869","IEValue_50870","IEValue_50871","overlaycoverrsrp"),sampDatas,tlen,weakcoversamprate).invoke();
         }
 
         Map<String,List<Map<String,Object>>> result=new HashMap<>();
@@ -323,6 +338,76 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         return sumkm;
     }
 
+    //private boolean rsrp_diff(double rsrp0, double rsrp1, double rsrp2, double rsrp3, double rsrp4, double rsrp5, double rsrp6, double rsrp7, double beamdiff)
+    private boolean rsrp_diff(Object rsrpb0, Object rsrpb1, Object rsrpb2, Object rsrpb3, Object rsrpb4, Object rsrpb5, Object rsrpb6, Object rsrpb7, double beamdiff)
+    {
+        double rsrp0 = -100.0;
+        double rsrp1 = -100.0;
+        double rsrp2 = -100.0;
+        double rsrp3 = -100.0;
+        double rsrp4 = -100.0;
+        double rsrp5 = -100.0;
+        double rsrp6 = -100.0;
+        double rsrp7 = -100.0;
+
+        if(rsrpb0 != null) {
+            rsrp0 = Double.parseDouble(rsrpb0.toString());
+        }
+        if(rsrpb1 != null) {
+            rsrp1 = Double.parseDouble(rsrpb1.toString());
+        }
+        if(rsrpb2 != null) {
+            rsrp2 = Double.parseDouble(rsrpb2.toString());
+        }
+        if(rsrpb3 != null) {
+            rsrp3 = Double.parseDouble(rsrpb3.toString());
+        }
+        if(rsrpb4 != null) {
+            rsrp4 = Double.parseDouble(rsrpb4.toString());
+        }
+        if(rsrpb5 != null) {
+            rsrp5 = Double.parseDouble(rsrpb5.toString());
+        }
+        if(rsrpb6 != null) {
+            rsrp6 = Double.parseDouble(rsrpb6.toString());
+        }
+        if(rsrpb7 != null) {
+            rsrp7 = Double.parseDouble(rsrpb7.toString());
+        }
+        double max_rsrp = -100.0;
+        double max2_rsrp = -100.0;
+        if(rsrp0 > max_rsrp){            max_rsrp = rsrp0;        }
+        if(rsrp1 > max_rsrp){            max_rsrp = rsrp1;        }
+        if(rsrp2 > max_rsrp){            max_rsrp = rsrp2;        }
+        if(rsrp3 > max_rsrp){            max_rsrp = rsrp3;        }
+        if(rsrp4 > max_rsrp){            max_rsrp = rsrp4;        }
+        if(rsrp5 > max_rsrp){            max_rsrp = rsrp5;        }
+        if(rsrp6 > max_rsrp){            max_rsrp = rsrp6;        }
+        if(rsrp7 > max_rsrp){            max_rsrp = rsrp7;        }
+
+        if((rsrp0 < max_rsrp) && (rsrp0 > max2_rsrp)){            max2_rsrp = rsrp0;        }
+        if((rsrp1 < max_rsrp) && (rsrp1 > max2_rsrp)){            max2_rsrp = rsrp1;        }
+        if((rsrp2 < max_rsrp) && (rsrp2 > max2_rsrp)){            max2_rsrp = rsrp2;        }
+        if((rsrp3 < max_rsrp) && (rsrp3 > max2_rsrp)){            max2_rsrp = rsrp3;        }
+        if((rsrp4 < max_rsrp) && (rsrp4 > max2_rsrp)){            max2_rsrp = rsrp4;        }
+        if((rsrp5 < max_rsrp) && (rsrp5 > max2_rsrp)){            max2_rsrp = rsrp5;        }
+        if((rsrp6 < max_rsrp) && (rsrp6 > max2_rsrp)){            max2_rsrp = rsrp6;        }
+        if((rsrp7 < max_rsrp) && (rsrp7 > max2_rsrp)){            max2_rsrp = rsrp7;        }
+
+        double rsrp_diff = -100.0;
+        if((max_rsrp != -100.0) && (max2_rsrp != -100.0)) {
+            rsrp_diff = max_rsrp - max2_rsrp;
+        }
+        if(rsrp_diff <= beamdiff) {
+            return true;
+        }
+        return false;
+    }
+    private Predicate<Map<String, Object>> getMapPredicate3(Map<String, Double> thresholdMap, String ieValue_50055, String ieValue_50864, String ieValue_50865, String ieValue_50866, String ieValue_50867, String ieValue_50868, String ieValue_50869, String ieValue_50870, String ieValue_50871, String overlaycoverrsrp) {
+        //return item -> null!=item.get(ieValue_50055)&&Double.parseDouble(item.get(ieValue_50055).toString()) >= thresholdMap.get(overlaycoverrsrp);
+        return item -> null!=item.get(ieValue_50055)&&Double.parseDouble(item.get(ieValue_50055).toString()) >= thresholdMap.get(overlaycoverrsrp)&&rsrp_diff(item.get(ieValue_50864), item.get(ieValue_50865),item.get(ieValue_50866),item.get(ieValue_50867),item.get(ieValue_50868),item.get(ieValue_50869),item.get(ieValue_50870),item.get(ieValue_50871),thresholdMap.get("overlaycoverbeamdiff"));
+    }
+
     private Predicate<Map<String, Object>> getMapPredicate2(Map<String, Double> thresholdMap, String ieValue_50055, String weakcoverrsrp) {
         return item -> null!=item.get(ieValue_50055)&&Double.parseDouble(item.get(ieValue_50055).toString()) <= thresholdMap.get(weakcoverrsrp);
     }
@@ -450,7 +535,13 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                     Double distance = AdjPlaneArithmetic.getDistance(lon, lat, lon2, lat2);
                     if(distance>=roadThresold){
                         flag1=true;
-                        Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
+                        //Double rate=slideWindow.stream().filter(mapPredicate1).count()*1.0/slideWindow.size();
+                        Double rate = 0.0;
+                        Double tt = slideWindow.stream().filter(mapPredicate1).count()*1.0;
+                        if(tt > 0) {
+                            LOGGER.info(" slideWindow.stream().filter(mapPredicate1).count():  " + tt);
+                            rate = tt / slideWindow.size();
+                        }
                         if(rate*100>rateThreshold){
                             if(!flag){
                                 start=i-slideWindow.size()+1;
@@ -532,8 +623,12 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                 return false;
             }
             String time1=slideWindow.get(slideWindow.size()-1).get("time").toString();
-            String time2=slideWindow.get(slideWindow.size()-2).get("time").toString();
-            if(DateComputeUtils.toUtcDate(time1).getTimeInMillis()-5000>DateComputeUtils.toUtcDate(time2).getTimeInMillis()){
+            //String time2=slideWindow.get(slideWindow.size()-2).get("time").toString();
+            String time2=slideWindow.get(0).get("time").toString();
+            Long t1 = DateComputeUtils.toUtcDate(time1).getTimeInMillis()-5000;
+            Long t2 = DateComputeUtils.toUtcDate(time2).getTimeInMillis();
+            //if(DateComputeUtils.toUtcDate(time1).getTimeInMillis()-5000>DateComputeUtils.toUtcDate(time2).getTimeInMillis()){
+            if((t1 - 5000) > t2){
                 return true;
             }
             return false;

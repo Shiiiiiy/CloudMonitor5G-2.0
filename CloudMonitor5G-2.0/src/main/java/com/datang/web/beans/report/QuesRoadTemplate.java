@@ -38,6 +38,7 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
         List<Map<String,Object>> sqlObj3 = new ArrayList<>();
         List<Map<String,Object>> sqlObj4 = new ArrayList<>();
         List<Map<String,Object>> sqlObj5 = new ArrayList<>();
+        List<Map<String,Object>> sqlObj6 = new ArrayList<>();
         QuesRoadService quesRoadService = (QuesRoadService) influxService;
         try{
             Map<String, List<Map<String, Object>>> netConfigReports = quesRoadService.analysize(logFileIdList);
@@ -46,6 +47,7 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
             toSqlObj3(netConfigReports,sqlObj3);
             toSqlObj4(netConfigReports,sqlObj4);
             toSqlObj5(netConfigReports,sqlObj5);
+            toSqlObj6(netConfigReports,sqlObj6);
             LOGGER.info(" influxDb " + netConfigReports.size() );
         }catch (Exception e){
             e.printStackTrace();
@@ -58,18 +60,21 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
         TestLogItemUtils.addId(sqlObj3);
         TestLogItemUtils.addId(sqlObj4);
         TestLogItemUtils.addId(sqlObj5);
+        TestLogItemUtils.addId(sqlObj6);
         // 转数字
         TestLogItemUtils.formatNumber(sqlObj1);
         TestLogItemUtils.formatNumber(sqlObj2);
         TestLogItemUtils.formatNumber(sqlObj3);
         TestLogItemUtils.formatNumber(sqlObj4);
         TestLogItemUtils.formatNumber(sqlObj5);
+        TestLogItemUtils.formatNumber(sqlObj6);
         Map<String, Collection> hashMap1 = new HashMap<>();
         hashMap1.put("sqlObj1", sqlObj1);
         hashMap1.put("sqlObj2", sqlObj2);
         hashMap1.put("sqlObj3", sqlObj3);
         hashMap1.put("sqlObj4", sqlObj4);
         hashMap1.put("sqlObj5", sqlObj5);
+        hashMap1.put("sqlObj6", sqlObj6);
         return hashMap1;
     }
 
@@ -103,5 +108,11 @@ public class QuesRoadTemplate implements AnalyzeTemplate{
         List<Map<String, Object>> maps = map.get("上传速率低路段");
         if(CollectionUtils.isEmpty(maps)) return;
         sqlObj5.addAll(maps);
+    }
+
+    private void toSqlObj6(Map<String, List<Map<String, Object>>> map, List<Map<String,Object>> sqlObj6){
+        List<Map<String, Object>> maps = map.get("重叠覆盖路段");
+        if(CollectionUtils.isEmpty(maps)) return;
+        sqlObj6.addAll(maps);
     }
 }

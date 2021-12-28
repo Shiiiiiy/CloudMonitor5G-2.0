@@ -716,6 +716,10 @@ INSERT INTO "public"."t_quesroad_threshold" VALUES (20,'弱覆盖路段分析门
 INSERT INTO "public"."t_quesroad_threshold" VALUES (21,'弱覆盖路段分析门限', '重叠覆盖路段持续距离-NR', 'overlapcoverroadlen', 30, 'm');
 INSERT INTO "public"."t_quesroad_threshold" VALUES (22,'弱覆盖路段分析门限', 'NR辅小区重叠覆盖RSRP门限', 'overlapcoverrsrp', 30, 'dBm');
 INSERT INTO "public"."t_quesroad_threshold" VALUES (23,'弱覆盖路段分析门限', 'NR小区beam覆盖带差值', 'beamcoverdvalue', 30, 'dB');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (24, '重叠覆盖路段', '重叠采样点占比-路段-N', 'overlaycoversamprate', 90, '%');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (25, '重叠覆盖路段', '重叠路段持续距离-NR', 'overlaycoverroadlen', 600, 'm');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (26, '重叠覆盖路段', 'NR重叠覆盖RSRP门限', 'overlaycoverrsrp', -100, 'dBm');
+INSERT INTO "public"."t_quesroad_threshold" VALUES (27, '重叠覆盖路段', 'NR小区beam覆盖带差值', 'overlaycoverbeamdiff', 10, 'dB');
 
 INSERT INTO IADS_TRAFFIC_CLASSIFY(traffic,traffic_name,traffic_icon,app,app_name,app_icon)  VALUES ('Message','即时通信','message','com.tencent.mm','微信','wechat');
 INSERT INTO IADS_TRAFFIC_CLASSIFY(traffic,traffic_name,traffic_icon,app,app_name,app_icon) VALUES ('Message','即时通信','message','com.tencent.mobileqq','QQ','qq');

@@ -202,11 +202,11 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             obj.put("sumsinr",InfluxReportUtils.getSumKpi2(maps,"IEValue_50056"));
             obj.put("countsinr",InfluxReportUtils.getCountKpi2(maps,"IEValue_50056"));
             obj.put("avgsinr",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50056"));
-            obj.put("sumdistance",InfluxReportUtils.getSumKpi2(maps,"IEValue_50014"));
-            obj.put("countdistance",InfluxReportUtils.getCountKpi2(maps,"IEValue_50014"));
-            obj.put("maxdistance",InfluxReportUtils.getMaxKpi(maps,"IEValue_50014"));
-            obj.put("mindistance",InfluxReportUtils.getMinKpi(maps,"IEValue_50014"));
-            obj.put("avgdistance",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50014"));
+            //obj.put("sumdistance",InfluxReportUtils.getSumKpi2(maps,"IEValue_50014"));
+            //obj.put("countdistance",InfluxReportUtils.getCountKpi2(maps,"IEValue_50014"));
+            //obj.put("maxdistance",InfluxReportUtils.getMaxKpi(maps,"IEValue_50014"));
+            //obj.put("mindistance",InfluxReportUtils.getMinKpi(maps,"IEValue_50014"));
+            //obj.put("avgdistance",InfluxReportUtils.getAvgKpi2(maps,"IEValue_50014"));
 
             Map<String,Integer> arfcnCountMap=new HashMap<>();
             maps.stream().filter(i->i.get("IEValue_53601")!=null).collect(Collectors.groupingBy(i -> i.get("IEValue_53601").toString())).forEach((a,b)->{
@@ -225,6 +225,10 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
                 Cell5G cell = InfluxReportUtils.getCell((slat + elat) / 2, (slong + elong) / 2, cell5GS);
                 obj.put("gnodebid1",cell!=null?cell.getgNBId():null);
                 obj.put("sectorid1",cell!=null?cell.getLocalCellId():null);
+                Map<String,Double> dis = (Map<String, Double>) getSumDistance(maps, cell.getLatitude(), cell.getLongitude());
+                obj.put("maxdistance",dis.get("maxdistance"));
+                obj.put("mindistance",dis.get("mindistance"));
+                obj.put("avgdistance",dis.get("avgdistance"));
             }
             obj.put("avgdlinitbler",InfluxReportUtils.getAvgKpi2(maps,"IEValue_73000"));
             obj.put("sumdlinitbler",InfluxReportUtils.getSumKpi2(maps,"IEValue_73000"));
@@ -324,6 +328,36 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         }
         result.put(key,list);
         return result;
+    }
+
+    // maxdistance  mindistance  avgdistance
+    private Object getSumDistance(List<Map<String,Object>> maps, double celllan, double celllon) {
+        double maxdistance = 0.0;
+        double mindistance = 0.0;
+        double avgdistance = 0.0;
+        double sumkm = 0.0;
+        double edis = 0.0;
+        Map<String,Double> dis=new HashMap<>();
+        for(int i=0;i<maps.size()-1;i++){
+            double slong = Double.parseDouble(maps.get(i).get("Long").toString());
+            double slat = Double.parseDouble(maps.get(i).get("Lat").toString());
+            edis = AdjPlaneArithmetic.getDistance(slong, slat, celllan, celllon);
+            if(i == 0) {
+                maxdistance = edis;
+                mindistance = edis;
+            }
+            else if(edis > maxdistance){
+                maxdistance = edis;
+            }else if(edis < mindistance){
+                mindistance = edis;
+            }
+            sumkm+=edis;
+        }
+        avgdistance = sumkm / maps.size();
+        dis.put("maxdistance", maxdistance);
+        dis.put("mindistance", mindistance);
+        dis.put("avgdistance", avgdistance);
+        return dis;
     }
 
     private Object getSumKm(List<Map<String,Object>> maps) {

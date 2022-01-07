@@ -232,7 +232,7 @@
 				</div>
 			</div>
 		</div>
-		<div style="width:50%;height:90%;float:left;border:1px solid #95b8e7;">
+		<div style="width:calc(50% - 14px);height:90%;float:left;border:1px solid #95b8e7;">
 			<div data-options="region:'east',border:false,split:true">
 				<div style="width:100%;height:33%;">
 					<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">下行低速率路段判定</div>

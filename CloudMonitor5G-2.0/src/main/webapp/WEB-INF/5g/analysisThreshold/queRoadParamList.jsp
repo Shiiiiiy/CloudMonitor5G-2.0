@@ -113,18 +113,18 @@
 			fieldNameEn = fieldNameEn + 'upspeedtype'+',';
 			fieldValue = fieldValue + upspeedtype+',';
 
-			var overlapcoversamprate  = $("#overlapcoversamprate").textbox('getValue');
-			fieldNameEn = fieldNameEn + 'overlapcoversamprate'+',';
-			fieldValue = fieldValue + overlapcoversamprate+',';
-			var overlapcoverroadlen  = $("#overlapcoverroadlen").textbox('getValue');
-			fieldNameEn = fieldNameEn + 'overlapcoverroadlen'+',';
-			fieldValue = fieldValue + overlapcoverroadlen+',';
-			var overlapcoverrsrp  = $("#overlapcoverrsrp").textbox('getValue');
-			fieldNameEn = fieldNameEn + 'overlapcoverrsrp'+',';
-			fieldValue = fieldValue + overlapcoverrsrp+',';
-			var beamcoverdvalue  = $("#beamcoverdvalue").textbox('getValue');
-			fieldNameEn = fieldNameEn + 'beamcoverdvalue';
-			fieldValue = fieldValue + beamcoverdvalue;
+			var overlaycoversamprate  = $("#overlaycoversamprate").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'overlaycoversamprate'+',';
+			fieldValue = fieldValue + overlaycoversamprate+',';
+			var overlaycoverroadlen  = $("#overlaycoverroadlen").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'overlaycoverroadlen'+',';
+			fieldValue = fieldValue + overlaycoverroadlen+',';
+			var overlaycoverrsrp  = $("#overlaycoverrsrp").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'overlaycoverrsrp'+',';
+			fieldValue = fieldValue + overlaycoverrsrp+',';
+			var overlaycoverbeamdiff  = $("#overlaycoverbeamdiff").textbox('getValue');
+			fieldNameEn = fieldNameEn + 'overlaycoverbeamdiff';
+			fieldValue = fieldValue + overlaycoverbeamdiff;
 
 
 			$.ajax({
@@ -173,7 +173,7 @@
   </head>
   <body class="easyui-layout" style="width:100%;height: 100%;margin: 0 auto;list-style:none;overflow:hidden;">
   	<div id="paramForm">
-		<div style="width:49%;height:90%;float:left; margin-right: 10px;border:1px solid #95b8e7;">
+		<div style="width:calc(50% - 14px);height:90%;float:left; margin-right: 10px;border:1px solid #95b8e7;">
 			<div data-options="region:'west',border:false,split:true">
 				<div style="width:100%;height:33%;">
 					<div style="height:16px;background-color:#e8f1ff;padding:5px;border-bottom:1px solid #95b8e7;">
@@ -284,19 +284,19 @@
 				<div style="width:100%;height:33%;">
 					<div style="height:16px;background-color:#e8f1ff;padding:5px;"><div class="panel-title" style="font-size: 11px">弱覆盖路段分析门限</div>
 					<div class="inputDivShow">重叠覆盖采样点占比-路段-NR>=
-						<input id="overlapcoversamprate" name="overlapcoversamprate" style="width:120px;"  value="${questionRoadParam.overlapcoversamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:0,max:100" />
+						<input id="overlaycoversamprate" name="overlaycoversamprate" style="width:120px;"  value="${questionRoadParam.overlaycoversamprate}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]',min:0,max:100" />
 						%
 					</div>
 					<div class="inputDivShow">重叠覆盖路段持续距离-NR>=
-						<input id="overlapcoverroadlen" name="overlapcoverroadlen" style="width:120px;"  value="${questionRoadParam.overlapcoverroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+						<input id="overlaycoverroadlen" name="overlaycoverroadlen" style="width:120px;"  value="${questionRoadParam.overlaycoverroadlen}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
 						m
 					</div>
 					<div class="inputDivShow">NR辅小区重叠覆盖RSRP门限>=
-						<input id="overlapcoverrsrp" name="overlapcoverrsrp" style="width:120px;"  value="${questionRoadParam.overlapcoverrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+						<input id="overlaycoverrsrp" name="overlaycoverrsrp" style="width:120px;"  value="${questionRoadParam.overlaycoverrsrp}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
 						dBm
 					</div>
 					<div class="inputDivShow">NR小区beam覆盖带差值<=
-						<input id="beamcoverdvalue" name="beamcoverdvalue" style="width:120px;"  value="${questionRoadParam.beamcoverdvalue}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
+						<input id="overlaycoverbeamdiff" name="overlaycoverbeamdiff" style="width:120px;"  value="${questionRoadParam.overlaycoverbeamdiff}" class="easyui-numberbox" data-options="required:true,validType:'length[1,24]'" />
 						dB
 					</div>
 				</div>

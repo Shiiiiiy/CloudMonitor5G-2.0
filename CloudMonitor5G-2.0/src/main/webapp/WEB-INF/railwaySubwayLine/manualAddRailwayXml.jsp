@@ -426,7 +426,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         <tbody>
                         <tr>
                             <td>
-                                <input class='iconfont' type="checkbox"/>
+                                <input class='iconfont' type="checkbox" disabled/>
                             </td>
                             <td id="tdSid">0</td>
                             <td>

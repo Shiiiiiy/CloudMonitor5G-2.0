@@ -10,8 +10,8 @@
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
 	
-	<%@ include file="../../../taglibs/jquery.jsp"%>
-	<%@ include file="../../../taglibs/easyui.jsp"%>
+	<%@ include file="../../taglibs/jquery.jsp"%>
+	<%@ include file="../../taglibs/easyui.jsp"%>
 		<style type="text/css">
 		.inputDivShow{ 
 			display: inline-block; *
@@ -47,14 +47,21 @@
 					{field:'creatDate',width:80,align:'center',title:'创建时间',formatter:showTooltip},
 					{field:'nam',width:80,align:'center',title:'操作',
 						formatter:function(value,row,index){
+							var s = '';
 							if(row.taskStatus == 2 || row.taskStatus == 3 || row.taskStatus == null || row.taskStatus == -1 ){
-								return '<a href="#" title="报表下载" onclick="batchDownload('+row.id+');" >报表下载</a>';
+								s+= '<a href="#" title="报表下载" onclick="batchDownload('+row.id+');" >报表下载</a>';
 							}else{
-								return '';
 								//	return '<a style="opacity: 0.2" href="javascript:return false;" title="查看详情" onclick="return false;" >查看详情</a>';
 							}
 							//return '<a href="#" title="查看详情" onclick="seeInfo('+row.id+');" >查看详情</a>';
-						}
+							if(row.name && row.name.indexOf("分析报表") !=-1){
+								s+= ' <a href="#" title="异常事件" onclick="exceptionEvent('+row.id+');" >异常事件</a>'
+								s+= ' <a href="#" title="问题路段" onclick="questionRoad('+row.id+');" >问题路段</a>'
+							}
+
+
+							return s;
+					}
 					},
 					{field:'taskStatus',width:75,align:'center',title:'预统计状态',
 						formatter: function(value,row,index){
@@ -139,6 +146,14 @@
 
 			window.open("${pageContext.request.contextPath}/customeLogReport/batchDownloadExcel.action?idLong="+id);
 			//goToPage("${pageContext.request.contextPath}/customeLogReport/seeInfo.action?idLong="+id+"&dPage=0");
+		}
+
+		function exceptionEvent(id){
+			top.addRepeatableTab(null,"${pageContext.request.contextPath}/logReplay/toExceptionEventPage?reportId="+id,"异常事件");
+		}
+
+		function questionRoad(id){
+			top.addRepeatableTab(null,"${pageContext.request.contextPath}/logReplay/toQuestionRoadPage?reportId="+id,"问题路段");
 		}
 
 		/* 删除任务*/

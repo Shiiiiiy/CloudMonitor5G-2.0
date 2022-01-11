@@ -111,13 +111,13 @@ html,body,#map {
 }
 
 #layerbox_item .zoonin .icon {
-	background-image: url('../images/zoomin.png');
+	background-image: url('../images/放大.png');
 	background-repeat: no-repeat;
 	background-size: 16px;
 }
 
 #layerbox_item .zoomout .icon {
-	background-image: url('../images/zoomout.png');
+	background-image: url('../images/缩小.png');
 	background-repeat: no-repeat;
 	background-size: 16px;
 }
@@ -152,7 +152,7 @@ html,body,#map {
 }
 
 #layerbox_item .clearMark .icon {
-	background-image: url('../images/broom.png');
+	background-image: url('../images/清除.png');
 	background-repeat: no-repeat;
 	background-size: 16px;
 }
@@ -164,7 +164,7 @@ html,body,#map {
 }
 
 #layerbox_item .setting .icon {
-	background-image: url('../images/settings.png');
+	background-image: url('../images/显示设置.png');
 	background-repeat: no-repeat;
 	background-size: 16px;
 }
@@ -192,7 +192,7 @@ html,body,#map {
 }
 
 #layerbox_item .zoomExtent .icon {
-	background-image: url('../images/FullExtent.png');
+	background-image: url('../images/全景.png');
 	background-repeat: no-repeat;
 	background-size: 16px;
 }
@@ -222,7 +222,7 @@ html,body,#map {
 }
 
 #layerbox_item .measure .icon {
-	background-image: url('../images/measure.png');
+	background-image: url('../images/测量.png');
 	background-repeat: no-repeat;
 	background-size: 16px;
 }

@@ -3,35 +3,12 @@
  */
 package com.datang.web.action.testLogItem;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpSession;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.struts2.ServletActionContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.EasyuiPageList;
 import com.datang.common.action.page.PageAction;
 import com.datang.common.action.page.PageList;
 import com.datang.common.util.StringUtils;
 import com.datang.domain.security.User;
-import com.datang.domain.testLogItem.StationVerificationLogPojo;
 import com.datang.domain.testLogItem.TestLogItem;
 import com.datang.domain.testManage.terminal.Terminal;
 import com.datang.domain.testPlan.TestPlan;
@@ -46,6 +23,21 @@ import com.datang.web.action.ReturnType;
 import com.datang.web.beans.testLogItem.TestLogItemPageQueryRequestBean;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ModelDriven;
+import org.apache.shiro.SecurityUtils;
+import org.apache.struts2.ServletActionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 测试日志Action
@@ -248,20 +240,11 @@ public class TestLogItemAction extends PageAction implements
 			for (String id : idsArry) {
 				TestLogItem queryTestLogById = testlogItemService.queryTestLogById(Long.valueOf(id));
 				if (null != queryTestLogById && StringUtils.hasText(queryTestLogById.getFilelink())) {
-					if(queryTestLogById.getFilelink().contains("./")){
-						String filePath = dzTestLogTtemUrl + queryTestLogById.getFilelink().replace("./", "/").replace(" ", "");
-						if(filePath.indexOf(queryTestLogById.getFileName()) == -1){
-							filePath = filePath + queryTestLogById.getFileName();
-						}
-						File log = new File(filePath);
-						System.out.println(filePath);
-						if (!log.exists() || !log.isFile()) {
-							unUsedStrList.add(id);
-							respString = respString+queryTestLogById.getFileName()+" 日志不存在!路径:"+filePath+"</br>";
-						}
-					}else{
+					String filePath =  queryTestLogById.getFilelink();
+					File log = new File(filePath);
+					if (!log.exists() || !log.isFile()) {
 						unUsedStrList.add(id);
-						respString = respString+queryTestLogById.getFileName()+":日志名称的路径应该为相对路径!</br>";
+						respString = respString+queryTestLogById.getFileName()+" 日志不存在!路径:"+filePath+"</br>";
 					}
 				}
 			}

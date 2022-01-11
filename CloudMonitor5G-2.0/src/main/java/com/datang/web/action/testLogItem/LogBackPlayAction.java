@@ -5,6 +5,7 @@ import com.datang.domain.testLogItem.PcapData;
 import com.datang.service.service5g.logbackplay.LogIEService;
 import com.datang.web.action.ReturnType;
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.util.ValueStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,17 @@ public class LogBackPlayAction {
      * 同步请求下发的时间点
      */
     private String time;
+
+    /**
+     * 加载更多数据时的起始id
+     */
+    private long beginId;
+
+    /**
+     * 加载更多数据的方向
+     */
+    private String direction;
+
     /**
      * 日志回放
      *
@@ -96,17 +108,30 @@ public class LogBackPlayAction {
      * @return
      */
     public String pcapData() {
-        List<PcapData> ieItems = logIEService.pcapDatas(logId);
-        ActionContext
-                .getContext()
-                .getValueStack()
-                .push(ieItems);
+        List<PcapData> items = logIEService.pcapDatas(logId);
+        ValueStack valueStack = ActionContext.getContext().getValueStack();
+        valueStack.set("items",items);
+
+        valueStack.set("maxId",logIEService.maxId(logId));
+        valueStack.set("minId",logIEService.minId(logId));
+
+        return ReturnType.JSON;
+    }
+
+    /**
+     * 加载pcap数据
+     * @return
+     */
+    public String morePcapData() {
+        List<PcapData> ieItems = logIEService.morePcapDatas(logId,beginId,direction);
+        ActionContext.getContext().getValueStack().push(ieItems);
         return ReturnType.JSON;
     }
 
 
+
     /**
-     * pcap窗口数据
+     * pcap窗口数据同步
      * @return
      */
     public String syncPcapData() {
@@ -146,5 +171,21 @@ public class LogBackPlayAction {
 
     public void setLogId(long logId) {
         this.logId = logId;
+    }
+
+    public long getBeginId() {
+        return beginId;
+    }
+
+    public void setBeginId(long beginId) {
+        this.beginId = beginId;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 }

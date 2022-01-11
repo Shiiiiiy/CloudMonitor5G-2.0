@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbook>
+	<worksheet name="弱覆盖路段">
+		<section startRow="0" endRow="0" />
+		<loop items="weakCover" var="item" varType="com.datang.web.beans.questionRoad.QuestionRoadBean">
+			<section startRow="1" endRow="1">
+				<mapping row="1" col="1">item.logName</mapping>
+				<mapping row="1" col="2">item.startTime</mapping>
+				<mapping row="1" col="3">item.startLong</mapping>
+				<mapping row="1" col="4">item.startLat</mapping>
+				<mapping row="1" col="5">item.endTime</mapping>
+				<mapping row="1" col="8">item.totalLen</mapping>
+			</section>
+			<loopbreakcondition>
+				<rowcheck offset="0">
+					<cellcheck offset="0"></cellcheck>
+				</rowcheck>
+			</loopbreakcondition>
+		</loop>
+	</worksheet>
+
+	<worksheet name="重叠覆盖路段">
+		<section startRow="0" endRow="0" />
+		<loop items="overlapCover" var="item" varType="com.datang.web.beans.questionRoad.QuestionRoadBean">
+			<section startRow="1" endRow="1">
+				<mapping row="1" col="1">item.logName</mapping>
+				<mapping row="1" col="2">item.startTime</mapping>
+				<mapping row="1" col="3">item.startLong</mapping>
+				<mapping row="1" col="4">item.startLat</mapping>
+				<mapping row="1" col="5">item.endTime</mapping>
+				<mapping row="1" col="8">item.totalLen</mapping>
+			</section>
+			<loopbreakcondition>
+				<rowcheck offset="0">
+					<cellcheck offset="0"></cellcheck>
+				</rowcheck>
+			</loopbreakcondition>
+		</loop>
+	</worksheet>
+
+	<worksheet name="下行质差路段">
+		<section startRow="0" endRow="0" />
+		<loop items="downQd" var="item" varType="com.datang.web.beans.questionRoad.QuestionRoadBean">
+			<section startRow="1" endRow="1">
+				<mapping row="1" col="1">item.logName</mapping>
+				<mapping row="1" col="2">item.startTime</mapping>
+				<mapping row="1" col="3">item.startLong</mapping>
+				<mapping row="1" col="4">item.startLat</mapping>
+				<mapping row="1" col="5">item.endTime</mapping>
+				<mapping row="1" col="8">item.totalLen</mapping>
+			</section>
+			<loopbreakcondition>
+				<rowcheck offset="0">
+					<cellcheck offset="0"></cellcheck>
+				</rowcheck>
+			</loopbreakcondition>
+		</loop>
+	</worksheet>
+
+	<worksheet name="上行质差路段">
+		<section startRow="0" endRow="0" />
+		<loop items="upQd" var="item" varType="com.datang.web.beans.questionRoad.QuestionRoadBean">
+			<section startRow="1" endRow="1">
+				<mapping row="1" col="1">item.logName</mapping>
+				<mapping row="1" col="2">item.startTime</mapping>
+				<mapping row="1" col="3">item.startLong</mapping>
+				<mapping row="1" col="4">item.startLat</mapping>
+				<mapping row="1" col="5">item.endTime</mapping>
+				<mapping row="1" col="8">item.totalLen</mapping>
+			</section>
+			<loopbreakcondition>
+				<rowcheck offset="0">
+					<cellcheck offset="0"></cellcheck>
+				</rowcheck>
+			</loopbreakcondition>
+		</loop>
+	</worksheet>
+
+	<worksheet name="下载速率低路段">
+		<section startRow="0" endRow="0" />
+		<loop items="downLowSpeed" var="item" varType="com.datang.web.beans.questionRoad.QuestionRoadBean">
+			<section startRow="1" endRow="1">
+				<mapping row="1" col="1">item.logName</mapping>
+				<mapping row="1" col="2">item.startTime</mapping>
+				<mapping row="1" col="3">item.startLong</mapping>
+				<mapping row="1" col="4">item.startLat</mapping>
+				<mapping row="1" col="5">item.endTime</mapping>
+				<mapping row="1" col="8">item.totalLen</mapping>
+			</section>
+			<loopbreakcondition>
+				<rowcheck offset="0">
+					<cellcheck offset="0"></cellcheck>
+				</rowcheck>
+			</loopbreakcondition>
+		</loop>
+	</worksheet>
+
+	<worksheet name="上传速率低路段">
+		<section startRow="0" endRow="0" />
+		<loop items="upLowSpeed" var="item" varType="com.datang.web.beans.questionRoad.QuestionRoadBean">
+			<section startRow="1" endRow="1">
+				<mapping row="1" col="2">item.startTime</mapping>
+				<mapping row="1" col="3">item.startLong</mapping>
+				<mapping row="1" col="4">item.startLat</mapping>
+				<mapping row="1" col="5">item.endTime</mapping>
+				<mapping row="1" col="8">item.totalLen</mapping>
+			</section>
+			<loopbreakcondition>
+				<rowcheck offset="0">
+					<cellcheck offset="0"></cellcheck>
+				</rowcheck>
+			</loopbreakcondition>
+		</loop>
+	</worksheet>
+
+
+
+</workbook>
+
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbook>
+	<worksheet name="分析表单">
+		<section startRow="0" endRow="1" />
+		<loop items="items" var="item" varType="com.datang.web.beans.questionRoad.ExceptionEventBean">
+			<section startRow="2" endRow="1">
+				<mapping row="2" col="0">item.logName</mapping>
+				<mapping row="2" col="3">item.businessType</mapping>
+				<mapping row="2" col="5">item.time</mapping>
+				<mapping row="2" col="6">item.longitude</mapping>
+				<mapping row="2" col="7">item.latitude</mapping>
+				<mapping row="2" col="8">item.causeBy</mapping>
+			</section>
+			<loopbreakcondition>
+				<rowcheck offset="0">
+					<cellcheck offset="0"></cellcheck>
+				</rowcheck>
+			</loopbreakcondition>
+		</loop>
+	</worksheet>
+
+</workbook>
+
+

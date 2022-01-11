@@ -100,6 +100,11 @@
                     <span class="icon"></span>
                     <span class="name">导出图片</span>
                 </div>
+
+                <div class="layer_item setting item " onclick="showCfg();">
+                    <span class="icon"></span>
+                    <span class="name">显示设置</span>
+                </div>
             </div>
         </div>
     </div>
@@ -143,7 +148,17 @@
         } else if (typeof window.attachEvent != 'undefined') {
             window.attachEvent('onmessage', receiveMessage);
         }
+
+        function showCfg(){
+            parent.showCfgWindow();
+        }
+
     </script>
+
+
+
+
+
 </body>
 
 </html>

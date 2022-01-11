@@ -168,6 +168,12 @@ INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", 
 INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1654, '500', '音频加载时延', 'musicDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF23');
 INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1653, '500', '图片加载时延', 'picDelay', 'knowFeelingMonitor', NULL, NULL, NULL, 'KF22');
 
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1656, '#fff', '弱覆盖问题路段', 'weakCoverQuestionRoad', 'qrDisplaySetting', NULL, NULL, NULL, '');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1657, '#fff', '重叠覆盖问题路段', 'overlapCoverQuestionRoad', 'qrDisplaySetting', NULL, NULL, NULL, '');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1658, '#fff', '上行质差问题路段', 'upQualityDiffQuestionRoad', 'qrDisplaySetting', NULL, NULL, NULL, '');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1659, '#fff', '下行质差问题路段', 'downQualityDiffQuestionRoad', 'qrDisplaySetting', NULL, NULL, NULL, '');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1660, '#fff', '上行低速率问题路段', 'upLowSpeedQuestionRoad', 'qrDisplaySetting', NULL, NULL, NULL, '');
+INSERT INTO "public"."iads_volte_analysis_threshold"("id", "current_threshold", "name_ch", "name_en", "subject_type","threshold1", "threshold2", "threshold3", "threshold_type") VALUES (1661, '#fff', '下行低速率问题路段', 'downLowSpeedQuestionRoad', 'qrDisplaySetting', NULL, NULL, NULL, '');
 
 
 

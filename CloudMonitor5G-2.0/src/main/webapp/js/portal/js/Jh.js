@@ -9,14 +9,28 @@ var Jh = {
         'view6':'事件窗口',
         'view7':'linechart窗口',
         'view8':'pcap窗口',
+        'view9':'问题路段窗口',
+        'view10':'异常事件窗口'
     },
 
     Data:{
-
         ieData:{},
+        //信令
         signData:[],
+        //事件
         eventData:[],
-        pcapData:[]
+        //pcap
+        pcapData:[],
+        //问题路段
+        roadData:[],
+        //异常事件
+        exceptEventData:[]
+    },
+
+    PData:{
+        loadingPcapData : false,
+        maxPcapId:0,
+        minPcapId:0
     },
 
     Config: {
@@ -27,19 +41,20 @@ var Jh = {
         ulCls: "tag-list",
         layCls: "layout-list",
         min: "min",
-        mintext: "\u6536\u8d77",//收起
+        mintext: "收起",//收起
         max: "max",
-        maxtext: "\u5c55\u5f00",//展开
+        maxtext: "展开",//展开
         close: "close",
-        closetext: "\u5173\u95ed",//关闭
-        refreshtext: "\u5237\u65b0",//刷新
+        closetext: "关闭",//关闭
+        refreshtext: "刷新",//刷新
         refresh: "refresh",
         _groupItemContent: "itemContent",
         _groupItemHead: "itemHeader",
         _groupWrapperClass: "groupWrapper",
         _groupItemClass: "groupItem",
         _allIe:[],
-        _listView:['view5','view6','view8']
+        _listView:['view5','view6','view8','view9','view10'],
+
     },
     ViewColumns:{
         'view1':[[
@@ -232,26 +247,41 @@ var Jh = {
             ]],
 
         'view5':[[
-            {field:'time',title:'\u65f6\u95f4',width:'15%'},//时间
-            {field:'Netmode',title:'\u5236\u5f0f',width:'15%',format:'Jh.Util.getNetCodeName'},//制式
-            {field:'Dir',title:'\u65b9\u5411',width:'14%',format:'Jh.Util.getDirtName'},//方向
-            {field:'signalName',title:'\u4fe1\u4ee4',width:'14%'}//信令
+            {field:'time',title:'时间',width:'15%'},//时间
+            {field:'Netmode',title:'制式',width:'15%',format:'Jh.Util.getNetCodeName'},//制式
+            {field:'Dir',title:'方向',width:'14%',format:'Jh.Util.getDirtName'},//方向
+            {field:'signalName',title:'信令',width:'14%'}//信令
         ]],
 
 
         'view6':[[
-            {field:'time',title:'\u65f6\u95f4',width:'33%'},//时间
-            {field:'Netmode',title:'\u5236\u5f0f',width:'33%',format:'Jh.Util.getNetCodeName'},//制式
-            {field:'evtName',title:'\u4e8b\u4ef6',width:'33%'}//事件
+            {field:'time',title:'时间',width:'33%'},//时间
+            {field:'Netmode',title:'制式',width:'33%',format:'Jh.Util.getNetCodeName'},//制式
+            {field:'evtName',title:'事件',width:'33%'}//事件
         ]],
         'view8':[[
-            {field:'time',title:'\u65f6\u95f4',width:'16%'},//时间
-            {field:'sourceip',title:'\u6e90\u0069\u0070',width:'25%'},//源ip
-            {field:'destip',title:'\u76ee\u6807\u0069\u0070',width:'25%'},//目标ip
-            {field:'protocol',title:'\u534f\u8bae',width:'12%'},//协议
-            {field:'rawdata',title:'\u4fe1\u4ee4',width:'22%',ellipsis:true},//信令
+            {field:'time',title:'时间',width:'18%'},//时间
+            {field:'sourceip',title:'源ip',width:'24%'},//源ip
+            {field:'destip',title:'目标ip',width:'24%'},//目标ip
+            {field:'protocol',title:'协议',width:'12%'},//协议
+            {field:'rawdata',title:'信令',width:'22%',ellipsis:true},//信令
         ]],
-
+        'view9':[[
+            {field:'roadType',title:'问题路段类型',width:'30%'},//
+            {field:'startLong',title:'起始经度',width:'12%'},//
+            {field:'startLat',title:'起始纬度',width:'12%'},//
+            {field:'startTime',title:'起始时间',width:'12%'},//
+            {field:'endTime',title:'结束时间',width:'18%'},
+            {field:'totalLen',title:'连续问题里程数(m)',width:'16%'}
+        ]],
+        'view10':[[
+            {field:'businessType',title:'业务类型',width:'20%'},//
+            {field:'evtName',title:'事件名称',width:'15%'},//
+            {field:'time',title:'发生时间',width:'15%'},//
+            {field:'longitude',title:'经度',width:'15%'},//
+            {field:'latitude',title:'纬度',width:'15%'},
+            {field:'causeBy',title:'事件判断依据',width:'20%'}
+        ]],
 
 
 
@@ -409,8 +439,10 @@ Jh.Util = {
     }
 };
 Jh.base = function (a) {
+    var resizeFunction;
     return a = {
         init: function (b) {
+            resizeFunction = b.resize;
             a._bindEvent(b);
         }, _bindEvent: function (b) {
             a._layoutAClick()
@@ -428,14 +460,10 @@ Jh.base = function (a) {
 
                     existViews.push($(v).attr("id"));
                 })
-
                 var notExistViews = [];
 
                 $.each(Jh.Views,function(k,v){
-
                     if(!existViews.includes(k)){
-
-
                         var n = {};
                         n['id'] = k ;
                         n['value'] = v ;
@@ -523,6 +551,7 @@ Jh.base = function (a) {
                     a._ToLayout(c);
                     b.parent().parent().find("a").removeClass("active");
                     b.addClass("active");
+                    resizeFunction();
                 })
 
             })
@@ -665,7 +694,7 @@ Jh.fn = function (a) {
 
                 if(Jh.Config._listView.includes(b)){
 
-                    var thead=$("<thead class='' ></thead>");
+                    var thead=$("<thead></thead>");
 
                     var tr = $("<tr style='height:30px;line-height:15px;' class ='textCenter datagrid-header'></tr>");
 
@@ -704,7 +733,12 @@ Jh.fn = function (a) {
                         _data = Jh.Data.eventData;
                     }else if('view8' === b){
                         _data = Jh.Data.pcapData;
+                    }else if('view9' === b){
+                        _data = Jh.Data.roadData;
+                    }else if('view10' === b){
+                        _data = Jh.Data.exceptEventData;
                     }
+
 
                 }else{
                     _prefix = "ie_";
@@ -715,7 +749,12 @@ Jh.fn = function (a) {
                 $.each(_data,function(key,value){
 
                     //========表格体
-                    tr = $("<tr style='height:25px;' ref='"+key+"'  class='textCenter "+b+"_"+key+"'   ></tr>");
+                    if('view8' === b){
+                        tr = $("<tr style='height:25px;' ref='"+key+"'   did='"+value.recseqno+"'   class='textCenter "+b+"_"+key+"'   ></tr>");
+                    }else{
+                        tr = $("<tr style='height:25px;' ref='"+key+"'  class='textCenter "+b+"_"+key+"'   ></tr>");
+                    }
+
 
                     $.each(cit,function(ind,it){
 
@@ -755,20 +794,39 @@ Jh.fn = function (a) {
                     });
 
 
+                    //绑定各种事件
                     if(!_prefix){
                         a._bindRowClick(b,tr);
                     }
-
                     tbody.append(tr);
-
                     //========表格体
-
                 });
-
 
             });
 
             $("#"+b+"Table").append(tbody);
+
+            if(Jh.Config._listView.includes(b)){
+                var barWidth = $("#" + b + "_tbody")[0].offsetWidth -  $("#" + b + "_tbody")[0].clientWidth;
+                var width = 'calc(100% - '+barWidth+'px)';
+                $("#"+b+"Table thead").css('width',width);
+            }
+
+            if(b === 'view8'){
+                if($("#view8_tbody")[0].scrollHeight  -  $("#view8_tbody").height() > 10){
+                    //滚动加载数据
+                    $("#view8_tbody").scroll(function(){
+                        if(!MyPlayer.Data.playingStatus && !Jh.PData.loadingPcapData){
+                            if($("#view8_tbody").scrollTop() / ( $("#view8_tbody")[0].scrollHeight  -  $("#view8_tbody").height()) < 0.15  ){
+                                loadMorePcapData("0");
+                            }
+                            if($("#view8_tbody").scrollTop() / ( $("#view8_tbody")[0].scrollHeight  -  $("#view8_tbody").height()) > 0.85  ){
+                                loadMorePcapData("1");
+                            }
+                        }
+                    });
+                }
+            }
 
         },_bindRowClick:function(b,r){
             var $this = this;
@@ -801,12 +859,12 @@ Jh.fn = function (a) {
             //pacap窗口
             if(b=="view8"){
                 r.dblclick(function () {
-                    if(!MyPlayer.Data.playingStatus){
+                    if(!MyPlayer.Data.playingStatus && !Jh.PData.loadingPcapData){
 
                         $("#signDetailDiv").dialog('open');
                         $("#signDetailDiv").window('center');
                         $("#signDetail").html();
-                        $("#signDetail").html(Jh.Data.pcapData[r.attr('ref')].rawdata);
+                        $("#signDetail").html(Jh.Data.pcapData[r.index()].rawdata);
                     }
                 });
             }
@@ -865,7 +923,7 @@ Jh.fn = function (a) {
         },_refresh:function(data,id){
 
             if(id!=='view8'){
-                syncPacpData();
+                syncPcapData();
             }
 
             //同步信令、事件窗口
@@ -881,7 +939,12 @@ Jh.fn = function (a) {
                         dataArray = Jh.Data.eventData.map(c=>c.time);
                     }else if(view==='view8'){
                         dataArray = Jh.Data.pcapData.map(c=>c.time);
+                    }else if(view === 'view9'){
+                        dataArray = Jh.Data.roadData.map(c=>c.beginTime);
+                    }else if(view === 'view10'){
+                        dataArray = Jh.Data.exceptEventData.map(c=>c.time);
                     }
+
                     dataArray.push(MyPlayer.Data.currentTime);
                     dataArray.sort();
                     var position =  dataArray.indexOf(MyPlayer.Data.currentTime);
@@ -989,6 +1052,88 @@ Jh.fn = function (a) {
         },_refreshTable:function(b){
             $("#"+b+"Table").empty();
             a._createViewTable(b,Jh.ViewColumns[b]);
+        },_pcapLoadingData:function(data,direction){
+            var b = 'view8'
+            var tbody = $("#view8_tbody");
+            var _prefix = '';
+
+            var key;
+            if(0 == direction){
+                key =  $("#view8_tbody tr:first").attr('ref');
+            }else{
+                key =  $("#view8_tbody tr:last").attr('ref');
+            }
+
+            $.each(data,function(index,value){
+                var tr;
+                //========表格体
+                if(0 == direction){
+                   key--;
+                }else{
+                   key++;
+                }
+                if('view8' === b){
+                    tr = $("<tr style='height:25px;' ref='"+key+"'   did='"+value.recseqno+"'   class='textCenter "+b+"_"+key+"'   ></tr>");
+                }else{
+                    tr = $("<tr style='height:25px;' ref='"+key+"'  class='textCenter "+b+"_"+key+"'   ></tr>");
+                }
+
+                $.each(Jh.ViewColumns['view8'][0],function(ind,it){
+
+                    var td;
+                    if(value){
+                        var val = value[_prefix+it.field];
+                        if( val !=0 && !val ){
+                            val = '';
+                        }
+                        if(it.format){
+                            val = eval( it.format+"('"+val+"');");
+                        }
+                        var td = _prefix ?  $("<td id='ie_"+it.field+"'>"+val+"</td>") :  $("<td>"+val+"</td>");
+
+                    }else{
+                        td = $("<td id='ie_"+it.field+"'></td>");
+                    }
+                    if(it.width){
+                        td.css('width',it.width);
+                    }
+                    if(it.ellipsis){
+                        td.css('overflow','hidden');
+                        td.css('text-overflow','ellipsis');
+                        td.css('white-space','nowrap');
+                    }
+                    tr.append(td);
+                });
+                tr.hover(function () {
+                    $(this).addClass("datagrid-row-over");
+                }, function () {
+                    $(this).removeClass("datagrid-row-over");
+                });
+
+                //绑定各种事件
+                if(!_prefix){
+                    a._bindRowClick(b,tr);
+                }
+                if(0 == direction){
+                    $("#view8_tbody tr:first").before(tr);
+                    Jh.Data.pcapData.splice(0,0,value);
+                    if($("#view8_tbody").children().length>3000) {
+                        $("#view8_tbody tr:last-child").remove();
+                        Jh.Data.pcapData.splice(Jh.Data.pcapData.length-1);
+                    }
+                }else{
+                    tbody.append(tr);
+                    Jh.Data.pcapData.push(value);
+                    if($("#view8_tbody").children().length>3000) {
+                        $("#view8_tbody tr:first").remove();
+                        Jh.Data.pcapData.splice(0,1);
+                    }
+                }
+            });
+
+
+
         }
+
     }
 }();

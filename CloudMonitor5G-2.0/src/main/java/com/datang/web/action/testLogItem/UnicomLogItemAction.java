@@ -7,7 +7,6 @@ import com.datang.common.util.*;
 import com.datang.dao.customTemplate.CustomLogReportTaskDao;
 import com.datang.domain.security.menu.MenuType;
 import com.datang.domain.security.menu.TerminalMenu;
-import com.datang.domain.testLogItem.TestLogItem;
 import com.datang.domain.testLogItem.UnicomLogItem;
 import com.datang.domain.testManage.terminal.TerminalGroup;
 import com.datang.service.influx.InfluxService;
@@ -27,10 +26,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ModelDriven;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.*;
 import org.apache.struts2.ServletActionContext;
 import org.apache.tools.ant.util.DateUtils;
 import org.slf4j.Logger;
@@ -729,20 +725,11 @@ public class UnicomLogItemAction extends PageAction implements
 			for (String id : idsArry) {
 				UnicomLogItem queryTestLogById = unicomLogItemService.queryTestLogById(Long.valueOf(id));
 				if (null != queryTestLogById && StringUtils.hasText(queryTestLogById.getFilelink())) {
-					if(queryTestLogById.getFilelink().contains("./")){
-						String filePath = dzTestLogTtemUrl + queryTestLogById.getFilelink().replace("./", "/").replace(" ", "");
-						if(filePath.indexOf(queryTestLogById.getFileName()) == -1){
-							filePath = filePath + queryTestLogById.getFileName();
-						}
-						File log = new File(filePath);
-						System.out.println(filePath);
-						if (!log.exists() || !log.isFile()) {
-							unUsedStrList.add(id);
-							respString = respString+queryTestLogById.getFileName()+" 日志不存在!路径:"+filePath+"</br>";
-						}
-					}else{
+					String filePath =  queryTestLogById.getFilelink();
+					File log = new File(filePath);
+					if (!log.exists() || !log.isFile()) {
 						unUsedStrList.add(id);
-						respString = respString+queryTestLogById.getFileName()+":日志名称的路径应该为相对路径!</br>";
+						respString = respString+queryTestLogById.getFileName()+" 日志不存在!路径:"+filePath+"</br>";
 					}
 				}
 			}

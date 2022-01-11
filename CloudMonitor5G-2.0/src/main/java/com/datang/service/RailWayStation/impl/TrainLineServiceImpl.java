@@ -16,7 +16,6 @@ import com.datang.dao.railway.TrainXmlTableDao;
 import com.datang.domain.railway.TrainStationPojo;
 import com.datang.domain.railway.TrainTimeInterfacePojo;
 import com.datang.domain.railway.TrainXmlTablePojo;
-import com.datang.domain.report.StatisticeTask;
 import com.datang.exception.ApplicationException;
 import com.datang.service.RailWayStation.TrainLineService;
 import com.datang.util.HttpClientUtils;
@@ -30,9 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
-import java.sql.Clob;
 import java.util.*;
 
 /**
@@ -415,7 +412,13 @@ public class TrainLineServiceImpl implements TrainLineService {
             decoder.writeTail();
 
             //保存数据库
-            TrainXmlTablePojo trainXmlTablePojo = new TrainXmlTablePojo();
+            TrainXmlTablePojo trainXmlTablePojo;
+            if(line.getId() != null){
+                trainXmlTablePojo = trainXmlTableDao.find(line.getId());
+            }else{
+                trainXmlTablePojo = new TrainXmlTablePojo();
+            }
+
             trainXmlTablePojo.setTrainCode(line.getName());
             trainXmlTablePojo.setStartStation(line.getStartStation());
             trainXmlTablePojo.setStartTime(line.getStartTime());
@@ -423,17 +426,22 @@ public class TrainLineServiceImpl implements TrainLineService {
             trainXmlTablePojo.setArriveTime(line.getArriveTime());
             trainXmlTablePojo.setLineXml(xmlFileName);
             trainXmlTablePojo.setXmlFilePath(xmlfile.getPath());
-            trainXmlTablePojo.setUpdateTimeLong(new Date().getTime());
+            trainXmlTablePojo.setUpdateTimeLong(System.currentTimeMillis());
 
-            PageList pagelist = new PageList();
-            pagelist.putParam("lineXml",trainXmlTablePojo.getLineXml());
-            List<TrainXmlTablePojo> trainXmlTableList = trainXmlTableDao.findTrainXmlTable(pagelist);
-            if(trainXmlTableList==null || trainXmlTableList.size()==0){
-                trainXmlTableDao.create(trainXmlTablePojo);
-            }else{
-                trainXmlTablePojo.setId(trainXmlTableList.get(0).getId());
+            if(line.getId()!=null){
                 trainXmlTableDao.update(trainXmlTablePojo);
+            }else{
+                PageList pagelist = new PageList();
+                pagelist.putParam("lineXml",trainXmlTablePojo.getLineXml());
+                List<TrainXmlTablePojo> trainXmlTableList = trainXmlTableDao.findTrainXmlTable(pagelist);
+                if(trainXmlTableList==null || trainXmlTableList.size()==0){
+                    trainXmlTableDao.create(trainXmlTablePojo);
+                }else{
+                    trainXmlTablePojo.setId(trainXmlTableList.get(0).getId());
+                    trainXmlTableDao.update(trainXmlTablePojo);
+                }
             }
+
             xmlNum++;
 
         } catch (Exception e) {
@@ -451,6 +459,11 @@ public class TrainLineServiceImpl implements TrainLineService {
                         e.getMessage());
             }
         }
+    }
+
+    @Override
+    public TrainXmlTablePojo find(Long id) {
+        return trainXmlTableDao.find(id);
     }
 
     /**

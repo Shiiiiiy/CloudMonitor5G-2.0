@@ -23,4 +23,10 @@ public interface LogIEService {
     List<PcapData> pcapDatas(long logId);
 
     List<PcapData> syncPcapDatas(long logId,String time);
+
+    List<PcapData> morePcapDatas(long logId, long beginId, String direction);
+
+    Long maxId(long logId);
+
+    Long minId(long logId);
 }

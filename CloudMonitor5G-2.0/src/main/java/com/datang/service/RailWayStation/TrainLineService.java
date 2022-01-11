@@ -4,7 +4,6 @@ import com.datang.bean.railway.Line;
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageList;
 import com.datang.domain.railway.TrainXmlTablePojo;
-import com.datang.domain.report.StatisticeTask;
 
 import java.io.File;
 import java.util.List;
@@ -25,4 +24,6 @@ public interface TrainLineService {
     List<TrainXmlTablePojo> findTrainXml(PageList pageList);
 
     void manualAddTrainXml(Line line);
+
+    TrainXmlTablePojo find(Long id);
 }

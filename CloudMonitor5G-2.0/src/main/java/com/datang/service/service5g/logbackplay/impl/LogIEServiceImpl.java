@@ -79,4 +79,19 @@ public class LogIEServiceImpl implements LogIEService {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public List<PcapData> morePcapDatas(long logId, long beginId, String direction) {
+        return logBackPlayDao.morePcapDatas(logId,beginId,direction);
+    }
+
+    @Override
+    public Long maxId(long logId) {
+        return logBackPlayDao.maxId(logId);
+    }
+
+    @Override
+    public Long minId(long logId) {
+        return logBackPlayDao.minId(logId);
+    }
 }

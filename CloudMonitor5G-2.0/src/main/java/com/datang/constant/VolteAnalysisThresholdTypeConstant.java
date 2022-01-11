@@ -243,5 +243,10 @@ public interface VolteAnalysisThresholdTypeConstant {
 	 * 感知监控门限
 	 */
 	public static String KNOW_FEELING_MONITOR = "knowFeelingMonitor";
+
+	/**
+	 * 问题路段显示设置
+	 */
+	public static String QUESTION_ROAD_DISPLAY_SETTING = "qrDisplaySetting";
 	
 }

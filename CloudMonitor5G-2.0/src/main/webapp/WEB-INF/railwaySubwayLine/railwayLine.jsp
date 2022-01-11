@@ -37,13 +37,16 @@
 		// field用于匹配远程json属性，width宽度,align居左右中对齐
 		var railwayInfoColumns=[[
 			{field:'id',checkbox:true}, // 一个对象代表一列 <th>
-			{field:'trainCode',width:150,align:'center',title:'车次'},
+			{field:'trainCode',width:75,align:'center',title:'车次'},
 			{field:'startStation',width:75,align:'center',title:'始发站'},
 			{field:'startTime',width:75,align:'center',title:'出发时间'},
 			{field:'destStation',width:75,align:'center',title:'终点站'},
-			{field:'arriveTime',width:90,align:'center',title:'到达时间'},
-			{field:'updateTime',width:90,align:'center',title:'更新时间'},
-			{field:'lineXml',width:45,align:'center',title:'路线文件'}
+			{field:'arriveTime',width:75,align:'center',title:'到达时间'},
+			{field:'updateTime',width:75,align:'center',title:'更新时间'},
+			{field:'lineXml',width:75,align:'center',title:'路线文件'},
+			{field:'oper',width:60,align:'center',title:'操作',formatter:function(value,row,index){
+				return '<a href="#" onclick="addXml('+row.id+');" title="编辑">编辑</a>';
+			}}
 		]];
 
 		$(function(){
@@ -171,8 +174,12 @@
 			goToPage('${pageContext.request.contextPath}/railwayLine/goImport.action');
 		}
 
-		function addXml(){
-			goToPage('${pageContext.request.contextPath}/railwayLine/goAddRailwayXmlPage.action');
+		function addXml(id){
+			if(id){
+				goToPage('${pageContext.request.contextPath}/railwayLine/goAddRailwayXmlPage.action?id='+id);
+			}else{
+				goToPage('${pageContext.request.contextPath}/railwayLine/goAddRailwayXmlPage.action');
+			}
 		}
 
 		function doAnalysis(){

@@ -14,9 +14,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <meta http-equiv="expires" content="0">
     <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
     <meta http-equiv="description" content="This is my page">
-    <%@ include file="../../../taglibs/jquery.jsp" %>
-    <%@ include file="../../../taglibs/easyui.jsp" %>
-    <%@ include file="../../../gis/layerManagerEmbb.jsp" %>
+    <%@ include file="../../taglibs/jquery.jsp" %>
+    <%@ include file="../../taglibs/easyui.jsp" %>
+    <%@ include file="../../gis/layerManagerEmbb.jsp" %>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/common.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/gisCommon.js"></script>
@@ -73,10 +73,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         
     </style>
     <script type="text/javascript">
-        // field用于匹配远程json属性，width宽度,align居左右中对齐
 
 		var processIndex = 1;
-        var sid = 0;
         var selectLocationType = null;
         var xmlParam = {};
         var sidArr=[];
@@ -205,7 +203,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             }
         }
 
-        function saveXml(){
+        function saveXml(id){
 
             $('#stationInfo td .iconfont').each(function(){
                 let index = $(this).parent().parent().children("#tdSid")[0].innerHTML;
@@ -215,6 +213,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             });
             let xmlParamJson = JSON.parse(JSON.stringify(xmlParam));
             let data = {};
+            if(id){
+                data["line.id"] = id;
+            }
             data["line.name"] = xmlParamJson["name"];
             data["line.startStation"] = xmlParamJson["startStation"];
             data["line.startTime"] = xmlParamJson["startTime"];
@@ -249,18 +250,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         }
 
         function addStation(){
-            let trElement = $("#stationInfo tbody tr")[sid];
-            sid++;
+            let trElement = $("#stationInfo tbody");
             var inHtml ='<tr>' +
                 '<td><input class=\'iconfont\' type="checkbox" /></td>' +
-                '<td id="tdSid">'+sid+'</td>' +
-                '<td><input id="stationName'+sid+'" name="stationName" class="easyui-textbox stationInput stationNameClass" data-options="required:true"/></td>' +
-                '<td><input name="stationEndTime" id="stationEndTime'+sid+'" class="easyui-timespinner stationInput stationEndTimeClass" data-options="required:true,showSeconds:false"></td>'+
-                '<td><input name="stationStartTime" id="stationStartTime'+sid+'" class="easyui-timespinner stationInput stationStartTimeClass" data-options="required:true,showSeconds:false"></td>' +
-                ' <td><input id="Longitude'+sid+'" name="Longitude" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/></td>' +
-                '<td><input id="Latitude'+sid+'" name="Latitude" class="easyui-numberbox stationInput latitudeClass" data-options="required:true,min:-90,max:90,precision:6"/></td>' +
+                '<td id="tdSid"></td>' +
+                '<td><input id="stationName" name="stationName" class="easyui-textbox stationInput stationNameClass" data-options="required:true"/></td>' +
+                '<td><input name="stationEndTime" id="stationEndTime" class="easyui-timespinner stationInput stationEndTimeClass" data-options="required:true,showSeconds:false"></td>'+
+                '<td><input name="stationStartTime" id="stationStartTime" class="easyui-timespinner stationInput stationStartTimeClass" data-options="required:true,showSeconds:false"></td>' +
+                ' <td><input id="Longitude" name="Longitude" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/></td>' +
+                '<td><input id="Latitude" name="Latitude" class="easyui-numberbox stationInput latitudeClass" data-options="required:true,min:-90,max:90,precision:6"/></td>' +
                 '<tr>';
-            $(trElement).after(inHtml);
+            $(trElement).append(inHtml);
             $('.easyui-textbox').textbox();
             $('.easyui-timespinner').timespinner();
             $('.easyui-numberbox').numberbox();
@@ -347,7 +347,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
         <form id="trainff" method="post">
             <div class="inputDivShow" >
-                <input id="trainCode" name="trainCode" class="easyui-textbox" data-options="required:true,prompt:'请输入高铁车次号'" />
+                <input id="trainCode" name="trainCode" class="easyui-textbox" value="${entity.trainCode}" data-options="required:true,prompt:'请输入高铁车次号'" />
             </div>
             <div id="trainCodeInfo" style="display: block">
                 <div style="height:2%;background-color:#e8f1ff;padding:5px;border:1px solid #95b8e7;">
@@ -371,25 +371,25 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         <tr>
                             <td>始发站</td>
                             <td>
-                                <input id="startStation" name="startStation" class="easyui-textbox" data-options="required:true"/>
+                                <input id="startStation" name="startStation" value="${entity.startStation}" class="easyui-textbox" data-options="required:true"/>
                             </td>
                         </tr>
                         <tr>
                             <td>终点站</td>
                             <td>
-                                <input id="endStation" name="endStation" class="easyui-textbox" data-options="required:true"/>
+                                <input id="endStation" name="endStation" value="${entity.destStation}" class="easyui-textbox" data-options="required:true"/>
                             </td>
                         </tr>
                         <tr>
                             <td>开始时间(StartTime)</td>
                             <td>
-                                <input name="metroLineStartTime" id="metroLineStartTime" class="easyui-timespinner" data-options="required:true,showSeconds:false">
+                                <input name="metroLineStartTime" id="metroLineStartTime" value="${entity.startTime}" class="easyui-timespinner" data-options="required:true,showSeconds:false">
                             </td>
                         </tr>
                         <tr>
                             <td>终点时间(EndTime)</td>
                             <td>
-                                <input name="metroLineEndTime" id="metroLineEndTime" class="easyui-timespinner" data-options="required:true,showSeconds:false">
+                                <input name="metroLineEndTime" id="metroLineEndTime" value="${entity.arriveTime}" class="easyui-timespinner" data-options="required:true,showSeconds:false">
                             </td>
                         </tr>
                         </tbody>
@@ -424,27 +424,55 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>
-                                <input class='iconfont' type="checkbox" disabled/>
-                            </td>
-                            <td id="tdSid">0</td>
-                            <td>
-                                <input id="stationName0" name="stationName" class="easyui-textbox stationInput stationNameClass" data-options="required:true"/>
-                            </td>
-                            <td>
-                                <input name="stationEndTime" id="stationEndTime0" class="easyui-timespinner stationInput stationEndTimeClass" data-options="required:true,showSeconds:false">
-                            </td>
-                            <td>
-                                <input name="stationStartTime" id="stationStartTime0" class="easyui-timespinner stationInput stationStartTimeClass" data-options="required:true,showSeconds:false">
-                            </td>
-                            <td>
-                                <input id="Longitude0" name="Longitude" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/>
-                            </td>
-                            <td>
-                                <input id="Latitude0" name="Latitude" class="easyui-numberbox stationInput latitudeClass" data-options="required:true,min:-90,max:90,precision:6"/>
-                            </td>
-                        </tr>
+                   <%--     <tr>
+                                <td>
+                                    <input class='iconfont' type="checkbox" disabled/>
+                                </td>
+                                <td id="tdSid">0</td>
+                                <td>
+                                    <input id="stationName0" name="stationName" class="easyui-textbox stationInput stationNameClass" data-options="required:true"/>
+                                </td>
+                                <td>
+                                    <input name="stationEndTime" id="stationEndTime0" class="easyui-timespinner stationInput stationEndTimeClass" data-options="required:true,showSeconds:false">
+                                </td>
+                                <td>
+                                    <input name="stationStartTime" id="stationStartTime0" class="easyui-timespinner stationInput stationStartTimeClass" data-options="required:true,showSeconds:false">
+                                </td>
+                                <td>
+                                    <input id="Longitude0" name="Longitude" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/>
+                                </td>
+                                <td>
+                                    <input id="Latitude0" name="Latitude" class="easyui-numberbox stationInput latitudeClass" data-options="required:true,min:-90,max:90,precision:6"/>
+                                </td>
+                            </tr>
+                         --%>
+                           <c:forEach items="${stopList}" var="stop" varStatus="status">
+                               <tr>
+                                   <td>
+                                       <input class='iconfont' type="checkbox"  <c:if test="${status.index == 0}" >disabled</c:if>/>
+                                   </td>
+                                   <td id="tdSid">${status.index}</td>
+                                   <td>
+                                       <input id="stationName${status.index}" name="stationName" value="${stop.name}"  class="easyui-textbox stationInput stationNameClass" data-options="required:true"/>
+                                   </td>
+                                   <td>
+                                       <input name="stationEndTime" id="stationEndTime${status.index}" value="${stop.arriveTime}" class="easyui-timespinner stationInput stationEndTimeClass" data-options="required:true,showSeconds:false">
+                                   </td>
+                                   <td>
+                                       <input name="stationStartTime" id="stationStartTime${status.index}" value="${stop.startTime}" class="easyui-timespinner stationInput stationStartTimeClass" data-options="required:true,showSeconds:false">
+                                   </td>
+                                   <td>
+                                       <input id="Longitude${status.index}" name="Longitude" value="${stop.longitude}" class="easyui-numberbox stationInput longitudeClass" data-options="required:true,min:-180,max:180,precision:6"/>
+                                   </td>
+                                   <td>
+                                       <input id="Latitude${status.index}" name="Latitude" value="${stop.latitude}" class="easyui-numberbox stationInput latitudeClass" data-options="required:true,min:-90,max:90,precision:6"/>
+                                   </td>
+                               </tr>
+
+
+                           </c:forEach>
+
+
                         </tbody>
                     </table>
                 </div>
@@ -461,7 +489,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         <a id="nextButton" iconCls="icon-redo" class="easyui-linkbutton" style="width:100px;" onclick="next();"  >下一步</a>
                     </td>
                     <td width="33%;">
-                        <a id="saveButton" class="easyui-linkbutton" data-options="iconCls:'icon-ok',disabled:true" style="width:100px;" onclick="saveXml();">保存</a>
+                        <a id="saveButton" class="easyui-linkbutton" data-options="iconCls:'icon-ok',disabled:true" style="width:100px;" onclick="saveXml(${entity.id});">保存</a>
                     </td>
                 </tr>
             </table>

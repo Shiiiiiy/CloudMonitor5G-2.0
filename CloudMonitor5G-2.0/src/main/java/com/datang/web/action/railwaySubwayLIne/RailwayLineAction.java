@@ -1,40 +1,29 @@
 package com.datang.web.action.railwaySubwayLIne;
 
 import com.datang.bean.railway.Line;
-import com.datang.bean.railway.StationTrail;
 import com.datang.common.action.page.AbstractPageList;
 import com.datang.common.action.page.PageAction;
 import com.datang.common.action.page.PageList;
-import com.datang.common.util.ClassUtil;
 import com.datang.common.util.StringUtils;
-import com.datang.domain.platform.stationParam.StationParamPojo;
-import com.datang.domain.platform.stationParam.StationReportTemplatePojo;
 import com.datang.domain.railway.TrainXmlTablePojo;
-import com.datang.domain.security.menu.Menu;
-import com.datang.domain.security.menu.TerminalMenu;
-import com.datang.domain.testLogItem.TestLogItem;
-import com.datang.domain.testManage.terminal.TerminalGroup;
 import com.datang.exception.ApplicationException;
 import com.datang.service.RailWayStation.TrainLineService;
 import com.datang.service.RailWayStation.TrainUpdateSchduleService;
-import com.datang.service.platform.security.IMenuManageService;
-import com.datang.service.platform.stationParam.StationParamService;
 import com.datang.util.ZipMultiFile;
 import com.datang.web.action.ReturnType;
-import com.datang.web.beans.report.AnalyzeEventTemplate;
-import com.datang.web.beans.report.AnalyzeNetworkTemplate;
-import com.datang.web.beans.report.AnalyzeVoiceTemplate;
-import com.datang.web.beans.report.QuesRoadTemplate;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ModelDriven;
 import com.opensymphony.xwork2.util.ValueStack;
 import lombok.extern.slf4j.Slf4j;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import javax.servlet.ServletOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -88,6 +77,47 @@ public class RailwayLineAction extends PageAction implements ModelDriven<TrainXm
 	}
 
 	public String goAddRailwayXmlPage(){
+
+		ValueStack valueStack = ActionContext.getContext().getValueStack();
+		List<Map<String,String>> list = new ArrayList<>();
+		//编辑
+		if(traintXmlTablePojo.getId()!=null){
+			TrainXmlTablePojo entity = trainLineService.find(traintXmlTablePojo.getId());
+			valueStack.set("entity",entity);
+			//解析原来的xml
+			File file = new File(entity.getXmlFilePath());
+			if(file.exists()){
+				SAXReader reader = new SAXReader();
+				try {
+					Document doc = reader.read(file);
+					Element root = doc.getRootElement();
+					Element city = root.element("City");
+					Element metroLine = city.element("MetroLine");
+
+					for (Object element : metroLine.elements()) {
+						Element e = (Element) element;
+						Map<String,String> map = new HashMap<>();
+						map.put("sid",e.attribute("SID").getText());
+						map.put("name",e.attribute("Name").getText());
+						map.put("arriveTime",e.attribute("ArriveTime").getText());
+						map.put("startTime",e.attribute("StartTime").getText());
+						map.put("longitude",e.attribute("Longitude").getText());
+						map.put("latitude",e.attribute("Latitude").getText());
+						list.add(map);
+					}
+					list.sort(Comparator.comparing(o ->Integer.valueOf(o.get("sid"))));
+				} catch (DocumentException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if(list.size()<1){
+			Map<String,String> map = new HashMap<>();
+			list.add(map);
+		}
+
+		valueStack.set("stopList",list);
 		return "manualAddRailwayXml";
 	}
 

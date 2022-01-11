@@ -24,12 +24,6 @@
 	  <script type="text/javascript" src="${pageContext.request.contextPath}/js/portal/js/slider.js" charset="utf-8"></script>
 
 
-<%--
-      <script type="text/javascript" src="${pageContext.request.contextPath}/js/portal/js/json/lineChart.js" charset="utf-8"></script>
---%>
-
-
-
 		<%@ include file="../../taglibs/easyui.jsp"%>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/common.js" ></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/modelLock.js" ></script>
@@ -46,13 +40,30 @@
 
 	$(function(){
 
-		$("#outDiv").css('margin-top',$("#innerDiv").height());
+		Jh.Data.roadData = eval('${roadData}');
+		Jh.Data.exceptEventData = eval('${exceptEventData}');
+		if(!Jh.Data.roadData){
+			Jh.Data.roadData = [];
+		}
+		if(!Jh.Data.exceptEventData){
+			Jh.Data.exceptEventData = [];
+		}
 
-		initMap();
+
+		$("#outDiv").css('margin-top',$("#innerDiv").height());
 
 		var s = '${logIds}';
 		var n = '${logNames}';
 
+		if(!s){
+			$.messager.alert("系统提示", "查询不到关联日志数据",'',function(){
+				$(".tabs-selected .tabs-close",parent.document)[0].click();
+			});
+			$(".panel-tool-close").hide();
+			return ;
+		}
+
+		initMap();
 
 		var ids = s.split(",");
 		var names = n.split(",");
@@ -125,7 +136,9 @@
 					data: {'logId': MyPlayer.Data.logId},
 					dataType: "json",
 					success: function(data){
-						Jh.Data.pcapData =  data;
+						Jh.Data.pcapData =  data.items;
+						Jh.PData.maxPcapId = data.maxId;
+						Jh.PData.minPcapId = data.minId;
 					}
 				}),
 
@@ -344,7 +357,7 @@
 		});
 	}
 
-	function syncPacpData(){
+	function syncPcapData(){
 		$.ajax({
 			type: "POST",
 			url: "${pageContext.request.contextPath}/logback/syncPcapData.action",
@@ -402,6 +415,52 @@
 				}
 			}
 		});
+	}
+
+	function loadMorePcapData(direction){
+		if(Jh.PData.loadingPcapData ){
+			return;
+		}
+		var beginId = $("#view8_tbody tr:last-child").attr('did');
+		if(0 == direction ){
+			beginId = $("#view8_tbody tr:first-child").attr('did');
+			if(!(Jh.PData.minPcapId < beginId)){
+				return;
+			}
+		}else{
+			if(!(Jh.PData.maxPcapId > beginId)){
+				return;
+			}
+		}
+		Jh.PData.loadingPcapData = true;
+		$.ajax({
+			type: "POST",
+			url: "${pageContext.request.contextPath}/logback/morePcapData.action",
+			data: {'logId': MyPlayer.Data.logId,beginId:beginId,direction:direction},
+			async:true,
+			dataType: "json",
+			success: function(data){
+				Jh.fn._pcapLoadingData(data,direction);
+				Jh.PData.loadingPcapData = false;
+
+				setTimeout(function(){
+					//防止滚动条 拖到最高挥着最低的地方后无法继续加载的问题
+					if($("#view8_tbody").scrollTop() ==0){
+						$("#view8_tbody").scrollTop(1);
+					}
+					if($("#view8_tbody")[0].scrollHeight - $("#view8_tbody").height() - $("#view8_tbody").scrollTop() < 1 ){
+						$("#view8_tbody").scrollTop($("#view8_tbody")[0].scrollHeight - $("#view8_tbody").height() - 1);
+					}
+				},300);
+
+			},
+			error:function(){
+				Jh.PData.loadingPcapData = false;
+			}
+		});
+
+
+
 	}
 
 
@@ -468,7 +527,9 @@
 					data: {'logId': MyPlayer.Data.logId},
 					dataType: "json",
 					success: function(data){
-						Jh.Data.pcapData =  data;
+						Jh.Data.pcapData =  data.items;
+						Jh.PData.maxPcapId = data.maxId;
+						Jh.PData.minPcapId = data.minId;
 					}
 				}),
 
@@ -511,6 +572,9 @@
 		})
 
 }
+
+
+
 
 
 </script>
@@ -602,6 +666,158 @@
 			<div style="white-space:pre-line;word-break:break-all" id="signDetail">
 			</div>
 		</div>
+
+
+
+		<div id="displayCfgWindow" class="easyui-window" title="显示设置" data-options="closed:true,maximizable:false,minimizable:false,collapsible:false" style="width: 700px;height: 500px;">
+			<div class="easyui-layout" data-options="fit:true">
+				<div data-options="region:'center',border:false" style="padding: 0px;">
+					<div class="easyui-tabs" data-options="border:false,tabWidth:85" style="width:100%;height: 420px">
+						<div title="工参" style="padding: 10px;">
+							<div class="qrDiv">
+								<div class="qrText">联通-4G</div>
+								<input class="qrColor" type="color" id="unicom4g" value="${cfgEntity.unicom4g}"  />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">联通-5G</div>
+								<input class="qrColor" type="color" id="unicom5g" value="${cfgEntity.unicom5g}"  />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">移动-4G</div>
+								<input class="qrColor" type="color" id="mobile4g" value="${cfgEntity.mobile4g}"   />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">移动-5G</div>
+								<input class="qrColor" type="color" id="mobile5g" value="${cfgEntity.mobile5g}"  />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">电信-4G</div>
+								<input class="qrColor" type="color" id="telcom4g" value="${cfgEntity.telcom4g}"   />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">电信-5G</div>
+								<input class="qrColor" type="color" id="telcom5g" value="${cfgEntity.telcom5g}"  />
+							</div>
+						</div>
+						<div title="轨迹" style="padding: 10px;">
+							<div class="inputDivShow">筛选
+								<input style="width: 160px" id=""  name=""  class="easyui-textbox" data-options="validType:'length[1,30]'"/>
+							</div>
+
+
+
+						</div>
+						<div title="拉线" style="padding: 10px;">
+							3
+						</div>
+						<div id="questionRoad" title="问题路段" style="padding: 10px;">
+							<div class="qrDiv">
+								<div class="qrText">弱覆盖问题路段</div>
+								<input class="qrColor" type="color" id="weakCoverQuestionRoad" value="${cfgEntity.weakCoverQuestionRoad}"  />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">重叠覆盖问题路段</div>
+								<input class="qrColor" type="color" id="overlapCoverQuestionRoad" value="${cfgEntity.overlapCoverQuestionRoad}"  />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">上行质差问题路段</div>
+								<input class="qrColor" type="color" id="upQualityDiffQuestionRoad" value="${cfgEntity.upQualityDiffQuestionRoad}"   />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">下行质差问题路段</div>
+								<input class="qrColor" type="color" id="downQualityDiffQuestionRoad" value="${cfgEntity.downQualityDiffQuestionRoad}"  />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">上行低速率问题路段</div>
+								<input class="qrColor" type="color" id="upLowSpeedQuestionRoad" value="${cfgEntity.upLowSpeedQuestionRoad}"  />
+							</div>
+							<div class="qrDiv">
+								<div class="qrText">下行低速率问题路段</div>
+								<input class="qrColor" type="color"  id="downLowSpeedQuestionRoad" value="${cfgEntity.downLowSpeedQuestionRoad}"  />
+							</div>
+						</div>
+						<div title="异常事件" style="padding: 10px;">
+							5
+						</div>
+						<div title="网格对比" style="padding: 10px;">
+							6
+						</div>
+						<div title="采样点过滤" style="padding: 10px;">
+							7
+						</div>
+					</div>
+
+				</div>
+				<div data-options="region:'south',border:false" style="text-align: center;padding: 5px;">
+					<a class="easyui-linkbutton"  href="javascript:void(0)" onclick="saveDisplayCfg()" style="width: 80px;">确定</a>
+					<a class="easyui-linkbutton"  href="javascript:void(0)" onclick="closeCfgWindow();" style="width: 80px;">取消</a>
+				</div>
+			</div>
+		</div>
+
+
+		<script>
+			function showCfgWindow(){
+				$("#displayCfgWindow").window('open');
+				$("#displayCfgWindow").window('center');
+			}
+			function closeCfgWindow(){
+				$("#displayCfgWindow").window('close');
+			}
+
+			/* 保存修改 */
+			function saveDisplayCfg(){
+				var fieldNameEn = "";
+				var fieldValue = "";
+				$("#questionRoad input").each(function(i,a){
+					fieldNameEn += $(a).attr('id') +",";
+					fieldValue += $(a).val() + ',';
+				})
+				$.ajax({
+					url:"${pageContext.request.contextPath}/coverageParam/saveWeakCoverThreshold.action",
+					dataType:"json",
+					type:"post",
+					data: {'fieldNameEn':fieldNameEn,'fieldValue':fieldValue},
+					success:function(result){
+						if (result.errorMsg) {
+							$.messager.alert("系统提示", result.errorMsg,'error');
+						} else {
+							$.messager.alert('提示','修改成功','info');
+							closeCfgWindow();
+						}
+					}
+				});
+
+			}
+
+
+		</script>
+
+		<style>
+			.qrDiv{
+				height: 50px;
+				padding-top: 10px;
+				box-sizing: border-box;
+				border-bottom: dashed 1px #8f818194;
+			}
+			.qrText{
+				margin-left: 20px;
+				height: 30px;
+				line-height: 30px;
+				font-size: 15px;
+				float: left;
+				width: 200px;
+				text-align: left;
+			}
+			.qrColor{
+				border:none;
+				padding:0;
+				background-color:white;
+				width: 120px;
+				height: 30px;
+			}
+
+		</style>
 
 </body>
 </html>

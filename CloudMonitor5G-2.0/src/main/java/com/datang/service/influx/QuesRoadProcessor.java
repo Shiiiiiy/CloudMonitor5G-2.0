@@ -47,10 +47,11 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
         WHERE_MAP.put("上行低速率路段",new String[]{"IEValue_54231"});
         WHERE_MAP.put("下行低速率路段",new String[]{"IEValue_53483"});
         WHERE_MAP.put("重叠覆盖路段",new String[]{"IEValue_50055"});
-        EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Send STOR","FTP Upload Last Data","FTP UpLoad Drop","FTP Upload Attempt","FTP Upload Success","FTP UpLoad Drop"});
-        EVTS_MAP.put("下行低速率路段",new String[]{"FTP DownLoad Drop","FTP Download Send RETR","FTP Download Last Data","FTP Download Attempt","FTP Download Success","FTP Download Drop"});
-        START_EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Attempt","FTP Upload Send STOR"});
-        START_EVTS_MAP.put("下行低速率路段",new String[]{"FTP Download Attempt","FTP Download Send RETR"});
+
+        //EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Send STOR","FTP Upload Last Data","FTP UpLoad Drop","FTP Upload Attempt","FTP Upload Success","FTP UpLoad Drop"});
+        //EVTS_MAP.put("下行低速率路段",new String[]{"FTP DownLoad Drop","FTP Download Send RETR","FTP Download Last Data","FTP Download Attempt","FTP Download Success","FTP Download Drop"});
+        //START_EVTS_MAP.put("上行低速率路段",new String[]{"FTP Upload Attempt","FTP Upload Send STOR"});
+        //START_EVTS_MAP.put("下行低速率路段",new String[]{"FTP Download Attempt","FTP Download Send RETR"});
     }
     @Autowired
     private GisAndListShowServie gisAndListShowServie;
@@ -659,9 +660,12 @@ public class QuesRoadProcessor extends InfluxServiceImpl implements QuesRoadServ
             String time1=slideWindow.get(slideWindow.size()-1).get("time").toString();
             //String time2=slideWindow.get(slideWindow.size()-2).get("time").toString();
             String time2=slideWindow.get(0).get("time").toString();
-            Long t1 = DateComputeUtils.toUtcDate(time1).getTimeInMillis()-5000;
+            Long t1 = DateComputeUtils.toUtcDate(time1).getTimeInMillis();
             Long t2 = DateComputeUtils.toUtcDate(time2).getTimeInMillis();
             //if(DateComputeUtils.toUtcDate(time1).getTimeInMillis()-5000>DateComputeUtils.toUtcDate(time2).getTimeInMillis()){
+            if(t1 < t2){
+                return true;
+            }
             if((t1 - 5000) > t2){
                 return true;
             }
